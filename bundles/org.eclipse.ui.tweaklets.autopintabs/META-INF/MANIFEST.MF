@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.ui.tweaklets.autopintabs;singleton:=true
+Bundle-Version: 0.9.0
+Bundle-ClassPath: .
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.equinox.common
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Eclipse-LazyStart: true

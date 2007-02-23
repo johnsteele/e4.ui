@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.internalTweaklets">
+      <tweaklet
+            definition="org.eclipse.ui.internal.tweaklets.TabBehaviour"
+            description="%tweakletDescription"
+            id="org.eclipse.ui.tweaklets.autopintabs.tweaklet2"
+            implementation="org.eclipse.ui.internal.tweaklets.TabBehaviourAutoPin"
+            name="Editor Tab Management Proposal">
+      </tweaklet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.tweaklets.OpenEmptyEditorTabHandler"
+            description="%command.openEmptyEditorTab.description"
+            id="org.eclipse.ui.window.openEmptyEditorTab"
+            name="%command.openEmptyEditorTab.name"/>
+   </extension>
+
+</plugin>
