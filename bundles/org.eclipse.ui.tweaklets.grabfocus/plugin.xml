@@ -5,10 +5,10 @@
          point="org.eclipse.ui.internalTweaklets">
       <tweaklet
             definition="org.eclipse.ui.internal.tweaklets.GrabFocus"
-            description="Prevent a view from grabbing focus from the background."
+            description="%tweaklet.description"
             id="org.eclipse.ui.tweaklets.grabfocus.notify"
             implementation="org.eclipse.ui.tweaklets.grabfocus.PreventGrabFocus"
-            name="Prevent Grab Focus">
+            name="%tweaklet.name">
       </tweaklet>
    </extension>
 
