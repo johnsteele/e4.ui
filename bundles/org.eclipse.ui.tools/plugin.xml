@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="Dynamic"
+            description="Dynamic plug-in utilities"
+            visible="true"
+            id="org.eclipse.ui.internal.dynamic">
+         <action
+               class="org.eclipse.ui.tools.dynamic.LoadBundleMenu"
+               icon="icons/obj16/bundle.gif"
+               id="org.eclipse.ui.internal.dynamic.loadPlugin"
+               label="&amp;Load Plugin"
+               style="pulldown"
+               toolbarPath="dynamicToolbar"/>
+      </actionSet>
+   </extension>
+   
+   <!--
+     cant work until various menu bugs are fixed post 3.3
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.trim.status">
+         <toolbar
+               id="org.eclipse.ui.tools.toolbar1">
+            <command
+                  commandId="org.eclipse.ui.tools.dynamic.bundle"
+                  icon="icons/obj16/bundle.gif"
+                  id="org.eclipse.ui.tools.dynamic.root"
+                  style="pulldown">
+         </command>
+         </toolbar>
+
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.tools.dynamic.root">
+         <dynamic
+               class="org.eclipse.ui.tools.dynamic.BundleListItem"
+               id="org.eclipse.ui.tools.dynamic.bundles">
+         </dynamic>
+      </menuContribution>
+      
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               id="org.eclipse.ui.tools.toolbar1"
+               label="MOOPS">
+            <dynamic
+               class="org.eclipse.ui.tools.futureWithMenus.dynamic.BundleListItem"
+               id="org.eclipse.ui.tools.dynamic.bundles">
+            </dynamic>
+            <command
+                  commandId="org.eclipse.ui.tools.dynamic.bundle"
+                  icon="icons/obj16/bundle.gif"
+                  id="org.eclipse.ui.tools.dynamic.root"
+                  style="toggle">
+         </command>
+         </menu>
+
+      </menuContribution>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.eclipse.ui.tools.futureWithMenus.dynamic.LoadUnloadHandler"
+            id="org.eclipse.ui.tools.dynamic.bundle"
+            name="Load/Unload Bundle">
+         <commandParameter
+               id="bundleLocation"
+               name="Bundle Location">
+         </commandParameter>
+      </command>
+   </extension>-->
+
+</plugin>
