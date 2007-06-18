@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tools.futureWithMenus.dynamic;
+
+package org.eclipse.ui.tools.dynamic;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -18,7 +19,6 @@ import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandService;
@@ -33,6 +33,7 @@ public class LoadUnloadHandler extends AbstractHandler implements
 
 	public static final String LOCATION = "bundleLocation"; //$NON-NLS-1$
 
+	@SuppressWarnings("unchecked")
 	public void updateElement(UIElement element, Map parameters) {
 		String location = (String) parameters.get(LOCATION);
 		if (location == null)

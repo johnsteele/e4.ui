@@ -11,113 +11,60 @@
 package org.eclipse.ui.tools.dynamic;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.ui.tools.Activator;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
 
 /**
  * @since 3.1
  */
 public class BundleHistory {
 
-	private class BundleRef extends Action {
-		private Bundle bundle;
-
+	public static class BundleRef {
 		private String label;
 
-		private URL url;
+		private String location;
 
 		/**
 		 * @param label
 		 * @param url
 		 * @throws MalformedURLException
 		 */
-		public BundleRef(String label, String url) throws MalformedURLException {
-			super("", IAction.AS_CHECK_BOX);
-			setLabel(label);
-			this.url = new URL(url);
-			setText(label);
-			setBundle(DynamicTools.getBundle("reference:"
-					+ this.url.toExternalForm()));
-		}
-
-		/**
-		 * @param label
-		 */
-		private void setLabel(String label) {
+		public BundleRef(String label, String location) {
+			Assert.isNotNull(label);
+			Assert.isNotNull(location);
 			this.label = label;
-			setText(label);			
-		}
-
-		public BundleRef(URL url) throws BundleException {
-			this.url = url;
-			install();
-			setLabel((String) bundle.getHeaders().get("Bundle-Name"));
-		}
-
-		/**
-		 * @return
-		 */
-		public Action getAction() {
-			return this;
+			this.location = location;
 		}
 
 		public String getLabel() {
 			return label;
 		}
 
-		public URL getUrl() {
-			return url;
-		}
-
-		public Bundle install() throws BundleException {
-			if (bundle == null) {
-				String pluginLocation = "reference:" + url.toExternalForm();
-				setBundle(DynamicTools.installBundle(pluginLocation));
-			}
-			return bundle;
+		public String getLocation() {
+			return location;
 		}
 		
-		public void run() {
-			try {
-				if (bundle == null) 
-					install();
-				else
-					uninstall();
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof BundleRef) {
+				return location.equals(((BundleRef)obj).getLocation());
 			}
-			catch (BundleException e) {
-				MessageDialog.openError(null, "Problem in run", e.getMessage());
-			}
+			return false;
 		}
-
-		/**
-		 * @param bundle
-		 */
-		private void setBundle(Bundle bundle) {
-			this.bundle = bundle;
-			setChecked(bundle != null);
-		}
-
-		public void uninstall() throws BundleException {
-			if (bundle != null) {
-				DynamicTools.uninstallBundle(bundle);
-				setBundle(null);
-			}
+		
+		@Override
+		public int hashCode() {
+			return location.hashCode();
 		}
 	}
 
-	private final static String PREF = "org.eclipse.ui.internal.dynamic.entries"; //$NON-NLS-1$
+	private final static String PREF = "org.eclipse.ui.tools.dynamic.entries"; //$NON-NLS-1$
 
 	private static BundleHistory singleton;
 
@@ -128,7 +75,7 @@ public class BundleHistory {
 		return singleton;
 	}
 
-	private List bundles = new ArrayList();
+	private List<BundleRef> bundles = new ArrayList<BundleRef>();
 
 	/**
 	 *  
@@ -138,22 +85,8 @@ public class BundleHistory {
 		load();
 	}
 
-	public void addBundleReference(URL url) throws BundleException {
-		BundleRef ref = new BundleRef(url);
-		bundles.add(ref);
-		save();
-	}
-
-	/**
-	 * @param menuManager
-	 * @return
-	 */
-	public boolean createMenu(MenuManager menuManager) {
-		for (Iterator i = bundles.iterator(); i.hasNext();) {
-			BundleRef ref = (BundleRef) i.next();
-			menuManager.add(ref.getAction());
-		}
-		return !bundles.isEmpty();
+	public List<BundleRef> getBundles() {
+		return Collections.unmodifiableList(bundles);
 	}
 
 	/**
@@ -171,28 +104,27 @@ public class BundleHistory {
 			if (parts.length != 2)
 				continue;
 
-			try {
-				BundleRef ref = new BundleRef(parts[0], parts[1]);
-				bundles.add(ref);
-			} catch (Exception e) {
-				// do nothing ATM
-			}
+			addBundleReference(parts[0], parts[1]);
 		}
 	}
 
 	/**
 	 *  
 	 */
-	private void save() {
-		IPreferenceStore store = Activator.getDefault()
-				.getPreferenceStore();
-		
+	public void save() {
 		StringBuffer buffer = new StringBuffer();
-		for (Iterator i = bundles.iterator(); i.hasNext();) {
-			BundleRef ref = (BundleRef) i.next();
-			buffer.append(ref.getLabel() + "\t" + ref.getUrl().toString());
+		for (Iterator<BundleRef> i = bundles.iterator(); i.hasNext();) {
+			BundleRef ref = i.next();
+			buffer.append(ref.getLabel() + "\t" + ref.getLocation());
 			buffer.append('\n');
 		}
 		Activator.getDefault().getPluginPreferences().setValue(PREF, buffer.toString());
+		Activator.getDefault().savePluginPreferences();
+	}
+
+	public void addBundleReference(String symbolicName, String location) {
+		BundleRef ref = new BundleRef(symbolicName, location);
+		if (!bundles.contains(ref)) 
+			bundles.add(ref);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tools.futureWithMenus.dynamic;
+package org.eclipse.ui.tools.dynamic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.menus.CommandContributionItem;
-import org.eclipse.ui.tools.futureWithMenus.dynamic.BundleHistory.BundleRef;
+import org.eclipse.ui.tools.dynamic.BundleHistory.BundleRef;
 
 public class BundleListItem extends CompoundContributionItem {
 
@@ -40,12 +40,12 @@ public class BundleListItem extends CompoundContributionItem {
 				.hasNext();) {
 			BundleRef ref = (BundleRef) iterator.next();
 			Map<String, String> map = new HashMap<String, String>();
-			map.put(LoadUnloadHandler.LOCATION, ref.getUrl().toExternalForm());
+			map.put(LoadUnloadHandler.LOCATION, ref.getLocation());
 			CommandContributionItem item = new CommandContributionItem(
 					PlatformUI.getWorkbench(), null,
 					"org.eclipse.ui.tools.dynamic.bundle", map, null, null,
 					null, ref.getLabel(), null, ref.getLabel(),
-					CommandContributionItem.STYLE_PUSH);
+					CommandContributionItem.STYLE_CHECK);
 			items.add(item);
 		}
 		return items.toArray(new IContributionItem[items.size()]);
