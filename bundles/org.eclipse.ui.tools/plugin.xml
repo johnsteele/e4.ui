@@ -23,7 +23,7 @@
          point="org.eclipse.ui.menus">
       <!--
       cant work until various menu bugs are fixed post 3.3
-      
+      --> 
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.trim.status">
          <toolbar
@@ -43,7 +43,7 @@
                class="org.eclipse.ui.tools.dynamic.BundleListItem"
                id="org.eclipse.ui.tools.dynamic.bundles">
          </dynamic>
-      </menuContribution>-->
+      </menuContribution>
       
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu">
