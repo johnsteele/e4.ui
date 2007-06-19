@@ -21,10 +21,10 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.tools.Activator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 
 /**
  * @since 3.1
@@ -44,11 +44,11 @@ public class BundleHistory {
 		 * @throws MalformedURLException
 		 */
 		public BundleRef(String label, String url) throws MalformedURLException {
-			super("", IAction.AS_CHECK_BOX);
+			super(label, IAction.AS_CHECK_BOX);
 			setLabel(label);
 			this.url = new URL(url);
 			setText(label);
-			setBundle(DynamicTools.getBundle("reference:"
+			setBundle(DynamicTools.getBundle("reference:" //$NON-NLS-1$
 					+ this.url.toExternalForm()));
 		}
 
@@ -63,7 +63,7 @@ public class BundleHistory {
 		public BundleRef(URL url) throws BundleException {
 			this.url = url;
 			install();
-			setLabel((String) bundle.getHeaders().get("Bundle-Name"));
+			setLabel((String) bundle.getHeaders().get(Constants.BUNDLE_NAME));
 		}
 
 		/**
@@ -83,7 +83,7 @@ public class BundleHistory {
 
 		public Bundle install() throws BundleException {
 			if (bundle == null) {
-				String pluginLocation = "reference:" + url.toExternalForm();
+				String pluginLocation = "reference:" + url.toExternalForm(); //$NON-NLS-1$
 				setBundle(DynamicTools.installBundle(pluginLocation));
 			}
 			return bundle;
@@ -97,7 +97,7 @@ public class BundleHistory {
 					uninstall();
 			}
 			catch (BundleException e) {
-				MessageDialog.openError(null, "Problem in run", e.getMessage());
+				MessageDialog.openError(null, "Problem in run", e.getMessage()); //$NON-NLS-1$
 			}
 		}
 
@@ -164,7 +164,7 @@ public class BundleHistory {
 		if (bundleString == null)
 			return;
 
-		for (StringTokenizer toker = new StringTokenizer(bundleString, "\n"); toker
+		for (StringTokenizer toker = new StringTokenizer(bundleString, "\n"); toker //$NON-NLS-1$
 				.hasMoreTokens();) {
 			String token = toker.nextToken();
 			String[] parts = token.split("\t"); //$NON-NLS-1$
@@ -184,13 +184,13 @@ public class BundleHistory {
 	 *  
 	 */
 	private void save() {
-		IPreferenceStore store = Activator.getDefault()
-				.getPreferenceStore();
+//		IPreferenceStore store = Activator.getDefault()
+//				.getPreferenceStore();
 		
 		StringBuffer buffer = new StringBuffer();
 		for (Iterator i = bundles.iterator(); i.hasNext();) {
 			BundleRef ref = (BundleRef) i.next();
-			buffer.append(ref.getLabel() + "\t" + ref.getUrl().toString());
+			buffer.append(ref.getLabel() + "\t" + ref.getUrl().toString()); //$NON-NLS-1$
 			buffer.append('\n');
 		}
 		Activator.getDefault().getPluginPreferences().setValue(PREF, buffer.toString());

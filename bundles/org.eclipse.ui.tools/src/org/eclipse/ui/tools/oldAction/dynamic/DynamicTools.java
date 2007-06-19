@@ -12,10 +12,7 @@ package org.eclipse.ui.tools.oldAction.dynamic;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.tools.Activator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -30,7 +27,7 @@ public class DynamicTools {
 	public static final Bundle installPlugin(URL dataURL) throws IOException,
 			BundleException {
 		// Programmatically install a new plugin
-		String pluginLocation = "reference:" + dataURL.toExternalForm();
+		String pluginLocation = "reference:" + dataURL.toExternalForm(); //$NON-NLS-1$
 		return installBundle(pluginLocation);
 	}
 
@@ -52,8 +49,8 @@ public class DynamicTools {
 		Bundle target = Activator.getDefault().getContext().installBundle(pluginLocation);
 		int state = target.getState();
 		if (state != Bundle.INSTALLED)
-			throw new IllegalStateException("Bundle " + target
-					+ " is in a wrong state: " + state);
+			throw new IllegalStateException("Bundle " + target //$NON-NLS-1$
+					+ " is in a wrong state: " + state); //$NON-NLS-1$
 		refreshPackages(new Bundle[] { target });
 		return target;
 	}

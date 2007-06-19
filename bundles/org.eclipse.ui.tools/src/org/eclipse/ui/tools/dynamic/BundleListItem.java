@@ -24,6 +24,8 @@ import org.eclipse.ui.tools.dynamic.BundleHistory.BundleRef;
 
 public class BundleListItem extends CompoundContributionItem {
 
+	private static final String BUNDLE_COMMAND_ID = "org.eclipse.ui.tools.dynamic.bundle"; //$NON-NLS-1$
+
 	public BundleListItem() {
 	}
 
@@ -38,12 +40,12 @@ public class BundleListItem extends CompoundContributionItem {
 				bundles.size());
 		for (Iterator<BundleRef> iterator = bundles.iterator(); iterator
 				.hasNext();) {
-			BundleRef ref = (BundleRef) iterator.next();
+			BundleRef ref = iterator.next();
 			Map<String, String> map = new HashMap<String, String>();
 			map.put(LoadUnloadHandler.LOCATION, ref.getLocation());
 			CommandContributionItem item = new CommandContributionItem(
 					PlatformUI.getWorkbench(), null,
-					"org.eclipse.ui.tools.dynamic.bundle", map, null, null,
+					BUNDLE_COMMAND_ID, map, null, null,
 					null, ref.getLabel(), null, ref.getLabel(),
 					CommandContributionItem.STYLE_CHECK);
 			items.add(item);

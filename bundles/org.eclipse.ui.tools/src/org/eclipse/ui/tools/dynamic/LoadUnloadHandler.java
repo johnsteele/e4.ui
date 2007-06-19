@@ -25,6 +25,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.menus.UIElement;
+import org.eclipse.ui.tools.Messages;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
@@ -46,11 +47,11 @@ public class LoadUnloadHandler extends AbstractHandler implements
 		IWorkbenchWindow window = HandlerUtil
 				.getActiveWorkbenchWindowChecked(event);
 
-		String location = (String) event.getParameter(LOCATION);
+		String location = event.getParameter(LOCATION);
 		try {
 			if (location == null) {
 				DirectoryDialog dd = new DirectoryDialog(window.getShell());
-				dd.setMessage("Select bundle location.");
+				dd.setMessage(Messages.loadlUnload_selection_location);
 				String desiredLocation = dd.open();
 				if (desiredLocation == null)
 					return null;
@@ -58,15 +59,15 @@ public class LoadUnloadHandler extends AbstractHandler implements
 				File file = new File(desiredLocation);
 				try {
 					URL url = file.toURL();
-					Bundle bundle = DynamicTools.installBundle("reference:"
+					Bundle bundle = DynamicTools.installBundle("reference:" //$NON-NLS-1$
 							+ url.toExternalForm());
 					BundleHistory.getInstance().addBundleReference(
 							bundle.getSymbolicName(),
-							"reference:" + url.toExternalForm());
+							"reference:" + url.toExternalForm()); //$NON-NLS-1$
 					BundleHistory.getInstance().save();
 				} catch (MalformedURLException e) {
 					throw new ExecutionException(file.toString()
-							+ " is not a valid path.", e);
+							+ " is not a valid path.", e); //$NON-NLS-1$
 				} catch (BundleException e) {
 					throw new ExecutionException(e.getMessage(), e);
 				}
@@ -92,7 +93,7 @@ public class LoadUnloadHandler extends AbstractHandler implements
 		try {
 			DynamicTools.uninstallBundle(bundle);
 		} catch (BundleException e) {
-			throw new ExecutionException("", e);
+			throw new ExecutionException("Failed to unload", e); //$NON-NLS-1$
 		}
 	}
 
@@ -100,9 +101,9 @@ public class LoadUnloadHandler extends AbstractHandler implements
 		try {
 			DynamicTools.installBundle(location);
 		} catch (IllegalStateException e) {
-			throw new ExecutionException("", e);
+			throw new ExecutionException("Failed to load", e); //$NON-NLS-1$
 		} catch (BundleException e) {
-			throw new ExecutionException("", e);
+			throw new ExecutionException("Failed to load", e); //$NON-NLS-1$
 		}
 	}
 }

@@ -97,7 +97,7 @@ public class BundleHistory {
 		if (bundleString == null)
 			return;
 
-		for (StringTokenizer toker = new StringTokenizer(bundleString, "\n"); toker
+		for (StringTokenizer toker = new StringTokenizer(bundleString, "\n"); toker //$NON-NLS-1$
 				.hasMoreTokens();) {
 			String token = toker.nextToken();
 			String[] parts = token.split("\t"); //$NON-NLS-1$
@@ -115,7 +115,7 @@ public class BundleHistory {
 		StringBuffer buffer = new StringBuffer();
 		for (Iterator<BundleRef> i = bundles.iterator(); i.hasNext();) {
 			BundleRef ref = i.next();
-			buffer.append(ref.getLabel() + "\t" + ref.getLocation());
+			buffer.append(ref.getLabel() + "\t" + ref.getLocation()); //$NON-NLS-1$
 			buffer.append('\n');
 		}
 		Activator.getDefault().getPluginPreferences().setValue(PREF, buffer.toString());

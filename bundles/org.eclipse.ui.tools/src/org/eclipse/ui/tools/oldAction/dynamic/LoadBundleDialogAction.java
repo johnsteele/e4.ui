@@ -33,13 +33,13 @@ public class LoadBundleDialogAction extends Action {
 	public LoadBundleDialogAction(Shell parent) {
 		super();
 		this.parent = parent;
-		setText("&Load...");
+		setText("&Load..."); //$NON-NLS-1$
 	}
 	
 	
 	public void run() {
 		DirectoryDialog dd = new DirectoryDialog(parent);
-		dd.setMessage("Select bundle location.");
+		dd.setMessage("Select bundle location."); //$NON-NLS-1$
 		String location = dd.open();
 		if (location == null)
 			return;
@@ -50,9 +50,9 @@ public class LoadBundleDialogAction extends Action {
 			BundleHistory.getInstance().addBundleReference(url);
 		}
 		catch (MalformedURLException e) {
-			MessageDialog.openError(parent, "Error creating bundle path", file.toString() + " is not a valid path.");
+			MessageDialog.openError(parent, "Error creating bundle path", file.toString() + " is not a valid path."); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (BundleException e) {
-			MessageDialog.openError(parent, "Error loading bundle", e.getMessage());
+			MessageDialog.openError(parent, "Error loading bundle", e.getMessage()); //$NON-NLS-1$
 		}
 		
 	}

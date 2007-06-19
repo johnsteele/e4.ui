@@ -21,9 +21,6 @@
    
    <extension
          point="org.eclipse.ui.menus">
-      <!--
-      cant work until various menu bugs are fixed post 3.3
-      --> 
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.trim.status">
          <toolbar
@@ -69,7 +66,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            category="org.eclipse.ui.tools.category"
+            categoryId="org.eclipse.ui.tools.category"
             defaultHandler="org.eclipse.ui.tools.dynamic.LoadUnloadHandler"
             description="%command.dynamic.bundle.desc"
             id="org.eclipse.ui.tools.dynamic.bundle"
@@ -78,7 +75,6 @@
                id="bundleLocation"
                name="%command.dynamic.bundle.param"
                optional="true"
-               typeId="url"
                values="org.eclipse.ui.tools.dynamic.BundleParameterValues">
          </commandParameter>
       </command>

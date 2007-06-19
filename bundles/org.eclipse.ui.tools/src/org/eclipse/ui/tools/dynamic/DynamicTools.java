@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tools.dynamic;
 
-import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.ui.tools.Activator;
@@ -24,10 +23,10 @@ import org.osgi.service.packageadmin.PackageAdmin;
 
 public class DynamicTools {
 
-	public static final Bundle installPlugin(URL dataURL) throws IOException,
+	public static final Bundle installPlugin(URL dataURL) throws 
 			BundleException {
 		// Programmatically install a new plugin
-		String pluginLocation = "reference:" + dataURL.toExternalForm();
+		String pluginLocation = "reference:" + dataURL.toExternalForm(); //$NON-NLS-1$
 		return installBundle(pluginLocation);
 	}
 
@@ -37,8 +36,8 @@ public class DynamicTools {
 				pluginLocation);
 		int state = target.getState();
 		if (state != Bundle.INSTALLED)
-			throw new IllegalStateException("Bundle " + target
-					+ " is in a wrong state: " + state);
+			throw new IllegalStateException("Bundle " + target //$NON-NLS-1$
+					+ " is in a wrong state: " + state); //$NON-NLS-1$
 		refreshPackages(new Bundle[] { target });
 		return target;
 	}
