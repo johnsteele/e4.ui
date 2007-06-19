@@ -80,9 +80,9 @@
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            commandId="org.eclipse.ui.tools.showClass"
+            commandId="org.eclipse.ui.tools.dynamic.bundle"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+5 M1+S">
+            sequence="M1+5 M1+U RETURN">
       </key>
       <key
             commandId="org.eclipse.ui.tools.runMultipleCommands"
@@ -92,6 +92,11 @@
                id="commandId.list"
                value="org.eclipse.ui.file.saveAll,org.eclipse.ui.project.buildAll,org.eclipse.ui.help.aboutAction">
          </parameter>
+      </key>
+       <key
+            commandId="org.eclipse.ui.tools.showClass"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+5 M1+S">
       </key>
    </extension>
 
