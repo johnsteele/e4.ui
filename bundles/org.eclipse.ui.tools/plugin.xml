@@ -70,7 +70,7 @@
             name="%runMultipleCommands.name">
          <commandParameter
                id="commandId.list"
-               name="%runMultipleCommands.name"
+               name="%runMultipleCommands.list.name"
                optional="false">
          </commandParameter>
       </command>
