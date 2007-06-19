@@ -62,6 +62,18 @@
             id="org.eclipse.ui.tools.showWindowContexts"
             name="%showWindowContexts.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.tools.category"
+            defaultHandler="org.eclipse.ui.tools.handlers.RunMultipleCommands"
+            description="%runMultipleCommands.desc"
+            id="org.eclipse.ui.tools.runMultipleCommands"
+            name="%runMultipleCommands.name">
+         <commandParameter
+               id="commandId.list"
+               name="%runMultipleCommands.name"
+               optional="false">
+         </commandParameter>
+      </command>
    </extension>
 
    <!-- keybindings, anyone? We use a prefix of M1+5 for all UI tools -->
@@ -71,6 +83,15 @@
             commandId="org.eclipse.ui.tools.showClass"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+5 M1+S">
+      </key>
+      <key
+            commandId="org.eclipse.ui.tools.runMultipleCommands"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+5 M1+B">
+         <parameter
+               id="commandId.list"
+               value="org.eclipse.ui.file.saveAll,org.eclipse.ui.project.buildAll,org.eclipse.ui.help.aboutAction">
+         </parameter>
       </key>
    </extension>
 
