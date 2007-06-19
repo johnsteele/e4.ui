@@ -1,24 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+   <!-- Commands Section --> 
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="%command.category.desc"
+            id="org.eclipse.ui.tools.category"
+            name="%command.category.name">
+      </category>
+      <command
+            categoryId="org.eclipse.ui.tools.category"
+            defaultHandler="org.eclipse.ui.tools.dynamic.LoadUnloadHandler"
+            description="%command.dynamic.bundle.desc"
+            id="org.eclipse.ui.tools.dynamic.bundle"
+            name="%command.dynamic.bundle.name">
+         <commandParameter
+               id="bundleLocation"
+               name="%command.dynamic.bundle.param"
+               optional="true"
+               values="org.eclipse.ui.tools.dynamic.BundleParameterValues">
+         </commandParameter>
+      </command>
+      <command
+            categoryId="org.eclipse.ui.tools.category"
+            defaultHandler="org.eclipse.ui.tools.handlers.GenerateFilesHandler"
+            id="org.eclipse.ui.tools.genPerf"
+            name="%genPerf.name">
+         <commandParameter
+               id="genPerf.extension"
+               name="%genPerf.extension.name"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="genPerf.num"
+               name="%genPerf.num.name"
+               optional="true">
+         </commandParameter>
+      </command>
+      <command
+            categoryId="org.eclipse.ui.tools.category"
+            defaultHandler="org.eclipse.ui.tools.handlers.CheckExtensionsHandler"
+            id="org.eclipse.ui.tools.checkExtensions"
+            name="%checkExtensions.name">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.tools.category"
+            defaultHandler="org.eclipse.ui.tools.handlers.CheckWorkspaceHandler"
+            id="org.eclipse.ui.tools.checkWorkspaceExtensions"
+            name="%checkWorkspaceExtensions.name">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.tools.category"
+            defaultHandler="org.eclipse.ui.tools.handlers.ShowClassHandler"
+            id="org.eclipse.ui.tools.showClass"
+            name="%showClass.name">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.tools.category"
+            defaultHandler="org.eclipse.ui.tools.handlers.ShowWindowContextsHandler"
+            id="org.eclipse.ui.tools.showWindowContexts"
+            name="%showWindowContexts.name">
+      </command>
+   </extension>
 
-   <!--<extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            label="Dynamic"
-            description="Dynamic plug-in utilities"
-            visible="true"
-            id="org.eclipse.ui.internal.dynamic">
-         <action
-               class="org.eclipse.ui.tools.dynamic.LoadBundleMenu"
-               icon="icons/obj16/bundle.gif"
-               id="org.eclipse.ui.internal.dynamic.loadPlugin"
-               label="&amp;Load Plugin"
-               style="pulldown"
-               toolbarPath="dynamicToolbar"/>
-      </actionSet>
-   </extension>-->
-   
+   <!-- keybindings, anyone? We use a prefix of M1+5 for all UI tools -->
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.ui.tools.showClass"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+5 M1+S">
+      </key>
+   </extension>
+
+   <!-- place the commands in various menus -->   
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -46,7 +102,8 @@
             locationURI="menu:org.eclipse.ui.main.menu">
          <menu
                id="org.eclipse.ui.tools.menu"
-               label="%menu.tools">
+               label="%menu.tools"
+               mnemonic="%menu.tools.mnemonic">
             <dynamic
                class="org.eclipse.ui.tools.dynamic.BundleListItem"
                id="org.eclipse.ui.tools.dynamic.bundles">
@@ -57,32 +114,37 @@
                   id="org.eclipse.ui.tools.dynamic.root"
                   label="%menu.command.dynamic.bundle"
                   style="push">
-         </command>
+            </command>
+            <separator
+                  name="org.eclipse.ui.tools.separator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.ui.tools.showClass">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.tools.showWindowContexts">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.tools.checkExtensions">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.tools.checkWorkspaceExtensions">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.tools.genPerf"
+                  label="%genPerf.basic.label">
+               <parameter
+                     name="genPerf.extension"
+                     value="perf_basic">
+               </parameter>
+               <parameter
+                     name="genPerf.num"
+                     value="100">
+               </parameter>
+            </command>
          </menu>
-
       </menuContribution>
-   </extension>
-   
-   <extension
-         point="org.eclipse.ui.commands">
-      <command
-            categoryId="org.eclipse.ui.tools.category"
-            defaultHandler="org.eclipse.ui.tools.dynamic.LoadUnloadHandler"
-            description="%command.dynamic.bundle.desc"
-            id="org.eclipse.ui.tools.dynamic.bundle"
-            name="%command.dynamic.bundle.name">
-         <commandParameter
-               id="bundleLocation"
-               name="%command.dynamic.bundle.param"
-               optional="true"
-               values="org.eclipse.ui.tools.dynamic.BundleParameterValues">
-         </commandParameter>
-      </command>
-      <category
-            description="%command.category.desc"
-            id="org.eclipse.ui.tools.category"
-            name="%command.category.name">
-      </category>
    </extension>
 
 </plugin>
