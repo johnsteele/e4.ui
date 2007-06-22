@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+<extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.sound.category"
+            defaultHandler="org.eclipse.sound.ui.PlaySoundHandler"
+            description="%command.play.description"
+            id="org.eclipse.sound.playSound"
+            name="%command.play.name">
+         <commandParameter
+               id="org.eclipse.sound.id"
+               name="%command.play.parameter.name"
+               optional="false"
+               values="org.eclipse.sound.ui.internal.SoundExtensionValues">
+         </commandParameter>
+      </command>
+      <category
+            description="%category.sound.description"
+            id="org.eclipse.sound.category"
+            name="%category.sound.name">
+      </category>
+   </extension>
+</plugin>
