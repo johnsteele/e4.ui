@@ -22,4 +22,22 @@
             name="%category.sound.name">
       </category>
    </extension>
+<extension
+      point="org.eclipse.ui.startup">
+   <startup>
+   </startup>
+</extension>
+<extension
+      point="org.eclipse.sound.sounds">
+   <sound
+         file="sounds/noerrors.wav"
+         id="org.eclipse.sound.ui.noErrors"
+         name="%sound.name.noMoreErrors">
+   </sound>
+   <sound
+         file="sounds/newerror.wav"
+         id="org.eclipse.sound.ui.newErrors"
+         name="%sound.name.newErrors">
+   </sound>
+</extension>
 </plugin>
