@@ -39,5 +39,15 @@
          id="org.eclipse.sound.ui.newErrors"
          name="%sound.name.newErrors">
    </sound>
+   <sound
+         file="sounds/failure.wav"
+         id="org.eclipse.sound.ui.jobFailure"
+         name="%sound.name.jobFailed">
+   </sound>
+   <sound
+         file="sounds/success.wav"
+         id="org.eclipse.sound.ui.jobSuccess"
+         name="%sound.name.jobSuccess">
+   </sound>
 </extension>
 </plugin>

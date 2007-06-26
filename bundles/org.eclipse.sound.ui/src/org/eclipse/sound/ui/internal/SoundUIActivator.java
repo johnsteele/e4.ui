@@ -19,6 +19,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.sound.Activator;
 import org.eclipse.sound.ISound;
 import org.eclipse.sound.SoundSystemException;
@@ -61,22 +64,45 @@ public class SoundUIActivator extends AbstractUIPlugin implements IStartup {
 								new Status(IStatus.ERROR, PLUGIN_ID, e
 										.getMessage(), e));
 			}
+		}		
+	};
+	private IJobChangeListener jobChangeListener = new IJobChangeListener() {
+
+		public void aboutToRun(IJobChangeEvent event) {
+			
 		}
 
-		private void playSound(String id) {
-			ISound sound = Activator.getSoundManager().getSound(id);
-			if (sound == null)
+		public void awake(IJobChangeEvent event) {
+			
+		}
+
+		public void done(IJobChangeEvent event) {
+			if (event.getJob().isSystem())
 				return;
-			try {
-				sound.play();
-			} catch (SoundSystemException e) {
-				getLog()
-						.log(
-								new Status(IStatus.ERROR, PLUGIN_ID, e
-										.getMessage(), e));
+			switch (event.getResult().getSeverity()) {
+			case IStatus.ERROR:
+				playSound("org.eclipse.sound.ui.jobFailure"); //$NON-NLS-1$
+				break;
+
+			case IStatus.OK:
+				playSound("org.eclipse.sound.ui.jobSuccess"); //$NON-NLS-1$
+				break;
+			default:
+				break;
 			}
 		}
-	};
+
+		public void running(IJobChangeEvent event) {
+			
+		}
+
+		public void scheduled(IJobChangeEvent event) {
+			
+		}
+
+		public void sleeping(IJobChangeEvent event) {
+			
+		}};
 
 	/**
 	 * 
@@ -97,6 +123,8 @@ public class SoundUIActivator extends AbstractUIPlugin implements IStartup {
 		IMarker[] markers = ResourcesPlugin.getWorkspace().getRoot().findMarkers(
 				IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 		lastMarkerCount = countErrors(markers, IMarker.SEVERITY_ERROR);
+		
+		Job.getJobManager().addJobChangeListener(jobChangeListener);
 	}
 
 	/*
@@ -109,8 +137,23 @@ public class SoundUIActivator extends AbstractUIPlugin implements IStartup {
 
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(
 				resourceChangeListener);
+		Job.getJobManager().removeJobChangeListener(jobChangeListener);
 	}
 
+	private void playSound(String id) {
+		ISound sound = Activator.getSoundManager().getSound(id);
+		if (sound == null)
+			return;
+		try {
+			sound.play();
+		} catch (SoundSystemException e) {
+			getLog()
+					.log(
+							new Status(IStatus.ERROR, PLUGIN_ID, e
+									.getMessage(), e));
+		}
+	}
+	
 	public void earlyStartup() {
 
 	}
