@@ -63,6 +63,14 @@ public abstract class Sound implements ISound {
 	public final String getName() {
 		return element.getAttribute(SoundManager.ATT_NAME);
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.sound.ISound#getDescription()
+	 */
+	public final String getDescription() {
+		return element.getAttribute(SoundManager.ATT_DESCRIPTION);
+	}
 
 	/**
 	 * 
@@ -86,4 +94,32 @@ public abstract class Sound implements ISound {
 	 */
 	public abstract AudioInputStream getInputStream()
 			throws SoundSystemException;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.sound.ISound#getVolume()
+	 */
+	public float getVolume() {
+		return manager.getVolume(this);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.sound.ISound#isMuted()
+	 */
+	public boolean isMuted() {
+		return manager.isMuted(this);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.sound.ISound#setMuted(boolean)
+	 */
+	public void setMuted(boolean muted) {
+		manager.setMuted(this, muted);		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.sound.ISound#setVolume(float)
+	 */
+	public void setVolume(float volume) {
+		manager.setVolume(this, volume);
+	}
 }

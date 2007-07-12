@@ -12,3 +12,4 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.sound
+Bundle-Activator: org.eclipse.sound.Activator

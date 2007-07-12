@@ -26,6 +26,8 @@ public interface ISound {
 	 * @return
 	 */
 	public String getName();
+	
+	public String getDescription();
 
 	/**
 	 * Plays the sound. This method returns immediately - the actual playing of
@@ -34,4 +36,35 @@ public interface ISound {
 	 * @throws SoundSystemException
 	 */
 	public void play() throws SoundSystemException;
+
+	/**
+	 * Answers whether this sound is currently muted.
+	 * 
+	 * @return the mute state
+	 */
+	public boolean isMuted();
+
+	/**
+	 * Answers the current volume of this sound in the range [0, 1].
+	 * 
+	 * @return the volume
+	 */
+	public float getVolume();
+
+	/**
+	 * Set whether or not this sound is currently muted.
+	 * 
+	 * @param muted
+	 *            the mute state
+	 */
+	public void setMuted(boolean muted);
+
+	/**
+	 * Sets the current volume of this sound. This value must be in the range
+	 * [0, 1].
+	 * 
+	 * @param volume
+	 *            the volume
+	 */
+	public void setVolume(float volume);
 }

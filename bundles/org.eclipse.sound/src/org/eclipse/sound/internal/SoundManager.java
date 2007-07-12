@@ -40,6 +40,8 @@ public final class SoundManager implements ISoundManager {
 
 	static final String ATT_NAME = "name"; //$NON-NLS-1$
 
+	static final String ATT_DESCRIPTION = "description"; //$NON-NLS-1$
+
 	static final String ATT_FILE = "file"; //$NON-NLS-1$
 
 	private final Map sounds = new HashMap();
@@ -166,7 +168,27 @@ public final class SoundManager implements ISoundManager {
 			stream = AudioSystem.getAudioInputStream(targetFormat, stream);
 			format = stream.getFormat();
 		}
-		SoundJob job = new SoundJob(sound.getName(), stream, format);
+		SoundJob job = new SoundJob(sound.getName(), stream, format, sound.isMuted(), sound.getVolume());
 		job.schedule();
+	}
+	
+	void setMuted(ISound sound, boolean muted) {
+		Activator.getDefault().getPreferenceStore().setValue(sound.getId(), muted);
+	}
+	
+	void setVolume(ISound sound, float volume) {
+		if (volume < 0 || volume > 1)
+			throw new IllegalArgumentException();
+		Activator.getDefault().getPreferenceStore().setValue(sound.getId(), volume);
+	}
+	
+	boolean isMuted(ISound sound) {
+		return Activator.getDefault().getPreferenceStore().getBoolean(sound.getId());
+	}
+	
+	float getVolume(ISound sound) {
+		if (Activator.getDefault().getPreferenceStore().isDefault(sound.getId()))
+			return 1.0f;
+		return Activator.getDefault().getPreferenceStore().getFloat(sound.getId());
 	}
 }

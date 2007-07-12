@@ -14,7 +14,9 @@ package org.eclipse.sound.internal;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.BooleanControl;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.SourceDataLine;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -32,17 +34,26 @@ public final class SoundJob extends Job {
 
 	private AudioFormat format;
 
+	private float volume;
+
+	private boolean muted;
+
 	/**
 	 * @param name
 	 * @param format
 	 * @param stream
+	 * @param volume
+	 * @param muted
 	 */
-	public SoundJob(final String name, final AudioInputStream stream, final AudioFormat format) {
+	public SoundJob(final String name, final AudioInputStream stream,
+			final AudioFormat format, boolean muted, float volume) {
 		super(name);
 		setSystem(true);
 		setPriority(Job.INTERACTIVE);
 		this.stream = stream;
 		this.format = format;
+		this.muted = muted;
+		this.volume = Math.min(1, Math.abs(volume)); // doublecheck
 	}
 
 	/*
@@ -59,6 +70,17 @@ public final class SoundJob extends Job {
 			line = (SourceDataLine) AudioSystem.getLine(info);
 
 			line.open(format, AudioSystem.NOT_SPECIFIED);
+			if (line.isControlSupported(BooleanControl.Type.MUTE)) {
+				BooleanControl muteControl = (BooleanControl) line
+						.getControl(BooleanControl.Type.MUTE);
+				muteControl.setValue(muted);
+			}
+			if (line.isControlSupported(FloatControl.Type.VOLUME)) {
+				FloatControl volumeControl = (FloatControl) line
+						.getControl(FloatControl.Type.VOLUME);
+				volumeControl.setValue(volume);
+			}
+
 		} catch (Exception e) {
 			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0,
 					Messages.SoundJob_0 + format, e);
