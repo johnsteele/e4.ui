@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - bug 201502
  *******************************************************************************/
 
 package org.eclipse.sound.internal;
@@ -17,6 +18,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.BooleanControl;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -67,7 +69,18 @@ public final class SoundJob extends Job {
 			DataLine.Info info = new DataLine.Info(SourceDataLine.class,
 					format, AudioSystem.NOT_SPECIFIED);
 
-			line = (SourceDataLine) AudioSystem.getLine(info);
+			try {
+				line = (SourceDataLine) AudioSystem.getLine(info);
+			} catch (IllegalArgumentException e) {
+				// ignore illegal argument, security, and line unavailability
+				// exceptions, if we can't access it for whatever reasons (sound
+				// card may be in use, etc.), we'll just not play any sounds
+				return Status.OK_STATUS;
+			} catch (SecurityException e) {
+				return Status.OK_STATUS;
+			} catch (LineUnavailableException e) {
+				return Status.OK_STATUS;
+			}
 
 			line.open(format, AudioSystem.NOT_SPECIFIED);
 			if (line.isControlSupported(BooleanControl.Type.MUTE)) {

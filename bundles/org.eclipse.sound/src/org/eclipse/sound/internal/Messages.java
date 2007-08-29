@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - bug 201502
  ******************************************************************************/
 
 package org.eclipse.sound.internal;
@@ -18,7 +19,7 @@ import org.eclipse.osgi.util.NLS;
  *
  */
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.internal.sound.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.sound.internal.messages"; //$NON-NLS-1$
 	
 	
 	public static String SoundJob_0;
