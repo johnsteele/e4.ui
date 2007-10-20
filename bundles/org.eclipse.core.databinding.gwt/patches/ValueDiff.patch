@@ -1,0 +1,47 @@
+### Eclipse Workspace Patch 1.0
+#P org.eclipse.core.databinding
+Index: src/org/eclipse/core/databinding/observable/value/ValueDiff.java
+===================================================================
+RCS file: /cvsroot/eclipse/org.eclipse.core.databinding/src/org/eclipse/core/databinding/observable/value/ValueDiff.java,v
+retrieving revision 1.3
+diff -u -r1.3 ValueDiff.java
+--- src/org/eclipse/core/databinding/observable/value/ValueDiff.java	16 Mar 2007 18:00:56 -0000	1.3
++++ src/org/eclipse/core/databinding/observable/value/ValueDiff.java	20 Oct 2007 02:04:24 -0000
+@@ -12,10 +12,11 @@
+ package org.eclipse.core.databinding.observable.value;
+ 
+ import org.eclipse.core.databinding.observable.Diffs;
++import org.eclipse.core.internal.runtime.Util;
+ 
+ /**
+  * @since 1.0
+- * 
++ *
+  */
+ public abstract class ValueDiff {
+ 	/**
+@@ -44,7 +45,7 @@
+ 		}
+ 		return false;
+ 	}
+-		
++
+ 	public int hashCode() {
+ 		final int prime = 31;
+ 		int result = 1;
+@@ -61,13 +62,13 @@
+ 	public String toString() {
+ 		StringBuffer buffer = new StringBuffer();
+ 		buffer
+-			.append(getClass().getName())
++			.append(Util.getClassNameAsString(this))
+ 			.append("{oldValue [") //$NON-NLS-1$
+ 			.append(getOldValue() != null ? getOldValue().toString() : "null") //$NON-NLS-1$
+ 			.append("], newValue [") //$NON-NLS-1$
+ 			.append(getNewValue() != null ? getNewValue().toString() : "null") //$NON-NLS-1$
+ 			.append("]}"); //$NON-NLS-1$
+-		
++
+ 		return buffer.toString();
+ 	}
+ }

@@ -1,0 +1,36 @@
+### Eclipse Workspace Patch 1.0
+#P org.eclipse.core.databinding
+Index: src/org/eclipse/core/internal/databinding/Pair.java
+===================================================================
+RCS file: /cvsroot/eclipse/org.eclipse.core.databinding/src/org/eclipse/core/internal/databinding/Pair.java,v
+retrieving revision 1.1
+diff -u -r1.1 Pair.java
+--- src/org/eclipse/core/internal/databinding/Pair.java	10 Nov 2006 17:44:52 -0000	1.1
++++ src/org/eclipse/core/internal/databinding/Pair.java	20 Oct 2007 02:14:02 -0000
+@@ -10,6 +10,8 @@
+  *******************************************************************************/
+ package org.eclipse.core.internal.databinding;
+ 
++import org.eclipse.core.internal.runtime.Util;
++
+ /**
+  * Class Pair.  Represents a mathematical pair of objects (a, b).
+  * @since 1.0
+@@ -28,7 +30,7 @@
+ 
+ 	/**
+ 	 * Construct a Pair(a, b)
+-	 * 
++	 *
+ 	 * @param a a in the pair (a, b)
+ 	 * @param b b in the pair (a, b)
+ 	 */
+@@ -41,7 +43,7 @@
+ 	 * @see java.lang.Object#equals(java.lang.Object)
+ 	 */
+ 	public boolean equals(Object obj) {
+-		if (obj.getClass() != Pair.class) {
++		if (! Util.isSameClass(this,obj)) {
+ 			return false;
+ 		}
+ 		Pair other = (Pair) obj;

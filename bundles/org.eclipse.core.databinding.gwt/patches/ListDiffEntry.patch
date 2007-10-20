@@ -1,0 +1,62 @@
+### Eclipse Workspace Patch 1.0
+#P org.eclipse.core.databinding
+Index: src/org/eclipse/core/databinding/observable/list/ListDiffEntry.java
+===================================================================
+RCS file: /cvsroot/eclipse/org.eclipse.core.databinding/src/org/eclipse/core/databinding/observable/list/ListDiffEntry.java,v
+retrieving revision 1.1
+diff -u -r1.1 ListDiffEntry.java
+--- src/org/eclipse/core/databinding/observable/list/ListDiffEntry.java	10 Nov 2006 17:44:52 -0000	1.1
++++ src/org/eclipse/core/databinding/observable/list/ListDiffEntry.java	20 Oct 2007 01:57:15 -0000
+@@ -11,35 +11,37 @@
+ 
+ package org.eclipse.core.databinding.observable.list;
+ 
++import org.eclipse.core.internal.runtime.Util;
++
+ /**
+  * A single addition of an element to a list or removal of an element from a list.
+- *  
++ *
+  * @since 1.0
+  */
+ public abstract class ListDiffEntry {
+-	
++
+ 	/**
+ 	 * @return the 0-based position of the addition or removal
+ 	 */
+ 	public abstract int getPosition();
+-	
++
+ 	/**
+ 	 * @return true if this represents an addition, false if this represents a removal
+ 	 */
+ 	public abstract boolean isAddition();
+-	
++
+ 	/**
+ 	 * @return the element that was added or removed
+ 	 */
+ 	public abstract Object getElement();
+-	
++
+ 	/**
+ 	 * @see java.lang.Object#toString()
+ 	 */
+ 	public String toString() {
+ 		StringBuffer buffer = new StringBuffer();
+ 		buffer
+-			.append(this.getClass().getName())
++			.append(Util.getClassNameAsString(this))
+ 			.append("{position [") //$NON-NLS-1$
+ 			.append(getPosition())
+ 			.append("], isAddition [") //$NON-NLS-1$
+@@ -47,7 +49,7 @@
+ 			.append("], element [") //$NON-NLS-1$
+ 			.append(getElement() != null ? getElement().toString() : "null") //$NON-NLS-1$
+ 			.append("]}"); //$NON-NLS-1$
+-		
++
+ 		return buffer.toString();
+ 	}
+ }

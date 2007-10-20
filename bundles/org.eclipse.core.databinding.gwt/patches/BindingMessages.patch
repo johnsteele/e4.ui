@@ -1,0 +1,89 @@
+### Eclipse Workspace Patch 1.0
+#P org.eclipse.core.databinding
+Index: src/org/eclipse/core/internal/databinding/BindingMessages.java
+===================================================================
+RCS file: /cvsroot/eclipse/org.eclipse.core.databinding/src/org/eclipse/core/internal/databinding/BindingMessages.java,v
+retrieving revision 1.4
+diff -u -r1.4 BindingMessages.java
+--- src/org/eclipse/core/internal/databinding/BindingMessages.java	1 Apr 2007 20:58:12 -0000	1.4
++++ src/org/eclipse/core/internal/databinding/BindingMessages.java	20 Oct 2007 01:28:03 -0000
+@@ -10,22 +10,22 @@
+  *******************************************************************************/
+ package org.eclipse.core.internal.databinding;
+ 
+-import java.util.MissingResourceException;
+-import java.util.ResourceBundle;
+-
+-import com.ibm.icu.text.MessageFormat;
++//import java.util.MissingResourceException;
++//import java.util.ResourceBundle;
++//
++//import com.ibm.icu.text.MessageFormat;
+ 
+ /**
+  * @since 1.0
+- * 
++ *
+  */
+ public class BindingMessages {
+ 
+-	/**
+-	 * The Binding resource bundle; eagerly initialized.
+-	 */
+-	private static final ResourceBundle bundle = ResourceBundle
+-			.getBundle("org.eclipse.core.internal.databinding.messages"); //$NON-NLS-1$
++//	/**
++//	 * The Binding resource bundle; eagerly initialized.
++//	 */
++//	private static final ResourceBundle bundle = ResourceBundle
++//			.getBundle("org.eclipse.core.internal.databinding.messages"); //$NON-NLS-1$
+ 
+ 	/**
+ 	 * Key to be used for an index out of range message.
+@@ -41,32 +41,34 @@
+ 	 * Returns the resource object with the given key in the resource bundle for
+ 	 * JFace Data Binding. If there isn't any value under the given key, the key
+ 	 * is returned.
+-	 * 
++	 *
+ 	 * @param key
+ 	 *            the resource name
+ 	 * @return the string
+ 	 */
+ 	public static String getString(String key) {
+-		try {
+-			return bundle.getString(key);
+-		} catch (MissingResourceException e) {
+-			return key;
+-		}
++		return "***"+key+"***"; //$NON-NLS-1$ //$NON-NLS-2$
++//		try {
++//			return bundle.getString(key);
++//		} catch (MissingResourceException e) {
++//			return key;
++//		}
+ 	}
+ 
+ 	/**
+ 	 * Returns a formatted string with the given key in the resource bundle for
+ 	 * JFace Data Binding.
+-	 * 
++	 *
+ 	 * @param key
+ 	 * @param arguments
+ 	 * @return formatted string, the key if the key is invalid
+ 	 */
+ 	public static String formatString(String key, Object[] arguments) {
+-		try {
+-			return MessageFormat.format(bundle.getString(key), arguments);
+-		} catch (MissingResourceException e) {
+-			return key;
+-		}
++		return "***"+key+"***"; //$NON-NLS-1$ //$NON-NLS-2$
++//		try {
++//			return MessageFormat.format(bundle.getString(key), arguments);
++//		} catch (MissingResourceException e) {
++//			return key;
++//		}
+ 	}
+ }

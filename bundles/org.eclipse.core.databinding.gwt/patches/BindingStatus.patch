@@ -1,0 +1,73 @@
+### Eclipse Workspace Patch 1.0
+#P org.eclipse.core.databinding
+Index: src/org/eclipse/core/internal/databinding/BindingStatus.java
+===================================================================
+RCS file: /cvsroot/eclipse/org.eclipse.core.databinding/src/org/eclipse/core/internal/databinding/BindingStatus.java,v
+retrieving revision 1.2
+diff -u -r1.2 BindingStatus.java
+--- src/org/eclipse/core/internal/databinding/BindingStatus.java	21 Apr 2007 22:35:33 -0000	1.2
++++ src/org/eclipse/core/internal/databinding/BindingStatus.java	20 Oct 2007 02:09:19 -0000
+@@ -16,17 +16,18 @@
+ import org.eclipse.core.databinding.util.Policy;
+ import org.eclipse.core.runtime.IStatus;
+ import org.eclipse.core.runtime.MultiStatus;
++import org.eclipse.core.internal.runtime.Util;
+ 
+ /**
+  * A <code>MultiStatus</code> implementation that copies that state of the
+  * added status to this instance if it is >= the current severity.
+- * 
++ *
+  * @since 1.0
+  */
+ public class BindingStatus extends MultiStatus {
+ 	/**
+ 	 * Constructs a new instance.
+-	 * 
++	 *
+ 	 * @param pluginId
+ 	 * @param code
+ 	 * @param message
+@@ -40,7 +41,7 @@
+ 	/**
+ 	 * Adds the status to the multi status. The details of the status will be
+ 	 * copied to the multi status if the severity is >= the current severity.
+-	 * 
++	 *
+ 	 * @see org.eclipse.core.runtime.MultiStatus#add(org.eclipse.core.runtime.IStatus)
+ 	 */
+ 	public void add(IStatus status) {
+@@ -63,13 +64,13 @@
+ 	 * <li>message = ""</li>
+ 	 * <li>exception = null</li>
+ 	 * </ul>
+-	 * 
++	 *
+ 	 * @return status
+ 	 */
+ 	public static BindingStatus ok() {
+ 		return new BindingStatus(Policy.JFACE_DATABINDING, 0, "", null); //$NON-NLS-1$
+ 	}
+-	
++
+ 	private static int hashCode(Object[] array) {
+ 		final int prime = 31;
+ 		if (array == null)
+@@ -81,7 +82,7 @@
+ 		}
+ 		return result;
+ 	}
+-	
++
+ 	public int hashCode() {
+ 		final int prime = 31;
+ 		int result = 1;
+@@ -94,7 +95,7 @@
+ 			return true;
+ 		if (obj == null)
+ 			return false;
+-		if (getClass() != obj.getClass())
++		if (Util.isSameClass(this,obj))
+ 			return false;
+ 		final BindingStatus other = (BindingStatus) obj;
+ 		if (!Arrays.equals(getChildren(), other.getChildren()))

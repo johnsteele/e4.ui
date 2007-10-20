@@ -1,0 +1,133 @@
+### Eclipse Workspace Patch 1.0
+#P org.eclipse.core.databinding
+Index: src/org/eclipse/core/databinding/validation/ValidationStatus.java
+===================================================================
+RCS file: /cvsroot/eclipse/org.eclipse.core.databinding/src/org/eclipse/core/databinding/validation/ValidationStatus.java,v
+retrieving revision 1.6
+diff -u -r1.6 ValidationStatus.java
+--- src/org/eclipse/core/databinding/validation/ValidationStatus.java	21 Apr 2007 22:35:33 -0000	1.6
++++ src/org/eclipse/core/databinding/validation/ValidationStatus.java	20 Oct 2007 02:06:55 -0000
+@@ -14,19 +14,20 @@
+ import org.eclipse.core.databinding.util.Policy;
+ import org.eclipse.core.runtime.IStatus;
+ import org.eclipse.core.runtime.Status;
++import org.eclipse.core.internal.runtime.Util;
+ 
+ /**
+  * Convenience class for creating status objects.
+- * 
++ *
+  * @since 3.3
+- * 
++ *
+  */
+ public class ValidationStatus extends Status {
+ 
+ 	/**
+ 	 * Creates a new validation status with the given severity, message, and
+ 	 * exception.
+-	 * 
++	 *
+ 	 * @param severity
+ 	 * @param message
+ 	 * @param exception
+@@ -37,7 +38,7 @@
+ 
+ 	/**
+ 	 * Creates a new validation status with the given severity and message.
+-	 * 
++	 *
+ 	 * @param severity
+ 	 * @param message
+ 	 */
+@@ -47,7 +48,7 @@
+ 
+ 	/**
+ 	 * Creates a new validation error status with the given message.
+-	 * 
++	 *
+ 	 * @param message
+ 	 * @return a new error status with the given message
+ 	 */
+@@ -57,18 +58,18 @@
+ 
+ 	/**
+ 	 * Creates a new validation cancel status with the given message.
+-	 * 
++	 *
+ 	 * @param message
+ 	 * @return a new cancel status with the given message
+ 	 */
+ 	public static IStatus cancel(String message) {
+ 		return new ValidationStatus(IStatus.CANCEL, message);
+ 	}
+-	
++
+ 	/**
+ 	 * Creates a new validation error status with the given message and
+ 	 * exception.
+-	 * 
++	 *
+ 	 * @param message
+ 	 * @param exception
+ 	 * @return a new error status with the given message and exception
+@@ -79,27 +80,27 @@
+ 
+ 	/**
+ 	 * Creates a new validation warning status with the given message.
+-	 * 
++	 *
+ 	 * @param message
+ 	 * @return a new warning status with the given message
+ 	 */
+ 	public static IStatus warning(String message) {
+ 		return new ValidationStatus(IStatus.WARNING, message);
+ 	}
+-	
++
+ 	/**
+ 	 * Creates a new validation info status with the given message.
+-	 * 
++	 *
+ 	 * @param message
+ 	 * @return a new info status with the given message
+ 	 */
+ 	public static IStatus info(String message) {
+ 		return new ValidationStatus(IStatus.INFO, message);
+ 	}
+-	
++
+ 	/**
+ 	 * Returns an OK status.
+-	 * 
++	 *
+ 	 * @return an ok status
+ 	 */
+ 	public static IStatus ok() {
+@@ -108,7 +109,7 @@
+ 
+ 	/*
+ 	 * (non-Javadoc)
+-	 * 
++	 *
+ 	 * @see java.lang.Object#hashCode()
+ 	 */
+ 	public int hashCode() {
+@@ -128,7 +129,7 @@
+ 
+ 	/**
+ 	 * Equality is based upon instance equality rather than identity.
+-	 * 
++	 *
+ 	 * @see java.lang.Object#equals(java.lang.Object)
+ 	 */
+ 	public boolean equals(Object obj) {
+@@ -136,7 +137,7 @@
+ 			return true;
+ 		if (obj == null)
+ 			return false;
+-		if (getClass() != obj.getClass())
++		if (Util.isSameClass(this,obj))
+ 			return false;
+ 		final ValidationStatus other = (ValidationStatus) obj;
+ 
