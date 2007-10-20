@@ -62,7 +62,7 @@
 
 	<target name="dist" depends="clean, cvs, build">
 		<mkdir dir="dist" />
-		<jar destfile="dist/eclipse-core-runtime.jar">
+		<jar destfile="dist/org.eclipse.equinox.common.jar">
 			<fileset dir="build/src">
 				<include name="**/*" />
 			</fileset>
