@@ -1,0 +1,86 @@
+### Eclipse Workspace Patch 1.0
+#P org.eclipse.equinox.common
+Index: src/org/eclipse/core/runtime/CoreException.java
+===================================================================
+RCS file: /cvsroot/eclipse/org.eclipse.equinox.common/src/org/eclipse/core/runtime/CoreException.java,v
+retrieving revision 1.5
+diff -u -r1.5 CoreException.java
+--- src/org/eclipse/core/runtime/CoreException.java	10 May 2006 18:23:18 -0000	1.5
++++ src/org/eclipse/core/runtime/CoreException.java	20 Oct 2007 00:08:01 -0000
+@@ -4,19 +4,19 @@
+  * are made available under the terms of the Eclipse Public License v1.0
+  * which accompanies this distribution, and is available at
+  * http://www.eclipse.org/legal/epl-v10.html
+- * 
++ *
+  * Contributors:
+  *     IBM Corporation - initial API and implementation
+  *******************************************************************************/
+ package org.eclipse.core.runtime;
+ 
+ import java.io.PrintStream;
+-import java.io.PrintWriter;
++import org.eclipse.core.internal.runtime.Util;
+ 
+ /**
+  * A checked exception representing a failure.
+  * <p>
+- * Core exceptions contain a status object describing the 
++ * Core exceptions contain a status object describing the
+  * cause of the exception.
+  * </p><p>
+  * This class can be used without OSGi running.
+@@ -66,34 +66,34 @@
+ 	 * Prints a stack trace out for the exception, and
+ 	 * any nested exception that it may have embedded in
+ 	 * its Status object.
+-	 * 
++	 *
+ 	 * @param output the stream to write to
+ 	 */
+ 	public void printStackTrace(PrintStream output) {
+ 		synchronized (output) {
+ 			super.printStackTrace(output);
+ 			if (status.getException() != null) {
+-				output.print(getClass().getName() + "[" + status.getCode() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
+-				status.getException().printStackTrace(output);
+-			}
+-		}
+-	}
+-
+-	/**
+-	 * Prints a stack trace out for the exception, and
+-	 * any nested exception that it may have embedded in
+-	 * its Status object.
+-	 * 
+-	 * @param output the stream to write to
+-	 */
+-	public void printStackTrace(PrintWriter output) {
+-		synchronized (output) {
+-			super.printStackTrace(output);
+-			if (status.getException() != null) {
+-				output.print(getClass().getName() + "[" + status.getCode() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
++				output.print(Util.getClassNameAsString(this) + "[" + status.getCode() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
+ 				status.getException().printStackTrace(output);
+ 			}
+ 		}
+ 	}
++	//FIXME GWT
++	//	/**
++	//	 * Prints a stack trace out for the exception, and
++	//	 * any nested exception that it may have embedded in
++	//	 * its Status object.
++	//	 *
++	//	 * @param output the stream to write to
++	//	 */
++	//	public void printStackTrace(PrintWriter output) {
++	//		synchronized (output) {
++	//			super.printStackTrace(output);
++	//			if (status.getException() != null) {
++	//				output.print(getClass().getName() + "[" + status.getCode() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
++	//				status.getException().printStackTrace(output);
++	//			}
++	//		}
++	//	}
+ 
+ }
