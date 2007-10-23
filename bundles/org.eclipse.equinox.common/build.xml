@@ -12,7 +12,7 @@
 -->
 <project>
 	<target name="cvs">
-		<mkdir dir="build/cvs-src"/>
+		<mkdir dir="build/cvs-src" />
 		<cvs cvsroot=":pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse" package="org.eclipse.equinox.common" dest="build/cvs-src" />
 	</target>
 
@@ -58,13 +58,24 @@
 		<javac srcdir="build/src" destdir="build/bin" source="1.4" target="1.4" classpath="/Users/tomson/gwt-builds/gwt-1.5/gwt-mac-0.0.0/gwt-user.jar">
 		</javac>
 
+		<!-- Create the emulation package needed -->
+		<mkdir dir="build/bin/com/google/gwt/emul" />
+		<copy todir="build/bin/com/google/gwt/emul">
+			<fileset dir="src">
+				<include name="java/**/*" />
+			</fileset>
+			<fileset dir="bin">
+				<include name="java/**/*" />
+			</fileset>
+		</copy>
+		<delete dir="build/bin/java"></delete>
 	</target>
 
 	<target name="dist" depends="clean, cvs, build">
 		<mkdir dir="dist" />
 		<jar destfile="dist/org.eclipse.equinox.common.jar">
 			<fileset dir="build/src">
-				<include name="**/*" />
+				<include name="org/**/*" />
 			</fileset>
 			<fileset dir="build/bin">
 				<include name="**/*" />
