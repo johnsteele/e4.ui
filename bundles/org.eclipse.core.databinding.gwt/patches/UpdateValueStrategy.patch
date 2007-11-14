@@ -3,11 +3,11 @@
 Index: src/org/eclipse/core/databinding/UpdateValueStrategy.java
 ===================================================================
 RCS file: /cvsroot/eclipse/org.eclipse.core.databinding/src/org/eclipse/core/databinding/UpdateValueStrategy.java,v
-retrieving revision 1.8
-diff -u -r1.8 UpdateValueStrategy.java
---- src/org/eclipse/core/databinding/UpdateValueStrategy.java	29 Apr 2007 04:12:55 -0000	1.8
-+++ src/org/eclipse/core/databinding/UpdateValueStrategy.java	20 Oct 2007 01:20:04 -0000
-@@ -11,41 +11,41 @@
+retrieving revision 1.9
+diff -u -r1.9 UpdateValueStrategy.java
+--- src/org/eclipse/core/databinding/UpdateValueStrategy.java	7 Nov 2007 03:19:45 -0000	1.9
++++ src/org/eclipse/core/databinding/UpdateValueStrategy.java	14 Nov 2007 21:02:53 -0000
+@@ -12,43 +12,43 @@
  
  package org.eclipse.core.databinding;
  
@@ -31,6 +31,7 @@ diff -u -r1.8 UpdateValueStrategy.java
 -import org.eclipse.core.internal.databinding.conversion.NumberToLongConverter;
 -import org.eclipse.core.internal.databinding.conversion.NumberToNumberConverter;
 -import org.eclipse.core.internal.databinding.conversion.NumberToShortConverter;
+-import org.eclipse.core.internal.databinding.conversion.StringToCharacterConverter;
 -import org.eclipse.core.internal.databinding.conversion.StringToDateConverter;
 -import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
 -import org.eclipse.core.internal.databinding.validation.NumberToByteValidator;
@@ -42,6 +43,7 @@ diff -u -r1.8 UpdateValueStrategy.java
 -import org.eclipse.core.internal.databinding.validation.NumberToUnboundedNumberValidator;
 -import org.eclipse.core.internal.databinding.validation.ObjectToPrimitiveValidator;
 -import org.eclipse.core.internal.databinding.validation.StringToByteValidator;
+-import org.eclipse.core.internal.databinding.validation.StringToCharacterValidator;
 -import org.eclipse.core.internal.databinding.validation.StringToDateValidator;
 -import org.eclipse.core.internal.databinding.validation.StringToDoubleValidator;
 -import org.eclipse.core.internal.databinding.validation.StringToFloatValidator;
@@ -58,6 +60,7 @@ diff -u -r1.8 UpdateValueStrategy.java
 +//import org.eclipse.core.internal.databinding.conversion.NumberToLongConverter;
 +//import org.eclipse.core.internal.databinding.conversion.NumberToNumberConverter;
 +//import org.eclipse.core.internal.databinding.conversion.NumberToShortConverter;
++//import org.eclipse.core.internal.databinding.conversion.StringToCharacterConverter;
 +//import org.eclipse.core.internal.databinding.conversion.StringToDateConverter;
 +//import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
 +//import org.eclipse.core.internal.databinding.validation.NumberToByteValidator;
@@ -69,6 +72,7 @@ diff -u -r1.8 UpdateValueStrategy.java
 +//import org.eclipse.core.internal.databinding.validation.NumberToUnboundedNumberValidator;
 +//import org.eclipse.core.internal.databinding.validation.ObjectToPrimitiveValidator;
 +//import org.eclipse.core.internal.databinding.validation.StringToByteValidator;
++//import org.eclipse.core.internal.databinding.validation.StringToCharacterValidator;
 +//import org.eclipse.core.internal.databinding.validation.StringToDateValidator;
 +//import org.eclipse.core.internal.databinding.validation.StringToDoubleValidator;
 +//import org.eclipse.core.internal.databinding.validation.StringToFloatValidator;
@@ -78,7 +82,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  import org.eclipse.core.runtime.IStatus;
  import org.eclipse.core.runtime.Status;
  
-@@ -87,7 +87,7 @@
+@@ -90,7 +90,7 @@
   * construction of the strategy (e.g. {@link #POLICY_NEVER},
   * {@link #POLICY_CONVERT}, {@link #POLICY_ON_REQUEST}, {@link #POLICY_UPDATE}).
   * </p>
@@ -87,7 +91,7 @@ diff -u -r1.8 UpdateValueStrategy.java
   * @see DataBindingContext#bindValue(IObservableValue, IObservableValue,
   *      UpdateValueStrategy, UpdateValueStrategy)
   * @see Binding#getValidationStatus()
-@@ -131,7 +131,7 @@
+@@ -134,7 +134,7 @@
  	 * Helper method allowing API evolution of the above constant values. The
  	 * compiler will not inline constant values into client code if values are
  	 * "computed" using this helper.
@@ -96,7 +100,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  	 * @param i
  	 *            an integer
  	 * @return the same integer
-@@ -147,15 +147,15 @@
+@@ -150,15 +150,15 @@
  
  	private int updatePolicy;
  
@@ -118,7 +122,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  
  	/**
  	 * Creates a new update value strategy for automatically updating the
-@@ -171,7 +171,7 @@
+@@ -174,7 +174,7 @@
  	 * Creates a new update value strategy with a configurable update policy.
  	 * Default validators and a default converter will be provided. The defaults
  	 * can be changed by calling one of the setter methods.
@@ -127,7 +131,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  	 * @param updatePolicy
  	 *            one of {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST},
  	 *            {@link #POLICY_CONVERT}, or {@link #POLICY_UPDATE}
-@@ -185,7 +185,7 @@
+@@ -188,7 +188,7 @@
  	 * Default validators and a default converter will be provided if
  	 * <code>provideDefaults</code> is <code>true</code>. The defaults can
  	 * be changed by calling one of the setter methods.
@@ -136,7 +140,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  	 * @param provideDefaults
  	 *            if <code>true</code>, default validators and a default
  	 *            converter will be provided based on the observable value's
-@@ -206,7 +206,7 @@
+@@ -209,7 +209,7 @@
  	 * {@link #setConverter(IConverter) converter} if one exists. If no
  	 * converter exists no conversion occurs.
  	 * </p>
@@ -145,7 +149,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  	 * @param value
  	 * @return the converted value
  	 */
-@@ -214,27 +214,27 @@
+@@ -217,27 +217,27 @@
  		return converter == null ? value : converter.convert(value);
  	}
  
@@ -194,7 +198,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  
  	/**
  	 * Fills out default values based upon the provided <code>source</code>
-@@ -243,107 +243,107 @@
+@@ -246,126 +246,126 @@
  	 * attempt is made to default the
  	 * {@link #validateAfterGet(Object) after get validator}. If a validator
  	 * cannot be defaulted it will be <code>null</code>.
@@ -244,22 +248,33 @@ diff -u -r1.8 UpdateValueStrategy.java
 -					// TODO sring based lookup
 -					if (Integer.class.equals(toType)
 -							|| Integer.TYPE.equals(toType)) {
--						result = new StringToIntegerValidator((NumberFormatConverter) converter);
+-						result = new StringToIntegerValidator(
+-								(NumberFormatConverter) converter);
 -					} else if (Long.class.equals(toType)
 -							|| Long.TYPE.equals(toType)) {
--						result = new StringToLongValidator((NumberFormatConverter) converter);
+-						result = new StringToLongValidator(
+-								(NumberFormatConverter) converter);
 -					} else if (Float.class.equals(toType)
 -							|| Float.TYPE.equals(toType)) {
--						result = new StringToFloatValidator((NumberFormatConverter) converter);
+-						result = new StringToFloatValidator(
+-								(NumberFormatConverter) converter);
 -					} else if (Double.class.equals(toType)
 -							|| Double.TYPE.equals(toType)) {
--						result = new StringToDoubleValidator((NumberFormatConverter) converter);
+-						result = new StringToDoubleValidator(
+-								(NumberFormatConverter) converter);
 -					} else if (Byte.class.equals(toType)
 -							|| Byte.TYPE.equals(toType)) {
--						result = new StringToByteValidator((NumberFormatConverter) converter);
+-						result = new StringToByteValidator(
+-								(NumberFormatConverter) converter);
 -					} else if (Short.class.equals(toType)
 -							|| Short.TYPE.equals(toType)) {
--						result = new StringToShortValidator((NumberFormatConverter) converter);
+-						result = new StringToShortValidator(
+-								(NumberFormatConverter) converter);
+-					} else if (Character.class.equals(toType)
+-							|| Character.TYPE.equals(toType)
+-							&& converter instanceof StringToCharacterConverter) {
+-						result = new StringToCharacterValidator(
+-								(StringToCharacterConverter) converter);
 -					} else if (Date.class.equals(toType)
 -							&& converter instanceof StringToDateConverter) {
 -						result = new StringToDateValidator(
@@ -272,22 +287,30 @@ diff -u -r1.8 UpdateValueStrategy.java
 -				}
 -			} else if (converter instanceof NumberToNumberConverter) {
 -				result = (IValidator) validatorsByConverter.get(converter);
--				
+-
 -				if (result == null) {
 -					if (converter instanceof NumberToByteConverter) {
--						result = new NumberToByteValidator((NumberToByteConverter) converter);
+-						result = new NumberToByteValidator(
+-								(NumberToByteConverter) converter);
 -					} else if (converter instanceof NumberToShortConverter) {
--						result = new NumberToShortValidator((NumberToShortConverter) converter);
+-						result = new NumberToShortValidator(
+-								(NumberToShortConverter) converter);
 -					} else if (converter instanceof NumberToIntegerConverter) {
--						result = new NumberToIntegerValidator((NumberToIntegerConverter) converter);
+-						result = new NumberToIntegerValidator(
+-								(NumberToIntegerConverter) converter);
 -					} else if (converter instanceof NumberToLongConverter) {
--						result = new NumberToLongValidator((NumberToLongConverter) converter);
+-						result = new NumberToLongValidator(
+-								(NumberToLongConverter) converter);
 -					} else if (converter instanceof NumberToFloatConverter) {
--						result = new NumberToFloatValidator((NumberToFloatConverter) converter);
+-						result = new NumberToFloatValidator(
+-								(NumberToFloatConverter) converter);
 -					} else if (converter instanceof NumberToDoubleConverter) {
--						result = new NumberToDoubleValidator((NumberToDoubleConverter) converter);
--					} else if (converter instanceof NumberToBigIntegerConverter || converter instanceof NumberToBigDecimalConverter) {
--						result = new NumberToUnboundedNumberValidator((NumberToNumberConverter) converter);
+-						result = new NumberToDoubleValidator(
+-								(NumberToDoubleConverter) converter);
+-					} else if (converter instanceof NumberToBigIntegerConverter
+-							|| converter instanceof NumberToBigDecimalConverter) {
+-						result = new NumberToUnboundedNumberValidator(
+-								(NumberToNumberConverter) converter);
 -					}
 -				}
 -			}
@@ -339,22 +362,33 @@ diff -u -r1.8 UpdateValueStrategy.java
 +//					// TODO sring based lookup
 +//					if (Integer.class.equals(toType)
 +//							|| Integer.TYPE.equals(toType)) {
-+//						result = new StringToIntegerValidator((NumberFormatConverter) converter);
++//						result = new StringToIntegerValidator(
++//								(NumberFormatConverter) converter);
 +//					} else if (Long.class.equals(toType)
 +//							|| Long.TYPE.equals(toType)) {
-+//						result = new StringToLongValidator((NumberFormatConverter) converter);
++//						result = new StringToLongValidator(
++//								(NumberFormatConverter) converter);
 +//					} else if (Float.class.equals(toType)
 +//							|| Float.TYPE.equals(toType)) {
-+//						result = new StringToFloatValidator((NumberFormatConverter) converter);
++//						result = new StringToFloatValidator(
++//								(NumberFormatConverter) converter);
 +//					} else if (Double.class.equals(toType)
 +//							|| Double.TYPE.equals(toType)) {
-+//						result = new StringToDoubleValidator((NumberFormatConverter) converter);
++//						result = new StringToDoubleValidator(
++//								(NumberFormatConverter) converter);
 +//					} else if (Byte.class.equals(toType)
 +//							|| Byte.TYPE.equals(toType)) {
-+//						result = new StringToByteValidator((NumberFormatConverter) converter);
++//						result = new StringToByteValidator(
++//								(NumberFormatConverter) converter);
 +//					} else if (Short.class.equals(toType)
 +//							|| Short.TYPE.equals(toType)) {
-+//						result = new StringToShortValidator((NumberFormatConverter) converter);
++//						result = new StringToShortValidator(
++//								(NumberFormatConverter) converter);
++//					} else if (Character.class.equals(toType)
++//							|| Character.TYPE.equals(toType)
++//							&& converter instanceof StringToCharacterConverter) {
++//						result = new StringToCharacterValidator(
++//								(StringToCharacterConverter) converter);
 +//					} else if (Date.class.equals(toType)
 +//							&& converter instanceof StringToDateConverter) {
 +//						result = new StringToDateValidator(
@@ -370,19 +404,27 @@ diff -u -r1.8 UpdateValueStrategy.java
 +//
 +//				if (result == null) {
 +//					if (converter instanceof NumberToByteConverter) {
-+//						result = new NumberToByteValidator((NumberToByteConverter) converter);
++//						result = new NumberToByteValidator(
++//								(NumberToByteConverter) converter);
 +//					} else if (converter instanceof NumberToShortConverter) {
-+//						result = new NumberToShortValidator((NumberToShortConverter) converter);
++//						result = new NumberToShortValidator(
++//								(NumberToShortConverter) converter);
 +//					} else if (converter instanceof NumberToIntegerConverter) {
-+//						result = new NumberToIntegerValidator((NumberToIntegerConverter) converter);
++//						result = new NumberToIntegerValidator(
++//								(NumberToIntegerConverter) converter);
 +//					} else if (converter instanceof NumberToLongConverter) {
-+//						result = new NumberToLongValidator((NumberToLongConverter) converter);
++//						result = new NumberToLongValidator(
++//								(NumberToLongConverter) converter);
 +//					} else if (converter instanceof NumberToFloatConverter) {
-+//						result = new NumberToFloatValidator((NumberToFloatConverter) converter);
++//						result = new NumberToFloatValidator(
++//								(NumberToFloatConverter) converter);
 +//					} else if (converter instanceof NumberToDoubleConverter) {
-+//						result = new NumberToDoubleValidator((NumberToDoubleConverter) converter);
-+//					} else if (converter instanceof NumberToBigIntegerConverter || converter instanceof NumberToBigDecimalConverter) {
-+//						result = new NumberToUnboundedNumberValidator((NumberToNumberConverter) converter);
++//						result = new NumberToDoubleValidator(
++//								(NumberToDoubleConverter) converter);
++//					} else if (converter instanceof NumberToBigIntegerConverter
++//							|| converter instanceof NumberToBigDecimalConverter) {
++//						result = new NumberToUnboundedNumberValidator(
++//								(NumberToNumberConverter) converter);
 +//					}
 +//				}
 +//			}
@@ -398,7 +440,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  
  	/**
  	 * @return the update policy
-@@ -355,7 +355,7 @@
+@@ -377,7 +377,7 @@
  	/**
  	 * Sets the validator to be invoked after the source value is converted to
  	 * the type of the destination observable.
@@ -407,7 +449,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  	 * @param validator
  	 * @return the receiver, to enable method call chaining
  	 */
-@@ -367,7 +367,7 @@
+@@ -389,7 +389,7 @@
  	/**
  	 * Sets the validator to be invoked after the source value is retrieved at
  	 * the beginning of the synchronization process.
@@ -416,7 +458,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  	 * @param validator
  	 * @return the receiver, to enable method call chaining
  	 */
-@@ -379,7 +379,7 @@
+@@ -401,7 +401,7 @@
  	/**
  	 * Sets the validator to be invoked before the value is to be set on the
  	 * destination at the end of the synchronization process.
@@ -425,7 +467,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  	 * @param validator
  	 * @return the receiver, to enable method call chaining
  	 */
-@@ -391,7 +391,7 @@
+@@ -413,7 +413,7 @@
  	/**
  	 * Sets the converter to be invoked when converting from the source type to
  	 * the destination type.
@@ -434,7 +476,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  	 * @param converter
  	 * @return the receiver, to enable method call chaining
  	 */
-@@ -407,7 +407,7 @@
+@@ -429,7 +429,7 @@
  	 * {@link #setAfterConvertValidator(IValidator) validator} if one exists. If
  	 * one does not exist no validation will occur.
  	 * </p>
@@ -443,7 +485,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  	 * @param value
  	 * @return an ok status
  	 */
-@@ -423,7 +423,7 @@
+@@ -445,7 +445,7 @@
  	 * {@link #setAfterGetValidator(IValidator) validator} if one exists. If one
  	 * does not exist no validation will occur.
  	 * </p>
@@ -452,7 +494,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  	 * @param value
  	 * @return an ok status
  	 */
-@@ -439,7 +439,7 @@
+@@ -461,7 +461,7 @@
  	 * {@link #setBeforeSetValidator(IValidator) validator} if one exists. If
  	 * one does not exist no validation will occur.
  	 * </p>
@@ -461,12 +503,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  	 * @param value
  	 * @return an ok status
  	 */
-@@ -447,11 +447,11 @@
- 		return beforeSetValidator == null ? Status.OK_STATUS
- 				: beforeSetValidator.validate(value);
- 	}
--	
-+
+@@ -473,7 +473,7 @@
  	/**
  	 * Sets the current value of the given observable to the given value.
  	 * Clients may extend but must call the super implementation.
@@ -475,7 +512,7 @@ diff -u -r1.8 UpdateValueStrategy.java
  	 * @param observableValue
  	 * @param value
  	 * @return status
-@@ -467,91 +467,91 @@
+@@ -489,91 +489,91 @@
  		return Status.OK_STATUS;
  	}
  
