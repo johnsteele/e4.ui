@@ -3,10 +3,10 @@
 Index: src/org/eclipse/core/databinding/UpdateValueStrategy.java
 ===================================================================
 RCS file: /cvsroot/eclipse/org.eclipse.core.databinding/src/org/eclipse/core/databinding/UpdateValueStrategy.java,v
-retrieving revision 1.9
-diff -u -r1.9 UpdateValueStrategy.java
---- src/org/eclipse/core/databinding/UpdateValueStrategy.java	7 Nov 2007 03:19:45 -0000	1.9
-+++ src/org/eclipse/core/databinding/UpdateValueStrategy.java	14 Nov 2007 21:02:53 -0000
+retrieving revision 1.11
+diff -u -r1.11 UpdateValueStrategy.java
+--- src/org/eclipse/core/databinding/UpdateValueStrategy.java	14 Nov 2007 23:03:19 -0000	1.11
++++ src/org/eclipse/core/databinding/UpdateValueStrategy.java	14 Nov 2007 23:24:21 -0000
 @@ -12,43 +12,43 @@
  
  package org.eclipse.core.databinding;
@@ -82,25 +82,7 @@ diff -u -r1.9 UpdateValueStrategy.java
  import org.eclipse.core.runtime.IStatus;
  import org.eclipse.core.runtime.Status;
  
-@@ -90,7 +90,7 @@
-  * construction of the strategy (e.g. {@link #POLICY_NEVER},
-  * {@link #POLICY_CONVERT}, {@link #POLICY_ON_REQUEST}, {@link #POLICY_UPDATE}).
-  * </p>
-- * 
-+ *
-  * @see DataBindingContext#bindValue(IObservableValue, IObservableValue,
-  *      UpdateValueStrategy, UpdateValueStrategy)
-  * @see Binding#getValidationStatus()
-@@ -134,7 +134,7 @@
- 	 * Helper method allowing API evolution of the above constant values. The
- 	 * compiler will not inline constant values into client code if values are
- 	 * "computed" using this helper.
--	 * 
-+	 *
- 	 * @param i
- 	 *            an integer
- 	 * @return the same integer
-@@ -150,15 +150,15 @@
+@@ -150,8 +150,8 @@
  
  	private int updatePolicy;
  
@@ -111,118 +93,10 @@ diff -u -r1.9 UpdateValueStrategy.java
  
  	protected boolean provideDefaults;
  
--	/**
--	 * <code>true</code> if we defaulted the converter
--	 */
--	private boolean defaultedConverter = false;
-+//	/**
-+//	 * <code>true</code> if we defaulted the converter
-+//	 */
-+//	private boolean defaultedConverter = false;
- 
- 	/**
- 	 * Creates a new update value strategy for automatically updating the
-@@ -174,7 +174,7 @@
- 	 * Creates a new update value strategy with a configurable update policy.
- 	 * Default validators and a default converter will be provided. The defaults
- 	 * can be changed by calling one of the setter methods.
--	 * 
-+	 *
- 	 * @param updatePolicy
- 	 *            one of {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST},
- 	 *            {@link #POLICY_CONVERT}, or {@link #POLICY_UPDATE}
-@@ -188,7 +188,7 @@
- 	 * Default validators and a default converter will be provided if
- 	 * <code>provideDefaults</code> is <code>true</code>. The defaults can
- 	 * be changed by calling one of the setter methods.
--	 * 
-+	 *
- 	 * @param provideDefaults
- 	 *            if <code>true</code>, default validators and a default
- 	 *            converter will be provided based on the observable value's
-@@ -209,7 +209,7 @@
- 	 * {@link #setConverter(IConverter) converter} if one exists. If no
- 	 * converter exists no conversion occurs.
- 	 * </p>
--	 * 
-+	 *
- 	 * @param value
- 	 * @return the converted value
- 	 */
-@@ -217,27 +217,27 @@
- 		return converter == null ? value : converter.convert(value);
- 	}
- 
--	/**
--	 * Tries to create a validator that can validate values of type fromType.
--	 * Returns <code>null</code> if no validator could be created. Either
--	 * toType or modelDescription can be <code>null</code>, but not both.
--	 * 
--	 * @param fromType
--	 * @param toType
--	 * @return an IValidator, or <code>null</code> if unsuccessful
--	 */
--	protected IValidator createValidator(Object fromType, Object toType) {
--		if (fromType == null || toType == null) {
--			return new IValidator() {
--
--				public IStatus validate(Object value) {
--					return Status.OK_STATUS;
--				}
--			};
--		}
--
--		return findValidator(fromType, toType);
--	}
-+//	/**
-+//	 * Tries to create a validator that can validate values of type fromType.
-+//	 * Returns <code>null</code> if no validator could be created. Either
-+//	 * toType or modelDescription can be <code>null</code>, but not both.
-+//	 *
-+//	 * @param fromType
-+//	 * @param toType
-+//	 * @return an IValidator, or <code>null</code> if unsuccessful
-+//	 */
-+//	protected IValidator createValidator(Object fromType, Object toType) {
-+//		if (fromType == null || toType == null) {
-+//			return new IValidator() {
-+//
-+//				public IStatus validate(Object value) {
-+//					return Status.OK_STATUS;
-+//				}
-+//			};
-+//		}
-+//
-+//		return findValidator(fromType, toType);
-+//	}
- 
- 	/**
- 	 * Fills out default values based upon the provided <code>source</code>
-@@ -246,126 +246,126 @@
- 	 * attempt is made to default the
- 	 * {@link #validateAfterGet(Object) after get validator}. If a validator
- 	 * cannot be defaulted it will be <code>null</code>.
--	 * 
-+	 *
- 	 * @param source
- 	 * @param destination
- 	 */
- 	protected void fillDefaults(IObservableValue source,
- 			IObservableValue destination) {
--		Object sourceType = source.getValueType();
--		Object destinationType = destination.getValueType();
--		if (provideDefaults && sourceType != null && destinationType != null) {
--			if (converter == null) {
--				IConverter converter = createConverter(sourceType,
--						destinationType);
--				defaultedConverter = (converter != null);
--				setConverter(converter);
--			}
--
--			if (afterGetValidator == null) {
--				afterGetValidator = createValidator(sourceType, destinationType);
--			}
--		}
+@@ -266,16 +266,16 @@
+ 				afterGetValidator = createValidator(sourceType, destinationType);
+ 			}
+ 		}
 -		if (converter != null) {
 -			if (sourceType != null) {
 -				checkAssignable(converter.getFromType(), sourceType,
@@ -233,14 +107,23 @@ diff -u -r1.9 UpdateValueStrategy.java
 -						"converter does not convert to type " + destinationType); //$NON-NLS-1$
 -			}
 -		}
--	}
--
--	private IValidator findValidator(Object fromType, Object toType) {
--		IValidator result = null;
--
--		// We only default the validator if we defaulted the converter since the
--		// two are tightly coupled.
--		if (defaultedConverter) {
++//		if (converter != null) {
++//			if (sourceType != null) {
++//				checkAssignable(converter.getFromType(), sourceType,
++//						"converter does not convert from type " + sourceType); //$NON-NLS-1$
++//			}
++//			if (destinationType != null) {
++//				checkAssignable(converter.getToType(), destinationType,
++//						"converter does not convert to type " + destinationType); //$NON-NLS-1$
++//			}
++//		}
+ 	}
+ 
+ 	private IValidator findValidator(Object fromType, Object toType) {
+@@ -284,84 +284,84 @@
+ 		// We only default the validator if we defaulted the converter since the
+ 		// two are tightly coupled.
+ 		if (defaultedConverter) {
 -			if (String.class.equals(fromType)) {
 -				result = (IValidator) validatorsByConverter.get(converter);
 -
@@ -319,42 +202,6 @@ diff -u -r1.9 UpdateValueStrategy.java
 -				// TODO string based lookup
 -				result = validatorRegistry.get(fromType, toType);
 -			}
--		}
--
--		return result;
--	}
-+//		Object sourceType = source.getValueType();
-+//		Object destinationType = destination.getValueType();
-+//		if (provideDefaults && sourceType != null && destinationType != null) {
-+//			if (converter == null) {
-+//				IConverter converter = createConverter(sourceType,
-+//						destinationType);
-+//				defaultedConverter = (converter != null);
-+//				setConverter(converter);
-+//			}
-+//
-+//			if (afterGetValidator == null) {
-+//				afterGetValidator = createValidator(sourceType, destinationType);
-+//			}
-+//		}
-+//		if (converter != null) {
-+//			if (sourceType != null) {
-+//				checkAssignable(converter.getFromType(), sourceType,
-+//						"converter does not convert from type " + sourceType); //$NON-NLS-1$
-+//			}
-+//			if (destinationType != null) {
-+//				checkAssignable(converter.getToType(), destinationType,
-+//						"converter does not convert to type " + destinationType); //$NON-NLS-1$
-+//			}
-+//		}
-+	}
-+
-+//	private IValidator findValidator(Object fromType, Object toType) {
-+//		IValidator result = null;
-+//
-+//		// We only default the validator if we defaulted the converter since the
-+//		// two are tightly coupled.
-+//		if (defaultedConverter) {
 +//			if (String.class.equals(fromType)) {
 +//				result = (IValidator) validatorsByConverter.get(converter);
 +//
@@ -433,85 +280,9 @@ diff -u -r1.9 UpdateValueStrategy.java
 +//				// TODO string based lookup
 +//				result = validatorRegistry.get(fromType, toType);
 +//			}
-+//		}
-+//
-+//		return result;
-+//	}
+ 		}
  
- 	/**
- 	 * @return the update policy
-@@ -377,7 +377,7 @@
- 	/**
- 	 * Sets the validator to be invoked after the source value is converted to
- 	 * the type of the destination observable.
--	 * 
-+	 *
- 	 * @param validator
- 	 * @return the receiver, to enable method call chaining
- 	 */
-@@ -389,7 +389,7 @@
- 	/**
- 	 * Sets the validator to be invoked after the source value is retrieved at
- 	 * the beginning of the synchronization process.
--	 * 
-+	 *
- 	 * @param validator
- 	 * @return the receiver, to enable method call chaining
- 	 */
-@@ -401,7 +401,7 @@
- 	/**
- 	 * Sets the validator to be invoked before the value is to be set on the
- 	 * destination at the end of the synchronization process.
--	 * 
-+	 *
- 	 * @param validator
- 	 * @return the receiver, to enable method call chaining
- 	 */
-@@ -413,7 +413,7 @@
- 	/**
- 	 * Sets the converter to be invoked when converting from the source type to
- 	 * the destination type.
--	 * 
-+	 *
- 	 * @param converter
- 	 * @return the receiver, to enable method call chaining
- 	 */
-@@ -429,7 +429,7 @@
- 	 * {@link #setAfterConvertValidator(IValidator) validator} if one exists. If
- 	 * one does not exist no validation will occur.
- 	 * </p>
--	 * 
-+	 *
- 	 * @param value
- 	 * @return an ok status
- 	 */
-@@ -445,7 +445,7 @@
- 	 * {@link #setAfterGetValidator(IValidator) validator} if one exists. If one
- 	 * does not exist no validation will occur.
- 	 * </p>
--	 * 
-+	 *
- 	 * @param value
- 	 * @return an ok status
- 	 */
-@@ -461,7 +461,7 @@
- 	 * {@link #setBeforeSetValidator(IValidator) validator} if one exists. If
- 	 * one does not exist no validation will occur.
- 	 * </p>
--	 * 
-+	 *
- 	 * @param value
- 	 * @return an ok status
- 	 */
-@@ -473,7 +473,7 @@
- 	/**
- 	 * Sets the current value of the given observable to the given value.
- 	 * Clients may extend but must call the super implementation.
--	 * 
-+	 *
- 	 * @param observableValue
- 	 * @param value
- 	 * @return status
+ 		return result;
 @@ -489,91 +489,91 @@
  		return Status.OK_STATUS;
  	}
@@ -561,7 +332,7 @@ diff -u -r1.9 UpdateValueStrategy.java
 -		/**
 -		 * Associate a particular validator that can validate the conversion
 -		 * (fromClass, toClass)
--		 * 
+-		 *
 -		 * @param fromClass
 -		 *            The Class to convert from
 -		 * @param toClass
@@ -576,7 +347,7 @@ diff -u -r1.9 UpdateValueStrategy.java
 -
 -		/**
 -		 * Return an IValidator for a specific fromClass and toClass.
--		 * 
+-		 *
 -		 * @param fromClass
 -		 *            The Class to convert from
 -		 * @param toClass

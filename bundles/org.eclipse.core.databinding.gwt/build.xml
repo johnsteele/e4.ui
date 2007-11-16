@@ -49,22 +49,12 @@
 
 		<patch patchfile="patches/Realm.patch" originalfile="build/src/org/eclipse/core/databinding/observable/Realm.java" />
 
-		<patch patchfile="patches/ListDiff.patch" originalfile="build/src/org/eclipse/core/databinding/observable/list/ListDiff.java" />
-		<patch patchfile="patches/ListDiffEntry.patch" originalfile="build/src/org/eclipse/core/databinding/observable/list/ListDiffEntry.java" />
-
-		<patch patchfile="patches/SetDiff.patch" originalfile="build/src/org/eclipse/core/databinding/observable/set/SetDiff.java" />
-
 		<patch patchfile="patches/ValueChangeEvent.patch" originalfile="build/src/org/eclipse/core/databinding/observable/value/ValueChangeEvent.java" />
 		<patch patchfile="patches/ValueChangingEvent.patch" originalfile="build/src/org/eclipse/core/databinding/observable/value/ValueChangingEvent.java" />
-		<patch patchfile="patches/ValueDiff.patch" originalfile="build/src/org/eclipse/core/databinding/observable/value/ValueDiff.java" />
-
-		<patch patchfile="patches/ValidationStatus.patch" originalfile="build/src/org/eclipse/core/databinding/validation/ValidationStatus.java" />
 
 
 		<patch patchfile="patches/BindingMessages.patch" originalfile="build/src/org/eclipse/core/internal/databinding/BindingMessages.java" />
-		<patch patchfile="patches/BindingStatus.patch" originalfile="build/src/org/eclipse/core/internal/databinding/BindingStatus.java" />
-		<patch patchfile="patches/IdentityWrapper.patch" originalfile="build/src/org/eclipse/core/internal/databinding/IdentityWrapper.java" />
-		<patch patchfile="patches/Pair.patch" originalfile="build/src/org/eclipse/core/internal/databinding/Pair.java" />
+		<patch patchfile="patches/BindingException.patch" originalfile="build/src/org/eclipse/core/internal/databinding/BindingException.java" />
 
 
 

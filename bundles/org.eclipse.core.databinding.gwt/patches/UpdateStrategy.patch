@@ -3,17 +3,11 @@
 Index: src/org/eclipse/core/databinding/UpdateStrategy.java
 ===================================================================
 RCS file: /cvsroot/eclipse/org.eclipse.core.databinding/src/org/eclipse/core/databinding/UpdateStrategy.java,v
-retrieving revision 1.9
-diff -u -r1.9 UpdateStrategy.java
---- src/org/eclipse/core/databinding/UpdateStrategy.java	7 Nov 2007 03:19:45 -0000	1.9
-+++ src/org/eclipse/core/databinding/UpdateStrategy.java	14 Nov 2007 20:58:22 -0000
-@@ -8,698 +8,698 @@
-  * Contributors:
-  *     IBM Corporation - initial API and implementation
-  *     Matt Carter - Bug 180392
-- *                 - Character support completed (bug 197679) 
-+ *                 - Character support completed (bug 197679)
-  ******************************************************************************/
+retrieving revision 1.11
+diff -u -r1.11 UpdateStrategy.java
+--- src/org/eclipse/core/databinding/UpdateStrategy.java	14 Nov 2007 23:03:19 -0000	1.11
++++ src/org/eclipse/core/databinding/UpdateStrategy.java	14 Nov 2007 23:19:03 -0000
+@@ -13,36 +13,36 @@
  
  package org.eclipse.core.databinding;
  
@@ -21,8 +15,12 @@ diff -u -r1.9 UpdateStrategy.java
 -import java.math.BigInteger;
 -import java.util.HashMap;
 -import java.util.Map;
--
--import org.eclipse.core.databinding.conversion.IConverter;
++//import java.math.BigDecimal;
++//import java.math.BigInteger;
++//import java.util.HashMap;
++//import java.util.Map;
+ 
+ import org.eclipse.core.databinding.conversion.IConverter;
 -import org.eclipse.core.databinding.conversion.NumberToStringConverter;
 -import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 -import org.eclipse.core.databinding.util.Policy;
@@ -47,12 +45,6 @@ diff -u -r1.9 UpdateStrategy.java
 -import org.eclipse.core.runtime.Status;
 -
 -import com.ibm.icu.text.NumberFormat;
-+//import java.math.BigDecimal;
-+//import java.math.BigInteger;
-+//import java.util.HashMap;
-+//import java.util.Map;
-+//
-+//import org.eclipse.core.databinding.conversion.IConverter;
 +//import org.eclipse.core.databinding.conversion.NumberToStringConverter;
 +//import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 +//import org.eclipse.core.databinding.util.Policy;
@@ -80,8 +72,7 @@ diff -u -r1.9 UpdateStrategy.java
  
  /**
   * @since 1.0
-- * 
-+ *
+@@ -50,54 +50,54 @@
   */
  /* package */class UpdateStrategy {
  
@@ -133,18 +124,61 @@ diff -u -r1.9 UpdateStrategy.java
 -					+ " Expected: " + fromType + ", actual: " + toType); //$NON-NLS-1$//$NON-NLS-2$
 -		}
 -	}
--
--	/**
--	 * Tries to create a converter that can convert from values of type
--	 * fromType. Returns <code>null</code> if no converter could be created.
--	 * Either toType or modelDescription can be <code>null</code>, but not
--	 * both.
--	 * 
--	 * @param fromType
--	 * @param toType
--	 * @return an IConverter, or <code>null</code> if unsuccessful
--	 */
--	protected IConverter createConverter(Object fromType, Object toType) {
++//	private static final String BOOLEAN_TYPE = "java.lang.Boolean.TYPE"; //$NON-NLS-1$
++//
++//	private static final String SHORT_TYPE = "java.lang.Short.TYPE"; //$NON-NLS-1$
++//
++//	private static final String BYTE_TYPE = "java.lang.Byte.TYPE"; //$NON-NLS-1$
++//
++//	private static final String DOUBLE_TYPE = "java.lang.Double.TYPE"; //$NON-NLS-1$
++//
++//	private static final String FLOAT_TYPE = "java.lang.Float.TYPE"; //$NON-NLS-1$
++//
++//	private static final String INTEGER_TYPE = "java.lang.Integer.TYPE"; //$NON-NLS-1$
++//
++//	private static final String LONG_TYPE = "java.lang.Long.TYPE"; //$NON-NLS-1$
++//
++//	private static final String CHARACTER_TYPE = "java.lang.Character.TYPE"; //$NON-NLS-1$
++//
++//	private static Map converterMap;
++//
++//	private static Class autoboxed(Class clazz) {
++//		if (clazz == Float.TYPE)
++//			return Float.class;
++//		else if (clazz == Double.TYPE)
++//			return Double.class;
++//		else if (clazz == Short.TYPE)
++//			return Short.class;
++//		else if (clazz == Integer.TYPE)
++//			return Integer.class;
++//		else if (clazz == Long.TYPE)
++//			return Long.class;
++//		else if (clazz == Byte.TYPE)
++//			return Byte.class;
++//		else if (clazz == Boolean.TYPE)
++//			return Boolean.class;
++//		else if (clazz == Character.TYPE)
++//			return Character.class;
++//		return clazz;
++//	}
++//
++//	final protected void checkAssignable(Object toType, Object fromType,
++//			String errorString) {
++//		Boolean assignableFromModelToModelConverter = isAssignableFromTo(
++//				fromType, toType);
++//		if (assignableFromModelToModelConverter != null
++//				&& !assignableFromModelToModelConverter.booleanValue()) {
++//			throw new BindingException(errorString
++//					+ " Expected: " + fromType + ", actual: " + toType); //$NON-NLS-1$//$NON-NLS-2$
++//		}
++//	}
+ 
+ 	/**
+ 	 * Tries to create a converter that can convert from values of type
+@@ -110,566 +110,566 @@
+ 	 * @return an IConverter, or <code>null</code> if unsuccessful
+ 	 */
+ 	protected IConverter createConverter(Object fromType, Object toType) {
 -		if (!(fromType instanceof Class) || !(toType instanceof Class)) {
 -			return new DefaultConverter(fromType, toType);
 -		}
@@ -207,9 +241,71 @@ diff -u -r1.9 UpdateStrategy.java
 -		if (fromClass.isAssignableFrom(toClass)) {
 -			return new IdentityConverter(originalFromClass, originalToClass);
 -		}
--		return new DefaultConverter(fromType, toType);
--	}
--
++//		if (!(fromType instanceof Class) || !(toType instanceof Class)) {
++//			return new DefaultConverter(fromType, toType);
++//		}
++//		Class toClass = (Class) toType;
++//		Class originalToClass = toClass;
++//		if (toClass.isPrimitive()) {
++//			toClass = autoboxed(toClass);
++//		}
++//		Class fromClass = (Class) fromType;
++//		Class originalFromClass = fromClass;
++//		if (fromClass.isPrimitive()) {
++//			fromClass = autoboxed(fromClass);
++//		}
++//		if (!((Class) toType).isPrimitive()
++//				&& toClass.isAssignableFrom(fromClass)) {
++//			return new IdentityConverter(originalFromClass, originalToClass);
++//		}
++//		if (((Class) fromType).isPrimitive() && ((Class) toType).isPrimitive()
++//				&& fromType.equals(toType)) {
++//			return new IdentityConverter(originalFromClass, originalToClass);
++//		}
++//		Map converterMap = getConverterMap();
++//		Class[] supertypeHierarchyFlattened = ClassLookupSupport
++//				.getTypeHierarchyFlattened(fromClass);
++//		for (int i = 0; i < supertypeHierarchyFlattened.length; i++) {
++//			Class currentFromClass = supertypeHierarchyFlattened[i];
++//			if (currentFromClass == toType) {
++//				// converting to toType is just a widening
++//				return new IdentityConverter(fromClass, toClass);
++//			}
++//			Pair key = new Pair(getKeyForClass(fromType, currentFromClass),
++//					getKeyForClass(toType, toClass));
++//			Object converterOrClassname = converterMap.get(key);
++//			if (converterOrClassname instanceof IConverter) {
++//				return (IConverter) converterOrClassname;
++//			} else if (converterOrClassname instanceof String) {
++//				String classname = (String) converterOrClassname;
++//				Class converterClass;
++//				try {
++//					converterClass = Class.forName(classname);
++//					IConverter result = (IConverter) converterClass
++//							.newInstance();
++//					converterMap.put(key, result);
++//					return result;
++//				} catch (Exception e) {
++//					Policy
++//							.getLog()
++//							.log(
++//									new Status(
++//											IStatus.ERROR,
++//											Policy.JFACE_DATABINDING,
++//											0,
++//											"Error while instantiating default converter", e)); //$NON-NLS-1$
++//				}
++//			}
++//		}
++//		// Since we found no converter yet, try a "downcast" converter;
++//		// the IdentityConverter will automatically check the actual types at
++//		// runtime.
++//		if (fromClass.isAssignableFrom(toClass)) {
++//			return new IdentityConverter(originalFromClass, originalToClass);
++//		}
+ 		return new DefaultConverter(fromType, toType);
+ 	}
+ 
 -	private static Map getConverterMap() {
 -		// using string-based lookup avoids loading of too many classes
 -		if (converterMap == null) {
@@ -239,7 +335,7 @@ diff -u -r1.9 UpdateStrategy.java
 -							new Pair("java.lang.String", "java.lang.Short"), StringToShortConverter.toShort(integerFormat, false)); //$NON-NLS-1$//$NON-NLS-2$
 -			converterMap
 -					.put(
--							new Pair("java.lang.String", "java.lang.Character"), StringToCharacterConverter.toCharacter(false)); //$NON-NLS-1$//$NON-NLS-2$			
+-							new Pair("java.lang.String", "java.lang.Character"), StringToCharacterConverter.toCharacter(false)); //$NON-NLS-1$//$NON-NLS-2$
 -			converterMap
 -					.put(
 -							new Pair("java.lang.String", "java.lang.Integer"), StringToNumberConverter.toInteger(integerFormat, false)); //$NON-NLS-1$//$NON-NLS-2$
@@ -251,10 +347,10 @@ diff -u -r1.9 UpdateStrategy.java
 -							new Pair("java.lang.String", "java.lang.Long"), StringToNumberConverter.toLong(integerFormat, false)); //$NON-NLS-1$//$NON-NLS-2$
 -			converterMap
 -					.put(
--							new Pair("java.lang.String", "java.lang.Float"), StringToNumberConverter.toFloat(numberFormat, false)); //$NON-NLS-1$//$NON-NLS-2$			
+-							new Pair("java.lang.String", "java.lang.Float"), StringToNumberConverter.toFloat(numberFormat, false)); //$NON-NLS-1$//$NON-NLS-2$
 -			converterMap
 -					.put(
--							new Pair("java.lang.String", "java.math.BigInteger"), StringToNumberConverter.toBigInteger(integerFormat)); //$NON-NLS-1$//$NON-NLS-2$			
+-							new Pair("java.lang.String", "java.math.BigInteger"), StringToNumberConverter.toBigInteger(integerFormat)); //$NON-NLS-1$//$NON-NLS-2$
 -			converterMap
 -					.put(
 -							new Pair("java.lang.Integer", "java.lang.String"), NumberToStringConverter.fromInteger(integerFormat, false)); //$NON-NLS-1$//$NON-NLS-2$
@@ -353,7 +449,7 @@ diff -u -r1.9 UpdateStrategy.java
 -							new Pair(FLOAT_TYPE, "java.lang.Float"), new IdentityConverter(Float.TYPE, Float.class)); //$NON-NLS-1$
 -			converterMap
 -					.put(
--							new Pair(FLOAT_TYPE, "java.lang.Object"), new IdentityConverter(Float.TYPE, Object.class)); //$NON-NLS-1$		
+-							new Pair(FLOAT_TYPE, "java.lang.Object"), new IdentityConverter(Float.TYPE, Object.class)); //$NON-NLS-1$
 -
 -			// Short.TYPE
 -			converterMap
@@ -367,7 +463,7 @@ diff -u -r1.9 UpdateStrategy.java
 -							new Pair(SHORT_TYPE, "java.lang.String"), IntegerToStringConverter.fromShort(integerFormat, true)); //$NON-NLS-1$
 -			converterMap
 -					.put(
--							new Pair(SHORT_TYPE, "java.lang.Object"), new IdentityConverter(Short.TYPE, Object.class)); //$NON-NLS-1$		
+-							new Pair(SHORT_TYPE, "java.lang.Object"), new IdentityConverter(Short.TYPE, Object.class)); //$NON-NLS-1$
 -
 -			// Long.TYPE
 -			converterMap
@@ -381,7 +477,7 @@ diff -u -r1.9 UpdateStrategy.java
 -							new Pair(LONG_TYPE, "java.lang.Long"), new IdentityConverter(Long.TYPE, Long.class)); //$NON-NLS-1$
 -			converterMap
 -					.put(
--							new Pair(LONG_TYPE, "java.lang.Object"), new IdentityConverter(Long.TYPE, Object.class)); //$NON-NLS-1$		
+-							new Pair(LONG_TYPE, "java.lang.Object"), new IdentityConverter(Long.TYPE, Object.class)); //$NON-NLS-1$
 -
 -			// Character.TYPE
 -			converterMap
@@ -395,7 +491,7 @@ diff -u -r1.9 UpdateStrategy.java
 -							new Pair(CHARACTER_TYPE, "java.lang.String"), CharacterToStringConverter.fromCharacter(true)); //$NON-NLS-1$
 -			converterMap
 -					.put(
--							new Pair(CHARACTER_TYPE, "java.lang.Object"), new IdentityConverter(Character.TYPE, Object.class)); //$NON-NLS-1$		
+-							new Pair(CHARACTER_TYPE, "java.lang.Object"), new IdentityConverter(Character.TYPE, Object.class)); //$NON-NLS-1$
 -
 -			// Miscellaneous
 -			converterMap
@@ -453,7 +549,7 @@ diff -u -r1.9 UpdateStrategy.java
 -	/**
 -	 * Registers converters to boxed and unboxed types from a list of from
 -	 * classes.
--	 * 
+-	 *
 -	 * @param map
 -	 * @param numberFormat
 -	 * @param fromTypes
@@ -482,7 +578,7 @@ diff -u -r1.9 UpdateStrategy.java
 -	/**
 -	 * Registers converters to boxed and unboxed types from a list of from
 -	 * classes.
--	 * 
+-	 *
 -	 * @param map
 -	 * @param numberFormat
 -	 * @param fromTypes
@@ -509,7 +605,7 @@ diff -u -r1.9 UpdateStrategy.java
 -	/**
 -	 * Registers converters to boxed and unboxed types from a list of from
 -	 * classes.
--	 * 
+-	 *
 -	 * @param map
 -	 * @param numberFormat
 -	 * @param fromTypes
@@ -536,7 +632,7 @@ diff -u -r1.9 UpdateStrategy.java
 -	/**
 -	 * Registers converters to boxed and unboxed types from a list of from
 -	 * classes.
--	 * 
+-	 *
 -	 * @param map
 -	 * @param numberFormat
 -	 * @param fromTypes
@@ -564,7 +660,7 @@ diff -u -r1.9 UpdateStrategy.java
 -	/**
 -	 * Registers converters to boxed and unboxed types from a list of from
 -	 * classes.
--	 * 
+-	 *
 -	 * @param map
 -	 * @param numberFormat
 -	 * @param fromTypes
@@ -591,7 +687,7 @@ diff -u -r1.9 UpdateStrategy.java
 -	/**
 -	 * Registers converters to boxed and unboxed types from a list of from
 -	 * classes.
--	 * 
+-	 *
 -	 * @param map
 -	 * @param numberFormat
 -	 * @param fromTypes
@@ -617,7 +713,7 @@ diff -u -r1.9 UpdateStrategy.java
 -	/**
 -	 * Registers converters to boxed and unboxed types from a list of from
 -	 * classes.
--	 * 
+-	 *
 -	 * @param map
 -	 * @param numberFormat
 -	 * @param fromTypes
@@ -641,7 +737,7 @@ diff -u -r1.9 UpdateStrategy.java
 -	/**
 -	 * Registers converters to boxed and unboxed types from a list of from
 -	 * classes.
--	 * 
+-	 *
 -	 * @param map
 -	 * @param numberFormat
 -	 * @param fromTypes
@@ -705,162 +801,6 @@ diff -u -r1.9 UpdateStrategy.java
 -		}
 -		return null;
 -	}
--
--	/*
--	 * Default converter implementation, does not perform any conversion.
--	 */
--	protected static final class DefaultConverter implements IConverter {
--
--		private final Object toType;
--
--		private final Object fromType;
--
--		/**
--		 * @param fromType
--		 * @param toType
--		 */
--		DefaultConverter(Object fromType, Object toType) {
--			this.toType = toType;
--			this.fromType = fromType;
--		}
--
--		public Object convert(Object fromObject) {
--			return fromObject;
--		}
--
--		public Object getFromType() {
--			return fromType;
--		}
--
--		public Object getToType() {
--			return toType;
--		}
--	}
-+//	private static final String BOOLEAN_TYPE = "java.lang.Boolean.TYPE"; //$NON-NLS-1$
-+//
-+//	private static final String SHORT_TYPE = "java.lang.Short.TYPE"; //$NON-NLS-1$
-+//
-+//	private static final String BYTE_TYPE = "java.lang.Byte.TYPE"; //$NON-NLS-1$
-+//
-+//	private static final String DOUBLE_TYPE = "java.lang.Double.TYPE"; //$NON-NLS-1$
-+//
-+//	private static final String FLOAT_TYPE = "java.lang.Float.TYPE"; //$NON-NLS-1$
-+//
-+//	private static final String INTEGER_TYPE = "java.lang.Integer.TYPE"; //$NON-NLS-1$
-+//
-+//	private static final String LONG_TYPE = "java.lang.Long.TYPE"; //$NON-NLS-1$
-+//
-+//	private static final String CHARACTER_TYPE = "java.lang.Character.TYPE"; //$NON-NLS-1$
-+//
-+//	private static Map converterMap;
-+//
-+//	private static Class autoboxed(Class clazz) {
-+//		if (clazz == Float.TYPE)
-+//			return Float.class;
-+//		else if (clazz == Double.TYPE)
-+//			return Double.class;
-+//		else if (clazz == Short.TYPE)
-+//			return Short.class;
-+//		else if (clazz == Integer.TYPE)
-+//			return Integer.class;
-+//		else if (clazz == Long.TYPE)
-+//			return Long.class;
-+//		else if (clazz == Byte.TYPE)
-+//			return Byte.class;
-+//		else if (clazz == Boolean.TYPE)
-+//			return Boolean.class;
-+//		else if (clazz == Character.TYPE)
-+//			return Character.class;
-+//		return clazz;
-+//	}
-+//
-+//	final protected void checkAssignable(Object toType, Object fromType,
-+//			String errorString) {
-+//		Boolean assignableFromModelToModelConverter = isAssignableFromTo(
-+//				fromType, toType);
-+//		if (assignableFromModelToModelConverter != null
-+//				&& !assignableFromModelToModelConverter.booleanValue()) {
-+//			throw new BindingException(errorString
-+//					+ " Expected: " + fromType + ", actual: " + toType); //$NON-NLS-1$//$NON-NLS-2$
-+//		}
-+//	}
-+//
-+//	/**
-+//	 * Tries to create a converter that can convert from values of type
-+//	 * fromType. Returns <code>null</code> if no converter could be created.
-+//	 * Either toType or modelDescription can be <code>null</code>, but not
-+//	 * both.
-+//	 *
-+//	 * @param fromType
-+//	 * @param toType
-+//	 * @return an IConverter, or <code>null</code> if unsuccessful
-+//	 */
-+//	protected IConverter createConverter(Object fromType, Object toType) {
-+//		if (!(fromType instanceof Class) || !(toType instanceof Class)) {
-+//			return new DefaultConverter(fromType, toType);
-+//		}
-+//		Class toClass = (Class) toType;
-+//		Class originalToClass = toClass;
-+//		if (toClass.isPrimitive()) {
-+//			toClass = autoboxed(toClass);
-+//		}
-+//		Class fromClass = (Class) fromType;
-+//		Class originalFromClass = fromClass;
-+//		if (fromClass.isPrimitive()) {
-+//			fromClass = autoboxed(fromClass);
-+//		}
-+//		if (!((Class) toType).isPrimitive()
-+//				&& toClass.isAssignableFrom(fromClass)) {
-+//			return new IdentityConverter(originalFromClass, originalToClass);
-+//		}
-+//		if (((Class) fromType).isPrimitive() && ((Class) toType).isPrimitive()
-+//				&& fromType.equals(toType)) {
-+//			return new IdentityConverter(originalFromClass, originalToClass);
-+//		}
-+//		Map converterMap = getConverterMap();
-+//		Class[] supertypeHierarchyFlattened = ClassLookupSupport
-+//				.getTypeHierarchyFlattened(fromClass);
-+//		for (int i = 0; i < supertypeHierarchyFlattened.length; i++) {
-+//			Class currentFromClass = supertypeHierarchyFlattened[i];
-+//			if (currentFromClass == toType) {
-+//				// converting to toType is just a widening
-+//				return new IdentityConverter(fromClass, toClass);
-+//			}
-+//			Pair key = new Pair(getKeyForClass(fromType, currentFromClass),
-+//					getKeyForClass(toType, toClass));
-+//			Object converterOrClassname = converterMap.get(key);
-+//			if (converterOrClassname instanceof IConverter) {
-+//				return (IConverter) converterOrClassname;
-+//			} else if (converterOrClassname instanceof String) {
-+//				String classname = (String) converterOrClassname;
-+//				Class converterClass;
-+//				try {
-+//					converterClass = Class.forName(classname);
-+//					IConverter result = (IConverter) converterClass
-+//							.newInstance();
-+//					converterMap.put(key, result);
-+//					return result;
-+//				} catch (Exception e) {
-+//					Policy
-+//							.getLog()
-+//							.log(
-+//									new Status(
-+//											IStatus.ERROR,
-+//											Policy.JFACE_DATABINDING,
-+//											0,
-+//											"Error while instantiating default converter", e)); //$NON-NLS-1$
-+//				}
-+//			}
-+//		}
-+//		// Since we found no converter yet, try a "downcast" converter;
-+//		// the IdentityConverter will automatically check the actual types at
-+//		// runtime.
-+//		if (fromClass.isAssignableFrom(toClass)) {
-+//			return new IdentityConverter(originalFromClass, originalToClass);
-+//		}
-+//		return new DefaultConverter(fromType, toType);
-+//	}
-+//
 +//	private static Map getConverterMap() {
 +//		// using string-based lookup avoids loading of too many classes
 +//		if (converterMap == null) {
@@ -1356,36 +1296,6 @@ diff -u -r1.9 UpdateStrategy.java
 +//		}
 +//		return null;
 +//	}
-+//
-+//	/*
-+//	 * Default converter implementation, does not perform any conversion.
-+//	 */
-+//	protected static final class DefaultConverter implements IConverter {
-+//
-+//		private final Object toType;
-+//
-+//		private final Object fromType;
-+//
-+//		/**
-+//		 * @param fromType
-+//		 * @param toType
-+//		 */
-+//		DefaultConverter(Object fromType, Object toType) {
-+//			this.toType = toType;
-+//			this.fromType = fromType;
-+//		}
-+//
-+//		public Object convert(Object fromObject) {
-+//			return fromObject;
-+//		}
-+//
-+//		public Object getFromType() {
-+//			return fromType;
-+//		}
-+//
-+//		public Object getToType() {
-+//			return toType;
-+//		}
-+//	}
  
- }
+ 	/*
+ 	 * Default converter implementation, does not perform any conversion.
