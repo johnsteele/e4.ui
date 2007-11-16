@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="GWT_USER"/>
+	<classpathentry kind="var" path="GWT/gwt-user.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
