@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.eclipse.ui.internal.js.JavascriptFactory:/js/sample_view.js"
+            id="org.eclipse.ui.js.view1"
+            name="JavaScript View">
+      </view>
+   </extension>
+
+</plugin>
