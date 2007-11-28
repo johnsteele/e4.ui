@@ -1,4 +1,4 @@
-package org.eclipse.ui.internal.js;
+package org.eclipse.ui.internal.examples.di.js;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.js.SWTFactory;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tweaklets.dependencyinjection.DIFactory;
 import org.mozilla.javascript.Context;
@@ -54,12 +53,7 @@ public class JavascriptFactory extends DIFactory implements
 			while ((element = array.get(i++, array)) != Scriptable.NOT_FOUND) {
 				final String typeName = Context.toString(element);
 				Class c = bundle.loadClass(typeName);
-				Object argument;
-				if (c == SWTFactory.class) {
-					argument = new SWTFactory();
-				} else {
-					argument = services.getService(c);
-				}
+				Object argument = services.getService(c);
 				arguments.add(argument);
 			}
 

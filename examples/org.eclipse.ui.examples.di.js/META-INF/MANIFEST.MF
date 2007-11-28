@@ -10,5 +10,4 @@ Require-Bundle: org.mozilla.rhino,
  org.eclipse.equinox.common,
  org.eclipse.core.runtime,
  org.eclipse.ui.tweaklets.dependencyinjection;bundle-version="1.0.0"
-Export-Package: org.eclipse.ui.internal.js,
- org.eclipse.ui.js
+Export-Package: org.eclipse.ui.internal.examples.di.js

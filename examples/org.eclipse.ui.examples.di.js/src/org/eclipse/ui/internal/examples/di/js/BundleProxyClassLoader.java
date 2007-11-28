@@ -1,4 +1,4 @@
-package org.eclipse.ui.internal.js;
+package org.eclipse.ui.internal.examples.di.js;
 
 import java.io.IOException;
 import java.net.URL;

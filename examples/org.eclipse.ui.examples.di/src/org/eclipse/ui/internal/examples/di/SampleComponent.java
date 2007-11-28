@@ -1,4 +1,4 @@
-package org.eclipse.ui.examples.di.internal;
+package org.eclipse.ui.internal.examples.di;
 
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;

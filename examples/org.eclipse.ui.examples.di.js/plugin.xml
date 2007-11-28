@@ -4,10 +4,20 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="org.eclipse.ui.internal.js.JavascriptFactory:/js/sample_view.js"
+            class="org.eclipse.ui.internal.examples.di.js.JavascriptFactory:/js/sample_view.js"
             id="org.eclipse.ui.js.view1"
-            name="JavaScript View">
+            name="Sample DI JS View">
       </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.ui.internal.examples.di.js.JavascriptFactory:/js/sample_view.js"
+            default="false"
+            extensions="jssample"
+            id="org.eclipse.ui.examples.di.js.editor2"
+            name="Sample DI JS Editor">
+      </editor>
    </extension>
 
 </plugin>

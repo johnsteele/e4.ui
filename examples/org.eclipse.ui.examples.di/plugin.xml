@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="org.eclipse.ui.tweaklets.dependencyinjection.CIFactory:org.eclipse.ui.examples.di.internal.SampleComponent"
+            class="org.eclipse.ui.tweaklets.dependencyinjection.CIFactory:org.eclipse.ui.internal.examples.di.SampleComponent"
             id="org.eclipse.ui.examples.di.view1"
             name="Sample DI View">
       </view>
@@ -12,9 +12,9 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="org.eclipse.ui.tweaklets.dependencyinjection.CIFactory:org.eclipse.ui.examples.di.internal.SampleComponent"
+            class="org.eclipse.ui.tweaklets.dependencyinjection.CIFactory:org.eclipse.ui.internal.examples.di.SampleComponent"
             default="false"
-            extensions=".sample"
+            extensions="sample"
             id="org.eclipse.ui.examples.di.editor1"
             name="Sample DI Editor">
       </editor>
