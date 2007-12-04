@@ -48,15 +48,12 @@
 		<patch patchfile="patches/BindingException.patch" originalfile="build/src/org/eclipse/core/databinding/BindingException.java" />
 
 		<patch patchfile="patches/Realm.patch" originalfile="build/src/org/eclipse/core/databinding/observable/Realm.java" />
+		<patch patchfile="patches/StalenessObservableValue.patch" originalfile="build/src/org/eclipse/core/databinding/observable/StalenessObservableValue.java" />
 
 		<patch patchfile="patches/ValueChangeEvent.patch" originalfile="build/src/org/eclipse/core/databinding/observable/value/ValueChangeEvent.java" />
 		<patch patchfile="patches/ValueChangingEvent.patch" originalfile="build/src/org/eclipse/core/databinding/observable/value/ValueChangingEvent.java" />
 
-
 		<patch patchfile="patches/BindingMessages.patch" originalfile="build/src/org/eclipse/core/internal/databinding/BindingMessages.java" />
-		<patch patchfile="patches/BindingException.patch" originalfile="build/src/org/eclipse/core/internal/databinding/BindingException.java" />
-
-
 
 		<!-- Replace the items through special implementations for GWT -->
 
@@ -96,4 +93,17 @@
 		</jar>
 	</target>
 
+	<target name="package">
+		<mkdir dir="dist" />
+		<javac srcdir="build/src" destdir="build/bin" source="1.4" target="1.4" classpath="../org.eclipse.equinox.common.gwt/dist/org.eclipse.equinox.common.jar:/Users/tomson/gwt-builds/gwt-1.5/gwt-mac-0.0.0/gwt-user.jar">
+		</javac>
+		<jar destfile="dist/org.eclipse.core.databinding.jar">
+			<fileset dir="build/src">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="build/bin">
+				<include name="**/*" />
+			</fileset>
+		</jar>
+	</target>
 </project>
