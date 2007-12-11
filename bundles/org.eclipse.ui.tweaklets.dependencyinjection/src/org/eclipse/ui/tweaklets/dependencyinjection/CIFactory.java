@@ -186,7 +186,7 @@ public class CIFactory extends DIFactory implements IExecutableExtension {
 
 			return targetConstructor.newInstance(params);
 		} catch (Exception e) {
-			throw new RuntimeException();
+			throw new RuntimeException(e);
 		}
 	}
 
