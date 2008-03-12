@@ -43,17 +43,18 @@
 		<delete file="build/src/org/eclipse/core/internal/databinding/ClassLookupSupport.java" />
 
 		<patch patchfile="patches/UpdateValueStrategy.patch" originalfile="build/src/org/eclipse/core/databinding/UpdateValueStrategy.java" />
+		<patch patchfile="patches/UpdateSetStrategy.patch" originalfile="build/src/org/eclipse/core/databinding/UpdateSetStrategy.java" />
 		<patch patchfile="patches/UpdateListStrategy.patch" originalfile="build/src/org/eclipse/core/databinding/UpdateListStrategy.java" />
 		<patch patchfile="patches/UpdateStrategy.patch" originalfile="build/src/org/eclipse/core/databinding/UpdateStrategy.java" />
 		<patch patchfile="patches/BindingException.patch" originalfile="build/src/org/eclipse/core/databinding/BindingException.java" />
 
 		<patch patchfile="patches/Realm.patch" originalfile="build/src/org/eclipse/core/databinding/observable/Realm.java" />
-		<patch patchfile="patches/StalenessObservableValue.patch" originalfile="build/src/org/eclipse/core/databinding/observable/StalenessObservableValue.java" />
 
 		<patch patchfile="patches/ValueChangeEvent.patch" originalfile="build/src/org/eclipse/core/databinding/observable/value/ValueChangeEvent.java" />
 		<patch patchfile="patches/ValueChangingEvent.patch" originalfile="build/src/org/eclipse/core/databinding/observable/value/ValueChangingEvent.java" />
 
 		<patch patchfile="patches/BindingMessages.patch" originalfile="build/src/org/eclipse/core/internal/databinding/BindingMessages.java" />
+		<patch patchfile="patches/StalenessObservableValue.patch" originalfile="build/src/org/eclipse/core/internal/databinding/observable/StalenessObservableValue.java" />
 
 		<!-- Replace the items through special implementations for GWT -->
 
@@ -76,7 +77,7 @@
 			</fileset>
 		</copy>
 
-		<javac srcdir="build/src" destdir="build/bin" source="1.4" target="1.4" classpath="../org.eclipse.equinox.common.gwt/dist/org.eclipse.equinox.common.jar:/Users/tomson/gwt-builds/gwt-1.5/gwt-mac-0.0.0/gwt-user.jar">
+		<javac srcdir="build/src" destdir="build/bin" source="1.4" target="1.4" classpath="../org.eclipse.equinox.common.gwt/dist/org.eclipse.equinox.common.jar:../org.ufacekit.libs/gwt-common-deploy/gwt-user.jar">
 		</javac>
 
 	</target>

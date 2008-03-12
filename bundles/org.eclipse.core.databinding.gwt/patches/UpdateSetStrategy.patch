@@ -1,0 +1,50 @@
+### Eclipse Workspace Patch 1.0
+#P org.eclipse.core.databinding
+Index: src/org/eclipse/core/databinding/UpdateSetStrategy.java
+===================================================================
+RCS file: /cvsroot/eclipse/org.eclipse.core.databinding/src/org/eclipse/core/databinding/UpdateSetStrategy.java,v
+retrieving revision 1.1
+diff -u -r1.1 UpdateSetStrategy.java
+--- src/org/eclipse/core/databinding/UpdateSetStrategy.java	5 Mar 2008 18:33:57 -0000	1.1
++++ src/org/eclipse/core/databinding/UpdateSetStrategy.java	12 Mar 2008 23:11:47 -0000
+@@ -152,23 +152,23 @@
+ 	 */
+ 	protected void fillDefaults(IObservableSet source,
+ 			IObservableSet destination) {
+-		Object sourceType = source.getElementType();
+-		Object destinationType = destination.getElementType();
+-		if (provideDefaults && sourceType != null && destinationType != null) {
+-			if (converter == null) {
+-				setConverter(createConverter(sourceType, destinationType));
+-			}
+-		}
+-		if (converter != null) {
+-			if (sourceType != null) {
+-				checkAssignable(converter.getFromType(), sourceType,
+-						"converter does not convert from type " + sourceType); //$NON-NLS-1$
+-			}
+-			if (destinationType != null) {
+-				checkAssignable(converter.getToType(), destinationType,
+-						"converter does not convert to type " + destinationType); //$NON-NLS-1$
+-			}
+-		}
++//		Object sourceType = source.getElementType();
++//		Object destinationType = destination.getElementType();
++//		if (provideDefaults && sourceType != null && destinationType != null) {
++//			if (converter == null) {
++//				setConverter(createConverter(sourceType, destinationType));
++//			}
++//		}
++//		if (converter != null) {
++//			if (sourceType != null) {
++//				checkAssignable(converter.getFromType(), sourceType,
++//						"converter does not convert from type " + sourceType); //$NON-NLS-1$
++//			}
++//			if (destinationType != null) {
++//				checkAssignable(converter.getToType(), destinationType,
++//						"converter does not convert to type " + destinationType); //$NON-NLS-1$
++//			}
++//		}
+ 	}
+ 
+ 	/**
