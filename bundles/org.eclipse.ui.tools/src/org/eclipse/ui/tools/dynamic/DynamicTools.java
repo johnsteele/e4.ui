@@ -90,4 +90,18 @@ public class DynamicTools {
 		target.uninstall();
 		refreshPackages(null);
 	}
+
+	/**
+	 * @param bundleName
+	 * @throws BundleException 
+	 */
+	public static void uninstallBundle(String bundleName) throws BundleException {
+		BundleContext context = Activator.getDefault().getContext();
+		Bundle [] bundles = context.getBundles();
+		for (int i = 0; i < bundles.length; i++) {
+			if (bundleName.equals(bundles[i].getSymbolicName()))
+					uninstallBundle(bundles[i]);
+		}
+		
+	}
 }

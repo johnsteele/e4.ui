@@ -74,6 +74,12 @@
                optional="false">
          </commandParameter>
       </command>
+      <command
+            defaultHandler="org.eclipse.ui.tools.handlers.ToggleDynamicProjectNatureHandler"
+            description="%toggleNatureCommand.desc"
+            id="org.eclipse.ui.tools.toggleDynamicProjectNature"
+            name="%toggleNatureCommand.name">
+      </command>
    </extension>
 
    <!-- keybindings, anyone? We use a prefix of M1+5 for all UI tools -->
@@ -122,6 +128,9 @@
                class="org.eclipse.ui.tools.dynamic.BundleListItem"
                id="org.eclipse.ui.tools.dynamic.bundles">
          </dynamic>
+         <separator
+               name="org.eclipse.ui.tools.separator1">
+         </separator>
       </menuContribution>
       
       <menuContribution
@@ -171,6 +180,98 @@
             </command>
          </menu>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any">
+            
+         <command
+               commandId="org.eclipse.ui.tools.toggleDynamicProjectNature"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.ui.tools.oneProjectRef">
+               </reference>
+              
+               
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:project">
+            <command
+               commandId="org.eclipse.ui.tools.toggleDynamicProjectNature"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.ui.tools.oneProjectRef">
+               </reference>
+            </visibleWhen>
+            </command>
+      </menuContribution>
    </extension>
-
+   <extension
+         id="dynamicNature"
+         name="%dynamicNature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.ui.tools.builder.DynamicNature">
+         </run>
+      </runtime>
+      <builder
+            id="org.eclipse.ui.tools.dynamicBuilder">
+      </builder>
+   </extension>
+   <extension
+         id="dynamicBuilder"
+         name="%dynamicBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.eclipse.ui.tools.builder.DynamicBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.ui.tools.oneProjectRef">
+             <and>
+                  <count
+                        value="1">
+                  </count>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                        <instanceof
+                              value="org.eclipse.core.resources.IProject">
+                        </instanceof>
+                     </adapt>
+                  </iterate>
+               </and>
+      </definition>
+   </extension>
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            adaptable="true"
+            icon="icons/obj16/dynamic.gif"
+            id="org.eclipse.ui.tools.dynamicProjectDecorator"
+            label="%dynamicDecorator.name"
+            lightweight="true"
+            location="TOP_RIGHT"
+            state="true">
+         <enablement>
+               <objectState
+                     name="nature"
+                     value="org.eclipse.ui.tools.dynamicNature">
+               </objectState>
+            
+         </enablement>
+      </decorator>
+   </extension>
 </plugin>
