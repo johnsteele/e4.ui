@@ -93,7 +93,11 @@ public class DIViewPart extends ViewPart implements IAdaptable {
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) getSite()
 				.getService(IServiceLocatorCreator.class);
 		IServiceLocator delegatingLocator = slc.createServiceLocator(getSite(),
-				delegatingFactory);
+				delegatingFactory, new IDisposable(){
+			public void dispose() {
+				getSite().getPage().hideView(DIViewPart.this);
+			}
+		});
 		
 		try {
 			implementation = factory.createObject(delegatingLocator);

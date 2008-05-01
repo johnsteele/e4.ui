@@ -105,7 +105,11 @@ public class DIEditorPart extends EditorPart implements IAdaptable {
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) getSite()
 				.getService(IServiceLocatorCreator.class);
 		IServiceLocator delegatingLocator = slc.createServiceLocator(getSite(),
-				delegatingFactory);
+				delegatingFactory, new IDisposable(){
+			public void dispose() {
+				getSite().getPage().closeEditor(DIEditorPart.this, true);
+			}
+		});
 
 		try {
 			implementation = factory.createObject(delegatingLocator);
