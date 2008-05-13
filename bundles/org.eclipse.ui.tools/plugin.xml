@@ -274,4 +274,19 @@
          </enablement>
       </decorator>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.ui.tools.category"
+            class="org.eclipse.ui.tools.SelectionView"
+            icon="icons/obj16/selectionview.gif"
+            id="org.eclipse.ui.tools.selectionView"
+            name="%views.selection"
+            restorable="true">
+      </view>
+      <category
+            id="org.eclipse.ui.tools.category"
+            name="%views.category">
+      </category>
+   </extension>
 </plugin>

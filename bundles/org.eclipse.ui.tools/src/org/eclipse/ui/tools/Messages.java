@@ -20,6 +20,9 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.tools.messages"; //$NON-NLS-1$
 	public static String loadlUnload_selection_location;
+	public static String SelectionView_adaptableHeader;
+	public static String SelectionView_classHeader;
+	public static String SelectionView_toStringHeader;
 	public static String showClass_info_title;
 	public static String showClass_no_selection;
 	public static String showContexts_button;
