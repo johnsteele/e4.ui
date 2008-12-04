@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<fragment>
+   <extension
+         point="org.eclipse.e4.workbench.legacy">
+      <hook
+            class="org.eclipse.e4.compatibility.LegacyHook">
+      </hook>
+   </extension>
+   <extension
+         point="org.eclipse.e4.workbench.partfactory">
+      <factory
+            class="org.eclipse.e4.extensions.LegacyViewFactory">
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.e4.compatibility.TestPerspectiveFactory"
+            id="org.eclipse.e4.ui.workbench.fragment.testPerspective"
+            name="%perspective.name.f0">
+      </perspective>
+   </extension>
+
+</fragment>
