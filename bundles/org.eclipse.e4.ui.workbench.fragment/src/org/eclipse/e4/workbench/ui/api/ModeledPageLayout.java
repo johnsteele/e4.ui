@@ -99,8 +99,12 @@ public class ModeledPageLayout implements IPageLayout {
 		return null;
 	}
 
-	public String getEditorArea() {
+	public static String internalGetEditorArea() {
 		return "org.eclipse.ui.EditorArea"; //$NON-NLS-1$
+	}
+	
+	public String getEditorArea() {
+		return internalGetEditorArea();
 	}
 
 	public int getEditorReuseThreshold() {
@@ -290,7 +294,7 @@ public class ModeledPageLayout implements IPageLayout {
 		insert(toInsert, relTo, swtSide, pct);
 	}
 	
-	private Part findElementById(Part part, String id) {
+	private static Part findElementById(Part part, String id) {
 		if (id == null || id.length() == 0)
 			return null;
 		
@@ -311,7 +315,7 @@ public class ModeledPageLayout implements IPageLayout {
 		return null;
 	}
 	
-	public Part findPart(Part toSearch, String id) {
+	public static Part findPart(Part toSearch, String id) {
 		Part found = findElementById(toSearch, id);
 		if (found instanceof Part)
 			return (Part) found;

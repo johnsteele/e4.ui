@@ -82,6 +82,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenResourceAction;
 import org.eclipse.ui.handlers.CollapseAllHandler;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -782,7 +783,10 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 	 */
 	protected void handleOpen(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
-			getActionGroup().runDefaultAction((IStructuredSelection)selection);
+			OpenFileAction ofa = new OpenFileAction(getSite().getPage());
+			ofa.selectionChanged((IStructuredSelection) selection);
+			ofa.run();
+			//getActionGroup().runDefaultAction((IStructuredSelection)selection);
 		}
     }
 
@@ -1418,7 +1422,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      */
     protected void updateStatusLine(IStructuredSelection selection) {
         String msg = getStatusLineMessage(selection);
-        getViewSite().getActionBars().getStatusLineManager().setMessage(msg);
+        //getViewSite().getActionBars().getStatusLineManager().setMessage(msg);
     }
 
     /**

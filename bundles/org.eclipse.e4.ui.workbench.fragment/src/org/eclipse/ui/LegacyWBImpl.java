@@ -11,6 +11,7 @@
 
 package org.eclipse.ui;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,21 +19,28 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.ui.model.workbench.WorkbenchWindow;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
+import org.eclipse.help.IContext;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.SharedImages;
+import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
@@ -50,6 +58,7 @@ public class LegacyWBImpl implements IWorkbench {
 	private IEditorRegistry editorRegistry;
 	private IExtensionTracker tracker;
 	private IDecoratorManager decoratorManager;
+	private WorkbenchActivitySupport workbenchActivitySupport;
 	
 	private static Map<WorkbenchWindow, LegacyWBWImpl> wbwModel2LegacyImpl = new HashMap<WorkbenchWindow, LegacyWBWImpl>();
 
@@ -110,7 +119,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 */
 	private LegacyWBWImpl getWBWImpl(WorkbenchWindow workbenchWindow) {
 		if(!wbwModel2LegacyImpl.containsKey(workbenchWindow)) {
-			LegacyWBWImpl impl = new LegacyWBWImpl(e4Workbench, workbenchWindow);
+			LegacyWBWImpl impl = new LegacyWBWImpl(e4Workbench, this, workbenchWindow);
 			wbwModel2LegacyImpl.put(workbenchWindow, impl);
 		}
 			
@@ -121,8 +130,12 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getActivitySupport()
 	 */
 	public IWorkbenchActivitySupport getActivitySupport() {
-		// TODO Auto-generated method stub
-		return null;
+		if (workbenchActivitySupport == null) {
+			workbenchActivitySupport = new WorkbenchActivitySupport();
+			//activityHelper = ActivityPersistanceHelper.getInstance();
+		}
+		
+		return workbenchActivitySupport;
 	}
 
 	/* (non-Javadoc)
@@ -163,8 +176,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getDisplay()
 	 */
 	public Display getDisplay() {
-		// TODO Auto-generated method stub
-		return null;
+		return Display.getCurrent();
 	}
 
 	/* (non-Javadoc)
@@ -207,8 +219,61 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getHelpSystem()
 	 */
 	public IWorkbenchHelpSystem getHelpSystem() {
-		// TODO Auto-generated method stub
-		return null;
+		//HACK!! fake this for now
+		return new IWorkbenchHelpSystem() {
+			public void displayContext(IContext context, int x, int y) {
+			}
+
+			public void displayDynamicHelp() {
+			}
+
+			public void displayHelp() {
+			}
+
+			public void displayHelp(String contextId) {
+			}
+
+			public void displayHelp(IContext context) {
+			}
+
+			public void displayHelpResource(String href) {
+			}
+
+			public void displaySearch() {
+			}
+
+			public boolean hasHelpUI() {
+				return false;
+			}
+
+			public boolean isContextHelpDisplayed() {
+				return false;
+			}
+
+			public URL resolve(String href, boolean documentOnly) {
+				return null;
+			}
+
+			public void search(String expression) {
+			}
+
+			public void setHelp(IAction action, String contextId) {
+				System.out.println("setHelp(IAction)"); //$NON-NLS-1$
+			}
+
+			public void setHelp(Control control, String contextId) {
+				System.out.println("setHelp(Control)"); //$NON-NLS-1$
+			}
+
+			public void setHelp(Menu menu, String contextId) {
+				System.out.println("setHelpMenu)"); //$NON-NLS-1$
+			}
+
+			public void setHelp(MenuItem item, String contextId) {
+				System.out.println("setHelp(MenuItem)"); //$NON-NLS-1$
+			}
+			
+		};
 	}
 
 	/* (non-Javadoc)
@@ -289,8 +354,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getThemeManager()
 	 */
 	public IThemeManager getThemeManager() {
-		// TODO Auto-generated method stub
-		return null;
+		return WorkbenchThemeManager.getInstance();
 	}
 
 	/* (non-Javadoc)

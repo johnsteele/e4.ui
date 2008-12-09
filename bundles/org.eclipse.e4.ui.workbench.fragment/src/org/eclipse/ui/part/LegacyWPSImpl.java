@@ -14,7 +14,11 @@ package org.eclipse.ui.part;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorActionBarContributor;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -25,7 +29,7 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.3
  *
  */
-public class LegacyWPSImpl implements IWorkbenchPartSite {
+public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getId()
@@ -144,6 +148,47 @@ public class LegacyWPSImpl implements IWorkbenchPartSite {
 	public boolean hasService(Class api) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewSite#getActionBars()
+	 */
+	public IActionBars getActionBars() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewSite#getSecondaryId()
+	 */
+	public String getSecondaryId() {
+		return ""; //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorSite#getActionBarContributor()
+	 */
+	public IEditorActionBarContributor getActionBarContributor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorSite#registerContextMenu(org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider, boolean)
+	 */
+	public void registerContextMenu(MenuManager menuManager,
+			ISelectionProvider selectionProvider, boolean includeEditorInput) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorSite#registerContextMenu(java.lang.String, org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider, boolean)
+	 */
+	public void registerContextMenu(String menuId, MenuManager menuManager,
+			ISelectionProvider selectionProvider, boolean includeEditorInput) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

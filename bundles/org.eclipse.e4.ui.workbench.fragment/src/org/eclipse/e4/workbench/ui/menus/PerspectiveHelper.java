@@ -53,7 +53,7 @@ public class PerspectiveHelper {
 //					String closeable = viewExts[j].getAttribute("closeable");
 //					String showTitle = viewExts[j].getAttribute("showTitle");
 					
-					Part relPart = layout.findPart(perspModel, relative);
+					Part relPart = ModeledPageLayout.findPart(perspModel, relative);
 					Stack sm = (Stack) relPart.getParent();
 					ContributedPart viewModel = ModeledPageLayout.createViewModel(id, Boolean.parseBoolean(visible));
 					sm.getChildren().add(viewModel);

@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.ViewPart;
 
 public class LegacyViewFactory extends PartFactory {
@@ -17,8 +18,44 @@ public class LegacyViewFactory extends PartFactory {
 	private IConfigurationElement findViewConfig(String id) {
 		IConfigurationElement[] persps = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_VIEWS);
 		IConfigurationElement viewContribution = ExtensionUtils.findExtension(persps, id);
-		
 		return viewContribution;
+	}
+
+	private IConfigurationElement findEditorConfig(String id) {
+		IConfigurationElement[] editors = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_EDITOR);
+		IConfigurationElement editorContribution = ExtensionUtils.findExtension(editors, id);
+		return editorContribution;
+	}
+	
+	/**
+	 * @param part
+	 * @param editorElement
+	 * @return
+	 */
+	private Control createEditor(ContributedPart<Part<?>> part,
+			IConfigurationElement editorElement) {
+		Composite parent = (Composite) getParentWidget(part);
+
+		//part.setPlugin(viewContribution.getContributor().getName());
+		part.setIconURI(editorElement.getAttribute("icon")); //$NON-NLS-1$
+		part.setName(editorElement.getAttribute("name")); //$NON-NLS-1$
+		EditorPart impl = null;
+		try {
+			impl = (EditorPart) editorElement.createExecutableExtension("class"); //$NON-NLS-1$
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		if (impl == null)
+			return null;
+
+		try {
+			impl.createPartControl(parent);
+			if (parent.getChildren().length > 0)
+				return parent.getChildren()[parent.getChildren().length-1];
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	private Control createView(ContributedPart<Part<?>> part, IConfigurationElement viewContribution) {
@@ -50,64 +87,36 @@ public class LegacyViewFactory extends PartFactory {
 	public Object createWidget(Part<?> part) {
 		if (part instanceof ContributedPart) {
 			ContributedPart cp = (ContributedPart) part;
-			String partId = part.getId();
-			IConfigurationElement viewElement = findViewConfig(partId);
 			
 			// HACK!! relies on legacy views -not- having a URI...
 			String uri = cp.getURI();
-			if (viewElement == null && uri != null && uri.length() > 0)
+			if (uri != null && uri.length() > 0)
 				return null;
+
+			Control newCtrl = null;
+			String partId = part.getId();
 			
-			Composite pc = (Composite) getParentWidget(part);
-			Control newView = null;
+			// if this a view ?
+			IConfigurationElement viewElement = findViewConfig(partId);
 			if (viewElement != null)
-				newView = createView((ContributedPart<Part<?>>) part, viewElement);
-			if (newView == null) {
+				newCtrl = createView((ContributedPart<Part<?>>) part, viewElement);
+			
+			IConfigurationElement editorElement = findEditorConfig(partId);
+			if (editorElement != null)
+				newCtrl = createEditor((ContributedPart<Part<?>>) part, editorElement);
+			if (newCtrl == null) {
+				
+			}
+			if (newCtrl == null) {
+				Composite pc = (Composite) getParentWidget(part);
 				Label lbl = new Label(pc, SWT.BORDER);
 				lbl.setText(part.getId());
-				newView = lbl;
+				newCtrl = lbl;
 			}
 			
-			return newView;
+			return newCtrl;
 		}
 		return null;
 	}
-//
-//	@Override
-//	public Object createWidget(Part<?> part) {
-//		if (!(part instanceof ContributedPart))
-//			return null;
-//		
-//		ContributedPart<?> itemPart = (ContributedPart<?>) part;
-//			
-//		String partId = part.getId();
-//		IConfigurationElement[] persps = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_VIEWS);
-//		IConfigurationElement viewContribution = ExtensionUtils.findExtension(persps, partId);
-//		if (viewContribution == null)
-//			return null;
-//
-//		String bundleId = viewContribution.getContributor().getName();
-//		String iconPath = viewContribution.getAttribute("icon");
-//		//itemPart.setPlugin(viewContribution.getContributor().getName());
-//		
-//		itemPart.setIconURI(viewContribution.getAttribute("icon"));
-//		itemPart.setName(viewContribution.getAttribute("name"));
-//		ViewPart impl = null;
-//		try {
-//			impl = (ViewPart) viewContribution.createExecutableExtension("class");
-//		} catch (CoreException e) {
-//			//e.printStackTrace();
-//		}
-//		if (impl == null)
-//			return null;
-//
-//		try {
-//			impl.createPartControl(parent);
-//			return parent.getChildren()[parent.getChildren().length-1];
-//		} catch (Exception e) {
-//			//e.printStackTrace();
-//		}
-//		return null;
-//	}
 
 }

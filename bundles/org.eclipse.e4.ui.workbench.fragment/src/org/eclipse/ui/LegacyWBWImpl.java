@@ -17,8 +17,14 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.IServiceLocator;
+import org.eclipse.e4.ui.model.application.ApplicationFactory;
+import org.eclipse.e4.ui.model.application.ContributedPart;
+import org.eclipse.e4.ui.model.application.Part;
+import org.eclipse.e4.ui.model.workbench.Perspective;
 import org.eclipse.e4.ui.model.workbench.WorkbenchWindow;
+import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -32,14 +38,17 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	private Workbench e4Workbench;
 	private WorkbenchWindow workbenchWindow;
+	private LegacyWBImpl legacyWbImpl;
 	
 	/**
 	 * @param e4Workbench
+	 * @param legacyWbImpl 
 	 * @param workbenchWindow
 	 */
-	public LegacyWBWImpl(Workbench e4Workbench, WorkbenchWindow workbenchWindow) {
+	public LegacyWBWImpl(Workbench e4Workbench, LegacyWBImpl legacyWbImpl, WorkbenchWindow workbenchWindow) {
 		this.e4Workbench = e4Workbench;
 		this.workbenchWindow = workbenchWindow;
+		this.legacyWbImpl = legacyWbImpl;
 	}
 
 	/* (non-Javadoc)
@@ -101,8 +110,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getWorkbench()
 	 */
 	public IWorkbench getWorkbench() {
-		// TODO Auto-generated method stub
-		return null;
+		return legacyWbImpl;
 	}
 
 	/* (non-Javadoc)
@@ -467,8 +475,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getWorkbenchWindow()
 	 */
 	public IWorkbenchWindow getWorkbenchWindow() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	/* (non-Javadoc)
@@ -565,7 +572,21 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 */
 	public IEditorPart openEditor(IEditorInput input, String editorId,
 			boolean activate) throws PartInitException {
-		// TODO Auto-generated method stub
+		// Create the model 'part' in the UI 
+		Perspective<?> curPersp = workbenchWindow.getActiveChild();
+		EList<?> kids = curPersp.getChildren();
+		Part ea = ModeledPageLayout.findPart(curPersp, ModeledPageLayout.internalGetEditorArea());
+		
+		ContributedPart<Part<?>> editorPart = ApplicationFactory.eINSTANCE.createContributedPart();
+		editorPart.setId(editorId);
+		editorPart.setName(input.getName());
+		ea.getChildren().add(editorPart);
+		ea.setActiveChild(editorPart);
+		
+		System.out.println(kids.toString() + ea.toString());
+//		ref = getEditorManager().openEditor(editorID, input, true,
+//				editorState);
+//
 		return null;
 	}
 
