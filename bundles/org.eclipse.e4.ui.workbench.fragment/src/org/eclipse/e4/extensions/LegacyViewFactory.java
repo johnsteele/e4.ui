@@ -9,8 +9,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.LegacyWBImpl;
+import org.eclipse.ui.LegacyWBWImpl;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.part.LegacyWPSImpl;
 import org.eclipse.ui.part.ViewPart;
 
 public class LegacyViewFactory extends PartFactory {
@@ -49,6 +53,11 @@ public class LegacyViewFactory extends PartFactory {
 			return null;
 
 		try {
+			// Assign a 'site' for the newly instantiated part
+			LegacyWBImpl wb = (LegacyWBImpl) PlatformUI.getWorkbench();
+			LegacyWPSImpl site = new LegacyWPSImpl(wb.getE4Workbench(), part, impl);
+			impl.init(site, LegacyWBWImpl.hackInput);  // HACK!! needs an editorInput
+
 			impl.createPartControl(parent);
 			if (parent.getChildren().length > 0)
 				return parent.getChildren()[parent.getChildren().length-1];
@@ -74,7 +83,14 @@ public class LegacyViewFactory extends PartFactory {
 			return null;
 
 		try {
+			// Assign a 'site' for the newly instantiated part
+			LegacyWBImpl wb = (LegacyWBImpl) PlatformUI.getWorkbench();
+			LegacyWPSImpl site = new LegacyWPSImpl(wb.getE4Workbench(), part, impl);
+			impl.init(site, null);
+
 			impl.createPartControl(parent);
+			
+			// HACK!! presumes it's the -last- child of the parent
 			if (parent.getChildren().length > 0)
 				return parent.getChildren()[parent.getChildren().length-1];
 		} catch (Exception e) {

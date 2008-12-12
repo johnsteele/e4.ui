@@ -15,6 +15,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.IServiceLocator;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
@@ -26,9 +28,11 @@ import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.WWinPartService;
 
 /**
  * @since 3.3
@@ -39,6 +43,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	private Workbench e4Workbench;
 	private WorkbenchWindow workbenchWindow;
 	private LegacyWBImpl legacyWbImpl;
+	
+	private WWinPartService partService = new WWinPartService(this);
+	public static IEditorInput hackInput;
 	
 	/**
 	 * @param e4Workbench
@@ -86,8 +93,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getPartService()
 	 */
 	public IPartService getPartService() {
-		// TODO Auto-generated method stub
-		return null;
+		return partService;
 	}
 
 	/* (non-Javadoc)
@@ -144,8 +150,8 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	public void run(boolean fork, boolean cancelable,
 			IRunnableWithProgress runnable) throws InvocationTargetException,
 			InterruptedException {
-		// TODO Auto-generated method stub
-
+		IProgressMonitor pm = new NullProgressMonitor();
+		ModalContext.run(runnable, fork, pm, e4Workbench.getDisplay());
 	}
 
 	/* (non-Javadoc)
@@ -581,8 +587,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		editorPart.setId(editorId);
 		editorPart.setName(input.getName());
 		ea.getChildren().add(editorPart);
+		hackInput = input;
 		ea.setActiveChild(editorPart);
-		
+		hackInput = null;
 		System.out.println(kids.toString() + ea.toString());
 //		ref = getEditorManager().openEditor(editorID, input, true,
 //				editorState);

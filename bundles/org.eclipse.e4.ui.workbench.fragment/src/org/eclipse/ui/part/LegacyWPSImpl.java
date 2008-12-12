@@ -11,8 +11,20 @@
 
 package org.eclipse.ui.part;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.e4.ui.model.application.ContributedPart;
+import org.eclipse.e4.ui.model.application.Part;
+import org.eclipse.e4.workbench.ui.internal.Workbench;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManagerOverrides;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -24,6 +36,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * @since 3.3
@@ -31,28 +44,73 @@ import org.eclipse.ui.PlatformUI;
  */
 public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite {
 
+	private ContributedPart<Part<?>> part;
+	private Workbench e4Workbench;
+	private WorkbenchPart implementation;
+	
+	private IKeyBindingService kbService;
+	private IActionBars actionBars;
+
+	/**
+	 * @param e4Workbench
+	 * @param part
+	 * @param impl 
+	 */
+	public LegacyWPSImpl(Workbench e4Workbench, ContributedPart<Part<?>> part, WorkbenchPart impl) {
+		this.e4Workbench = e4Workbench;
+		
+		// HACK! need to reference e4Workbench
+		if (this.e4Workbench != null) {
+			this.part = part;
+			this.implementation = impl;
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getId()
 	 */
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return part.getId();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getKeyBindingService()
 	 */
 	public IKeyBindingService getKeyBindingService() {
-		// TODO Auto-generated method stub
-		return null;
+//		if (kbService == null)
+//			kbService = new KeyBindingService(this);
+		if (kbService == null)
+			kbService = new IKeyBindingService() {
+
+				public String[] getScopes() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				public void registerAction(IAction action) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				public void setScopes(String[] scopes) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				public void unregisterAction(IAction action) {
+					// TODO Auto-generated method stub
+					
+				}
+			
+		};
+		return kbService;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getPart()
 	 */
 	public IWorkbenchPart getPart() {
-		// TODO Auto-generated method stub
-		return null;
+		return implementation;
 	}
 
 	/* (non-Javadoc)
@@ -107,8 +165,7 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 	 * @see org.eclipse.ui.IWorkbenchSite#getShell()
 	 */
 	public Shell getShell() {
-		// TODO Auto-generated method stub
-		return null;
+		return e4Workbench.getShell();
 	}
 
 	/* (non-Javadoc)
@@ -154,8 +211,199 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 	 * @see org.eclipse.ui.IViewSite#getActionBars()
 	 */
 	public IActionBars getActionBars() {
-		// TODO Auto-generated method stub
-		return null;
+		if (actionBars == null) {
+		actionBars = new IActionBars() {
+			private IStatusLineManager slManager;
+
+			public void clearGlobalActionHandlers() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public IAction getGlobalActionHandler(String actionId) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			public IMenuManager getMenuManager() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			public IServiceLocator getServiceLocator() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			public IStatusLineManager getStatusLineManager() {
+				if (slManager == null) {
+					slManager = new IStatusLineManager() {
+
+						public IProgressMonitor getProgressMonitor() {
+							return new NullProgressMonitor();
+						}
+
+						public boolean isCancelEnabled() {
+							// TODO Auto-generated method stub
+							return false;
+						}
+
+						public void setCancelEnabled(boolean enabled) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public void setErrorMessage(String message) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public void setErrorMessage(Image image, String message) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public void setMessage(String message) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public void setMessage(Image image, String message) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public void add(IAction action) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public void add(IContributionItem item) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public void appendToGroup(String groupName,
+								IAction action) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public void appendToGroup(String groupName,
+								IContributionItem item) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public IContributionItem find(String id) {
+							// TODO Auto-generated method stub
+							return null;
+						}
+
+						public IContributionItem[] getItems() {
+							// TODO Auto-generated method stub
+							return null;
+						}
+
+						public IContributionManagerOverrides getOverrides() {
+							// TODO Auto-generated method stub
+							return null;
+						}
+
+						public void insertAfter(String id, IAction action) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public void insertAfter(String id,
+								IContributionItem item) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public void insertBefore(String id, IAction action) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public void insertBefore(String id,
+								IContributionItem item) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public boolean isDirty() {
+							// TODO Auto-generated method stub
+							return false;
+						}
+
+						public boolean isEmpty() {
+							// TODO Auto-generated method stub
+							return false;
+						}
+
+						public void markDirty() {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public void prependToGroup(String groupName,
+								IAction action) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public void prependToGroup(String groupName,
+								IContributionItem item) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public IContributionItem remove(String id) {
+							// TODO Auto-generated method stub
+							return null;
+						}
+
+						public IContributionItem remove(IContributionItem item) {
+							// TODO Auto-generated method stub
+							return null;
+						}
+
+						public void removeAll() {
+							// TODO Auto-generated method stub
+							
+						}
+
+						public void update(boolean force) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+					};
+				}
+				
+				return slManager;
+			}
+
+			public IToolBarManager getToolBarManager() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			public void setGlobalActionHandler(String actionId, IAction handler) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void updateActionBars() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		};
+		}
+
+		return actionBars;
 	}
 
 	/* (non-Javadoc)

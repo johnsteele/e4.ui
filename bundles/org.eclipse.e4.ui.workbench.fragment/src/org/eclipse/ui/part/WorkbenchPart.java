@@ -175,9 +175,6 @@ public abstract class WorkbenchPart extends EventManager implements
      * Method declared on IWorkbenchPart.
      */
     public IWorkbenchPartSite getSite() {
-    	if (partSite == null)
-    		partSite = new LegacyWPSImpl();
-    	
     	return partSite;
     }
 
@@ -276,7 +273,7 @@ public abstract class WorkbenchPart extends EventManager implements
      */
     protected void setSite(IWorkbenchPartSite site) {
         checkSite(site);
-        //this.partSite = site;
+        this.partSite = site;
     }
 
     /**

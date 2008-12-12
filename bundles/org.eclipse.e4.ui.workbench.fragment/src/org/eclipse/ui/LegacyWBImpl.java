@@ -15,7 +15,16 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.ICompositeOperation;
+import org.eclipse.core.commands.operations.IOperationApprover;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IOperationHistoryListener;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.ui.model.workbench.WorkbenchWindow;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
@@ -54,11 +63,17 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  */
 public class LegacyWBImpl implements IWorkbench {
 	private Workbench e4Workbench;
+	public Workbench getE4Workbench() {
+		return e4Workbench;
+	}
+
 	private ISharedImages sharedImages;
 	private IEditorRegistry editorRegistry;
 	private IExtensionTracker tracker;
 	private IDecoratorManager decoratorManager;
 	private WorkbenchActivitySupport workbenchActivitySupport;
+	private IWorkbenchOperationSupport operationSupport;
+	protected IOperationHistory operationHistory;
 	
 	private static Map<WorkbenchWindow, LegacyWBWImpl> wbwModel2LegacyImpl = new HashMap<WorkbenchWindow, LegacyWBWImpl>();
 
@@ -304,8 +319,171 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getOperationSupport()
 	 */
 	public IWorkbenchOperationSupport getOperationSupport() {
-		// TODO Auto-generated method stub
-		return null;
+		if (operationSupport == null) {
+			operationSupport = new IWorkbenchOperationSupport() {
+	
+				public IOperationHistory getOperationHistory() {
+					if (operationHistory == null) {
+						operationHistory = new IOperationHistory() {
+
+							public void add(IUndoableOperation operation) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							public void addOperationApprover(
+									IOperationApprover approver) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							public void addOperationHistoryListener(
+									IOperationHistoryListener listener) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							public boolean canRedo(IUndoContext context) {
+								// TODO Auto-generated method stub
+								return false;
+							}
+
+							public boolean canUndo(IUndoContext context) {
+								// TODO Auto-generated method stub
+								return false;
+							}
+
+							public void closeOperation(boolean operationOk,
+									boolean addToHistory, int mode) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							public void dispose(IUndoContext context,
+									boolean flushUndo, boolean flushRedo,
+									boolean flushContext) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							public IStatus execute(
+									IUndoableOperation operation,
+									IProgressMonitor monitor, IAdaptable info)
+									throws ExecutionException {
+								// TODO Auto-generated method stub
+								return null;
+							}
+
+							public int getLimit(IUndoContext context) {
+								// TODO Auto-generated method stub
+								return 0;
+							}
+
+							public IUndoableOperation[] getRedoHistory(
+									IUndoContext context) {
+								// TODO Auto-generated method stub
+								return null;
+							}
+
+							public IUndoableOperation getRedoOperation(
+									IUndoContext context) {
+								// TODO Auto-generated method stub
+								return null;
+							}
+
+							public IUndoableOperation[] getUndoHistory(
+									IUndoContext context) {
+								// TODO Auto-generated method stub
+								return null;
+							}
+
+							public IUndoableOperation getUndoOperation(
+									IUndoContext context) {
+								// TODO Auto-generated method stub
+								return null;
+							}
+
+							public void openOperation(
+									ICompositeOperation operation, int mode) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							public void operationChanged(
+									IUndoableOperation operation) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							public IStatus redo(IUndoContext context,
+									IProgressMonitor monitor, IAdaptable info)
+									throws ExecutionException {
+								// TODO Auto-generated method stub
+								return null;
+							}
+
+							public IStatus redoOperation(
+									IUndoableOperation operation,
+									IProgressMonitor monitor, IAdaptable info)
+									throws ExecutionException {
+								// TODO Auto-generated method stub
+								return null;
+							}
+
+							public void removeOperationApprover(
+									IOperationApprover approver) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							public void removeOperationHistoryListener(
+									IOperationHistoryListener listener) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							public void replaceOperation(
+									IUndoableOperation operation,
+									IUndoableOperation[] replacements) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							public void setLimit(IUndoContext context, int limit) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							public IStatus undo(IUndoContext context,
+									IProgressMonitor monitor, IAdaptable info)
+									throws ExecutionException {
+								// TODO Auto-generated method stub
+								return null;
+							}
+
+							public IStatus undoOperation(
+									IUndoableOperation operation,
+									IProgressMonitor monitor, IAdaptable info)
+									throws ExecutionException {
+								// TODO Auto-generated method stub
+								return null;
+							}
+							
+						};
+					}
+					
+					return operationHistory;
+				}
+	
+				public IUndoContext getUndoContext() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+				
+			};
+		}
+		
+		return operationSupport;
 	}
 
 	/* (non-Javadoc)
@@ -488,14 +666,21 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
-		// TODO Auto-generated method stub
-		return null;
+		return e4Workbench.getService(api);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
 	 */
 	public boolean hasService(Class api) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#isStarting()
+	 */
+	public boolean isStarting() {
 		// TODO Auto-generated method stub
 		return false;
 	}

@@ -11,22 +11,23 @@ public class TestPerspectiveFactory implements IPerspectiveFactory {
 
 		IFolderLayout folder= layout.createFolder("left", IPageLayout.LEFT, (float)0.25, editorArea); //$NON-NLS-1$
 		folder.addView("LegacyViews.ResourceView"); //$NON-NLS-1$
-		folder.addView("org.eclipse.jdt.ui.PackageExplorer"); //$NON-NLS-1$
-		folder.addView("org.eclipse.jdt.ui.TypeHierarchy"); //$NON-NLS-1$
+		//folder.addView("org.eclipse.jdt.ui.PackageExplorer"); //$NON-NLS-1$
+		//folder.addView("org.eclipse.jdt.ui.TypeHierarchy"); //$NON-NLS-1$
 		//folder.addPlaceholder(IPageLayout.ID_RES_NAV);
-		folder.addPlaceholder("org.eclipse.ui.navigator.ProjectExplorer"); //$NON-NLS-1$
+		//folder.addPlaceholder("org.eclipse.ui.navigator.ProjectExplorer"); //$NON-NLS-1$
 
 		IFolderLayout outputfolder= layout.createFolder("bottom", IPageLayout.BOTTOM, (float)0.75, editorArea); //$NON-NLS-1$
-		outputfolder.addView(IPageLayout.ID_PROBLEM_VIEW);
-		outputfolder.addView("org.eclipse.jdt.ui.JavadocView"); //$NON-NLS-1$
-		outputfolder.addView("org.eclipse.jdt.ui.SourceView"); //$NON-NLS-1$
-		outputfolder.addPlaceholder("org.eclipse.search.ui.views.SearchView"); //$NON-NLS-1$
-		outputfolder.addPlaceholder("org.eclipse.ui.console.ConsoleView"); //$NON-NLS-1$
-		outputfolder.addPlaceholder(IPageLayout.ID_BOOKMARKS);
-		outputfolder.addPlaceholder("org.eclipse.ui.views.ProgressView"); //$NON-NLS-1$
-
-		IFolderLayout outlineFolder = layout.createFolder("right", IPageLayout.RIGHT, (float)0.75, editorArea); //$NON-NLS-1$
-		outlineFolder.addView(IPageLayout.ID_OUTLINE);
+		outputfolder.addView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
+//		outputfolder.addView(IPageLayout.ID_PROBLEM_VIEW);
+//		outputfolder.addView("org.eclipse.jdt.ui.JavadocView"); //$NON-NLS-1$
+//		outputfolder.addView("org.eclipse.jdt.ui.SourceView"); //$NON-NLS-1$
+//		outputfolder.addPlaceholder("org.eclipse.search.ui.views.SearchView"); //$NON-NLS-1$
+//		outputfolder.addPlaceholder("org.eclipse.ui.console.ConsoleView"); //$NON-NLS-1$
+//		outputfolder.addPlaceholder(IPageLayout.ID_BOOKMARKS);
+//		outputfolder.addPlaceholder("org.eclipse.ui.views.ProgressView"); //$NON-NLS-1$
+//
+//		IFolderLayout outlineFolder = layout.createFolder("right", IPageLayout.RIGHT, (float)0.75, editorArea); //$NON-NLS-1$
+//		outlineFolder.addView(IPageLayout.ID_OUTLINE);
 //
 //		outlineFolder.addPlaceholder("org.eclipse.ui.texteditor.TemplatesView");
 //		// XXX: in 3.4 M7 to be replaced by:
