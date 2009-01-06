@@ -307,7 +307,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         initDragAndDrop();
         updateTitle();
 
-        initContextMenu();
+//        initContextMenu();
 
         initResourceComparator();
         initWorkingSetFilter();
