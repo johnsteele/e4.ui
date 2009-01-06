@@ -23,6 +23,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
@@ -50,6 +52,7 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 	
 	private IKeyBindingService kbService;
 	private IActionBars actionBars;
+	private ISelectionProvider selProvider;
 
 	/**
 	 * @param e4Workbench
@@ -157,8 +160,26 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 	 * @see org.eclipse.ui.IWorkbenchSite#getSelectionProvider()
 	 */
 	public ISelectionProvider getSelectionProvider() {
-		// TODO Auto-generated method stub
-		return null;
+		if (selProvider == null) {
+			selProvider = new ISelectionProvider() {
+				public void addSelectionChangedListener(
+						ISelectionChangedListener listener) {
+				}
+
+				public ISelection getSelection() {
+					return null;
+				}
+
+				public void removeSelectionChangedListener(
+						ISelectionChangedListener listener) {
+				}
+
+				public void setSelection(ISelection selection) {
+				}				
+			};
+		}
+		
+		return selProvider;
 	}
 
 	/* (non-Javadoc)

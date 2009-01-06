@@ -555,8 +555,8 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getWorkbenchWindows()
 	 */
 	public IWorkbenchWindow[] getWorkbenchWindows() {
-		// TODO Auto-generated method stub
-		return null;
+		IWorkbenchWindow[] wbws = { getActiveWorkbenchWindow() };
+		return wbws;
 	}
 
 	/* (non-Javadoc)

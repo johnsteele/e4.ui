@@ -32,6 +32,7 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.NavigationHistory;
 import org.eclipse.ui.internal.WWinPartService;
 
 /**
@@ -45,6 +46,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	private LegacyWBImpl legacyWbImpl;
 	
 	private WWinPartService partService = new WWinPartService(this);
+	private INavigationHistory navHistory = new NavigationHistory(this);
 	public static IEditorInput hackInput;
 	
 	/**
@@ -108,8 +110,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getShell()
 	 */
 	public Shell getShell() {
-		// TODO Auto-generated method stub
-		return null;
+		return e4Workbench.getShell();
 	}
 
 	/* (non-Javadoc)
@@ -385,8 +386,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getNavigationHistory()
 	 */
 	public INavigationHistory getNavigationHistory() {
-		// TODO Auto-generated method stub
-		return null;
+		return navHistory ;
 	}
 
 	/* (non-Javadoc)
