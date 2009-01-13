@@ -65,4 +65,24 @@
          id="org.eclipse.e4.ui.source.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.e4.swt.as.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.ui.css.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.xwt.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.xwt.tools.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.resources.source.feature"
+         version="0.0.0"/>
+
 </feature>
