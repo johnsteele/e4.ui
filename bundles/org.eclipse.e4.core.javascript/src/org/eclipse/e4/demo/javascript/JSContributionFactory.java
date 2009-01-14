@@ -5,11 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.WeakHashMap;
 
+import org.eclipse.e4.core.services.Context;
 import org.eclipse.e4.core.services.IContributionFactorySpi;
-import org.eclipse.e4.core.services.IServiceLocator;
-import org.osgi.framework.Bundle;
-
 import org.mozilla.javascript.Scriptable;
+import org.osgi.framework.Bundle;
 
 public class JSContributionFactory implements IContributionFactorySpi {
 
@@ -32,7 +31,7 @@ public class JSContributionFactory implements IContributionFactorySpi {
 		Bundle bundle;
 		String name;
 		String script;
-		IServiceLocator serviceLocator;
+		Context context;
 
 		private Object updateContribution(JSUtil js, Object contribution) {
 			InputStream stream;
@@ -49,16 +48,12 @@ public class JSContributionFactory implements IContributionFactorySpi {
 					int len = js.length(initargs);
 					Object[] args = new Object[len];
 					for (int i = 0; i < len; i++) {
-						args[i] = serviceLocator.getService(bundle
-								.loadClass((String) js.get(initargs, i)));
+						args[i] = context.get((String) js.get(initargs, i));
 					}
 					js.call(js.get(contribution, "init"), contribution, args);
 				}
 				return contribution;
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -79,11 +74,11 @@ public class JSContributionFactory implements IContributionFactorySpi {
 	}
 
 	public Object create(Bundle bundle, String name,
-			IServiceLocator serviceLocator) {
+			Context context) {
 		ContributionData cd = new ContributionData();
 		cd.bundle = bundle;
 		cd.name = name;
-		cd.serviceLocator = serviceLocator;
+		cd.context = context;
 		Object result = cd.updateContribution(js, null);
 		ContributionWrapper wrapper = new ContributionWrapper(result);
 		contributionDatas.put(wrapper, cd);
@@ -91,7 +86,7 @@ public class JSContributionFactory implements IContributionFactorySpi {
 	}
 
 	public Object call(Object o, String methodName,
-			IServiceLocator serviceLocator, Object defaultValue) {
+			Context context, Object defaultValue) {
 		ContributionWrapper wrapper = (ContributionWrapper) o;
 		ContributionData cd = (ContributionData) contributionDatas.get(wrapper);
 		wrapper.contribution = cd.updateContribution(js, wrapper.contribution);
@@ -99,13 +94,7 @@ public class JSContributionFactory implements IContributionFactorySpi {
 		int len = js.length(runargs);
 		Object[] args = new Object[len];
 		for (int i = 0; i < len; i++) {
-			try {
-				args[i] = serviceLocator.getService(cd.bundle
-						.loadClass((String) js.get(runargs, i)));
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			args[i] = context.get((String) js.get(runargs, i));
 		}
 		Object function = js.get(wrapper.contribution, methodName);
 
