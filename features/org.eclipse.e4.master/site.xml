@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.e4.resources.feature_3.105.0.qualifier.jar" id="org.eclipse.e4.resources.feature" version="3.105.0.qualifier">
+   <feature url="features/org.eclipse.e4.resources.feature_3.105.0.jar" id="org.eclipse.e4.resources.feature" version="3.105.0">
       <category name="org.eclipse.e4.resources"/>
    </feature>
-   <feature url="features/org.eclipse.e4.swt.as.feature_1.0.0.qualifier.jar" id="org.eclipse.e4.swt.as.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.e4.swt.as.feature_1.0.0.jar" id="org.eclipse.e4.swt.as.feature" version="1.0.0">
       <category name="org.eclipse.e4.swt"/>
    </feature>
-   <feature url="features/org.eclipse.e4.ui.compatibility.feature_4.0.0.qualifier.jar" id="org.eclipse.e4.ui.compatibility.feature" version="4.0.0.qualifier">
+   <feature url="features/org.eclipse.e4.ui.compatibility.feature_4.0.0.jar" id="org.eclipse.e4.ui.compatibility.feature" version="4.0.0">
       <category name="org.eclipse.e4.ui"/>
    </feature>
-   <feature url="features/org.eclipse.e4.ui.css.feature_4.0.0.qualifier.jar" id="org.eclipse.e4.ui.css.feature" version="4.0.0.qualifier">
+   <feature url="features/org.eclipse.e4.ui.css.feature_4.0.0.jar" id="org.eclipse.e4.ui.css.feature" version="4.0.0">
       <category name="org.eclipse.e4.ui"/>
    </feature>
-   <feature url="features/org.eclipse.e4.ui.feature_4.0.0.qualifier.jar" id="org.eclipse.e4.ui.feature" version="4.0.0.qualifier">
+   <feature url="features/org.eclipse.e4.ui.feature_4.0.0.jar" id="org.eclipse.e4.ui.feature" version="4.0.0">
       <category name="org.eclipse.e4.ui"/>
    </feature>
-   <feature url="features/org.eclipse.e4.xwt.feature_1.0.0.qualifier.jar" id="org.eclipse.e4.xwt.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.e4.xwt.feature_1.0.0.jar" id="org.eclipse.e4.xwt.feature" version="1.0.0">
       <category name="org.eclipse.e4.xwt"/>
    </feature>
-   <feature url="features/org.eclipse.e4.xwt.tools.feature_1.0.0.qualifier.jar" id="org.eclipse.e4.xwt.tools.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.e4.xwt.tools.feature_1.0.0.jar" id="org.eclipse.e4.xwt.tools.feature" version="1.0.0">
       <category name="org.eclipse.e4.xwt"/>
    </feature>
-   <feature url="features/org.eclipse.e4.resources.platform.patch.source_1.0.0.qualifier.jar" id="org.eclipse.e4.resources.platform.patch.source" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.e4.resources.platform.patch.source_1.0.0.jar" id="org.eclipse.e4.resources.platform.patch.source" version="1.0.0">
       <category name="org.eclipse.e4.resources"/>
    </feature>
-   <feature url="features/org.eclipse.e4.resources.rcp.patch.source_1.0.0.qualifier.jar" id="org.eclipse.e4.resources.platform.rcp.source" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.e4.resources.rcp.patch.source_1.0.0.jar" id="org.eclipse.e4.resources.platform.rcp.source" version="1.0.0">
       <category name="org.eclipse.e4.resources"/>
    </feature>
-   <feature url="features/org.eclipse.e4.swt.as.source.feature_1.0.0.qualifier.jar" id="org.eclipse.e4.swt.as.source.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.e4.swt.as.source.feature_1.0.0.jar" id="org.eclipse.e4.swt.as.source.feature" version="1.0.0">
       <category name="org.eclipse.e4.swt"/>
    </feature>
-   <feature url="features/org.eclipse.e4.ui.compatibility.source.feature_4.0.0.qualifier.jar" id="org.eclipse.e4.ui.compatibility.source.feature" version="4.0.0.qualifier">
+   <feature url="features/org.eclipse.e4.ui.compatibility.source.feature_4.0.0.jar" id="org.eclipse.e4.ui.compatibility.source.feature" version="4.0.0">
       <category name="org.eclipse.e4.ui"/>
    </feature>
-   <feature url="features/org.eclipse.e4.ui.css.source.feature_4.0.0.qualifier.jar" id="org.eclipse.e4.ui.css.source.feature" version="4.0.0.qualifier">
+   <feature url="features/org.eclipse.e4.ui.css.source.feature_4.0.0.jar" id="org.eclipse.e4.ui.css.source.feature" version="4.0.0">
       <category name="org.eclipse.e4.ui"/>
    </feature>
-   <feature url="features/org.eclipse.e4.ui.source.feature_4.0.0.qualifier.jar" id="org.eclipse.e4.ui.source.feature" version="4.0.0.qualifier">
+   <feature url="features/org.eclipse.e4.ui.source.feature_4.0.0.jar" id="org.eclipse.e4.ui.source.feature" version="4.0.0">
       <category name="org.eclipse.e4.ui"/>
    </feature>
-   <feature url="features/org.eclipse.e4.xwt.source.feature_1.0.0.qualifier.jar" id="org.eclipse.e4.xwt.source.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.e4.xwt.source.feature_1.0.0.jar" id="org.eclipse.e4.xwt.source.feature" version="1.0.0">
       <category name="org.eclipse.e4.xwt"/>
    </feature>
-   <feature url="features/org.eclipse.e4.xwt.tools.source.feature_1.0.0.qualifier.jar" id="org.eclipse.e4.xwt.tools.source.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.e4.xwt.tools.source.feature_1.0.0.jar" id="org.eclipse.e4.xwt.tools.source.feature" version="1.0.0">
       <category name="org.eclipse.e4.xwt"/>
    </feature>
    <category-def name="org.eclipse.e4.swt" label="E4 SWT"/>
