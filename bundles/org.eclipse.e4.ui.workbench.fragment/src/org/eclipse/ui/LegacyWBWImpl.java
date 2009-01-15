@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.e4.core.services.IServiceLocator;
+import org.eclipse.e4.core.services.Context;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.ContributedPart;
 import org.eclipse.e4.ui.model.application.Part;
@@ -369,8 +369,8 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getInput()
 	 */
 	public IAdaptable getInput() {
-		IServiceLocator svcLocator = e4Workbench.getServiceLocator();
-		IWorkspace ws = (IWorkspace) svcLocator.getService(IWorkspace.class);
+		Context context = e4Workbench.getContext();
+		IWorkspace ws = (IWorkspace) context.get(IWorkspace.class.getName());
 		return ws;//.getRoot();
 	}
 
