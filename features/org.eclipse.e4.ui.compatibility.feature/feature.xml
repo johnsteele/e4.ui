@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.e4.ui.compatibility.feature"
       label="%featureName"
-      version="4.0.0.qualifier"
+      version="0.9.0.qualifier"
       provider-name="%providerName"
       image="eclipse_update_120.jpg">
 
