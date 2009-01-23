@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.WeakHashMap;
 
-import org.eclipse.e4.core.services.Context;
 import org.eclipse.e4.core.services.IContributionFactorySpi;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.mozilla.javascript.Scriptable;
 import org.osgi.framework.Bundle;
 
@@ -31,7 +31,7 @@ public class JSContributionFactory implements IContributionFactorySpi {
 		Bundle bundle;
 		String name;
 		String script;
-		Context context;
+		IEclipseContext context;
 
 		private Object updateContribution(JSUtil js, Object contribution) {
 			InputStream stream;
@@ -74,7 +74,7 @@ public class JSContributionFactory implements IContributionFactorySpi {
 	}
 
 	public Object create(Bundle bundle, String name,
-			Context context) {
+			IEclipseContext context) {
 		ContributionData cd = new ContributionData();
 		cd.bundle = bundle;
 		cd.name = name;
@@ -86,7 +86,7 @@ public class JSContributionFactory implements IContributionFactorySpi {
 	}
 
 	public Object call(Object o, String methodName,
-			Context context, Object defaultValue) {
+			IEclipseContext context, Object defaultValue) {
 		ContributionWrapper wrapper = (ContributionWrapper) o;
 		ContributionData cd = (ContributionData) contributionDatas.get(wrapper);
 		wrapper.contribution = cd.updateContribution(js, wrapper.contribution);
