@@ -1,0 +1,14 @@
+GalleryItem {
+	color: gray;
+	background-color: #D0D0B0;
+}
+
+GalleryItem:selected {
+	color: purple;	
+    background-color:orange;
+	font:bold;	
+}
+
+Gallery {
+	background-color: #F3F3E3;
+}
