@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.operations.ICompositeOperation;
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
@@ -25,6 +26,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.ui.model.workbench.WorkbenchWindow;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
@@ -41,10 +43,13 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.SharedImages;
+import org.eclipse.ui.internal.WorkingSetManager;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
+import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.registry.EditorRegistry;
@@ -56,6 +61,8 @@ import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
  * @since 4.0
@@ -73,7 +80,9 @@ public class LegacyWBImpl implements IWorkbench {
 	private IDecoratorManager decoratorManager;
 	private WorkbenchActivitySupport workbenchActivitySupport;
 	private IWorkbenchOperationSupport operationSupport;
+	private IWorkingSetManager wsMgr;
 	protected IOperationHistory operationHistory;
+	private IContextService contextService;
 	
 	private static Map<WorkbenchWindow, LegacyWBWImpl> wbwModel2LegacyImpl = new HashMap<WorkbenchWindow, LegacyWBWImpl>();
 
@@ -563,8 +572,12 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getWorkingSetManager()
 	 */
 	public IWorkingSetManager getWorkingSetManager() {
-		// TODO Auto-generated method stub
-		return null;
+		if (wsMgr == null) {
+			Bundle bundle = Platform.getBundle("org.eclipse.e4.ui.model.workbench"); //$NON-NLS-1$
+			BundleContext bc = bundle.getBundleContext();
+			wsMgr = new WorkingSetManager(bc);
+		}
+		return wsMgr;
 	}
 
 	/* (non-Javadoc)
@@ -658,7 +671,13 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
+		if (IContextService.class == adapter) {
+			if (contextService == null) {
+				contextService = new ContextService(new ContextManager());
+			}
+			
+			return contextService;
+		}
 		return null;
 	}
 
@@ -666,6 +685,9 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
+//		if (IEvaluationService == api) {
+//			
+//		}
 		return e4Workbench.getService(api);
 	}
 
