@@ -371,7 +371,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	public IAdaptable getInput() {
 		IEclipseContext context = e4Workbench.getContext();
 		IWorkspace ws = (IWorkspace) context.get(IWorkspace.class.getName());
-		return ws;//.getRoot();
+		return ws.getRoot();
 	}
 
 	/* (non-Javadoc)
