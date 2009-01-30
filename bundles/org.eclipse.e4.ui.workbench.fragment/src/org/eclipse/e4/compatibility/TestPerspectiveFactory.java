@@ -17,7 +17,7 @@ public class TestPerspectiveFactory implements IPerspectiveFactory {
 		folder.addPlaceholder("org.eclipse.ui.navigator.ProjectExplorer"); //$NON-NLS-1$
 
 		IFolderLayout outputfolder= layout.createFolder("bottom", IPageLayout.BOTTOM, (float)0.75, editorArea); //$NON-NLS-1$
-		outputfolder.addView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
+//		outputfolder.addView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
 		outputfolder.addView(IPageLayout.ID_PROBLEM_VIEW);
 		outputfolder.addView("org.eclipse.jdt.ui.JavadocView"); //$NON-NLS-1$
 		outputfolder.addView("org.eclipse.team.ccvs.ui.RepositoriesView"); //$NON-NLS-1$
