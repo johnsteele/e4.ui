@@ -216,8 +216,7 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 	 * @see org.eclipse.ui.IWorkbenchSite#setSelectionProvider(org.eclipse.jface.viewers.ISelectionProvider)
 	 */
 	public void setSelectionProvider(ISelectionProvider provider) {
-		// TODO Auto-generated method stub
-
+		selProvider = provider;
 	}
 
 	/* (non-Javadoc)
