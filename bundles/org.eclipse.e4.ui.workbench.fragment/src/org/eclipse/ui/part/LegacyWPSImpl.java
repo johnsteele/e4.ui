@@ -23,8 +23,8 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.e4.ui.model.application.ContributedPart;
-import org.eclipse.e4.ui.model.application.Part;
+import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IAction;
@@ -62,7 +62,7 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite {
 
-	private ContributedPart<Part<?>> part;
+	private MContributedPart<MPart<?>> part;
 	private Workbench e4Workbench;
 	private WorkbenchPart implementation;
 	
@@ -75,7 +75,7 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 	 * @param part
 	 * @param impl 
 	 */
-	public LegacyWPSImpl(Workbench e4Workbench, ContributedPart<Part<?>> part, WorkbenchPart impl) {
+	public LegacyWPSImpl(Workbench e4Workbench, MContributedPart<MPart<?>> part, WorkbenchPart impl) {
 		this.e4Workbench = e4Workbench;
 		
 		// HACK! need to reference e4Workbench

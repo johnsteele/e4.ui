@@ -1,52 +1,59 @@
 package org.eclipse.e4.workbench.ui.menus;
 
-import org.eclipse.e4.ui.model.application.Menu;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.e4.extensions.ExtensionUtils;
+import org.eclipse.e4.ui.model.application.ApplicationFactory;
+import org.eclipse.e4.ui.model.application.MMenu;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 public class MenuHelper {
 
-	public static void loadMenu(Menu menuModel) {
-//		String id = menuModel.getId();
-//		if (id == null || id.length() == 0)
-//			return;
-//		
-//		if (id.indexOf("org.eclipse.ui.main.menu") >= 0)
-//			populateMainMenu(menuModel);
-//		else
-//			populateMenu(menuModel);
+	private static final String MAIN_MEUN_ID = "org.eclipse.ui.main.menu";  //$NON-NLS-1$
+	
+	public static void loadMenu(MMenu menuModel) {
+		String id = menuModel.getId();
+		if (id == null || id.length() == 0)
+			return;
+		
+		if (id.indexOf(MAIN_MEUN_ID) >= 0)
+			populateMainMenu(menuModel);
+		else
+			populateMenu(menuModel);
 	}
 	
-//	private static void printCEAtts(IConfigurationElement ce, String prefix) {
-//		String[] attNames = ce.getAttributeNames();
-//		for (int j = 0; j < attNames.length; j++) {
-//			System.out.println(prefix + "Att: " + attNames[j] + " = " + ce.getAttribute(attNames[j]));
-//		}
-//	}
-//	
-//	private static void printCEKids(IConfigurationElement ce, String prefix) {
-//		IConfigurationElement[] kids = ce.getChildren();
-//		for (int i = 0; i < kids.length; i++) {
-//			System.out.println(prefix + "Child: " + kids[i].getName());
-//			printCEAtts(kids[i], prefix + "  ");
-//			printCEKids(kids[i], prefix + "  ");
-//		}
-//	}
-//	
-//	private static void populateMenu(Menu menuModel) {
-//		String menuId = menuModel.getId();
-//		IConfigurationElement[] actionSets = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_ACTION_SETS);
-//		for (int i = 0; i < actionSets.length; i++) {
-//			System.out.println("Action Set:" + actionSets[i].getName());
-//			printCEAtts(actionSets[i], "  ");
-//			printCEKids(actionSets[i], "  ");
-//		}
-//	}
-//	
-//	private static void populateMainMenu(Menu menu0) {
-//
-//		Menu menu1 = addMenu(menu0, "&File", null, null, "file", "file");
-//			addSeparator(menu1, "fileStart");
-//			Menu menu2 = addMenu(menu1, "&New	Alt+Shift+N", null, null, "new", "new");
-//				addSeparator(menu2, "new");
+	private static void printCEAtts(IConfigurationElement ce, String prefix) {
+		String[] attNames = ce.getAttributeNames();
+		for (int j = 0; j < attNames.length; j++) {
+			System.out.println(prefix + "Att: " + attNames[j] + " = " + ce.getAttribute(attNames[j])); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
+	private static void printCEKids(IConfigurationElement ce, String prefix) {
+		IConfigurationElement[] kids = ce.getChildren();
+		for (int i = 0; i < kids.length; i++) {
+			System.out.println(prefix + "Child: " + kids[i].getName()); //$NON-NLS-1$
+			printCEAtts(kids[i], prefix + "  "); //$NON-NLS-1$
+			printCEKids(kids[i], prefix + "  "); //$NON-NLS-1$
+		}
+	}
+	
+	private static void populateMenu(MMenu menuModel) {
+		String menuId = menuModel.getId();
+		System.out.println("populateMenu: " + menuId); //$NON-NLS-1$
+		IConfigurationElement[] actionSets = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_ACTION_SETS);
+		for (int i = 0; i < actionSets.length; i++) {
+			System.out.println("Action Set:" + actionSets[i].getName()); //$NON-NLS-1$
+			printCEAtts(actionSets[i], "  "); //$NON-NLS-1$
+			printCEKids(actionSets[i], "  "); //$NON-NLS-1$
+		}
+	}
+	
+	private static void populateMainMenu(MMenu menu0) {
+
+		MMenu menu1 = addMenu(menu0, "&File", null, null, "file", "file"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			addSeparator(menu1, "fileStart"); //$NON-NLS-1$
+			MMenu menu2 = addMenu(menu1, "&New	Alt+Shift+N", null, null, "new", "new"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				addSeparator(menu2, "new"); //$NON-NLS-1$
 //				//didn't find: org.eclipse.ui.actions.NewWizardMenu
 //				addSeparator(menu2, "additions");
 //
@@ -85,7 +92,7 @@ public class MenuHelper {
 //			addSeparator(menu1, "fileEnd");
 //
 //
-//		Menu menu3 = addMenu(menu0, "&Edit", null, null, "edit", "edit");
+//		MMenu menu3 = addMenu(menu0, "&Edit", null, null, "edit", "edit");
 //			addSeparator(menu3, "editStart");
 //			addMenuItem(menu3, "&Undo", "org.eclipse.ui", "$nl$/icons/full/etool16/undo_edit.gif", "undo", "org.eclipse.ui.edit.undo");
 //			addMenuItem(menu3, "&Redo", "org.eclipse.ui", "$nl$/icons/full/etool16/redo_edit.gif", "redo", "org.eclipse.ui.edit.redo");
@@ -109,11 +116,11 @@ public class MenuHelper {
 //			addSeparator(menu3, "additions");
 //
 //
-//			Menu menu4 = addMenu(menu0, "&Navigate", null, null, "navigate", "navigate");
+//			MMenu menu4 = addMenu(menu0, "&Navigate", null, null, "navigate", "navigate");
 //			addSeparator(menu4, "navStart");
 //			addMenuItem(menu4, "Go &Into", null, null, "goInto", "org.eclipse.ui.navigate.goInto");
 //
-//			Menu menu5 = addMenu(menu4, "&Go To", null, null, "goTo", "goTo");
+//			MMenu menu5 = addMenu(menu4, "&Go To", null, null, "goTo", "goTo");
 //				addMenuItem(menu5, "&Back", "org.eclipse.ui", "$nl$/icons/full/elcl16/backward_nav.gif", "back", "org.eclipse.ui.navigate.back");
 //				addMenuItem(menu5, "&Forward", "org.eclipse.ui", "$nl$/icons/full/elcl16/forward_nav.gif", "forward", "org.eclipse.ui.navigate.forward");
 //				addMenuItem(menu5, "&Up One Level", "org.eclipse.ui", "$nl$/icons/full/elcl16/up_nav.gif", "up", "org.eclipse.ui.navigate.up");
@@ -125,7 +132,7 @@ public class MenuHelper {
 //			addSeparator(menu4, "open.ext4");
 //			addSeparator(menu4, "show.ext");
 //
-//			Menu menu6 = addMenu(menu4, "Sho&w In	Alt+Shift+W", null, null, "showIn", "showIn");
+//			MMenu menu6 = addMenu(menu4, "Sho&w In	Alt+Shift+W", null, null, "showIn", "showIn");
 //				//didn't find: org.eclipse.ui.internal.ShowInMenu
 //
 //			addSeparator(menu4, "show.ext2");
@@ -141,7 +148,7 @@ public class MenuHelper {
 //			addMenuItem(menu4, "&Forward", "org.eclipse.ui", "$nl$/icons/full/elcl16/forward_nav.gif", "forwardHistory", "org.eclipse.ui.navigate.forwardHistory");
 //
 //
-//			Menu menu7 = addMenu(menu0, "&Project", null, null, "project", "project");
+//			MMenu menu7 = addMenu(menu0, "&Project", null, null, "project", "project");
 //			addSeparator(menu7, "projStart");
 //			addMenuItem(menu7, "Op&en Project", null, null, "openProject", "org.eclipse.ui.project.openProject");
 //			addMenuItem(menu7, "Clo&se Project", null, null, "closeProject", "org.eclipse.ui.project.closeProject");
@@ -150,7 +157,7 @@ public class MenuHelper {
 //			addMenuItem(menu7, "Build &All", "org.eclipse.ui.ide", "$nl$/icons/full/etool16/build_exec.gif", "build", "org.eclipse.ui.project.buildAll");
 //			addMenuItem(menu7, "&Build Project", null, null, "buildProject", "org.eclipse.ui.project.buildProject");
 //
-//			Menu menu8 = addMenu(menu7, "Build &Working Set", null, null, null, null);
+//			MMenu menu8 = addMenu(menu7, "Build &Working Set", null, null, null, null);
 //				//didn't find: org.eclipse.ui.internal.ide.actions.BuildSetMenu
 //
 //			addMenuItem(menu7, "Clea&n...", null, null, "buildClean", "org.eclipse.ui.project.cleanAction");
@@ -164,29 +171,29 @@ public class MenuHelper {
 //
 //		addSeparator(menu0, "additions");
 //
-//		Menu menu9 = addMenu(menu0, "&Window", null, null, "window", "window");
-//			addMenuItem(menu9, "&New Window", null, null, "openNewWindow", "org.eclipse.ui.window.newWindow");
+//		MMenu menu9 = addMenu(menu0, "&MWindow", null, null, "window", "window");
+//			addMenuItem(menu9, "&New MWindow", null, null, "openNewWindow", "org.eclipse.ui.window.newWindow");
 //			addMenuItem(menu9, "New &Editor", null, null, "newEditor", "org.eclipse.ui.window.newEditor");
 //			addSeparator(menu9, null);
 //
-//			Menu menu10 = addMenu(menu9, "&Open Perspective", null, null, "openPerspective", "openPerspective");
+//			MMenu menu10 = addMenu(menu9, "&Open MPerspective", null, null, "openPerspective", "openPerspective");
 //				//didn't find: org.eclipse.ui.internal.ChangeToPerspectivMenu
 //
 //
-//			Menu menu11 = addMenu(menu9, "Show &View", null, null, "showView", "showView");
+//			MMenu menu11 = addMenu(menu9, "Show &View", null, null, "showView", "showView");
 //				//didn't find: org.eclipse.ui.internal.ShowViewMenu
 //
 //			addSeparator(menu9, null);
-//			addMenuItem(menu9, "Customi&ze Perspective...", null, null, "editActionSets", "org.eclipse.ui.window.customizePerspective");
-//			addMenuItem(menu9, "Save Perspective &As...", null, null, "savePerspective", "org.eclipse.ui.window.savePerspective");
-//			addMenuItem(menu9, "&Reset Perspective...", null, null, "resetPerspective", "org.eclipse.ui.window.resetPerspective");
-//			addMenuItem(menu9, "&Close Perspective", null, null, "closePerspective", "org.eclipse.ui.window.closePerspective");
+//			addMenuItem(menu9, "Customi&ze MPerspective...", null, null, "editActionSets", "org.eclipse.ui.window.customizePerspective");
+//			addMenuItem(menu9, "Save MPerspective &As...", null, null, "savePerspective", "org.eclipse.ui.window.savePerspective");
+//			addMenuItem(menu9, "&Reset MPerspective...", null, null, "resetPerspective", "org.eclipse.ui.window.resetPerspective");
+//			addMenuItem(menu9, "&Close MPerspective", null, null, "closePerspective", "org.eclipse.ui.window.closePerspective");
 //			addMenuItem(menu9, "Close A&ll Perspectives", null, null, "closeAllPerspectives", "org.eclipse.ui.window.closeAllPerspectives");
 //			addSeparator(menu9, null);
 //
-//			Menu menu12 = addMenu(menu9, "Navi&gation", null, null, "shortcuts", "shortcuts");
-//				addMenuItem(menu12, "Show &System Menu", null, null, "showPartPanMenu", "org.eclipse.ui.window.showSystemMenu");
-//				addMenuItem(menu12, "Show View &Menu", null, null, "showViewMenu", "org.eclipse.ui.window.showViewMenu");
+//			MMenu menu12 = addMenu(menu9, "Navi&gation", null, null, "shortcuts", "shortcuts");
+//				addMenuItem(menu12, "Show &System MMenu", null, null, "showPartPanMenu", "org.eclipse.ui.window.showSystemMenu");
+//				addMenuItem(menu12, "Show View &MMenu", null, null, "showViewMenu", "org.eclipse.ui.window.showViewMenu");
 //				addMenuItem(menu12, "&Quick Access", null, null, "showQuickAccess", "org.eclipse.ui.window.quickAccess");
 //				addSeparator(menu12, null);
 //				addMenuItem(menu12, "Maximize Active View or Editor", null, null, "maximize", "org.eclipse.ui.window.maximizePart");
@@ -200,15 +207,15 @@ public class MenuHelper {
 //				addMenuItem(menu12, "Next &View", null, null, "nextPart", "org.eclipse.ui.window.nextView");
 //				addMenuItem(menu12, "Previ&ous View", null, null, "previousPart", "org.eclipse.ui.window.previousView");
 //				addSeparator(menu12, null);
-//				addMenuItem(menu12, "Next &Perspective", null, null, "nextPerspective", "org.eclipse.ui.window.nextPerspective");
-//				addMenuItem(menu12, "Previo&us Perspective", null, null, "previousPerspective", "org.eclipse.ui.window.previousPerspective");
+//				addMenuItem(menu12, "Next &MPerspective", null, null, "nextPerspective", "org.eclipse.ui.window.nextPerspective");
+//				addMenuItem(menu12, "Previo&us MPerspective", null, null, "previousPerspective", "org.eclipse.ui.window.previousPerspective");
 //
 //			addSeparator(menu9, "additions");
 //			addMenuItem(menu9, "&Preferences", null, null, "preferences", null);
 //			//didn't find: org.eclipse.ui.internal.SwitchToWindowMenu
 //
 //
-//			Menu menu13 = addMenu(menu0, "&Help", null, null, "help", "help");
+//			MMenu menu13 = addMenu(menu0, "&Help", null, null, "help", "help");
 //			addSeparator(menu13, "group.intro");
 //			addMenuItem(menu13, "&Welcome", "org.eclipse.ui.intro", "$nl$/icons/welcome16.gif", "intro", "org.eclipse.ui.help.quickStartAction");
 //			addSeparator(menu13, "group.intro.ext");
@@ -228,32 +235,32 @@ public class MenuHelper {
 //			addSeparator(menu13, "group.about");
 //			addMenuItem(menu13, "&About Eclipse SDK", null, null, "about", "org.eclipse.ui.help.aboutAction");
 //			addSeparator(menu13, "group.about.ext");
-//	}
-//
-//	private static Menu addMenu(Menu parentMenu,
-//			String label, String plugin, String imgPath, String id, String cmdId) {
-//		Menu newMenu = ApplicationFactory.eINSTANCE.createMenu(); // WorkbenchFactory.eINSTANCE.createMenu();
+	}
+
+	public static MMenu addMenu(MMenu parentMenu,
+			String label, String plugin, String imgPath, String id, String cmdId) {
+		MMenu newMenu = ApplicationFactory.eINSTANCE.createMMenu(); // MWorkbenchFactory.eINSTANCE.createMenu();
 //		//newMenu.setPlugin(plugin);
 //		newMenu.setId(id);
 //		newMenu.setName(label);
 //		newMenu.setIconPath(imgPath);
 //		parentMenu.getItems().add(newMenu);
 //		
-//		return newMenu;
-//	}
+		return newMenu;
+	}
 //
-//	private static void addMenuItem(Menu parentMenu,
-//			String label, String plugin, String imgPath, String id, String cmdId) {
-//		MenuItem newMenuItem = WorkbenchFactory.eINSTANCE.createItemModel();
+	public static void addMenuItem(MMenu parentMenu,
+			String label, String plugin, String imgPath, String id, String cmdId) {
+//		MenuItem newMenuItem = MWorkbenchFactory.eINSTANCE.createItemModel();
 //		//newMenuItem.setPlugin(plugin);
 //		newMenuItem.setId(id);
 //		newMenuItem.setName(label);
 //		newMenuItem.setIconURI(imgPath);
 //		parentMenu.getItems().add(newMenuItem);
-//	}
+	}
 //
-//	public static void addSeparator(Menu parentMenu, String id) {
-//		ItemModel newMenuItem = WorkbenchFactory.eINSTANCE.createItemModel();
+	public static void addSeparator(MMenu parentMenu, String id) {
+//		ItemModel newMenuItem = MWorkbenchFactory.eINSTANCE.createItemModel();
 //		newMenuItem.setId(id);
 //		
 //		if (id == null)
@@ -264,5 +271,5 @@ public class MenuHelper {
 //		newMenuItem.setSeparator(true);
 //		newMenuItem.setVisible(id == null);
 //		parentMenu.getChildren().add(newMenuItem);
-//	}
+	}
 }

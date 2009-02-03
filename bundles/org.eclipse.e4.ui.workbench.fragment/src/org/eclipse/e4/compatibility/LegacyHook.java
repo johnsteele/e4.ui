@@ -1,9 +1,10 @@
 package org.eclipse.e4.compatibility;
 
-import org.eclipse.e4.ui.model.application.Menu;
-import org.eclipse.e4.ui.model.workbench.Perspective;
+import org.eclipse.e4.ui.model.application.MMenu;
+import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
+import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.e4.workbench.ui.menus.PerspectiveHelper;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchColors;
@@ -56,12 +57,12 @@ public class LegacyHook implements ILegacyHook {
 		WorkbenchColors.startup();
 	}
 	
-	public void loadMenu(Menu menuModel) {
+	public void loadMenu(MMenu menuModel) {
 		System.out.println("Should load the default menu here"); //$NON-NLS-1$
-		//MenuHelper.loadMenu(menuModel);
+		MenuHelper.loadMenu(menuModel);
 	}
 
-	public void loadPerspective(Perspective perspModel) {
+	public void loadPerspective(MPerspective perspModel) {
 		PerspectiveHelper.loadPerspective(perspModel);
 	}
 

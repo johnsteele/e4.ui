@@ -159,7 +159,7 @@ public final class PlatformUI {
     public static int createAndRunWorkbench(Display display,
             WorkbenchAdvisor advisor) {
     	// Should actually create and run a WB
-    	//WorkbenchModel newWB = WorkbenchFactory.eINSTANCE.createWorkbenchModel();
+    	//MWorkbench newWB = MWorkbenchFactory.eINSTANCE.createWorkbenchModel();
     	initE4Workbench();
     	
         return RETURN_OK;

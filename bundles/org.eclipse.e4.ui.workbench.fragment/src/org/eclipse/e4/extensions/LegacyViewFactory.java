@@ -2,8 +2,8 @@ package org.eclipse.e4.extensions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.e4.ui.model.application.ContributedPart;
-import org.eclipse.e4.ui.model.application.Part;
+import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.workbench.ui.renderers.swt.PartFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -36,7 +36,7 @@ public class LegacyViewFactory extends PartFactory {
 	 * @param editorElement
 	 * @return
 	 */
-	private Control createEditor(ContributedPart<Part<?>> part,
+	private Control createEditor(MContributedPart<MPart<?>> part,
 			IConfigurationElement editorElement) {
 		Composite parent = (Composite) getParentWidget(part);
 
@@ -67,7 +67,7 @@ public class LegacyViewFactory extends PartFactory {
 		return null;
 	}
 	
-	private Control createView(ContributedPart<Part<?>> part, IConfigurationElement viewContribution) {
+	private Control createView(MContributedPart<MPart<?>> part, IConfigurationElement viewContribution) {
 		Composite parent = (Composite) getParentWidget(part);
 
 		//part.setPlugin(viewContribution.getContributor().getName());
@@ -100,9 +100,9 @@ public class LegacyViewFactory extends PartFactory {
 	}
 
 	@Override
-	public Object createWidget(Part<?> part) {
-		if (part instanceof ContributedPart) {
-			ContributedPart cp = (ContributedPart) part;
+	public Object createWidget(MPart<?> part) {
+		if (part instanceof MContributedPart) {
+			MContributedPart cp = (MContributedPart) part;
 			
 			// HACK!! relies on legacy views -not- having a URI...
 			String uri = cp.getURI();
@@ -115,11 +115,11 @@ public class LegacyViewFactory extends PartFactory {
 			// if this a view ?
 			IConfigurationElement viewElement = findViewConfig(partId);
 			if (viewElement != null)
-				newCtrl = createView((ContributedPart<Part<?>>) part, viewElement);
+				newCtrl = createView((MContributedPart<MPart<?>>) part, viewElement);
 			
 			IConfigurationElement editorElement = findEditorConfig(partId);
 			if (editorElement != null)
-				newCtrl = createEditor((ContributedPart<Part<?>>) part, editorElement);
+				newCtrl = createEditor((MContributedPart<MPart<?>>) part, editorElement);
 			if (newCtrl == null) {
 				
 			}

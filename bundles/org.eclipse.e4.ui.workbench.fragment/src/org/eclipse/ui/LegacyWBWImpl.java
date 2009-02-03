@@ -20,10 +20,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
-import org.eclipse.e4.ui.model.application.ContributedPart;
-import org.eclipse.e4.ui.model.application.Part;
-import org.eclipse.e4.ui.model.workbench.Perspective;
-import org.eclipse.e4.ui.model.workbench.WorkbenchWindow;
+import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.workbench.MPerspective;
+import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.util.EList;
@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.WWinPartService;
 public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	private Workbench e4Workbench;
-	private WorkbenchWindow workbenchWindow;
+	private MWorkbenchWindow workbenchWindow;
 	private LegacyWBImpl legacyWbImpl;
 	
 	private WWinPartService partService = new WWinPartService(this);
@@ -54,7 +54,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @param legacyWbImpl 
 	 * @param workbenchWindow
 	 */
-	public LegacyWBWImpl(Workbench e4Workbench, LegacyWBImpl legacyWbImpl, WorkbenchWindow workbenchWindow) {
+	public LegacyWBWImpl(Workbench e4Workbench, LegacyWBImpl legacyWbImpl, MWorkbenchWindow workbenchWindow) {
 		this.e4Workbench = e4Workbench;
 		this.workbenchWindow = workbenchWindow;
 		this.legacyWbImpl = legacyWbImpl;
@@ -579,11 +579,11 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	public IEditorPart openEditor(IEditorInput input, String editorId,
 			boolean activate) throws PartInitException {
 		// Create the model 'part' in the UI 
-		Perspective<?> curPersp = workbenchWindow.getActiveChild();
+		MPerspective<?> curPersp = workbenchWindow.getActiveChild();
 		EList<?> kids = curPersp.getChildren();
-		Part ea = ModeledPageLayout.findPart(curPersp, ModeledPageLayout.internalGetEditorArea());
+		MPart ea = ModeledPageLayout.findPart(curPersp, ModeledPageLayout.internalGetEditorArea());
 		
-		ContributedPart<Part<?>> editorPart = ApplicationFactory.eINSTANCE.createContributedPart();
+		MContributedPart<MPart<?>> editorPart = ApplicationFactory.eINSTANCE.createMContributedPart();
 		editorPart.setId(editorId);
 		editorPart.setName(input.getName());
 		ea.getChildren().add(editorPart);

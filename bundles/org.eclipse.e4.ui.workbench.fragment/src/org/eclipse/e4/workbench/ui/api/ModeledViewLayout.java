@@ -1,13 +1,13 @@
 package org.eclipse.e4.workbench.ui.api;
 
-import org.eclipse.e4.ui.model.application.ContributedPart;
+import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.ui.IViewLayout;
 
 public class ModeledViewLayout implements IViewLayout {
 	
-	//private ContributedPart viewME;
+	//private MContributedPart viewME;
 
-	public ModeledViewLayout(ContributedPart view) {
+	public ModeledViewLayout(MContributedPart view) {
 		//viewME = view;
 	}
 

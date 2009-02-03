@@ -3,17 +3,17 @@ package org.eclipse.e4.workbench.ui.menus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.extensions.ExtensionUtils;
-import org.eclipse.e4.ui.model.application.ContributedPart;
-import org.eclipse.e4.ui.model.application.Part;
-import org.eclipse.e4.ui.model.application.Stack;
-import org.eclipse.e4.ui.model.workbench.Perspective;
+import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MStack;
+import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 public class PerspectiveHelper {
 	
-	public static void loadPerspective(Perspective perspModel) {
+	public static void loadPerspective(MPerspective perspModel) {
 		String perspId = perspModel.getId();
 		IConfigurationElement[] persps = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_PERSPECTIVES);
 		IConfigurationElement perspContribution = ExtensionUtils.findExtension(persps, perspId);
@@ -35,7 +35,7 @@ public class PerspectiveHelper {
 		loadExtensions(perspModel, layout);
 	}
 	
-	private static void loadExtensions(Perspective perspModel, ModeledPageLayout layout) {
+	private static void loadExtensions(MPerspective perspModel, ModeledPageLayout layout) {
 		String perspId = perspModel.getId();
 		if (perspId == null)
 			return;
@@ -53,9 +53,9 @@ public class PerspectiveHelper {
 //					String closeable = viewExts[j].getAttribute("closeable");
 //					String showTitle = viewExts[j].getAttribute("showTitle");
 					
-					Part relPart = ModeledPageLayout.findPart(perspModel, relative);
-					Stack sm = (Stack) relPart.getParent();
-					ContributedPart viewModel = ModeledPageLayout.createViewModel(id, Boolean.parseBoolean(visible));
+					MPart relPart = ModeledPageLayout.findPart(perspModel, relative);
+					MStack sm = (MStack) relPart.getParent();
+					MContributedPart viewModel = ModeledPageLayout.createViewModel(id, Boolean.parseBoolean(visible));
 					sm.getChildren().add(viewModel);
 				}
 			}

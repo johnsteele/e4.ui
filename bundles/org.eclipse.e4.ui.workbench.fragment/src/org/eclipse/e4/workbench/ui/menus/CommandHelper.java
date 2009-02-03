@@ -15,11 +15,11 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.extensions.ExtensionUtils;
-import org.eclipse.e4.ui.model.application.Application;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
-import org.eclipse.e4.ui.model.application.Command;
-import org.eclipse.e4.ui.model.application.Handler;
-import org.eclipse.e4.ui.model.application.Window;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
@@ -35,12 +35,12 @@ public class CommandHelper {
 	 * 
 	 * @param application
 	 */
-	public static void loadCommands(Application<Window<?>> application) {
+	public static void loadCommands(MApplication<MWindow<?>> application) {
 		IConfigurationElement[] cmdExts = ExtensionUtils
 				.getExtensions(IWorkbenchRegistryConstants.PL_COMMANDS);
 		for (int i = 0; i < cmdExts.length; i++) {
 			IConfigurationElement cmd = cmdExts[i];
-			Command command = ApplicationFactory.eINSTANCE.createCommand();
+			MCommand command = ApplicationFactory.eINSTANCE.createMCommand();
 			command.setId(cmd.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
 			command.setName(cmd
 					.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
@@ -50,21 +50,21 @@ public class CommandHelper {
 
 	/**
 	 * This loads the handlers. For the moment it loads all of them into each
-	 * available Window model element. That means it doesn't deal with
+	 * available MWindow model element. That means it doesn't deal with
 	 * conflicts, and it doesn't distribute the handlers down to the individual
 	 * parts yet.
 	 * 
 	 * @param application
 	 */
-	public static void loadHandlers(Application<Window<?>> application) {
+	public static void loadHandlers(MApplication<MWindow<?>> application) {
 		IConfigurationElement[] handlerExts = ExtensionUtils
 				.getExtensions(IWorkbenchRegistryConstants.PL_HANDLERS);
 		for (int i = 0; i < handlerExts.length; i++) {
 			IConfigurationElement handlerE = handlerExts[i];
-			Iterator<Window<?>> j = application.getWindows().iterator();
+			Iterator<MWindow<?>> j = application.getWindows().iterator();
 			while (j.hasNext()) {
-				Window<?> w = j.next();
-				Handler handler = ApplicationFactory.eINSTANCE.createHandler();
+				MWindow<?> w = j.next();
+				MHandler handler = ApplicationFactory.eINSTANCE.createMHandler();
 				handler
 						.setCommand(findCommand(
 								application,
@@ -88,12 +88,12 @@ public class CommandHelper {
 	 * @param id
 	 * @return the command
 	 */
-	private static Command findCommand(Application<Window<?>> application,
+	private static MCommand findCommand(MApplication<MWindow<?>> application,
 			String id) {
-		EList<Command> cmdList = application.getCommand();
-		Iterator<Command> i = cmdList.iterator();
+		EList<MCommand> cmdList = application.getCommand();
+		Iterator<MCommand> i = cmdList.iterator();
 		while (i.hasNext()) {
-			Command command = i.next();
+			MCommand command = i.next();
 			if (id.equals(command.getId())) {
 				return command;
 			}

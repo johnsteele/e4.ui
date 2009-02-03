@@ -12,7 +12,7 @@ public class TestPerspectiveFactory implements IPerspectiveFactory {
 		IFolderLayout folder= layout.createFolder("left", IPageLayout.LEFT, (float)0.25, editorArea); //$NON-NLS-1$
 		//folder.addView("org.eclipse.jdt.ui.PackageExplorer"); //$NON-NLS-1$
 		//folder.addView("org.eclipse.jdt.ui.TypeHierarchy"); //$NON-NLS-1$
-		folder.addView("LegacyViews.ResourceView"); //$NON-NLS-1$
+//		folder.addView("LegacyViews.ResourceView"); //$NON-NLS-1$
 		//folder.addPlaceholder(IPageLayout.ID_RES_NAV);
 		folder.addPlaceholder("org.eclipse.ui.navigator.ProjectExplorer"); //$NON-NLS-1$
 

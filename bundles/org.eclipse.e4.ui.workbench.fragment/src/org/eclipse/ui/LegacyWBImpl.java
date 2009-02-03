@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.e4.ui.model.workbench.WorkbenchWindow;
+import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.IAction;
@@ -84,7 +84,7 @@ public class LegacyWBImpl implements IWorkbench {
 	protected IOperationHistory operationHistory;
 	private IContextService contextService;
 	
-	private static Map<WorkbenchWindow, LegacyWBWImpl> wbwModel2LegacyImpl = new HashMap<WorkbenchWindow, LegacyWBWImpl>();
+	private static Map<MWorkbenchWindow, LegacyWBWImpl> wbwModel2LegacyImpl = new HashMap<MWorkbenchWindow, LegacyWBWImpl>();
 
 	/**
 	 * @param e4Workbench
@@ -134,14 +134,14 @@ public class LegacyWBImpl implements IWorkbench {
 	 */
 	public IWorkbenchWindow getActiveWorkbenchWindow() {
 		//TODO: ensure windows list is in z-order
-		WorkbenchWindow workbenchWindow = e4Workbench.getModelElement().getWindows().get(0);
+		MWorkbenchWindow workbenchWindow = e4Workbench.getModelElement().getWindows().get(0);
 		return getWBWImpl(workbenchWindow);
 	}
 
 	/**
 	 * @return
 	 */
-	private LegacyWBWImpl getWBWImpl(WorkbenchWindow workbenchWindow) {
+	private LegacyWBWImpl getWBWImpl(MWorkbenchWindow workbenchWindow) {
 		if(!wbwModel2LegacyImpl.containsKey(workbenchWindow)) {
 			LegacyWBWImpl impl = new LegacyWBWImpl(e4Workbench, this, workbenchWindow);
 			wbwModel2LegacyImpl.put(workbenchWindow, impl);

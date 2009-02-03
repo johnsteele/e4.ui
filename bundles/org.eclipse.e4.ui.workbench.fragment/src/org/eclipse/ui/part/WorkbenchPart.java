@@ -243,7 +243,7 @@ public abstract class WorkbenchPart extends EventManager implements
         // Save config element.
         configElement = cfig;
 
-        // Part name and title.  
+        // MPart name and title.  
         partName = Util.safeString(cfig.getAttribute("name"));//$NON-NLS-1$;
         title = partName;
 
@@ -469,7 +469,7 @@ public abstract class WorkbenchPart extends EventManager implements
      * @see org.eclipse.ui.part.IWorkbenchPartOrientation#getOrientation()
      */
     public int getOrientation(){
-		//By default use the orientation in Window
+		//By default use the orientation in MWindow
     	return Window.getDefaultOrientation();
     }
 
