@@ -88,7 +88,7 @@ public final class PlatformUI {
     		e4Workbench = LegacyHook.e4Workbench;
     		e3Workbench = null;
     		if (e4Workbench != null)
-    			e3Workbench = new LegacyWBImpl(e4Workbench);
+    			e3Workbench = new LegacyWBImpl(e4Workbench, LegacyHook.workbench);
     	}
     }
     

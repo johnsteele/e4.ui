@@ -1,7 +1,9 @@
 package org.eclipse.e4.compatibility;
 
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
+import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
@@ -19,9 +21,12 @@ import org.eclipse.ui.themes.IThemeManager;
 public class LegacyHook implements ILegacyHook {
 	
 	public static Workbench e4Workbench;
+	public static MApplication<MWorkbenchWindow> workbench;
 	
-	public void init(Workbench e4Workbench) {
+	public void init(Workbench e4Workbench,
+			MApplication<MWorkbenchWindow> workbench) {
 		LegacyHook.e4Workbench = e4Workbench;
+		LegacyHook.workbench = workbench;
 		
 		// Images
 		WorkbenchImages.getDescriptors();
@@ -62,7 +67,11 @@ public class LegacyHook implements ILegacyHook {
 		MenuHelper.loadMenu(menuModel);
 	}
 
-	public void loadPerspective(MPerspective perspModel) {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.e4.workbench.ui.ILegacyHook#loadPerspective(org.eclipse.e4.ui.model.workbench.MPerspective)
+	 */
+	public void loadPerspective(MPerspective<?> perspModel) {
 		PerspectiveHelper.loadPerspective(perspModel);
 	}
 

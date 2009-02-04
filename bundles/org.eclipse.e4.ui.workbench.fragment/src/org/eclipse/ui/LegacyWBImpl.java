@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.help.IContext;
@@ -83,14 +84,17 @@ public class LegacyWBImpl implements IWorkbench {
 	private IWorkingSetManager wsMgr;
 	protected IOperationHistory operationHistory;
 	private IContextService contextService;
+	private MApplication<MWorkbenchWindow> application;
 	
 	private static Map<MWorkbenchWindow, LegacyWBWImpl> wbwModel2LegacyImpl = new HashMap<MWorkbenchWindow, LegacyWBWImpl>();
 
 	/**
 	 * @param e4Workbench
+	 * @param workbench 
 	 */
-	public LegacyWBImpl(Workbench e4Workbench) {
+	public LegacyWBImpl(Workbench e4Workbench, MApplication<MWorkbenchWindow> workbench) {
 		this.e4Workbench = e4Workbench;
+		this.application = workbench;
 		
 		// register workspace adapters
 		WorkbenchAdapterBuilder.registerAdapters();
@@ -134,7 +138,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 */
 	public IWorkbenchWindow getActiveWorkbenchWindow() {
 		//TODO: ensure windows list is in z-order
-		MWorkbenchWindow workbenchWindow = e4Workbench.getModelElement().getWindows().get(0);
+		MWorkbenchWindow workbenchWindow = application.getWindows().get(0);
 		return getWBWImpl(workbenchWindow);
 	}
 
@@ -688,7 +692,7 @@ public class LegacyWBImpl implements IWorkbench {
 //		if (IEvaluationService == api) {
 //			
 //		}
-		return e4Workbench.getService(api);
+		return e4Workbench.getContext().get(api.getName());
 	}
 
 	/* (non-Javadoc)
