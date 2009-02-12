@@ -89,4 +89,16 @@
          id="org.eclipse.e4.resources.rcp.patch.source"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.e4.languages.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.languages.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.languages.tests.feature"
+         version="0.0.0"/>
+
 </feature>
