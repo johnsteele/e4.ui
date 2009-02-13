@@ -9,7 +9,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.e4.ui.examples.legacy.workbench";
+	public static final String PLUGIN_ID = "org.eclipse.e4.ui.examples.legacy.workbench"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
