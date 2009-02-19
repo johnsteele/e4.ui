@@ -87,6 +87,7 @@ public class LegacyWBImpl implements IWorkbench {
 	private MApplication<MWorkbenchWindow> application;
 	
 	private static Map<MWorkbenchWindow, LegacyWBWImpl> wbwModel2LegacyImpl = new HashMap<MWorkbenchWindow, LegacyWBWImpl>();
+	private PreferenceManager prefManager;
 
 	/**
 	 * @param e4Workbench
@@ -204,7 +205,10 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getDisplay()
 	 */
 	public Display getDisplay() {
-		return Display.getCurrent();
+		if (Display.getCurrent() != null)
+			return Display.getCurrent();
+		
+		return e4Workbench.getDisplay();
 	}
 
 	/* (non-Javadoc)
@@ -511,8 +515,9 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getPreferenceManager()
 	 */
 	public PreferenceManager getPreferenceManager() {
-		// TODO Auto-generated method stub
-		return null;
+		if (prefManager == null)
+			prefManager = new PreferenceManager();
+		return null;//prefManager;
 	}
 
 	/* (non-Javadoc)
