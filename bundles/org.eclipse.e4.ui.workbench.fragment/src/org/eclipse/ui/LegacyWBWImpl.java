@@ -34,6 +34,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.NavigationHistory;
 import org.eclipse.ui.internal.WWinPartService;
+import org.eclipse.ui.internal.services.EvaluationService;
+import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * @since 3.3
@@ -47,6 +49,8 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	
 	private WWinPartService partService = new WWinPartService(this);
 	private INavigationHistory navHistory = new NavigationHistory(this);
+	private ISelectionService selService;
+	private IEvaluationService evalService;
 	public static IEditorInput hackInput;
 	
 	/**
@@ -102,8 +106,36 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getSelectionService()
 	 */
 	public ISelectionService getSelectionService() {
-		// TODO Auto-generated method stub
-		return null;
+		if (selService == null) {
+			selService = new ISelectionService(){
+				public void removeSelectionListener(String partId,
+						ISelectionListener listener) {
+				}
+				public void removeSelectionListener(ISelectionListener listener) {
+				}
+				public void removePostSelectionListener(String partId,
+						ISelectionListener listener) {
+				}
+				public void removePostSelectionListener(ISelectionListener listener) {
+				}
+				public ISelection getSelection(String partId) {
+					return null;
+				}
+				public ISelection getSelection() {
+					return null;
+				}
+				public void addSelectionListener(String partId, ISelectionListener listener) {
+				}
+				public void addSelectionListener(ISelectionListener listener) {
+				}
+				public void addPostSelectionListener(String partId,
+						ISelectionListener listener) {
+				}
+				public void addPostSelectionListener(ISelectionListener listener) {
+				}
+			};
+		}
+		return selService;
 	}
 
 	/* (non-Javadoc)
@@ -199,7 +231,12 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
-		// TODO Auto-generated method stub
+		if (IEvaluationService.class == api) {
+			if (evalService == null) {
+				evalService = new EvaluationService(); 
+			}
+			return evalService;
+		}
 		return null;
 	}
 
@@ -337,8 +374,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getDirtyEditors()
 	 */
 	public IEditorPart[] getDirtyEditors() {
-		// TODO Auto-generated method stub
-		return null;
+		return new IEditorPart[0];
 	}
 
 	/* (non-Javadoc)

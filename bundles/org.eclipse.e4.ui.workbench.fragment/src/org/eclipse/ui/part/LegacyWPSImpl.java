@@ -43,6 +43,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.IPartService;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
@@ -52,6 +53,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.PartService;
+import org.eclipse.ui.internal.misc.UIListenerLogging;
+import org.eclipse.ui.internal.services.IServiceLocatorCreator;
+import org.eclipse.ui.internal.services.ServiceLocatorCreator;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.IServiceLocator;
@@ -69,6 +74,8 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 	private IKeyBindingService kbService;
 	private IActionBars actionBars;
 	private ISelectionProvider selProvider;
+	private IServiceLocatorCreator serviceLocatorCreator;
+	private IPartService partService;
 
 	/**
 	 * @param e4Workbench
@@ -231,6 +238,20 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
+		if (api == IPartService.class) {
+			if (partService == null) {
+				partService = new PartService(
+					UIListenerLogging.PAGE_PARTLISTENER_EVENTS,
+					UIListenerLogging.PAGE_PARTLISTENER2_EVENTS);
+			}
+			return partService;
+		}
+		if (api == IServiceLocatorCreator.class) {
+			if (serviceLocatorCreator == null) {
+				serviceLocatorCreator = new ServiceLocatorCreator();
+			}
+			return serviceLocatorCreator;
+		}
 		if (api == IMenuService.class) {
 			return new IMenuService() {
 
