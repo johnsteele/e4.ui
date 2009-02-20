@@ -101,4 +101,12 @@
          id="org.eclipse.e4.languages.tests.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.e4.ui.compatibility.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.ui.compatibility.source.feature"
+         version="0.0.0"/>
+
 </feature>
