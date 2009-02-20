@@ -23,6 +23,12 @@ public class LegacyHook implements ILegacyHook {
 	public static Workbench e4Workbench;
 	public static MApplication<MWorkbenchWindow> workbench;
 	
+	/**
+	 * 
+	 */
+	public LegacyHook() {
+	}
+	
 	public void init(Workbench e4Workbench,
 			MApplication<MWorkbenchWindow> workbench) {
 		LegacyHook.e4Workbench = e4Workbench;

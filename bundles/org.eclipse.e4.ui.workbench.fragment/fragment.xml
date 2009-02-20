@@ -2,12 +2,6 @@
 <?eclipse version="3.2"?>
 <fragment>
    <extension
-         point="org.eclipse.e4.workbench.legacy">
-      <hook
-            class="org.eclipse.e4.compatibility.LegacyHook">
-      </hook>
-   </extension>
-   <extension
          point="org.eclipse.e4.workbench.partfactory">
       <factory
             class="org.eclipse.e4.extensions.LegacyViewFactory">
@@ -20,6 +14,15 @@
             id="org.eclipse.e4.ui.workbench.fragment.testPerspective"
             name="%perspective.name.f0">
       </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.e4.services">
+      <servicefactory
+            class="org.eclipse.e4.compatibility.LegacyHook">
+         <service
+               api="org.eclipse.e4.workbench.ui.ILegacyHook">
+         </service>
+      </servicefactory>
    </extension>
 
 </fragment>
