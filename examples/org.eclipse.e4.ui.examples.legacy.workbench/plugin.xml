@@ -17,5 +17,14 @@
          </property>
       </product>
    </extension>
+   <extension
+         point="org.eclipse.e4.services">
+      <servicefactory
+            class="org.eclipse.e4.ui.examples.legacy.workbench.WorkspaceValue">
+         <service
+               api="org.eclipse.core.resources.IWorkspace">
+         </service>
+      </servicefactory>
+   </extension>
 
 </plugin>
