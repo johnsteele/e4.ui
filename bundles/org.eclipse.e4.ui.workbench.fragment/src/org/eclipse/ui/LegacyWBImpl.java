@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
@@ -53,6 +54,7 @@ import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
+import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
@@ -93,9 +95,9 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @param e4Workbench
 	 * @param workbench 
 	 */
-	public LegacyWBImpl(Workbench e4Workbench, MApplication<MWorkbenchWindow> workbench) {
-		this.e4Workbench = e4Workbench;
-		this.application = workbench;
+	public LegacyWBImpl(IEclipseContext context) {
+		this.e4Workbench = (Workbench) context.get(org.eclipse.e4.workbench.ui.IWorkbench.class.getName());
+		this.application = (MApplication<MWorkbenchWindow>) context.get(MApplication.class.getName());
 		
 		// register workspace adapters
 		WorkbenchAdapterBuilder.registerAdapters();
@@ -290,21 +292,16 @@ public class LegacyWBImpl implements IWorkbench {
 			}
 
 			public void setHelp(IAction action, String contextId) {
-				System.out.println("setHelp(IAction)"); //$NON-NLS-1$
 			}
 
 			public void setHelp(Control control, String contextId) {
-				System.out.println("setHelp(Control)"); //$NON-NLS-1$
 			}
 
 			public void setHelp(Menu menu, String contextId) {
-				System.out.println("setHelpMenu)"); //$NON-NLS-1$
 			}
 
 			public void setHelp(MenuItem item, String contextId) {
-				System.out.println("setHelp(MenuItem)"); //$NON-NLS-1$
-			}
-			
+			}			
 		};
 	}
 
@@ -532,8 +529,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getProgressService()
 	 */
 	public IProgressService getProgressService() {
-		// TODO Auto-generated method stub
-		return null;
+		return ProgressManager.getInstance();
 	}
 
 	/* (non-Javadoc)

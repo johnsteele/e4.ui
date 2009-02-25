@@ -18,7 +18,7 @@
    <extension
          point="org.eclipse.e4.services">
       <servicefactory
-            class="org.eclipse.e4.compatibility.LegacyHook">
+            class="org.eclipse.e4.compatibility.LegacyHookValue">
          <service
                api="org.eclipse.e4.workbench.ui.ILegacyHook">
          </service>

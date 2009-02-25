@@ -11,7 +11,6 @@
 package org.eclipse.ui;
 
 import org.eclipse.e4.compatibility.LegacyHook;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.application.WorkbenchAdvisor;
@@ -74,22 +73,17 @@ public final class PlatformUI {
      */
     public static final int RETURN_EMERGENCY_CLOSE = 3;
 
-    private static Workbench e4Workbench;
+    //private static Workbench e4Workbench;
     private static LegacyWBImpl e3Workbench;
+    
+//    static { 
+//    	e3Workbench = new LegacyWBImpl(LegacyHook.context);
+//    } 
     
     /**
      * Block instantiation.
      */
     private PlatformUI() {
-    }
-    
-    private static void initE4Workbench() {
-    	if (e4Workbench != LegacyHook.e4Workbench) {
-    		e4Workbench = LegacyHook.e4Workbench;
-    		e3Workbench = null;
-    		if (e4Workbench != null)
-    			e3Workbench = new LegacyWBImpl(e4Workbench, LegacyHook.workbench);
-    	}
     }
     
     /**
@@ -98,11 +92,6 @@ public final class PlatformUI {
      * @return the workbench
      */
     public static IWorkbench getWorkbench() {
-    	// HACK! we have to ensure that we are using the correct E4 Workbench
-    	// This really should be injected into this class but the tooling won't allow it
-    	// for some reason...
-    	initE4Workbench();
-    	
     	return e3Workbench;
     }
     
@@ -122,8 +111,10 @@ public final class PlatformUI {
 	 * @since 3.0
 	 */
     public static boolean isWorkbenchRunning() {
-    	initE4Workbench();
-    	return e4Workbench != null;
+    	if (e3Workbench == null && LegacyHook.context != null)
+        	e3Workbench = new LegacyWBImpl(LegacyHook.context);
+
+    	return e3Workbench != null;
     }
 
     /**
@@ -158,10 +149,6 @@ public final class PlatformUI {
      */
     public static int createAndRunWorkbench(Display display,
             WorkbenchAdvisor advisor) {
-    	// Should actually create and run a WB
-    	//MWorkbench newWB = MWorkbenchFactory.eINSTANCE.createWorkbenchModel();
-    	initE4Workbench();
-    	
         return RETURN_OK;
     }
 
@@ -174,7 +161,6 @@ public final class PlatformUI {
      * @since 3.0
      */
     public static Display createDisplay() {
-    	initE4Workbench();
         return e3Workbench.getDisplay();
     }
 
@@ -189,7 +175,6 @@ public final class PlatformUI {
      * @since 3.0
      */
     public static TestableObject getTestableObject() {
-    	initE4Workbench();
         return null;
     }
 
@@ -202,7 +187,6 @@ public final class PlatformUI {
      * @since 3.0
      */
     public static IPreferenceStore getPreferenceStore() {
-    	initE4Workbench();
         return PrefUtil.getAPIPreferenceStore();
     }
 }

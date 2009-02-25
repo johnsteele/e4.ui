@@ -1,11 +1,9 @@
 package org.eclipse.e4.compatibility;
 
-import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
-import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.workbench.ui.ILegacyHook;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.e4.workbench.ui.menus.PerspectiveHelper;
 import org.eclipse.ui.PlatformUI;
@@ -19,21 +17,23 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.IThemeManager;
 
 public class LegacyHook implements ILegacyHook {
-	
-	public static Workbench e4Workbench;
-	public static MApplication<MWorkbenchWindow> workbench;
-	
-	/**
-	 * 
-	 */
-	public LegacyHook() {
+	static {
+		PlatformUI.isWorkbenchRunning();
 	}
 	
-	public void init(Workbench e4Workbench,
-			MApplication<MWorkbenchWindow> workbench) {
-		LegacyHook.e4Workbench = e4Workbench;
-		LegacyHook.workbench = workbench;
-		
+//	public static Workbench e4Workbench;
+//	public static MApplication<MWorkbenchWindow> workbench;
+	public static IEclipseContext context;
+	
+	public LegacyHook(IEclipseContext context) {
+		init(context);
+	}
+	
+	private void init(IEclipseContext context) {
+		// set up PlatformUI
+		LegacyHook.context = context;
+		PlatformUI.isWorkbenchRunning();
+
 		// Images
 		WorkbenchImages.getDescriptors();
 
