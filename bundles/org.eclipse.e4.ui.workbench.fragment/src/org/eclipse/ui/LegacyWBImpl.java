@@ -23,7 +23,6 @@ import org.eclipse.e4.core.services.context.IComputedValue;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -34,6 +33,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
@@ -66,10 +66,6 @@ import org.osgi.framework.BundleContext;
  */
 public class LegacyWBImpl implements IWorkbench {
 	private IEclipseContext context;
-	private Workbench e4Workbench;
-//	public Workbench getE4Workbench() {
-//		return e4Workbench;
-//	}
 
 	private static Map<MWorkbenchWindow, LegacyWBWImpl> wbwModel2LegacyImpl = new HashMap<MWorkbenchWindow, LegacyWBWImpl>();
 
@@ -79,7 +75,9 @@ public class LegacyWBImpl implements IWorkbench {
 	 */
 	public LegacyWBImpl(IEclipseContext context) {
 		this.context = context;
-		this.e4Workbench = (Workbench) context.get(org.eclipse.e4.workbench.ui.IWorkbench.class.getName());
+
+		// Add myself to the context
+		context.set(LegacyWBImpl.class.getName(), this);
 		
 		// register workspace adapters
 		WorkbenchAdapterBuilder.registerAdapters();
@@ -148,8 +146,6 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#addWindowListener(org.eclipse.ui.IWindowListener)
 	 */
 	public void addWindowListener(IWindowListener listener) {
-		if (e4Workbench == null)
-			return;
 	}
 
 	/* (non-Javadoc)
@@ -191,7 +187,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 */
 	private LegacyWBWImpl getWBWImpl(MWorkbenchWindow workbenchWindow) {
 		if(!wbwModel2LegacyImpl.containsKey(workbenchWindow)) {
-			LegacyWBWImpl impl = new LegacyWBWImpl(e4Workbench, this, workbenchWindow);
+			LegacyWBWImpl impl = new LegacyWBWImpl(workbenchWindow);
 			wbwModel2LegacyImpl.put(workbenchWindow, impl);
 		}
 			
@@ -243,7 +239,8 @@ public class LegacyWBImpl implements IWorkbench {
 		if (Display.getCurrent() != null)
 			return Display.getCurrent();
 		
-		return e4Workbench.getDisplay();
+		Shell shell = (Shell) context.get(Shell.class.getName());
+		return shell.getDisplay();
 	}
 
 	/* (non-Javadoc)
@@ -536,10 +533,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
-//		if (IEvaluationService == api) {
-//			
-//		}
-		return e4Workbench.getContext().get(api.getName());
+		return context.get(api.getName());
 	}
 
 	/* (non-Javadoc)

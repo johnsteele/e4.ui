@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.core.services.context.IComputedValue;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
@@ -42,15 +43,12 @@ import org.eclipse.ui.services.IEvaluationService;
  *
  */
 public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
-
+	private IEclipseContext context;
 	private Workbench e4Workbench;
 	private MWorkbenchWindow workbenchWindow;
 	private LegacyWBImpl legacyWbImpl;
 	
-	private WWinPartService partService = new WWinPartService(this);
-	private INavigationHistory navHistory = new NavigationHistory(this);
-	private ISelectionService selService;
-	private IEvaluationService evalService;
+//	private ISelectionService selService;
 	public static IEditorInput hackInput;
 	
 	/**
@@ -58,10 +56,68 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @param legacyWbImpl 
 	 * @param workbenchWindow
 	 */
-	public LegacyWBWImpl(Workbench e4Workbench, LegacyWBImpl legacyWbImpl, MWorkbenchWindow workbenchWindow) {
-		this.e4Workbench = e4Workbench;
+	public LegacyWBWImpl(MWorkbenchWindow workbenchWindow) {
 		this.workbenchWindow = workbenchWindow;
-		this.legacyWbImpl = legacyWbImpl;
+		context = workbenchWindow.getContext();
+		e4Workbench = (Workbench) context
+				.get(org.eclipse.e4.workbench.ui.IWorkbench.class.getName());
+		legacyWbImpl = (LegacyWBImpl) context.get(LegacyWBImpl.class.getName());
+		
+		// Register any window-specific services to the context
+		registerServices();
+	}
+
+	/**
+	 * Register any window-specific services to the context
+	 */
+	private void registerServices() {
+		context.set(IPartService.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new WWinPartService(LegacyWBWImpl.this);
+			}
+		});
+		context.set(INavigationHistory.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new NavigationHistory(LegacyWBWImpl.this);
+			}
+		});
+		context.set(IEvaluationService.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new EvaluationService();
+			}
+		});
+		context.set(ISelectionService.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				ISelectionService selService = new ISelectionService(){
+					public void removeSelectionListener(String partId,
+							ISelectionListener listener) {
+					}
+					public void removeSelectionListener(ISelectionListener listener) {
+					}
+					public void removePostSelectionListener(String partId,
+							ISelectionListener listener) {
+					}
+					public void removePostSelectionListener(ISelectionListener listener) {
+					}
+					public ISelection getSelection(String partId) {
+						return null;
+					}
+					public ISelection getSelection() {
+						return null;
+					}
+					public void addSelectionListener(String partId, ISelectionListener listener) {
+					}
+					public void addSelectionListener(ISelectionListener listener) {
+					}
+					public void addPostSelectionListener(String partId,
+							ISelectionListener listener) {
+					}
+					public void addPostSelectionListener(ISelectionListener listener) {
+					}
+				};
+				return selService;
+			}
+		});
 	}
 
 	/* (non-Javadoc)
@@ -99,43 +155,14 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getPartService()
 	 */
 	public IPartService getPartService() {
-		return partService;
+		return (IPartService) context.get(IPartService.class.getName());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindow#getSelectionService()
 	 */
 	public ISelectionService getSelectionService() {
-		if (selService == null) {
-			selService = new ISelectionService(){
-				public void removeSelectionListener(String partId,
-						ISelectionListener listener) {
-				}
-				public void removeSelectionListener(ISelectionListener listener) {
-				}
-				public void removePostSelectionListener(String partId,
-						ISelectionListener listener) {
-				}
-				public void removePostSelectionListener(ISelectionListener listener) {
-				}
-				public ISelection getSelection(String partId) {
-					return null;
-				}
-				public ISelection getSelection() {
-					return null;
-				}
-				public void addSelectionListener(String partId, ISelectionListener listener) {
-				}
-				public void addSelectionListener(ISelectionListener listener) {
-				}
-				public void addPostSelectionListener(String partId,
-						ISelectionListener listener) {
-				}
-				public void addPostSelectionListener(ISelectionListener listener) {
-				}
-			};
-		}
-		return selService;
+		return (ISelectionService) context.get(ISelectionService.class.getName());
 	}
 
 	/* (non-Javadoc)
@@ -231,13 +258,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
-		if (IEvaluationService.class == api) {
-			if (evalService == null) {
-				evalService = new EvaluationService(); 
-			}
-			return evalService;
-		}
-		return null;
+		return context.get(api.getName());
 	}
 
 	/* (non-Javadoc)
@@ -422,7 +443,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getNavigationHistory()
 	 */
 	public INavigationHistory getNavigationHistory() {
-		return navHistory ;
+		return (INavigationHistory) context.get(INavigationHistory.class.getName());
 	}
 
 	/* (non-Javadoc)
