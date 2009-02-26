@@ -2,16 +2,18 @@ package org.eclipse.e4.extensions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
 import org.eclipse.e4.workbench.ui.renderers.swt.PartFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.LegacyWBImpl;
 import org.eclipse.ui.LegacyWBWImpl;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.LegacyWPSImpl;
@@ -42,7 +44,7 @@ public class LegacyViewFactory extends PartFactory {
 
 		//part.setPlugin(viewContribution.getContributor().getName());
 		part.setIconURI(editorElement.getAttribute("icon")); //$NON-NLS-1$
-		part.setName(editorElement.getAttribute("name")); //$NON-NLS-1$
+		//part.setName(editorElement.getAttribute("name")); //$NON-NLS-1$
 		EditorPart impl = null;
 		try {
 			impl = (EditorPart) editorElement.createExecutableExtension("class"); //$NON-NLS-1$
@@ -53,9 +55,14 @@ public class LegacyViewFactory extends PartFactory {
 			return null;
 
 		try {
+			IEclipseContext parentContext = getContextForParent(part);
+			final IEclipseContext localContext = EclipseContextFactory.create(
+								parentContext, UIContextScheduler.instance);
+						localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor"); //$NON-NLS-1$
+			part.setContext(localContext);
+			
 			// Assign a 'site' for the newly instantiated part
-			LegacyWBImpl wb = (LegacyWBImpl) PlatformUI.getWorkbench();
-			LegacyWPSImpl site = new LegacyWPSImpl(wb.getE4Workbench(), part, impl);
+			LegacyWPSImpl site = new LegacyWPSImpl(part, impl);
 			impl.init(site, LegacyWBWImpl.hackInput);  // HACK!! needs an editorInput
 
 			impl.createPartControl(parent);
@@ -83,9 +90,14 @@ public class LegacyViewFactory extends PartFactory {
 			return null;
 
 		try {
+			IEclipseContext parentContext = getContextForParent(part);
+			final IEclipseContext localContext = EclipseContextFactory.create(
+								parentContext, UIContextScheduler.instance);
+						localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor"); //$NON-NLS-1$
+			part.setContext(localContext);
+			
 			// Assign a 'site' for the newly instantiated part
-			LegacyWBImpl wb = (LegacyWBImpl) PlatformUI.getWorkbench();
-			LegacyWPSImpl site = new LegacyWPSImpl(wb.getE4Workbench(), part, impl);
+			LegacyWPSImpl site = new LegacyWPSImpl(part, impl);
 			impl.init(site, null);
 
 			impl.createPartControl(parent);

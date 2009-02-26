@@ -11,22 +11,12 @@
 
 package org.eclipse.ui.part;
 
-import java.util.Collection;
-
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.commands.NotEnabledException;
-import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.e4.core.services.context.IComputedValue;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
-import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.e4.workbench.ui.api.LegacyHandlerService;
+import org.eclipse.e4.workbench.ui.api.LegacyMenuService;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -37,27 +27,23 @@ import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IPartService;
-import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PartService;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.ServiceLocatorCreator;
-import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -66,30 +52,127 @@ import org.eclipse.ui.services.IServiceLocator;
  *
  */
 public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite {
-
 	private MContributedPart<MPart<?>> part;
-	private Workbench e4Workbench;
 	private WorkbenchPart implementation;
+	private IEclipseContext context;
 	
-	private IKeyBindingService kbService;
-	private IActionBars actionBars;
-	private ISelectionProvider selProvider;
-	private IServiceLocatorCreator serviceLocatorCreator;
-	private IPartService partService;
-
 	/**
 	 * @param e4Workbench
 	 * @param part
 	 * @param impl 
 	 */
-	public LegacyWPSImpl(Workbench e4Workbench, MContributedPart<MPart<?>> part, WorkbenchPart impl) {
-		this.e4Workbench = e4Workbench;
+	public LegacyWPSImpl(MContributedPart<MPart<?>> part, WorkbenchPart impl) {
+		this.part = part;
+		this.implementation = impl;
+		context = part.getContext();
 		
-		// HACK! need to reference e4Workbench
-		if (this.e4Workbench != null) {
-			this.part = part;
-			this.implementation = impl;
-		}
+		// Register any site-specific services with the context
+		registerServices();
+	}
+
+	/**
+	 * Add any necessary services to the context
+	 */
+	private void registerServices() {
+		context.set(IKeyBindingService.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return  new IKeyBindingService() {
+					public String[] getScopes() {
+						return null;
+					}
+					public void registerAction(IAction action) {
+					}
+					public void setScopes(String[] scopes) {
+					}
+					public void unregisterAction(IAction action) {
+					}
+			};
+			}
+		});
+		context.set(IActionBars.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				IActionBars actionBars = new IActionBars() {
+					private IStatusLineManager slMgr;
+					private IMenuManager menuMgr;
+					private IToolBarManager tbMgr;
+					private IAction globalHandler;
+					
+					public void clearGlobalActionHandlers() {
+						globalHandler = null;
+					}
+					public IAction getGlobalActionHandler(String actionId) {
+						return globalHandler;
+					}
+					public IMenuManager getMenuManager() {
+						if (menuMgr == null) {
+							menuMgr = new MenuManager();
+						}
+						return menuMgr;
+					}
+					public IServiceLocator getServiceLocator() {
+						return null;
+					}
+					public IStatusLineManager getStatusLineManager() {
+						if (slMgr == null) {
+							slMgr = new StatusLineManager();
+						}
+						return slMgr;
+					}
+					public IToolBarManager getToolBarManager() {
+						if (tbMgr == null) {
+							tbMgr = new ToolBarManager2();
+						}
+						return tbMgr;
+					}
+					public void setGlobalActionHandler(String actionId, IAction handler) {
+						globalHandler = handler;
+					}
+					public void updateActionBars() {
+					}
+				};
+				
+				return actionBars;
+			}
+		});
+		context.set(ISelectionProvider.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				ISelectionProvider selProvider = new ISelectionProvider() {
+					public void addSelectionChangedListener(ISelectionChangedListener listener) {
+					}
+					public ISelection getSelection() {
+						return null;
+					}
+					public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+					}
+					public void setSelection(ISelection selection) {
+					}				
+				};
+				return selProvider;
+			}
+		});
+		context.set(IServiceLocatorCreator.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new ServiceLocatorCreator();
+			}
+		});
+		context.set(IPartService.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new PartService(
+						UIListenerLogging.PAGE_PARTLISTENER_EVENTS,
+						UIListenerLogging.PAGE_PARTLISTENER2_EVENTS);
+			}
+		});
+		context.set(IMenuService.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new LegacyMenuService();
+			}
+		});
+		context.set(IHandlerService.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new LegacyHandlerService();
+			}
+		});
+		
 	}
 
 	/* (non-Javadoc)
@@ -103,33 +186,7 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getKeyBindingService()
 	 */
 	public IKeyBindingService getKeyBindingService() {
-//		if (kbService == null)
-//			kbService = new KeyBindingService(this);
-		if (kbService == null)
-			kbService = new IKeyBindingService() {
-
-				public String[] getScopes() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				public void registerAction(IAction action) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				public void setScopes(String[] scopes) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				public void unregisterAction(IAction action) {
-					// TODO Auto-generated method stub
-					
-				}
-			
-		};
-		return kbService;
+		return (IKeyBindingService) context.get(IKeyBindingService.class.getName());
 	}
 
 	/* (non-Javadoc)
@@ -183,33 +240,14 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 	 * @see org.eclipse.ui.IWorkbenchSite#getSelectionProvider()
 	 */
 	public ISelectionProvider getSelectionProvider() {
-		if (selProvider == null) {
-			selProvider = new ISelectionProvider() {
-				public void addSelectionChangedListener(
-						ISelectionChangedListener listener) {
-				}
-
-				public ISelection getSelection() {
-					return null;
-				}
-
-				public void removeSelectionChangedListener(
-						ISelectionChangedListener listener) {
-				}
-
-				public void setSelection(ISelection selection) {
-				}				
-			};
-		}
-		
-		return selProvider;
+		return (ISelectionProvider) context.get(ISelectionProvider.class.getName());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchSite#getShell()
 	 */
 	public Shell getShell() {
-		return e4Workbench.getShell();
+		return (Shell) part.getContext().get(Shell.class.getName());
 	}
 
 	/* (non-Javadoc)
@@ -223,224 +261,35 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 	 * @see org.eclipse.ui.IWorkbenchSite#setSelectionProvider(org.eclipse.jface.viewers.ISelectionProvider)
 	 */
 	public void setSelectionProvider(ISelectionProvider provider) {
-		selProvider = provider;
+		context.set(ISelectionProvider.class.getName(), provider);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
-		return null;
+		return context.get(adapter.getName());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
-		if (api == IPartService.class) {
-			if (partService == null) {
-				partService = new PartService(
-					UIListenerLogging.PAGE_PARTLISTENER_EVENTS,
-					UIListenerLogging.PAGE_PARTLISTENER2_EVENTS);
-			}
-			return partService;
-		}
-		if (api == IServiceLocatorCreator.class) {
-			if (serviceLocatorCreator == null) {
-				serviceLocatorCreator = new ServiceLocatorCreator();
-			}
-			return serviceLocatorCreator;
-		}
-		if (api == IMenuService.class) {
-			return new IMenuService() {
-
-				public void addContributionFactory(
-						AbstractContributionFactory factory) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				public IEvaluationContext getCurrentState() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				public void populateContributionManager(
-						ContributionManager mgr, String location) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				public void releaseContributions(ContributionManager mgr) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				public void removeContributionFactory(
-						AbstractContributionFactory factory) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				public void addSourceProvider(ISourceProvider provider) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				public void removeSourceProvider(ISourceProvider provider) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				public void dispose() {
-					// TODO Auto-generated method stub
-					
-				}				
-			};
-		}
-		if (api == IHandlerService.class) {
-			return new IHandlerService() {
-				public IHandlerActivation activateHandler(
-						IHandlerActivation activation) {
-					return null;
-				}
-				public IHandlerActivation activateHandler(String commandId,
-						IHandler handler) {
-					return null;
-				}
-				public IHandlerActivation activateHandler(String commandId,
-						IHandler handler, Expression expression) {
-					return null;
-				}
-				public IHandlerActivation activateHandler(String commandId,
-						IHandler handler, Expression expression, boolean global) {
-					return null;
-				}
-				public IHandlerActivation activateHandler(String commandId,
-						IHandler handler, Expression expression,
-						int sourcePriorities) {
-					return null;
-				}
-				public IEvaluationContext createContextSnapshot(
-						boolean includeSelection) {
-					return null;
-				}
-				public ExecutionEvent createExecutionEvent(Command command,
-						Event event) {
-					return null;
-				}
-				public ExecutionEvent createExecutionEvent(
-						ParameterizedCommand command, Event event) {
-					return null;
-				}
-				public void deactivateHandler(IHandlerActivation activation) {
-				}
-				public void deactivateHandlers(Collection activations) {
-				}
-				public Object executeCommand(String commandId, Event event)
-						throws ExecutionException, NotDefinedException,
-						NotEnabledException, NotHandledException {
-					return null;
-				}
-				public Object executeCommand(ParameterizedCommand command,
-						Event event) throws ExecutionException,
-						NotDefinedException, NotEnabledException,
-						NotHandledException {
-					return null;
-				}
-				public Object executeCommandInContext(
-						ParameterizedCommand command, Event event,
-						IEvaluationContext context) throws ExecutionException,
-						NotDefinedException, NotEnabledException,
-						NotHandledException {
-					return null;
-				}
-				public IEvaluationContext getCurrentState() {
-					return null;
-				}
-				public void readRegistry() {
-				}
-				public void setHelpContextId(IHandler handler,
-						String helpContextId) {
-				}
-				public void addSourceProvider(ISourceProvider provider) {
-				}
-				public void removeSourceProvider(ISourceProvider provider) {
-				}
-				public void dispose() {
-				}
-			};
-		}
-		return null;
+		return context.get(api.getName());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
 	 */
 	public boolean hasService(Class api) {
-		// TODO Auto-generated method stub
-		return false;
+		return context.containsKey(api.getName());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewSite#getActionBars()
 	 */
 	public IActionBars getActionBars() {
-		if (actionBars == null) {
-		actionBars = new IActionBars() {
-			private IStatusLineManager slMgr;
-			private IMenuManager menuMgr;
-			private IToolBarManager tbMgr;
-			private IAction globalHandler;
-			
-			public void clearGlobalActionHandlers() {
-				globalHandler = null;
-			}
-
-			public IAction getGlobalActionHandler(String actionId) {
-				return globalHandler;
-			}
-
-			public IMenuManager getMenuManager() {
-				if (menuMgr == null) {
-					menuMgr = new MenuManager();
-				}
-				
-				return menuMgr;
-			}
-
-			public IServiceLocator getServiceLocator() {
-				return null;
-			}
-
-			public IStatusLineManager getStatusLineManager() {
-				if (slMgr == null) {
-					slMgr = new StatusLineManager();
-				}
-				
-				return slMgr;
-			}
-
-			public IToolBarManager getToolBarManager() {
-				if (tbMgr == null) {
-					tbMgr = new ToolBarManager2();
-				}
-				
-				return tbMgr;
-			}
-
-			public void setGlobalActionHandler(String actionId, IAction handler) {
-				globalHandler = handler;
-			}
-
-			public void updateActionBars() {
-			}
-			
-		};
-		}
-
-		return actionBars;
+		return (IActionBars) context.get(IActionBars.class.getName());
 	}
 
 	/* (non-Javadoc)
@@ -463,8 +312,6 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 	 */
 	public void registerContextMenu(MenuManager menuManager,
 			ISelectionProvider selectionProvider, boolean includeEditorInput) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
@@ -472,8 +319,6 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 	 */
 	public void registerContextMenu(String menuId, MenuManager menuManager,
 			ISelectionProvider selectionProvider, boolean includeEditorInput) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

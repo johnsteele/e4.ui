@@ -15,19 +15,11 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.contexts.ContextManager;
-import org.eclipse.core.commands.operations.ICompositeOperation;
-import org.eclipse.core.commands.operations.IOperationApprover;
-import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.IOperationHistoryListener;
-import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.core.services.context.IComputedValue;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
@@ -54,6 +46,7 @@ import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
+import org.eclipse.ui.internal.operations.WorkbenchOperationSupport;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
@@ -72,36 +65,83 @@ import org.osgi.framework.BundleContext;
  *
  */
 public class LegacyWBImpl implements IWorkbench {
+	private IEclipseContext context;
 	private Workbench e4Workbench;
-	public Workbench getE4Workbench() {
-		return e4Workbench;
-	}
+//	public Workbench getE4Workbench() {
+//		return e4Workbench;
+//	}
 
-	private ISharedImages sharedImages;
-	private IEditorRegistry editorRegistry;
-	private IExtensionTracker tracker;
-	private IDecoratorManager decoratorManager;
-	private WorkbenchActivitySupport workbenchActivitySupport;
-	private IWorkbenchOperationSupport operationSupport;
-	private IWorkingSetManager wsMgr;
-	protected IOperationHistory operationHistory;
-	private IContextService contextService;
-	private MApplication<MWorkbenchWindow> application;
-	
 	private static Map<MWorkbenchWindow, LegacyWBWImpl> wbwModel2LegacyImpl = new HashMap<MWorkbenchWindow, LegacyWBWImpl>();
-	private PreferenceManager prefManager;
 
 	/**
 	 * @param e4Workbench
 	 * @param workbench 
 	 */
 	public LegacyWBImpl(IEclipseContext context) {
+		this.context = context;
 		this.e4Workbench = (Workbench) context.get(org.eclipse.e4.workbench.ui.IWorkbench.class.getName());
-		this.application = (MApplication<MWorkbenchWindow>) context.get(MApplication.class.getName());
 		
 		// register workspace adapters
 		WorkbenchAdapterBuilder.registerAdapters();
+		
+		// Register necessary services in the context
+		registerServices();
+	}
 
+	/**
+	 * Adds ComputedValues for all the services to the context
+	 */
+	private void registerServices() {
+		context.set(ISharedImages.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new SharedImages();
+			}
+		});
+		context.set(IEditorRegistry.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new EditorRegistry();
+			}
+		});
+		context.set(IExtensionTracker.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new UIExtensionTracker(getDisplay());
+			}
+		});
+		context.set(IDecoratorManager.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new DecoratorManager();
+			}
+		});
+		context.set(IWorkbenchActivitySupport.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new WorkbenchActivitySupport();
+			}
+		});
+//		private IWorkbenchOperationSupport operationSupport;
+		context.set(IWorkbenchOperationSupport.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new WorkbenchOperationSupport();
+			}
+		});
+//			private IWorkingSetManager wsMgr;
+		context.set(IWorkingSetManager.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				Bundle bundle = Platform.getBundle("org.eclipse.e4.ui.model.workbench"); //$NON-NLS-1$
+				BundleContext bc = bundle.getBundleContext();
+				return new WorkingSetManager(bc);
+			}
+		});
+//		private IContextService contextService;
+		context.set(IContextService.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new ContextService(new ContextManager());
+			}
+		});
+		context.set(PreferenceManager.class.getName(), new IComputedValue() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new PreferenceManager();
+			}
+		});
 	}
 
 	/* (non-Javadoc)
@@ -141,6 +181,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 */
 	public IWorkbenchWindow getActiveWorkbenchWindow() {
 		//TODO: ensure windows list is in z-order
+		MApplication<MWorkbenchWindow> application = (MApplication<MWorkbenchWindow>) context.get(MApplication.class.getName());
 		MWorkbenchWindow workbenchWindow = application.getWindows().get(0);
 		return getWBWImpl(workbenchWindow);
 	}
@@ -161,12 +202,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getActivitySupport()
 	 */
 	public IWorkbenchActivitySupport getActivitySupport() {
-		if (workbenchActivitySupport == null) {
-			workbenchActivitySupport = new WorkbenchActivitySupport();
-			//activityHelper = ActivityPersistanceHelper.getInstance();
-		}
-		
-		return workbenchActivitySupport;
+		return (IWorkbenchActivitySupport) context.get(IWorkbenchActivitySupport.class.getName());
 	}
 
 	/* (non-Javadoc)
@@ -197,10 +233,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getDecoratorManager()
 	 */
 	public IDecoratorManager getDecoratorManager() {
-        if (decoratorManager == null) {
-            decoratorManager = new DecoratorManager();
-        }
-        return decoratorManager;
+		return (IDecoratorManager) context.get(IDecoratorManager.class.getName());
 	}
 
 	/* (non-Javadoc)
@@ -217,10 +250,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getEditorRegistry()
 	 */
 	public IEditorRegistry getEditorRegistry() {
-        if (editorRegistry == null) {
-            editorRegistry = new EditorRegistry();
-        }
-        return editorRegistry;
+		return (IEditorRegistry) context.get(IEditorRegistry.class.getName());
 	}
 
 	/* (non-Javadoc)
@@ -243,10 +273,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getExtensionTracker()
 	 */
 	public IExtensionTracker getExtensionTracker() {
-		if (tracker == null) {
-			tracker = new UIExtensionTracker(getDisplay());
-		}
-		return tracker;
+		return (IExtensionTracker) context.get(IExtensionTracker.class.getName());
 	}
 
 	/* (non-Javadoc)
@@ -333,171 +360,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getOperationSupport()
 	 */
 	public IWorkbenchOperationSupport getOperationSupport() {
-		if (operationSupport == null) {
-			operationSupport = new IWorkbenchOperationSupport() {
-	
-				public IOperationHistory getOperationHistory() {
-					if (operationHistory == null) {
-						operationHistory = new IOperationHistory() {
-
-							public void add(IUndoableOperation operation) {
-								// TODO Auto-generated method stub
-								
-							}
-
-							public void addOperationApprover(
-									IOperationApprover approver) {
-								// TODO Auto-generated method stub
-								
-							}
-
-							public void addOperationHistoryListener(
-									IOperationHistoryListener listener) {
-								// TODO Auto-generated method stub
-								
-							}
-
-							public boolean canRedo(IUndoContext context) {
-								// TODO Auto-generated method stub
-								return false;
-							}
-
-							public boolean canUndo(IUndoContext context) {
-								// TODO Auto-generated method stub
-								return false;
-							}
-
-							public void closeOperation(boolean operationOk,
-									boolean addToHistory, int mode) {
-								// TODO Auto-generated method stub
-								
-							}
-
-							public void dispose(IUndoContext context,
-									boolean flushUndo, boolean flushRedo,
-									boolean flushContext) {
-								// TODO Auto-generated method stub
-								
-							}
-
-							public IStatus execute(
-									IUndoableOperation operation,
-									IProgressMonitor monitor, IAdaptable info)
-									throws ExecutionException {
-								// TODO Auto-generated method stub
-								return null;
-							}
-
-							public int getLimit(IUndoContext context) {
-								// TODO Auto-generated method stub
-								return 0;
-							}
-
-							public IUndoableOperation[] getRedoHistory(
-									IUndoContext context) {
-								// TODO Auto-generated method stub
-								return null;
-							}
-
-							public IUndoableOperation getRedoOperation(
-									IUndoContext context) {
-								// TODO Auto-generated method stub
-								return null;
-							}
-
-							public IUndoableOperation[] getUndoHistory(
-									IUndoContext context) {
-								// TODO Auto-generated method stub
-								return null;
-							}
-
-							public IUndoableOperation getUndoOperation(
-									IUndoContext context) {
-								// TODO Auto-generated method stub
-								return null;
-							}
-
-							public void openOperation(
-									ICompositeOperation operation, int mode) {
-								// TODO Auto-generated method stub
-								
-							}
-
-							public void operationChanged(
-									IUndoableOperation operation) {
-								// TODO Auto-generated method stub
-								
-							}
-
-							public IStatus redo(IUndoContext context,
-									IProgressMonitor monitor, IAdaptable info)
-									throws ExecutionException {
-								// TODO Auto-generated method stub
-								return null;
-							}
-
-							public IStatus redoOperation(
-									IUndoableOperation operation,
-									IProgressMonitor monitor, IAdaptable info)
-									throws ExecutionException {
-								// TODO Auto-generated method stub
-								return null;
-							}
-
-							public void removeOperationApprover(
-									IOperationApprover approver) {
-								// TODO Auto-generated method stub
-								
-							}
-
-							public void removeOperationHistoryListener(
-									IOperationHistoryListener listener) {
-								// TODO Auto-generated method stub
-								
-							}
-
-							public void replaceOperation(
-									IUndoableOperation operation,
-									IUndoableOperation[] replacements) {
-								// TODO Auto-generated method stub
-								
-							}
-
-							public void setLimit(IUndoContext context, int limit) {
-								// TODO Auto-generated method stub
-								
-							}
-
-							public IStatus undo(IUndoContext context,
-									IProgressMonitor monitor, IAdaptable info)
-									throws ExecutionException {
-								// TODO Auto-generated method stub
-								return null;
-							}
-
-							public IStatus undoOperation(
-									IUndoableOperation operation,
-									IProgressMonitor monitor, IAdaptable info)
-									throws ExecutionException {
-								// TODO Auto-generated method stub
-								return null;
-							}
-							
-						};
-					}
-					
-					return operationHistory;
-				}
-	
-				public IUndoContext getUndoContext() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-				
-			};
-		}
-		
-		return operationSupport;
+		return (IWorkbenchOperationSupport) context.get(IWorkbenchOperationSupport.class.getName());
 	}
 
 	/* (non-Javadoc)
@@ -512,9 +375,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getPreferenceManager()
 	 */
 	public PreferenceManager getPreferenceManager() {
-		if (prefManager == null)
-			prefManager = new PreferenceManager();
-		return null;//prefManager;
+		return (PreferenceManager) context.get(PreferenceManager.class.getName());
 	}
 
 	/* (non-Javadoc)
@@ -536,10 +397,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getSharedImages()
 	 */
 	public ISharedImages getSharedImages() {
-        if (sharedImages == null) {
-			sharedImages = new SharedImages();
-		}
-        return sharedImages;
+		return (ISharedImages) context.get(ISharedImages.class.getName());
 	}
 
 	/* (non-Javadoc)
@@ -577,12 +435,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getWorkingSetManager()
 	 */
 	public IWorkingSetManager getWorkingSetManager() {
-		if (wsMgr == null) {
-			Bundle bundle = Platform.getBundle("org.eclipse.e4.ui.model.workbench"); //$NON-NLS-1$
-			BundleContext bc = bundle.getBundleContext();
-			wsMgr = new WorkingSetManager(bc);
-		}
-		return wsMgr;
+		return (IWorkingSetManager) context.get(IWorkingSetManager.class.getName());
 	}
 
 	/* (non-Javadoc)
@@ -676,14 +529,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		if (IContextService.class == adapter) {
-			if (contextService == null) {
-				contextService = new ContextService(new ContextManager());
-			}
-			
-			return contextService;
-		}
-		return null;
+		return context.get(adapter.getName());
 	}
 
 	/* (non-Javadoc)
