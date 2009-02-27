@@ -26,7 +26,6 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
@@ -37,12 +36,13 @@ import org.eclipse.ui.internal.NavigationHistory;
 import org.eclipse.ui.internal.WWinPartService;
 import org.eclipse.ui.internal.services.EvaluationService;
 import org.eclipse.ui.services.IEvaluationService;
+import org.eclipse.e4.ui.workbench.swt.internal.Workbench;
 
 /**
  * @since 3.3
  *
  */
-public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
+public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage { 
 	private IEclipseContext context;
 	private Workbench e4Workbench;
 	private MWorkbenchWindow workbenchWindow;
