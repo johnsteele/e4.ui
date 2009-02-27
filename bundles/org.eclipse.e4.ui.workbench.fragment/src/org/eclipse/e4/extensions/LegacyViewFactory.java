@@ -8,7 +8,7 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
-import org.eclipse.e4.workbench.ui.renderers.PartFactory;
+import org.eclipse.e4.workbench.ui.renderers.swt.SWTPartFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -19,7 +19,7 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.LegacyWPSImpl;
 import org.eclipse.ui.part.ViewPart;
 
-public class LegacyViewFactory extends PartFactory {
+public class LegacyViewFactory extends SWTPartFactory {
 
 	private IConfigurationElement findViewConfig(String id) {
 		IConfigurationElement[] persps = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_VIEWS);
