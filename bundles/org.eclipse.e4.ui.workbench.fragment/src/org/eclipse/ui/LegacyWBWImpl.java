@@ -169,7 +169,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getShell()
 	 */
 	public Shell getShell() {
-		return e4Workbench.getShell();
+		return (Shell) e4Workbench.getWindow();
 	}
 
 	/* (non-Javadoc)
@@ -211,7 +211,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 			IRunnableWithProgress runnable) throws InvocationTargetException,
 			InterruptedException {
 		IProgressMonitor pm = new NullProgressMonitor();
-		ModalContext.run(runnable, fork, pm, e4Workbench.getDisplay());
+		ModalContext.run(runnable, fork, pm, getShell().getDisplay());
 	}
 
 	/* (non-Javadoc)
