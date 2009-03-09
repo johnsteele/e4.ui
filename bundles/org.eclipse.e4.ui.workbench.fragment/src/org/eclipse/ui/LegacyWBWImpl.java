@@ -939,4 +939,13 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPage#openEditors(org.eclipse.ui.IEditorInput[], java.lang.String[], int)
+	 */
+	public IEditorReference[] openEditors(IEditorInput[] inputs,
+			String[] editorIDs, int matchFlags) throws MultiPartInitException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
