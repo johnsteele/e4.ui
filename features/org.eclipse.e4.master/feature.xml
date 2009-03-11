@@ -121,4 +121,12 @@
          id="org.eclipse.e4.server.bespin.source.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.e4.xwt.css.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.xwt.css.source.feature"
+         version="0.0.0"/>
+
 </feature>
