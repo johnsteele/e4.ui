@@ -22,8 +22,8 @@ import org.eclipse.ui.part.ViewPart;
 public class LegacyViewFactory extends SWTPartFactory {
 
 	private IConfigurationElement findViewConfig(String id) {
-		IConfigurationElement[] persps = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_VIEWS);
-		IConfigurationElement viewContribution = ExtensionUtils.findExtension(persps, id);
+		IConfigurationElement[] views = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_VIEWS);
+		IConfigurationElement viewContribution = ExtensionUtils.findExtension(views, id);
 		return viewContribution;
 	}
 
@@ -77,9 +77,6 @@ public class LegacyViewFactory extends SWTPartFactory {
 	private Control createView(MContributedPart<MPart<?>> part, IConfigurationElement viewContribution) {
 		Composite parent = (Composite) getParentWidget(part);
 
-		//part.setPlugin(viewContribution.getContributor().getName());
-		part.setIconURI(viewContribution.getAttribute("icon")); //$NON-NLS-1$
-		part.setName(viewContribution.getAttribute("name")); //$NON-NLS-1$
 		ViewPart impl = null;
 		try {
 			impl = (ViewPart) viewContribution.createExecutableExtension("class"); //$NON-NLS-1$

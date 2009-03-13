@@ -3,6 +3,8 @@ package org.eclipse.e4.workbench.ui.api;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -16,6 +18,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPlaceholderFolderLayout;
 import org.eclipse.ui.IViewLayout;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 public class ModeledPageLayout implements IPageLayout {
 
@@ -163,7 +166,23 @@ public class ModeledPageLayout implements IPageLayout {
     public static MContributedPart createViewModel(String id, boolean visible) { 
     	MContributedPart viewModel = ApplicationFactory.eINSTANCE.createMContributedPart();
     	viewModel.setId(id);
-    	viewModel.setName(id);
+    	
+    	// Get the actual view name from the extension registry
+		IConfigurationElement[] views = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_VIEWS);
+		IConfigurationElement viewContribution = ExtensionUtils.findExtension(views, id);
+		if (viewContribution != null) {
+			viewModel.setName(viewContribution.getAttribute("name")); //$NON-NLS-1$
+
+			// Convert the relative path into a bundle URI
+			String imagePath = viewContribution.getAttribute("icon"); //$NON-NLS-1$
+			imagePath = imagePath.replace("$nl$", "");  //$NON-NLS-1$//$NON-NLS-2$
+			String bundleId = viewContribution.getContributor().getName();
+			String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
+			viewModel.setIconURI(imageURI);
+			System.out.println("image: " + imageURI); //$NON-NLS-1$
+		}
+		else
+			viewModel.setName(id); // No registered view, create error part?
     	
     	// HACK!! we don't have an attribute
     	viewModel.setPolicy(Boolean.toString(visible));
