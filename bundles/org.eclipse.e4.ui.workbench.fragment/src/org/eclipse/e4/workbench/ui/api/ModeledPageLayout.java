@@ -179,7 +179,6 @@ public class ModeledPageLayout implements IPageLayout {
 			String bundleId = viewContribution.getContributor().getName();
 			String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
 			viewModel.setIconURI(imageURI);
-			System.out.println("image: " + imageURI); //$NON-NLS-1$
 		}
 		else
 			viewModel.setName(id); // No registered view, create error part?
