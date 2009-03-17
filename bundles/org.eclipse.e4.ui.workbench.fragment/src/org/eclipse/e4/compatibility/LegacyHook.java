@@ -5,7 +5,6 @@ import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
-import org.eclipse.e4.workbench.ui.menus.PerspectiveHelper;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchColors;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -78,7 +77,7 @@ public class LegacyHook implements ILegacyHook {
 	 * @see org.eclipse.e4.workbench.ui.ILegacyHook#loadPerspective(org.eclipse.e4.ui.model.workbench.MPerspective)
 	 */
 	public void loadPerspective(MPerspective<?> perspModel) {
-		PerspectiveHelper.loadPerspective(perspModel);
+		//PerspectiveHelper.loadPerspective(perspModel);
 	}
 
 }

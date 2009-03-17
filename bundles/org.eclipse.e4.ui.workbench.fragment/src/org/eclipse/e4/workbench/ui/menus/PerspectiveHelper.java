@@ -13,16 +13,10 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 public class PerspectiveHelper {
 	
-	public static void loadPerspective(MPerspective perspModel) {
-		String perspId = perspModel.getId();
-		IConfigurationElement[] persps = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_PERSPECTIVES);
-		IConfigurationElement perspContribution = ExtensionUtils.findExtension(persps, perspId);
-		if (perspContribution == null)
-			return;
-
+	public static void loadPerspective(MPerspective perspModel, IConfigurationElement perspFactory) {
 		IPerspectiveFactory impl = null;
 		try {
-			impl = (IPerspectiveFactory) perspContribution.createExecutableExtension("class"); //$NON-NLS-1$
+			impl = (IPerspectiveFactory) perspFactory.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}

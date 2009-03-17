@@ -7,12 +7,16 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
+import org.eclipse.e4.workbench.ui.menus.PerspectiveHelper;
 import org.eclipse.e4.workbench.ui.renderers.swt.SWTPartFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.LegacyWBWImpl;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.part.EditorPart;
@@ -20,6 +24,12 @@ import org.eclipse.ui.part.LegacyWPSImpl;
 import org.eclipse.ui.part.ViewPart;
 
 public class LegacyViewFactory extends SWTPartFactory {
+
+	private IConfigurationElement findPerspectiveFactory(String id) {
+		IConfigurationElement[] factories = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_PERSPECTIVES);
+		IConfigurationElement theFactory = ExtensionUtils.findExtension(factories, id);
+		return theFactory;
+	}
 
 	private IConfigurationElement findViewConfig(String id) {
 		IConfigurationElement[] views = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_VIEWS);
@@ -110,6 +120,15 @@ public class LegacyViewFactory extends SWTPartFactory {
 
 	@Override
 	public Object createWidget(MPart<?> part) {
+		String partId = part.getId();
+
+		Control newCtrl = null;
+		if (part instanceof MPerspective) {
+			IConfigurationElement perspFactory = findPerspectiveFactory(partId);
+			if (perspFactory != null)
+				newCtrl = createPerspective((MPerspective<MPart<?>>) part, perspFactory);
+			return newCtrl;
+		}
 		if (part instanceof MContributedPart) {
 			MContributedPart cp = (MContributedPart) part;
 			
@@ -118,8 +137,6 @@ public class LegacyViewFactory extends SWTPartFactory {
 			if (uri != null && uri.length() > 0)
 				return null;
 
-			Control newCtrl = null;
-			String partId = part.getId();
 			
 			// if this a view ?
 			IConfigurationElement viewElement = findViewConfig(partId);
@@ -142,6 +159,26 @@ public class LegacyViewFactory extends SWTPartFactory {
 			return newCtrl;
 		}
 		return null;
+	}
+
+	/**
+	 * @param part
+	 * @param perspFactory
+	 * @return
+	 */
+	private Control createPerspective(MPerspective<MPart<?>> part,
+			IConfigurationElement perspFactory) {
+		Widget parentWidget = getParentWidget(part);
+		if (!(parentWidget instanceof Composite))
+			return null;
+		
+		Composite perspArea = new Composite((Composite) parentWidget, SWT.NONE);
+		perspArea.setLayout(new FillLayout());
+		
+		if (part.getChildren().size() == 0)
+			PerspectiveHelper.loadPerspective(part, perspFactory);
+		
+		return perspArea;
 	}
 
 }
