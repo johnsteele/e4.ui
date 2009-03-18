@@ -3,15 +3,15 @@ package org.eclipse.e4.demo.modifier;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -36,25 +36,25 @@ public class ModelView {
 								.getFirstElement());
 			}
 		});
-		IObservableFactory setFactory = new IObservableFactory() {
+		IObservableFactory listFactory = new IObservableFactory() {
 			public IObservable createObservable(Object element) {
 				if (element instanceof EObject
 						&& !((EObject) element).eContents().isEmpty()) {
 					EObject e = (EObject) element;
-					IObservableSet observableSet = new WritableSet(realm);
-					observableSet.addAll(e.eContents());
-					return observableSet;
+					IObservableList observableList = new WritableList(realm);
+					observableList.addAll(e.eContents());
+					return observableList;
 				} else if (element instanceof Object[]) {
 					EObject e = (EObject) ((Object[]) element)[0];
-					IObservableSet observableSet = new WritableSet(realm);
-					observableSet.add(e);
-					return observableSet;
+					IObservableList observableList = new WritableList(realm);
+					observableList.add(e);
+					return observableList;
 				}
-				return Observables.emptyObservableSet();
+				return Observables.emptyObservableList();
 			}
 		};
-		viewer.setContentProvider(new ObservableSetTreeContentProvider(
-				setFactory, new TreeStructureAdvisor() {
+		viewer.setContentProvider(new ObservableListTreeContentProvider(
+				listFactory, new TreeStructureAdvisor() {
 					public Boolean hasChildren(Object element) {
 						return Boolean.valueOf(element instanceof EObject);
 					}

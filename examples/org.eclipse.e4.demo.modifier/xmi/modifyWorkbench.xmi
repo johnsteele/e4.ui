@@ -22,7 +22,7 @@
     </menu>
     <children policy="VerticalComposite">
       <toolBar>
-        <items xsi:type="application:MToolBarItem" name="You Are Seeing The Default Application.xmi"/>
+        <items xsi:type="application:MToolBarItem" iconURI="platform:/plugin/org.eclipse.e4.demo.modifier/icons/elcl16/refresh_nav.gif" name="You Are Seeing The Default Application.xmi"/>
       </toolBar>
       <children xsi:type="application:MSashForm" policy="HorizontalSash">
         <children xsi:type="application:MSashForm" policy="VerticalSash">
