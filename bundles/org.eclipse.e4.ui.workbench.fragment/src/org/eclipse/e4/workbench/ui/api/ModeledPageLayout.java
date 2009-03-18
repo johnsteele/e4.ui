@@ -30,6 +30,7 @@ public class ModeledPageLayout implements IPageLayout {
 
 		MStack editorArea = ApplicationFactory.eINSTANCE.createMStack();
 		editorArea.setId(getEditorArea());
+		editorArea.setPolicy("EditorStack"); //$NON-NLS-1$
 		//editorArea.setName("Editor Area");
 		
 		perspModel.getChildren().add(editorArea);
@@ -165,6 +166,14 @@ public class ModeledPageLayout implements IPageLayout {
 
     public static MContributedPart createViewModel(String id, boolean visible) { 
     	MContributedPart viewModel = ApplicationFactory.eINSTANCE.createMContributedPart();
+    	
+    	// HACK!! allow Contributed parts in a perspective
+    	if (id.indexOf("platform:") >= 0) { //$NON-NLS-1$
+    		viewModel.setURI(id);
+    		viewModel.setName("Contrib View"); //$NON-NLS-1$
+    		return viewModel;
+    	}
+    	
     	viewModel.setId(id);
     	
     	// Get the actual view name from the extension registry
@@ -193,7 +202,7 @@ public class ModeledPageLayout implements IPageLayout {
     public static MStack createStack(String id, boolean visible) {
     	MStack newStack = ApplicationFactory.eINSTANCE.createMStack();
     	newStack.setId(id);
-    	newStack.setPolicy(Boolean.toString(visible));
+    	newStack.setPolicy("ViewStack"); //$NON-NLS-1$
 		
 		return newStack;
     }

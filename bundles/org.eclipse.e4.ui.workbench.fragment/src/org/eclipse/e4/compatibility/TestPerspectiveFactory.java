@@ -28,7 +28,10 @@ public class TestPerspectiveFactory implements IPerspectiveFactory {
 //		outputfolder.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 		outputfolder.addPlaceholder("org.eclipse.ui.views.ProgressView"); //$NON-NLS-1$
 //
-//		IFolderLayout outlineFolder = layout.createFolder("right", IPageLayout.RIGHT, (float)0.75, editorArea); //$NON-NLS-1$
+		IFolderLayout outlineFolder = layout.createFolder("right", IPageLayout.RIGHT, (float)0.75, editorArea); //$NON-NLS-1$
+		outlineFolder.addView("platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.ElementView"); //$NON-NLS-1$
+		IFolderLayout rightFolder = layout.createFolder("right", IPageLayout.RIGHT, (float)0.75, editorArea); //$NON-NLS-1$
+		rightFolder.addView("platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.ModelView"); //$NON-NLS-1$
 //		outlineFolder.addView(IPageLayout.ID_OUTLINE);
 //
 //		outlineFolder.addPlaceholder("org.eclipse.ui.texteditor.TemplatesView");

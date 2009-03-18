@@ -129,7 +129,7 @@ public class LegacyViewFactory extends SWTPartFactory {
 				newCtrl = createPerspective((MPerspective<MPart<?>>) part, perspFactory);
 			return newCtrl;
 		}
-		if (part instanceof MContributedPart) {
+		else if (part instanceof MContributedPart) {
 			MContributedPart cp = (MContributedPart) part;
 			
 			// HACK!! relies on legacy views -not- having a URI...

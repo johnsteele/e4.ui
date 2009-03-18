@@ -2,6 +2,7 @@ package org.eclipse.e4.compatibility;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MMenu;
+import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
@@ -70,6 +71,11 @@ public class LegacyHook implements ILegacyHook {
 	public void loadMenu(MMenu menuModel) {
 		System.out.println("Should load the default menu here"); //$NON-NLS-1$
 		MenuHelper.loadMenu(menuModel);
+	}
+	
+	public void loadToolbar(MToolBar tbModel) {
+		System.out.println("Should load the default menu here"); //$NON-NLS-1$
+		MenuHelper.loadToolbar(tbModel);
 	}
 
 

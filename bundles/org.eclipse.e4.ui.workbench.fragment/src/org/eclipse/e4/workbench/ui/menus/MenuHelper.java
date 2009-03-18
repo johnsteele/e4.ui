@@ -5,18 +5,20 @@ import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
+import org.eclipse.e4.ui.model.application.MToolBar;
+import org.eclipse.e4.ui.model.application.MToolBarItem;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 public class MenuHelper {
 
-	private static final String MAIN_MEUN_ID = "org.eclipse.ui.main.menu";  //$NON-NLS-1$
+	public static final String MAIN_MENU_ID = "org.eclipse.ui.main.menu";  //$NON-NLS-1$
 	
 	public static void loadMenu(MMenu menuModel) {
 		String id = menuModel.getId();
 		if (id == null || id.length() == 0)
 			return;
 		
-		if (id.indexOf(MAIN_MEUN_ID) >= 0)
+		if (id.indexOf(MAIN_MENU_ID) >= 0)
 			populateMainMenu(menuModel);
 		else
 			populateMenu(menuModel);
@@ -176,7 +178,7 @@ public class MenuHelper {
 
 //		addSeparator(menu0, "additions"); //$NON-NLS-1$
 
-		MMenuItem menu9 = addMenu(menu0, "&MWindow", null, null, "window", "window"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		MMenuItem menu9 = addMenu(menu0, "&Window", null, null, "window", "window"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			addMenuItem(menu9, "&New MWindow", null, null, "openNewWindow", "org.eclipse.ui.window.newWindow"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			addMenuItem(menu9, "New &Editor", null, null, "newEditor", "org.eclipse.ui.window.newEditor"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			addSeparator(menu9, null);
@@ -250,6 +252,15 @@ public class MenuHelper {
 		
 		return newItem;
 	}
+
+	private static MToolBarItem createTBItem(String ttip, String imgPath, String id, String cmdId) {
+		MToolBarItem newItem = ApplicationFactory.eINSTANCE.createMToolBarItem();
+		newItem.setId(id);
+		newItem.setTooltip(ttip);
+		newItem.setIconURI(imgPath);
+		
+		return newItem;
+	}
 	
 	public static MMenuItem addMenu(MMenu parentMenu,
 			String label, String plugin, String imgPath, String id, String cmdId) {
@@ -284,5 +295,21 @@ public class MenuHelper {
 //		MMenuItem newItem = ApplicationFactory.eINSTANCE.createMMenuItem();
 //		newItem.setId(id);
 //		newItem.setSeparator(true);
+	}
+
+	public static void loadToolbar(MToolBar tbModel) {
+		MToolBarItem tbItem = createTBItem("&New	Alt+Shift+N", null, //$NON-NLS-1$
+				"cmdId.New", "cmdId.New");   //$NON-NLS-1$//$NON-NLS-2$
+		tbModel.getItems().add(tbItem);
+
+		tbItem = createTBItem("&Save", //$NON-NLS-1$
+				"platform:/plugin/org.eclipse.ui/icons/full/etool16/save_edit.gif", //$NON-NLS-1$
+				"cmdId.Save", "cmdId.Save");   //$NON-NLS-1$//$NON-NLS-2$
+		tbModel.getItems().add(tbItem);
+
+		tbItem = createTBItem("&Print", //$NON-NLS-1$
+				"platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.gif", //$NON-NLS-1$
+				"cmdId.Print", "cmdId.Print");   //$NON-NLS-1$//$NON-NLS-2$
+		tbModel.getItems().add(tbItem);
 	}
 }
