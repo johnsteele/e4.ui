@@ -97,6 +97,10 @@ public class ElementView {
 		return jsString;
 	}
 
+	/**
+	 * @param selection
+	 */
+	@Inject
 	public void setInput(final EObject selection) {
 		if (selection==null) {
 			return;
