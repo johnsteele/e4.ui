@@ -21,10 +21,6 @@
       <update label="%updateSiteName" url="http://www.eclipse.org/eclipse/platform-ui/updates"/>
    </url>
 
-   <requires>
-      <import feature="org.eclipse.rcp" version="3.3.0.v20070607-8y8eE8NEbsN3X5PjTaJy8DEsjhiu" match="greaterOrEqual"/>
-   </requires>
-
    <plugin
          id="org.eclipse.ui.tweaklets.nomrutabs"
          download-size="0"
