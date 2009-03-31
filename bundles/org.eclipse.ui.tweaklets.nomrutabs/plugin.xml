@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.internalTweaklets">
+      <tweaklet
+            definition="org.eclipse.ui.internal.tweaklets.TabBehaviour"
+            description="Disables the MRU tab behavior, see bug 68684"
+            id="org.eclipse.ui.tweaklets.nomrutabs.tweaklet1"
+            implementation="org.eclipse.ui.tweaklets.nomrutabs.NoMRUTabs"
+            name="Disable MRU tab behavior">
+      </tweaklet>
+   </extension>
+
+</plugin>
