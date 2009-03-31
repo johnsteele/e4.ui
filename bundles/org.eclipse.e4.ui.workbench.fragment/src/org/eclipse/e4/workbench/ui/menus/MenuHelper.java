@@ -291,10 +291,14 @@ public class MenuHelper {
 		parentMenu.getItems().add(newItem);
 	}
 
-	public static void addSeparator(MMenuItem parentMenu, String id) {
-//		MMenuItem newItem = ApplicationFactory.eINSTANCE.createMMenuItem();
-//		newItem.setId(id);
-//		newItem.setSeparator(true);
+	public static void addSeparator(MMenuItem parentMenuItem, String id) {
+		if (id != null)
+			return;
+		MMenuItem newItem = ApplicationFactory.eINSTANCE.createMMenuItem();
+		newItem.setId(id);
+		newItem.setSeparator(true);
+		//newItem.setVisible(id == null);
+		parentMenuItem.getMenu().getItems().add(newItem);
 	}
 
 	public static void loadToolbar(MToolBar tbModel) {
