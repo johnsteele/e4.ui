@@ -15,11 +15,12 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.e4.core.services.context.IComputedValue;
+import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
@@ -36,13 +37,19 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.commands.ICommandImageService;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.SharedImages;
 import org.eclipse.ui.internal.WorkingSetManager;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
+import org.eclipse.ui.internal.commands.CommandImageManager;
+import org.eclipse.ui.internal.commands.CommandImageService;
+import org.eclipse.ui.internal.commands.CommandService;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
@@ -50,9 +57,12 @@ import org.eclipse.ui.internal.operations.WorkbenchOperationSupport;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
@@ -66,6 +76,8 @@ import org.osgi.framework.BundleContext;
  */
 public class LegacyWBImpl implements IWorkbench {
 	private IEclipseContext context;
+	private CommandManager commandManager;
+	private CommandImageManager commandImageManager;
 
 	private static Map<MWorkbenchWindow, LegacyWBWImpl> wbwModel2LegacyImpl = new HashMap<MWorkbenchWindow, LegacyWBWImpl>();
 
@@ -90,39 +102,39 @@ public class LegacyWBImpl implements IWorkbench {
 	 * Adds ComputedValues for all the services to the context
 	 */
 	private void registerServices() {
-		context.set(ISharedImages.class.getName(), new IComputedValue() {
+		context.set(ISharedImages.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new SharedImages();
 			}
 		});
-		context.set(IEditorRegistry.class.getName(), new IComputedValue() {
+		context.set(IEditorRegistry.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new EditorRegistry();
 			}
 		});
-		context.set(IExtensionTracker.class.getName(), new IComputedValue() {
+		context.set(IExtensionTracker.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new UIExtensionTracker(getDisplay());
 			}
 		});
-		context.set(IDecoratorManager.class.getName(), new IComputedValue() {
+		context.set(IDecoratorManager.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new DecoratorManager();
 			}
 		});
-		context.set(IWorkbenchActivitySupport.class.getName(), new IComputedValue() {
+		context.set(IWorkbenchActivitySupport.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new WorkbenchActivitySupport();
 			}
 		});
 //		private IWorkbenchOperationSupport operationSupport;
-		context.set(IWorkbenchOperationSupport.class.getName(), new IComputedValue() {
+		context.set(IWorkbenchOperationSupport.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new WorkbenchOperationSupport();
 			}
 		});
 //			private IWorkingSetManager wsMgr;
-		context.set(IWorkingSetManager.class.getName(), new IComputedValue() {
+		context.set(IWorkingSetManager.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				Bundle bundle = Platform.getBundle("org.eclipse.e4.ui.model.workbench"); //$NON-NLS-1$
 				BundleContext bc = bundle.getBundleContext();
@@ -130,14 +142,78 @@ public class LegacyWBImpl implements IWorkbench {
 			}
 		});
 //		private IContextService contextService;
-		context.set(IContextService.class.getName(), new IComputedValue() {
+		context.set(IContextService.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new ContextService(new ContextManager());
 			}
 		});
-		context.set(PreferenceManager.class.getName(), new IComputedValue() {
+		context.set(PreferenceManager.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new PreferenceManager();
+			}
+		});
+		context.set(ICommandService.class.getName(), new IContextFunction(){
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				commandManager = new CommandManager();
+				CommandService cs = new CommandService(commandManager);
+				cs.readRegistry();
+				return cs;
+			}
+		});
+		context.set(IHandlerService.class.getName(), new IContextFunction(){
+		
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new LegacyHandlerService(context);
+			}
+		});
+		context.set(ICommandImageService.class.getName(), new IContextFunction(){
+		
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				commandImageManager  = new CommandImageManager();
+				ICommandService cs = (ICommandService) context.get(ICommandService.class.getName());
+				CommandImageService cis = new CommandImageService(commandImageManager, cs);
+				cis.readRegistry();
+				return cis;
+			}
+		});
+		context.set(IWorkbenchLocationService.class.getName(), new IContextFunction(){
+		
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new IWorkbenchLocationService(){
+				
+					public IWorkbenchWindow getWorkbenchWindow() {
+						return null;
+					}
+				
+					public IWorkbench getWorkbench() {
+						return LegacyWBImpl.this;
+					}
+				
+					public String getServiceScope() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+				
+					public int getServiceLevel() {
+						// TODO Auto-generated method stub
+						return 0;
+					}
+				
+					public IWorkbenchPartSite getPartSite() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+				
+					public IPageSite getPageSite() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+				
+					public IEditorSite getMultiPageEditorSite() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+				};
 			}
 		});
 	}
@@ -341,8 +417,44 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getIntroManager()
 	 */
 	public IIntroManager getIntroManager() {
-		// TODO Auto-generated method stub
-		return null;
+		return new IIntroManager(){
+		
+			public IIntroPart showIntro(IWorkbenchWindow preferredWindow,
+					boolean standby) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		
+			public void setIntroStandby(IIntroPart part, boolean standby) {
+				// TODO Auto-generated method stub
+				
+			}
+		
+			public boolean isNewContentAvailable() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+		
+			public boolean isIntroStandby(IIntroPart part) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+		
+			public boolean hasIntro() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+		
+			public IIntroPart getIntro() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		
+			public boolean closeIntro(IIntroPart part) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+		};
 	}
 
 	/* (non-Javadoc)

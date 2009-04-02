@@ -111,8 +111,10 @@ public final class PlatformUI {
 	 * @since 3.0
 	 */
     public static boolean isWorkbenchRunning() {
-    	if (e3Workbench == null && LegacyHook.context != null)
+    	if (e3Workbench == null && LegacyHook.context != null) {
         	e3Workbench = new LegacyWBImpl(LegacyHook.context);
+        	LegacyHook.context.set(IWorkbench.class.getName(), e3Workbench);
+    	}
 
     	return e3Workbench != null;
     }

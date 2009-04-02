@@ -8,7 +8,7 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
-import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
+import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.menus.PerspectiveHelper;
 import org.eclipse.e4.workbench.ui.renderers.swt.SWTPartFactory;
 import org.eclipse.swt.SWT;
@@ -67,7 +67,7 @@ public class LegacyViewFactory extends SWTPartFactory {
 		try {
 			IEclipseContext parentContext = getContextForParent(part);
 			final IEclipseContext localContext = EclipseContextFactory.create(
-								parentContext, UIContextScheduler.instance);
+								parentContext, UISchedulerStrategy.getInstance());
 						localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor"); //$NON-NLS-1$
 			part.setContext(localContext);
 			
@@ -99,7 +99,7 @@ public class LegacyViewFactory extends SWTPartFactory {
 		try {
 			IEclipseContext parentContext = getContextForParent(part);
 			final IEclipseContext localContext = EclipseContextFactory.create(
-								parentContext, UIContextScheduler.instance);
+								parentContext, UISchedulerStrategy.getInstance());
 						localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor"); //$NON-NLS-1$
 			part.setContext(localContext);
 			

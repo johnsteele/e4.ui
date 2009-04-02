@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.part;
 
-import org.eclipse.e4.core.services.context.IComputedValue;
+import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -74,7 +74,7 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 	 * Add any necessary services to the context
 	 */
 	private void registerServices() {
-		context.set(IKeyBindingService.class.getName(), new IComputedValue() {
+		context.set(IKeyBindingService.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return  new IKeyBindingService() {
 					public String[] getScopes() {
@@ -89,7 +89,7 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 			};
 			}
 		});
-		context.set(IActionBars.class.getName(), new IComputedValue() {
+		context.set(IActionBars.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				IActionBars actionBars = new IActionBars() {
 					private IStatusLineManager slMgr;
@@ -134,7 +134,7 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 				return actionBars;
 			}
 		});
-		context.set(ISelectionProvider.class.getName(), new IComputedValue() {
+		context.set(ISelectionProvider.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				ISelectionProvider selProvider = new ISelectionProvider() {
 					public void addSelectionChangedListener(ISelectionChangedListener listener) {
@@ -150,24 +150,24 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite, IEditorSite
 				return selProvider;
 			}
 		});
-		context.set(IServiceLocatorCreator.class.getName(), new IComputedValue() {
+		context.set(IServiceLocatorCreator.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new ServiceLocatorCreator();
 			}
 		});
-		context.set(IPartService.class.getName(), new IComputedValue() {
+		context.set(IPartService.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new PartService(
 						UIListenerLogging.PAGE_PARTLISTENER_EVENTS,
 						UIListenerLogging.PAGE_PARTLISTENER2_EVENTS);
 			}
 		});
-		context.set(IMenuService.class.getName(), new IComputedValue() {
+		context.set(IMenuService.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new LegacyMenuService();
 			}
 		});
-		context.set(IHandlerService.class.getName(), new IComputedValue() {
+		context.set(IHandlerService.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new LegacyHandlerService();
 			}

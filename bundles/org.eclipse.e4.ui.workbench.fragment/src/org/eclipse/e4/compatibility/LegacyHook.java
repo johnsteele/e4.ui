@@ -255,9 +255,9 @@ public class LegacyHook implements ILegacyHook {
 		WorkbenchColors.startup();
 	}
 	
-	public void loadMenu(MMenu menuModel) {
+	public void loadMenu(IEclipseContext context, MMenu menuModel) {
 		System.out.println("Should load the default menu here"); //$NON-NLS-1$
-		MenuHelper.loadMenu(menuModel);
+		MenuHelper.loadMenu(context, menuModel);
 	}
 	
 	public void loadToolbar(MToolBar tbModel) {

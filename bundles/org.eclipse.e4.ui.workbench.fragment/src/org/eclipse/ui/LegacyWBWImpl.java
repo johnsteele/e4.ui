@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.e4.core.services.context.IComputedValue;
+import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
@@ -35,7 +35,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.NavigationHistory;
 import org.eclipse.ui.internal.WWinPartService;
+import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
+import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.services.EvaluationService;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.services.IEvaluationService;
 
 /**
@@ -71,22 +75,22 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * Register any window-specific services to the context
 	 */
 	private void registerServices() {
-		context.set(IPartService.class.getName(), new IComputedValue() {
+		context.set(IPartService.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new WWinPartService(LegacyWBWImpl.this);
 			}
 		});
-		context.set(INavigationHistory.class.getName(), new IComputedValue() {
+		context.set(INavigationHistory.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new NavigationHistory(LegacyWBWImpl.this);
 			}
 		});
-		context.set(IEvaluationService.class.getName(), new IComputedValue() {
+		context.set(IEvaluationService.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new EvaluationService();
 			}
 		});
-		context.set(ISelectionService.class.getName(), new IComputedValue() {
+		context.set(ISelectionService.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				ISelectionService selService = new ISelectionService(){
 					public void removeSelectionListener(String partId,
@@ -118,6 +122,52 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 				return selService;
 			}
 		});
+		context.set(IWorkbenchLocationService.class.getName(), new IContextFunction(){
+			
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new IWorkbenchLocationService(){
+				
+					public IWorkbenchWindow getWorkbenchWindow() {
+						return LegacyWBWImpl.this;
+					}
+				
+					public IWorkbench getWorkbench() {
+						return LegacyWBWImpl.this.getWorkbench();
+					}
+				
+					public String getServiceScope() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+				
+					public int getServiceLevel() {
+						// TODO Auto-generated method stub
+						return 0;
+					}
+				
+					public IWorkbenchPartSite getPartSite() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+				
+					public IPageSite getPageSite() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+				
+					public IEditorSite getMultiPageEditorSite() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+				};
+			}
+		});
+		context.set(IActionCommandMappingService.class.getName(), new IContextFunction(){
+		
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new ActionCommandMappingService();
+			}
+		});
 	}
 
 	/* (non-Javadoc)
@@ -139,8 +189,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getExtensionTracker()
 	 */
 	public IExtensionTracker getExtensionTracker() {
-		// TODO Auto-generated method stub
-		return null;
+		return (IExtensionTracker) context.get(IExtensionTracker.class.getName());
 	}
 
 	/* (non-Javadoc)
@@ -265,8 +314,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
 	 */
 	public boolean hasService(Class api) {
-		// TODO Auto-generated method stub
-		return false;
+		return context.containsKey(api.getName());
 	}
 
 	/* (non-Javadoc)
@@ -402,8 +450,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getEditorReferences()
 	 */
 	public IEditorReference[] getEditorReferences() {
-		// TODO Auto-generated method stub
-		return null;
+		return new IEditorReference[0];
 	}
 
 	/* (non-Javadoc)
