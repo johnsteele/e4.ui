@@ -49,6 +49,7 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.SharedImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkingSetManager;
@@ -58,7 +59,6 @@ import org.eclipse.ui.internal.commands.CommandImageService;
 import org.eclipse.ui.internal.commands.CommandService;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
-import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.operations.WorkbenchOperationSupport;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.EditorRegistry;
@@ -101,7 +101,7 @@ public class LegacyWBImpl implements IWorkbench {
 		context.set(LegacyWBImpl.class.getName(), this);
 
 		// register workspace adapters
-		WorkbenchAdapterBuilder.registerAdapters();
+		IDE.registerAdapters();
 
 		// Register necessary services in the context
 		registerServices();
