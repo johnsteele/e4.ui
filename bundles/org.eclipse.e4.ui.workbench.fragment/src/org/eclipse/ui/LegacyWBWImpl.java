@@ -39,6 +39,8 @@ import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.services.EvaluationService;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
+import org.eclipse.ui.model.ContributionComparator;
+import org.eclipse.ui.model.IContributionService;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.services.IEvaluationService;
 
@@ -91,6 +93,19 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 				return new EvaluationService();
 			}
 		});
+		context.set(IContributionService.class.getName(),
+				new IContextFunction() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				// TBD the IContributionService is contributed by the WorkbenchAdvisor.
+				// The code below corresponds to the case where WorkbenchAdvisor#getComparatorFor()
+				// method has not been overridden
+				return new IContributionService() {
+					public ContributionComparator getComparatorFor(String contributionType) {
+						return new ContributionComparator();
+					}};
+			}
+		});
+
 		context.set(ISelectionService.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				ISelectionService selService = new ISelectionService(){
