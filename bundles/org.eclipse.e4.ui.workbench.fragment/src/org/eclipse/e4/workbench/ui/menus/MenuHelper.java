@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
+import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MToolBar;
@@ -20,6 +21,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.LegacyWBImpl;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
@@ -78,8 +80,8 @@ public class MenuHelper {
 	private static void populateActionBarAdvisor(IEclipseContext context,
 			MMenu menuBar) {
 		IWorkbench wb = (IWorkbench) context.get(IWorkbench.class.getName());
-		LegacyActionBarConfigurer abc = new LegacyActionBarConfigurer(wb
-				.getActiveWorkbenchWindow());
+		LegacyActionBarConfigurer abc = new LegacyActionBarConfigurer(context,
+				wb.getActiveWorkbenchWindow());
 		WorkbenchActionBuilder builder = new WorkbenchActionBuilder(abc);
 		builder.fillActionBars(ActionBarAdvisor.FILL_MENU_BAR);
 		MenuManager barManager = (MenuManager) abc.getMenuManager();
@@ -97,14 +99,14 @@ public class MenuHelper {
 			IContributionItem item = items[i];
 			if (item instanceof MenuManager) {
 				MenuManager m = (MenuManager) item;
-				MMenuItem menu1 = addMenu(menu, m.getMenuText(), null, null, m
+				MMenuItem menu1 = addMenu(context, menu, m.getMenuText(), null, null, m
 						.getId(), null);
 				processMenuManager(context, menu1.getMenu(), m);
 			} else if (item instanceof ActionContributionItem) {
 				ActionContributionItem aci = (ActionContributionItem) item;
 				IAction action = aci.getAction();
 				String imageURL = getImageUrl(action.getImageDescriptor());
-				addMenuItem(menu, action.getText(), null, imageURL,
+				addMenuItem(context, menu, action.getText(), null, imageURL,
 						aci.getId(), action.getActionDefinitionId());
 			} else if (item instanceof CommandContributionItem) {
 				CommandContributionItem cci = (CommandContributionItem) item;
@@ -118,14 +120,14 @@ public class MenuHelper {
 					String imageURL = getImageUrl(cis.getImageDescriptor(cmd
 							.getId(), ICommandImageService.TYPE_DEFAULT));
 					try {
-						addMenuItem(menu, cmd.getName(), null, imageURL, cci
+						addMenuItem(context, menu, cmd.getName(), null, imageURL, cci
 								.getId(), id);
 					} catch (NotDefinedException e) {
 						// This should not happen
 						e.printStackTrace();
 					}
 				} else {
-					addMenuItem(menu,
+					addMenuItem(context, menu,
 							"unloaded:" + id, null, null, cci.getId(), id); //$NON-NLS-1$
 				}
 			} else if (item instanceof Separator) {
@@ -176,7 +178,7 @@ public class MenuHelper {
 		if (true)
 			return;
 
-		MMenuItem menu1 = addMenu(menu0, "&File", null, null, "file", "file"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		MMenuItem menu1 = addMenu(null, menu0, "&File", null, null, "file", "file"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		addSeparator(menu1, "fileStart"); //$NON-NLS-1$
 		MMenuItem menu2 = addMenu(menu1,
 				"&New	Alt+Shift+N", null, null, "new", "new"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -248,7 +250,7 @@ public class MenuHelper {
 				"E&xit", null, null, "quit", "org.eclipse.ui.file.exit"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		addSeparator(menu1, "fileEnd"); //$NON-NLS-1$
 
-		MMenuItem menu3 = addMenu(menu0, "&Edit", null, null, "edit", "edit"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		MMenuItem menu3 = addMenu(null, menu0, "&Edit", null, null, "edit", "edit"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		addSeparator(menu3, "editStart"); //$NON-NLS-1$
 		addMenuItem(
 				menu3,
@@ -291,7 +293,7 @@ public class MenuHelper {
 		addSeparator(menu3, "editEnd"); //$NON-NLS-1$
 		addSeparator(menu3, "additions"); //$NON-NLS-1$
 
-		MMenuItem menu4 = addMenu(menu0,
+		MMenuItem menu4 = addMenu(null, menu0,
 				"&Navigate", null, null, "navigate", "navigate"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		addSeparator(menu4, "navStart"); //$NON-NLS-1$
 		addMenuItem(
@@ -340,7 +342,7 @@ public class MenuHelper {
 				menu4,
 				"&Forward", null, "platform:/plugin/org.eclipse.ui/icons/full/elcl16/forward_nav.gif", "forwardHistory", "org.eclipse.ui.navigate.forwardHistory"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
 
-		MMenuItem menu7 = addMenu(menu0,
+		MMenuItem menu7 = addMenu(null, menu0,
 				"&Project", null, null, "project", "project"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		addSeparator(menu7, "projStart"); //$NON-NLS-1$
 		addMenuItem(
@@ -379,7 +381,7 @@ public class MenuHelper {
 
 		//		addSeparator(menu0, "additions"); //$NON-NLS-1$
 
-		MMenuItem menu9 = addMenu(menu0,
+		MMenuItem menu9 = addMenu(null, menu0,
 				"&Window", null, null, "window", "window"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		addMenuItem(
 				menu9,
@@ -466,7 +468,7 @@ public class MenuHelper {
 		addMenuItem(menu9, "&Preferences", null, null, "preferences", null); //$NON-NLS-1$ //$NON-NLS-2$
 		// didn't find: org.eclipse.ui.internal.SwitchToWindowMenu
 
-		MMenuItem menu13 = addMenu(menu0, "&Help", null, null, "help", "help"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		MMenuItem menu13 = addMenu(null, menu0, "&Help", null, null, "help", "help"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		addSeparator(menu13, "group.intro"); //$NON-NLS-1$
 		addMenuItem(
 				menu13,
@@ -500,13 +502,24 @@ public class MenuHelper {
 		addSeparator(menu13, "group.about.ext"); //$NON-NLS-1$
 	}
 
-	private static MMenuItem createMenuItem(String label, String imgPath,
-			String id, String cmdId) {
+	private static MMenuItem createMenuItem(IEclipseContext context,
+			String label, String imgPath, String id, String cmdId) {
 		MMenuItem newItem = ApplicationFactory.eINSTANCE.createMMenuItem();
 		newItem.setId(id);
 		newItem.setName(label);
 		newItem.setIconURI(imgPath);
-
+		if (cmdId != null) {
+			LegacyWBImpl legacyWB = (LegacyWBImpl) context
+					.get(LegacyWBImpl.class.getName());
+			MCommand mcmd = legacyWB.commandsById.get(cmdId);
+			if (mcmd != null) {
+				newItem.setCommand(mcmd);
+			} else {
+//				System.err.println("No MCommand defined for " + cmdId); //$NON-NLS-1$
+			}
+		} else {
+//			System.err.println("No command id for " + id); //$NON-NLS-1$
+		}
 		return newItem;
 	}
 
@@ -521,10 +534,10 @@ public class MenuHelper {
 		return newItem;
 	}
 
-	public static MMenuItem addMenu(MMenu parentMenu, String label,
+	public static MMenuItem addMenu(IEclipseContext context, MMenu parentMenu, String label,
 			String plugin, String imgPath, String id, String cmdId) {
 		// Sub-menus are implemented as an item with a menu... ??
-		MMenuItem newItem = createMenuItem(label, imgPath, id, cmdId);
+		MMenuItem newItem = createMenuItem(context, label, imgPath, id, cmdId);
 
 		// Create the sub menu
 		MMenu newMenu = ApplicationFactory.eINSTANCE.createMMenu();
@@ -540,19 +553,19 @@ public class MenuHelper {
 	public static MMenuItem addMenu(MMenuItem parentMenuItem, String label,
 			String plugin, String imgPath, String id, String cmdId) {
 		MMenu parentMenu = parentMenuItem.getMenu();
-		return addMenu(parentMenu, label, plugin, imgPath, id, cmdId);
+		return addMenu(null, parentMenu, label, plugin, imgPath, id, cmdId);
 	}
 
 	public static void addMenuItem(MMenuItem parentMenuItem, String label,
 			String plugin, String imgPath, String id, String cmdId) {
-		MMenuItem newItem = createMenuItem(label, imgPath, id, cmdId);
+		MMenuItem newItem = createMenuItem(null, label, imgPath, id, cmdId);
 		MMenu parentMenu = parentMenuItem.getMenu();
 		parentMenu.getItems().add(newItem);
 	}
 
-	public static void addMenuItem(MMenu parentMenu, String label,
-			String plugin, String imgPath, String id, String cmdId) {
-		MMenuItem newItem = createMenuItem(label, imgPath, id, cmdId);
+	public static void addMenuItem(IEclipseContext context, MMenu parentMenu,
+			String label, String plugin, String imgPath, String id, String cmdId) {
+		MMenuItem newItem = createMenuItem(context, label, imgPath, id, cmdId);
 		parentMenu.getItems().add(newItem);
 	}
 

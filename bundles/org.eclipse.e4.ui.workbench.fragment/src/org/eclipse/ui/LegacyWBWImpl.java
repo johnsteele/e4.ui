@@ -66,6 +66,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		e4Workbench = (Workbench) context
 				.get(org.eclipse.e4.workbench.ui.IWorkbench.class.getName());
 		legacyWbImpl = (LegacyWBImpl) context.get(LegacyWBImpl.class.getName());
+		context.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, this);
 		
 		// Register any window-specific services to the context
 		registerServices();

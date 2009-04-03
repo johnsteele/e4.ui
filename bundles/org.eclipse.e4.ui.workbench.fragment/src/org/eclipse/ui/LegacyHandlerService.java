@@ -12,6 +12,7 @@
 package org.eclipse.ui;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -23,18 +24,82 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.extensions.ExtensionUtils;
+import org.eclipse.e4.ui.model.application.ApplicationFactory;
+import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * @since 3.3
  * 
  */
 public class LegacyHandlerService implements IHandlerService {
+	public static class HandlerProxy {
+		IHandler handler = null;
+
+		public HandlerProxy(IHandler handler) {
+			this.handler = handler;
+		}
+
+		// public boolean canExecute(IEclipseContext context) {
+		// System.err.println(context);
+		// if (handler instanceof IHandler2) {
+		// ((IHandler2) handler)
+		// .setEnabled(new LegacyEvalContext(context));
+		// }
+		// return handler.isEnabled();
+		// }
+
+		public void execute(IEclipseContext context) {
+			Object shell = context
+					.get(Shell.class.getName());
+			context.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, shell);
+			context.set(ISources.ACTIVE_SHELL_NAME, shell);
+			LegacyEvalContext legacy = new LegacyEvalContext(context);
+			ExecutionEvent event = new ExecutionEvent(null,
+					Collections.EMPTY_MAP, null, legacy);
+			try {
+				handler.execute(event);
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.application.IActionBarConfigurer#registerGlobalAction(
+	 * org.eclipse.jface.action.IAction)
+	 */
+	public static void registerLegacyHandler(IEclipseContext context, String id,
+			String cmdId, IHandler handler) {
+		MWindow<?> windowPart = (MWindow<?>) context.get(MWindow.class
+				.getName());
+		LegacyWBImpl legacyWB = (LegacyWBImpl) context.get(LegacyWBImpl.class
+				.getName());
+		MCommand mcmd = legacyWB.commandsById.get(cmdId);
+		if (mcmd == null || windowPart == null)
+			return;
+		MHandler mHandler = ApplicationFactory.eINSTANCE.createMHandler();
+		mHandler.setId(id);
+		mHandler.setObject(new HandlerProxy(handler));
+		mHandler.setCommand(mcmd);
+		windowPart.getHandlers().add(mHandler);
+	}
+
 	private IEclipseContext eclipseContext;
 	private IEvaluationContext evalContext;
 
@@ -227,8 +292,27 @@ public class LegacyHandlerService implements IHandlerService {
 	 * @see org.eclipse.ui.handlers.IHandlerService#readRegistry()
 	 */
 	public void readRegistry() {
-		// TODO Auto-generated method stub
+		IConfigurationElement[] extensions = ExtensionUtils
+				.getExtensions(IWorkbenchRegistryConstants.PL_COMMANDS);
+		for (IConfigurationElement configElement : extensions) {
+			String id = configElement
+					.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+			if (id == null || id.length() == 0) {
+				continue;
+			}
+			String defaultHandler = configElement
+					.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT_HANDLER);
+			if ((defaultHandler == null)
+					&& (configElement
+							.getChildren(IWorkbenchRegistryConstants.TAG_DEFAULT_HANDLER).length == 0)) {
+				continue;
+			}
+			registerLegacyHandler(eclipseContext, id, id,
+					new org.eclipse.ui.internal.handlers.HandlerProxy(id,
+							configElement,
+							IWorkbenchRegistryConstants.ATT_DEFAULT_HANDLER));
 
+		}
 	}
 
 	/*
