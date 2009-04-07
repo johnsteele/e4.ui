@@ -55,10 +55,53 @@ public class MenuHelper {
 				processMenuManager(context, menuModel, barManager.getItems());
 				MenuContribution[] contributions = loadMenuContributions(context);
 				processMenuContributions(context, menuModel, contributions);
+				processActionSets(context, menuModel);
 			}
 		} else {
 			populateMenu(menuModel);
 		}
+	}
+
+	/**
+	 * @param context
+	 * @param menuModel
+	 */
+	private static void processActionSets(IEclipseContext context,
+			MMenu menuModel) {
+		ActionSet[] sets = loadActionSets(context, menuModel);
+		for (ActionSet actionSet : sets) {
+			actionSet.merge(menuModel);
+		}
+	}
+
+	/**
+	 * @param context
+	 * @param menuModel
+	 */
+	private static ActionSet[] loadActionSets(IEclipseContext context,
+			MMenu menuModel) {
+		ArrayList<ActionSet> contributions = new ArrayList<ActionSet>();
+		IConfigurationElement[] elements = ExtensionUtils
+				.getExtensions(IWorkbenchRegistryConstants.PL_ACTION_SETS);
+		for (IConfigurationElement element : elements) {
+			contributions.add(new ActionSet(context, element));
+		}
+		return contributions.toArray(new ActionSet[contributions.size()]);
+	}
+
+	public static int indexForId(MMenu menu, String id) {
+		if (id == null || id.length() == 0) {
+			return -1;
+		}
+		int i = 0;
+		EList<MMenuItem> items = menu.getItems();
+		for (MMenuItem item : items) {
+			if (id.equals(item.getId())) {
+				return i;
+			}
+			i++;
+		}
+		return -1;
 	}
 
 	/**
@@ -314,7 +357,7 @@ public class MenuHelper {
 	}
 
 	public static void addSeparator(MMenu parentMenu, String id) {
-		if (id != null)
+		if (id == null)
 			return;
 		MMenuItem newItem = ApplicationFactory.eINSTANCE.createMMenuItem();
 		newItem.setId(id);

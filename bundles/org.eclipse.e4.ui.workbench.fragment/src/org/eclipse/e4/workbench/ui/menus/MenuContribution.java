@@ -45,8 +45,6 @@ public class MenuContribution {
 	public MenuContribution(IEclipseContext context,
 			IConfigurationElement element) {
 		this.context = context;
-		// temporarily remove errors;
-		this.context.toString();
 		config = element;
 		uri = new MenuLocationURI(config
 				.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI));
@@ -95,7 +93,7 @@ public class MenuContribution {
 		int additionsIndex = -1;
 		String query = getURI().getQuery();
 		if (query.length() == 0 || query.equals("after=additions")) { //$NON-NLS-1$
-			additionsIndex = indexForId(menu, "additions"); //$NON-NLS-1$
+			additionsIndex = MenuHelper.indexForId(menu, "additions"); //$NON-NLS-1$
 			if (additionsIndex == -1) {
 				additionsIndex = menu.getItems().size();
 			} else {
@@ -104,27 +102,12 @@ public class MenuContribution {
 		} else {
 			String[] queryParts = Util.split(query, '=');
 			if (queryParts.length > 1 && queryParts[1].length() > 0) {
-				additionsIndex = indexForId(menu, queryParts[1]);
+				additionsIndex = MenuHelper.indexForId(menu, queryParts[1]);
 				if (additionsIndex != -1 && queryParts[0].equals("after")) //$NON-NLS-1$
 					additionsIndex++;
 			}
 		}
 		return additionsIndex;
-	}
-
-	private int indexForId(MMenu menu, String id) {
-		if (id == null || id.length() == 0) {
-			return -1;
-		}
-		int i = 0;
-		EList<MMenuItem> items = menu.getItems();
-		for (MMenuItem item : items) {
-			if (id.equals(item.getId())) {
-				return i;
-			}
-			i++;
-		}
-		return -1;
 	}
 
 	private void loadModel() {
