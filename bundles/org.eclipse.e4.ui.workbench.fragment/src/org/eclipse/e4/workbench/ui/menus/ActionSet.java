@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.workbench.ui.menus;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -18,6 +20,7 @@ import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
@@ -38,7 +41,41 @@ public class ActionSet {
 		for (IConfigurationElement element : menus) {
 			addMenu(menu, element);
 		}
+		IConfigurationElement[] actions = config
+				.getChildren(IWorkbenchRegistryConstants.TAG_ACTION);
+		for (IConfigurationElement element : actions) {
+			addAction(menu, element);
+		}
 		return true;
+	}
+
+	/**
+	 * @param menu
+	 * @param element
+	 */
+	private void addAction(MMenu menu, IConfigurationElement element) {
+		String path = element
+				.getAttribute(IWorkbenchRegistryConstants.ATT_MENUBAR_PATH);
+		if (path == null) {
+			return;
+		}
+		Path menuPath = new Path(path);
+		MMenu subMenu = findMenuFromPath(menu, menuPath, 0);
+		if (subMenu == null) {
+			System.err.println("Failed to find menu for " + path); //$NON-NLS-1$
+			return;
+		}
+		int idx = MenuHelper.indexForId(subMenu, menuPath.lastSegment());
+		if (idx == -1) {
+			idx = MenuHelper.indexForId(subMenu,
+					IWorkbenchActionConstants.MB_ADDITIONS);
+		}
+		if (idx == -1) {
+			System.err.println("Failed to find group for " + path); //$NON-NLS-1$
+			return;
+		}
+		MMenuItem item = createActionElement(element);
+		subMenu.getItems().add(idx, item);
 	}
 
 	/**
@@ -116,6 +153,32 @@ public class ActionSet {
 		MMenu m = ApplicationFactory.eINSTANCE.createMMenu();
 		m.setId(id);
 		item.setMenu(m);
+		return item;
+	}
+
+	private MMenuItem createActionElement(IConfigurationElement element) {
+		String imagePath = MenuHelper.getImageUrl(MenuHelper
+				.getIconDescriptor(element));
+		String cmdId = MenuHelper.getDefinitionId(element);
+		String id = MenuHelper.getId(element);
+		String label = MenuHelper.getLabel(element);
+		if (label == null && cmdId != null) {
+			ICommandService cs = (ICommandService) context
+					.get(ICommandService.class.getName());
+			Command cmd = cs.getCommand(cmdId);
+			if (cmd.isDefined()) {
+				try {
+					label = cmd.getName();
+				} catch (NotDefinedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} else {
+			label = "none:" + id; //$NON-NLS-1$
+		}
+		MMenuItem item = MenuHelper.createMenuItem(context, label, imagePath,
+				id, cmdId);
 		return item;
 	}
 

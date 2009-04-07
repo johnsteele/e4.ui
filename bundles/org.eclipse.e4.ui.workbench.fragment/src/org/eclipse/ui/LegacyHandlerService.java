@@ -61,8 +61,7 @@ public class LegacyHandlerService implements IHandlerService {
 		// }
 
 		public void execute(IEclipseContext context) {
-			Object shell = context
-					.get(Shell.class.getName());
+			Object shell = context.get(Shell.class.getName());
 			context.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, shell);
 			context.set(ISources.ACTIVE_SHELL_NAME, shell);
 			LegacyEvalContext legacy = new LegacyEvalContext(context);
@@ -84,8 +83,8 @@ public class LegacyHandlerService implements IHandlerService {
 	 * org.eclipse.ui.application.IActionBarConfigurer#registerGlobalAction(
 	 * org.eclipse.jface.action.IAction)
 	 */
-	public static void registerLegacyHandler(IEclipseContext context, String id,
-			String cmdId, IHandler handler) {
+	public static void registerLegacyHandler(IEclipseContext context,
+			String id, String cmdId, IHandler handler) {
 		MWindow<?> windowPart = (MWindow<?>) context.get(MWindow.class
 				.getName());
 		LegacyWBImpl legacyWB = (LegacyWBImpl) context.get(LegacyWBImpl.class
@@ -292,9 +291,9 @@ public class LegacyHandlerService implements IHandlerService {
 	 * @see org.eclipse.ui.handlers.IHandlerService#readRegistry()
 	 */
 	public void readRegistry() {
-		IConfigurationElement[] extensions = ExtensionUtils
+		IConfigurationElement[] elements = ExtensionUtils
 				.getExtensions(IWorkbenchRegistryConstants.PL_COMMANDS);
-		for (IConfigurationElement configElement : extensions) {
+		for (IConfigurationElement configElement : elements) {
 			String id = configElement
 					.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 			if (id == null || id.length() == 0) {

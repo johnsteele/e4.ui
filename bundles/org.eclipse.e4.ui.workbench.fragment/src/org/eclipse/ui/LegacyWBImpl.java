@@ -20,17 +20,21 @@ import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
+import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -62,6 +66,7 @@ import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.operations.WorkbenchOperationSupport;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.EditorRegistry;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
@@ -168,11 +173,15 @@ public class LegacyWBImpl implements IWorkbench {
 		});
 		context.set(ICommandService.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
-				commandManager = new CommandManager();
-				CommandService cs = new CommandService(commandManager);
-				cs.readRegistry();
-				populateCommands();
-				return cs;
+				if (commandManager == null) {
+					commandManager = new CommandManager();
+					CommandService cs = new CommandService(commandManager);
+					cs.readRegistry();
+					populateCommands();
+					populateActionSets();
+					return cs;
+				}
+				return new CommandService(commandManager);
 			}
 		});
 		context.set(IHandlerService.class.getName(), new IContextFunction() {
@@ -277,6 +286,27 @@ public class LegacyWBImpl implements IWorkbench {
 			}
 			app.getCommand().add(mcmd);
 			commandsById.put(cmd.getId(), mcmd);
+		}
+	}
+
+	protected void populateActionSets() {
+		MApplication<MWindow<?>> app = (MApplication<MWindow<?>>) context
+				.get(MApplication.class.getName());
+		IConfigurationElement[] actionSetElements = ExtensionUtils
+				.getExtensions(IWorkbenchRegistryConstants.PL_ACTION_SETS);
+		for (IConfigurationElement ase : actionSetElements) {
+			IConfigurationElement[] elements = ase
+					.getChildren(IWorkbenchRegistryConstants.TAG_ACTION);
+
+			for (IConfigurationElement element : elements) {
+				String id = MenuHelper.getActionSetCommandId(element);
+				MCommand mcmd = ApplicationFactory.eINSTANCE.createMCommand();
+				mcmd.setId(id);
+				mcmd.setName(LegacyActionTools.removeMnemonics(MenuHelper
+						.getLabel(element)));
+				app.getCommand().add(mcmd);
+				commandsById.put(mcmd.getId(), mcmd);
+			}
 		}
 	}
 

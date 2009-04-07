@@ -104,6 +104,17 @@ public class MenuHelper {
 		return -1;
 	}
 
+	public static String getActionSetCommandId(IConfigurationElement element) {
+		String id = MenuHelper.getDefinitionId(element);
+		if (id != null) {
+			return id;
+		}
+		id = MenuHelper.getId(element);
+		String actionSetId = element.getDeclaringExtension()
+				.getUniqueIdentifier();
+		return "AS::" + actionSetId + '/' + id; //$NON-NLS-1$
+	}
+
 	/**
 	 * @param context
 	 * @param menuModel
@@ -508,6 +519,11 @@ public class MenuHelper {
 
 	public static String getCommandId(IConfigurationElement element) {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_COMMAND_ID);
+	}
+
+	public static String getDefinitionId(IConfigurationElement element) {
+		return element
+				.getAttribute(IWorkbenchRegistryConstants.ATT_DEFINITION_ID);
 	}
 
 	public static int getStyle(IConfigurationElement element) {

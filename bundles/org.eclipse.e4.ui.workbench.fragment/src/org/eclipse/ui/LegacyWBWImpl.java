@@ -13,13 +13,17 @@ package org.eclipse.ui;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -27,16 +31,20 @@ import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
+import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.NavigationHistory;
 import org.eclipse.ui.internal.WWinPartService;
 import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
+import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.EvaluationService;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.model.ContributionComparator;
@@ -46,20 +54,20 @@ import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * @since 3.3
- *
+ * 
  */
-public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage { 
+public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	private IEclipseContext context;
 	private Workbench e4Workbench;
 	private MWorkbenchWindow workbenchWindow;
 	private LegacyWBImpl legacyWbImpl;
-	
-//	private ISelectionService selService;
+
+	// private ISelectionService selService;
 	public static IEditorInput hackInput;
-	
+
 	/**
 	 * @param e4Workbench
-	 * @param legacyWbImpl 
+	 * @param legacyWbImpl
 	 * @param workbenchWindow
 	 */
 	public LegacyWBWImpl(MWorkbenchWindow workbenchWindow) {
@@ -69,7 +77,8 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 				.get(org.eclipse.e4.workbench.ui.IWorkbench.class.getName());
 		legacyWbImpl = (LegacyWBImpl) context.get(LegacyWBImpl.class.getName());
 		context.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, this);
-		
+		context.set(IWorkbenchWindow.class.getName(), this);
+
 		// Register any window-specific services to the context
 		registerServices();
 	}
@@ -95,98 +104,153 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		});
 		context.set(IContributionService.class.getName(),
 				new IContextFunction() {
-			public Object compute(IEclipseContext context, Object[] arguments) {
-				// TBD the IContributionService is contributed by the WorkbenchAdvisor.
-				// The code below corresponds to the case where WorkbenchAdvisor#getComparatorFor()
-				// method has not been overridden
-				return new IContributionService() {
-					public ContributionComparator getComparatorFor(String contributionType) {
-						return new ContributionComparator();
-					}};
-			}
-		});
+					public Object compute(IEclipseContext context,
+							Object[] arguments) {
+						// TBD the IContributionService is contributed by the
+						// WorkbenchAdvisor.
+						// The code below corresponds to the case where
+						// WorkbenchAdvisor#getComparatorFor()
+						// method has not been overridden
+						return new IContributionService() {
+							public ContributionComparator getComparatorFor(
+									String contributionType) {
+								return new ContributionComparator();
+							}
+						};
+					}
+				});
 
 		context.set(ISelectionService.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
-				ISelectionService selService = new ISelectionService(){
+				ISelectionService selService = new ISelectionService() {
 					public void removeSelectionListener(String partId,
 							ISelectionListener listener) {
 					}
-					public void removeSelectionListener(ISelectionListener listener) {
+
+					public void removeSelectionListener(
+							ISelectionListener listener) {
 					}
+
 					public void removePostSelectionListener(String partId,
 							ISelectionListener listener) {
 					}
-					public void removePostSelectionListener(ISelectionListener listener) {
+
+					public void removePostSelectionListener(
+							ISelectionListener listener) {
 					}
+
 					public ISelection getSelection(String partId) {
 						return null;
 					}
+
 					public ISelection getSelection() {
 						return null;
 					}
-					public void addSelectionListener(String partId, ISelectionListener listener) {
+
+					public void addSelectionListener(String partId,
+							ISelectionListener listener) {
 					}
+
 					public void addSelectionListener(ISelectionListener listener) {
 					}
+
 					public void addPostSelectionListener(String partId,
 							ISelectionListener listener) {
 					}
-					public void addPostSelectionListener(ISelectionListener listener) {
+
+					public void addPostSelectionListener(
+							ISelectionListener listener) {
 					}
 				};
 				return selService;
 			}
 		});
-		context.set(IWorkbenchLocationService.class.getName(), new IContextFunction(){
-			
-			public Object compute(IEclipseContext context, Object[] arguments) {
-				return new IWorkbenchLocationService(){
-				
-					public IWorkbenchWindow getWorkbenchWindow() {
-						return LegacyWBWImpl.this;
+		context.set(IWorkbenchLocationService.class.getName(),
+				new IContextFunction() {
+
+					public Object compute(IEclipseContext context,
+							Object[] arguments) {
+						return new IWorkbenchLocationService() {
+
+							public IWorkbenchWindow getWorkbenchWindow() {
+								return LegacyWBWImpl.this;
+							}
+
+							public IWorkbench getWorkbench() {
+								return LegacyWBWImpl.this.getWorkbench();
+							}
+
+							public String getServiceScope() {
+								// TODO Auto-generated method stub
+								return null;
+							}
+
+							public int getServiceLevel() {
+								// TODO Auto-generated method stub
+								return 0;
+							}
+
+							public IWorkbenchPartSite getPartSite() {
+								// TODO Auto-generated method stub
+								return null;
+							}
+
+							public IPageSite getPageSite() {
+								// TODO Auto-generated method stub
+								return null;
+							}
+
+							public IEditorSite getMultiPageEditorSite() {
+								// TODO Auto-generated method stub
+								return null;
+							}
+						};
 					}
-				
-					public IWorkbench getWorkbench() {
-						return LegacyWBWImpl.this.getWorkbench();
+				});
+		context.set(IActionCommandMappingService.class.getName(),
+				new IContextFunction() {
+
+					public Object compute(IEclipseContext context,
+							Object[] arguments) {
+						return new ActionCommandMappingService();
 					}
-				
-					public String getServiceScope() {
-						// TODO Auto-generated method stub
-						return null;
-					}
-				
-					public int getServiceLevel() {
-						// TODO Auto-generated method stub
-						return 0;
-					}
-				
-					public IWorkbenchPartSite getPartSite() {
-						// TODO Auto-generated method stub
-						return null;
-					}
-				
-					public IPageSite getPageSite() {
-						// TODO Auto-generated method stub
-						return null;
-					}
-				
-					public IEditorSite getMultiPageEditorSite() {
-						// TODO Auto-generated method stub
-						return null;
-					}
-				};
-			}
-		});
-		context.set(IActionCommandMappingService.class.getName(), new IContextFunction(){
-		
-			public Object compute(IEclipseContext context, Object[] arguments) {
-				return new ActionCommandMappingService();
-			}
-		});
+				});
+		readActionSets();
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * 
+	 */
+	private void readActionSets() {
+		ICommandService cs = (ICommandService) context
+				.get(ICommandService.class.getName());
+		IConfigurationElement[] actionSetElements = ExtensionUtils
+				.getExtensions(IWorkbenchRegistryConstants.PL_ACTION_SETS);
+		for (IConfigurationElement ase : actionSetElements) {
+			IConfigurationElement[] elements = ase
+					.getChildren(IWorkbenchRegistryConstants.TAG_ACTION);
+			for (IConfigurationElement configElement : elements) {
+				String id = MenuHelper.getId(configElement);
+				String cmdId = MenuHelper.getActionSetCommandId(configElement);
+				if (id == null || id.length() == 0) {
+					continue;
+				}
+				Command cmd = cs.getCommand(cmdId);
+				if (!cmd.isDefined()) {
+					continue;
+				}
+				LegacyHandlerService.registerLegacyHandler(context, id, cmdId,
+						new ActionDelegateHandlerProxy(configElement,
+								IWorkbenchRegistryConstants.ATT_CLASS, id,
+								new ParameterizedCommand(cmd, null), this,
+								null, null, null));
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#close()
 	 */
 	public boolean close() {
@@ -194,57 +258,75 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getActivePage()
 	 */
 	public IWorkbenchPage getActivePage() {
 		return this;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getExtensionTracker()
 	 */
 	public IExtensionTracker getExtensionTracker() {
-		return (IExtensionTracker) context.get(IExtensionTracker.class.getName());
+		return (IExtensionTracker) context.get(IExtensionTracker.class
+				.getName());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getPages()
 	 */
 	public IWorkbenchPage[] getPages() {
-		IWorkbenchPage[] pages = new IWorkbenchPage[] {this};
+		IWorkbenchPage[] pages = new IWorkbenchPage[] { this };
 		return pages;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getPartService()
 	 */
 	public IPartService getPartService() {
 		return (IPartService) context.get(IPartService.class.getName());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getSelectionService()
 	 */
 	public ISelectionService getSelectionService() {
-		return (ISelectionService) context.get(ISelectionService.class.getName());
+		return (ISelectionService) context.get(ISelectionService.class
+				.getName());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getShell()
 	 */
 	public Shell getShell() {
 		return (Shell) e4Workbench.getWindow();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#getWorkbench()
 	 */
 	public IWorkbench getWorkbench() {
 		return legacyWbImpl;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindow#isApplicationMenu(java.lang.String)
 	 */
 	public boolean isApplicationMenu(String menuId) {
@@ -252,8 +334,11 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#openPage(java.lang.String, org.eclipse.core.runtime.IAdaptable)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchWindow#openPage(java.lang.String,
+	 * org.eclipse.core.runtime.IAdaptable)
 	 */
 	public IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
 			throws WorkbenchException {
@@ -261,16 +346,23 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#openPage(org.eclipse.core.runtime.IAdaptable)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchWindow#openPage(org.eclipse.core.runtime.IAdaptable
+	 * )
 	 */
 	public IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchWindow#run(boolean, boolean,
+	 * org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
 	public void run(boolean fork, boolean cancelable,
 			IRunnableWithProgress runnable) throws InvocationTargetException,
@@ -279,85 +371,119 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		ModalContext.run(runnable, fork, pm, getShell().getDisplay());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#setActivePage(org.eclipse.ui.IWorkbenchPage)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchWindow#setActivePage(org.eclipse.ui.IWorkbenchPage
+	 * )
 	 */
 	public void setActivePage(IWorkbenchPage page) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageService#addPageListener(org.eclipse.ui.IPageListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IPageService#addPageListener(org.eclipse.ui.IPageListener)
 	 */
 	public void addPageListener(IPageListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageService#addPerspectiveListener(org.eclipse.ui.IPerspectiveListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.ui.IPageService#addPerspectiveListener(org.eclipse.ui.
+	 * IPerspectiveListener)
 	 */
 	public void addPerspectiveListener(IPerspectiveListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageService#removePageListener(org.eclipse.ui.IPageListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IPageService#removePageListener(org.eclipse.ui.IPageListener
+	 * )
 	 */
 	public void removePageListener(IPageListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageService#removePerspectiveListener(org.eclipse.ui.IPerspectiveListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IPageService#removePerspectiveListener(org.eclipse.ui.
+	 * IPerspectiveListener)
 	 */
 	public void removePerspectiveListener(IPerspectiveListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
 		return context.get(api.getName());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
 	 */
 	public boolean hasService(Class api) {
 		return context.containsKey(api.getName());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#activate(org.eclipse.ui.IWorkbenchPart)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#activate(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void activate(IWorkbenchPart part) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#addPropertyChangeListener(org.eclipse.jface
+	 * .util.IPropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#bringToTop(org.eclipse.ui.IWorkbenchPart)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#bringToTop(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void bringToTop(IWorkbenchPart part) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#closeAllEditors(boolean)
 	 */
 	public boolean closeAllEditors(boolean save) {
@@ -365,7 +491,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#closeAllPerspectives(boolean, boolean)
 	 */
 	public void closeAllPerspectives(boolean saveEditors, boolean closePage) {
@@ -373,24 +501,35 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#closeEditor(org.eclipse.ui.IEditorPart, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#closeEditor(org.eclipse.ui.IEditorPart,
+	 * boolean)
 	 */
 	public boolean closeEditor(IEditorPart editor, boolean save) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#closeEditors(org.eclipse.ui.IEditorReference[], boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#closeEditors(org.eclipse.ui.IEditorReference
+	 * [], boolean)
 	 */
 	public boolean closeEditors(IEditorReference[] editorRefs, boolean save) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#closePerspective(org.eclipse.ui.IPerspectiveDescriptor, boolean, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.ui.IWorkbenchPage#closePerspective(org.eclipse.ui.
+	 * IPerspectiveDescriptor, boolean, boolean)
 	 */
 	public void closePerspective(IPerspectiveDescriptor desc,
 			boolean saveParts, boolean closePage) {
@@ -398,16 +537,23 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#findEditor(org.eclipse.ui.IEditorInput)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#findEditor(org.eclipse.ui.IEditorInput)
 	 */
 	public IEditorPart findEditor(IEditorInput input) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#findEditors(org.eclipse.ui.IEditorInput, java.lang.String, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#findEditors(org.eclipse.ui.IEditorInput,
+	 * java.lang.String, int)
 	 */
 	public IEditorReference[] findEditors(IEditorInput input, String editorId,
 			int matchFlags) {
@@ -415,7 +561,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#findView(java.lang.String)
 	 */
 	public IViewPart findView(String viewId) {
@@ -423,7 +571,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#findViewReference(java.lang.String)
 	 */
 	public IViewReference findViewReference(String viewId) {
@@ -431,15 +581,20 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#findViewReference(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPage#findViewReference(java.lang.String,
+	 * java.lang.String)
 	 */
 	public IViewReference findViewReference(String viewId, String secondaryId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getActiveEditor()
 	 */
 	public IEditorPart getActiveEditor() {
@@ -447,7 +602,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getAggregateWorkingSet()
 	 */
 	public IWorkingSet getAggregateWorkingSet() {
@@ -455,21 +612,27 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getDirtyEditors()
 	 */
 	public IEditorPart[] getDirtyEditors() {
 		return new IEditorPart[0];
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getEditorReferences()
 	 */
 	public IEditorReference[] getEditorReferences() {
 		return new IEditorReference[0];
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getEditorReuseThreshold()
 	 */
 	public int getEditorReuseThreshold() {
@@ -477,7 +640,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getEditors()
 	 */
 	public IEditorPart[] getEditors() {
@@ -485,7 +650,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getInput()
 	 */
 	public IAdaptable getInput() {
@@ -494,7 +661,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return ws.getRoot();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getLabel()
 	 */
 	public String getLabel() {
@@ -502,14 +671,19 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getNavigationHistory()
 	 */
 	public INavigationHistory getNavigationHistory() {
-		return (INavigationHistory) context.get(INavigationHistory.class.getName());
+		return (INavigationHistory) context.get(INavigationHistory.class
+				.getName());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getNewWizardShortcuts()
 	 */
 	public String[] getNewWizardShortcuts() {
@@ -517,7 +691,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getOpenPerspectives()
 	 */
 	public IPerspectiveDescriptor[] getOpenPerspectives() {
@@ -525,15 +701,20 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#getPartState(org.eclipse.ui.IWorkbenchPartReference)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.ui.IWorkbenchPage#getPartState(org.eclipse.ui.
+	 * IWorkbenchPartReference)
 	 */
 	public int getPartState(IWorkbenchPartReference ref) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getPerspective()
 	 */
 	public IPerspectiveDescriptor getPerspective() {
@@ -541,7 +722,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getPerspectiveShortcuts()
 	 */
 	public String[] getPerspectiveShortcuts() {
@@ -549,15 +732,20 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#getReference(org.eclipse.ui.IWorkbenchPart)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#getReference(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public IWorkbenchPartReference getReference(IWorkbenchPart part) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getShowViewShortcuts()
 	 */
 	public String[] getShowViewShortcuts() {
@@ -565,7 +753,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getSortedPerspectives()
 	 */
 	public IPerspectiveDescriptor[] getSortedPerspectives() {
@@ -573,7 +763,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getViewReferences()
 	 */
 	public IViewReference[] getViewReferences() {
@@ -581,7 +773,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getViewStack(org.eclipse.ui.IViewPart)
 	 */
 	public IViewPart[] getViewStack(IViewPart part) {
@@ -589,7 +783,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getViews()
 	 */
 	public IViewPart[] getViews() {
@@ -597,14 +793,18 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getWorkbenchWindow()
 	 */
 	public IWorkbenchWindow getWorkbenchWindow() {
 		return this;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getWorkingSet()
 	 */
 	public IWorkingSet getWorkingSet() {
@@ -612,7 +812,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getWorkingSets()
 	 */
 	public IWorkingSet[] getWorkingSets() {
@@ -620,7 +822,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#hideActionSet(java.lang.String)
 	 */
 	public void hideActionSet(String actionSetId) {
@@ -628,15 +832,20 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#hideEditor(org.eclipse.ui.IEditorReference)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#hideEditor(org.eclipse.ui.IEditorReference)
 	 */
 	public void hideEditor(IEditorReference ref) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#hideView(org.eclipse.ui.IViewPart)
 	 */
 	public void hideView(IViewPart view) {
@@ -644,15 +853,20 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#hideView(org.eclipse.ui.IViewReference)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#hideView(org.eclipse.ui.IViewReference)
 	 */
 	public void hideView(IViewReference view) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#isEditorAreaVisible()
 	 */
 	public boolean isEditorAreaVisible() {
@@ -660,15 +874,20 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#isEditorPinned(org.eclipse.ui.IEditorPart)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#isEditorPinned(org.eclipse.ui.IEditorPart)
 	 */
 	public boolean isEditorPinned(IEditorPart editor) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#isPageZoomed()
 	 */
 	public boolean isPageZoomed() {
@@ -676,34 +895,59 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#isPartVisible(org.eclipse.ui.IWorkbenchPart)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#isPartVisible(org.eclipse.ui.IWorkbenchPart
+	 * )
 	 */
 	public boolean isPartVisible(IWorkbenchPart part) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput,
+	 * java.lang.String)
 	 */
 	public IEditorPart openEditor(IEditorInput input, String editorId)
 			throws PartInitException {
-		// TODO Auto-generated method stub
-		return null;
+		return openEditor(input, editorId, true, MATCH_INPUT);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput, java.lang.String, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput,
+	 * java.lang.String, boolean)
 	 */
 	public IEditorPart openEditor(IEditorInput input, String editorId,
 			boolean activate) throws PartInitException {
-		// Create the model 'part' in the UI 
+		return openEditor(input, editorId, activate, MATCH_INPUT);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput,
+	 * java.lang.String, boolean, int)
+	 */
+	public IEditorPart openEditor(IEditorInput input, String editorId,
+			boolean activate, int matchFlags) throws PartInitException {
+		// Create the model 'part' in the UI
 		MPerspective<?> curPersp = workbenchWindow.getActiveChild();
 		EList<?> kids = curPersp.getChildren();
-		MPart ea = ModeledPageLayout.findPart(curPersp, ModeledPageLayout.internalGetEditorArea());
-		
-		MContributedPart<MPart<?>> editorPart = ApplicationFactory.eINSTANCE.createMContributedPart();
+		MPart ea = ModeledPageLayout.findPart(curPersp, ModeledPageLayout
+				.internalGetEditorArea());
+
+		MContributedPart<MPart<?>> editorPart = ApplicationFactory.eINSTANCE
+				.createMContributedPart();
 		editorPart.setId(editorId);
 		editorPart.setName(input.getName());
 		ea.getChildren().add(editorPart);
@@ -711,30 +955,27 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		ea.setActiveChild(editorPart);
 		hackInput = null;
 		System.out.println(kids.toString() + ea.toString());
-//		ref = getEditorManager().openEditor(editorID, input, true,
-//				editorState);
-//
+		// ref = getEditorManager().openEditor(editorID, input, true,
+		// editorState);
+		//
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput, java.lang.String, boolean, int)
-	 */
-	public IEditorPart openEditor(IEditorInput input, String editorId,
-			boolean activate, int matchFlags) throws PartInitException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#removePropertyChangeListener(org.eclipse
+	 * .jface.util.IPropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#resetPerspective()
 	 */
 	public void resetPerspective() {
@@ -742,15 +983,21 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#reuseEditor(org.eclipse.ui.IReusableEditor, org.eclipse.ui.IEditorInput)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#reuseEditor(org.eclipse.ui.IReusableEditor,
+	 * org.eclipse.ui.IEditorInput)
 	 */
 	public void reuseEditor(IReusableEditor editor, IEditorInput input) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#saveAllEditors(boolean)
 	 */
 	public boolean saveAllEditors(boolean confirm) {
@@ -758,15 +1005,20 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#saveEditor(org.eclipse.ui.IEditorPart, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPage#saveEditor(org.eclipse.ui.IEditorPart,
+	 * boolean)
 	 */
 	public boolean saveEditor(IEditorPart editor, boolean confirm) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#savePerspective()
 	 */
 	public void savePerspective() {
@@ -774,15 +1026,20 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#savePerspectiveAs(org.eclipse.ui.IPerspectiveDescriptor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.ui.IWorkbenchPage#savePerspectiveAs(org.eclipse.ui.
+	 * IPerspectiveDescriptor)
 	 */
 	public void savePerspectiveAs(IPerspectiveDescriptor perspective) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#setEditorAreaVisible(boolean)
 	 */
 	public void setEditorAreaVisible(boolean showEditorArea) {
@@ -790,7 +1047,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#setEditorReuseThreshold(int)
 	 */
 	public void setEditorReuseThreshold(int openEditors) {
@@ -798,31 +1057,43 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#setPartState(org.eclipse.ui.IWorkbenchPartReference, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.ui.IWorkbenchPage#setPartState(org.eclipse.ui.
+	 * IWorkbenchPartReference, int)
 	 */
 	public void setPartState(IWorkbenchPartReference ref, int state) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#setPerspective(org.eclipse.ui.IPerspectiveDescriptor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.ui.IWorkbenchPage#setPerspective(org.eclipse.ui.
+	 * IPerspectiveDescriptor)
 	 */
 	public void setPerspective(IPerspectiveDescriptor perspective) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#setWorkingSets(org.eclipse.ui.IWorkingSet[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#setWorkingSets(org.eclipse.ui.IWorkingSet
+	 * [])
 	 */
 	public void setWorkingSets(IWorkingSet[] sets) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#showActionSet(java.lang.String)
 	 */
 	public void showActionSet(String actionSetId) {
@@ -830,15 +1101,20 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#showEditor(org.eclipse.ui.IEditorReference)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#showEditor(org.eclipse.ui.IEditorReference)
 	 */
 	public void showEditor(IEditorReference ref) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#showView(java.lang.String)
 	 */
 	public IViewPart showView(String viewId) throws PartInitException {
@@ -846,8 +1122,11 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#showView(java.lang.String, java.lang.String, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPage#showView(java.lang.String,
+	 * java.lang.String, int)
 	 */
 	public IViewPart showView(String viewId, String secondaryId, int mode)
 			throws PartInitException {
@@ -855,15 +1134,20 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#toggleZoom(org.eclipse.ui.IWorkbenchPartReference)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.ui.IWorkbenchPage#toggleZoom(org.eclipse.ui.
+	 * IWorkbenchPartReference)
 	 */
 	public void toggleZoom(IWorkbenchPartReference ref) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#zoomOut()
 	 */
 	public void zoomOut() {
@@ -871,23 +1155,32 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartService#addPartListener(org.eclipse.ui.IPartListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IPartService#addPartListener(org.eclipse.ui.IPartListener)
 	 */
 	public void addPartListener(IPartListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartService#addPartListener(org.eclipse.ui.IPartListener2)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IPartService#addPartListener(org.eclipse.ui.IPartListener2
+	 * )
 	 */
 	public void addPartListener(IPartListener2 listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartService#getActivePart()
 	 */
 	public IWorkbenchPart getActivePart() {
@@ -895,7 +1188,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartService#getActivePartReference()
 	 */
 	public IWorkbenchPartReference getActivePartReference() {
@@ -903,32 +1198,48 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartService#removePartListener(org.eclipse.ui.IPartListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IPartService#removePartListener(org.eclipse.ui.IPartListener
+	 * )
 	 */
 	public void removePartListener(IPartListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartService#removePartListener(org.eclipse.ui.IPartListener2)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IPartService#removePartListener(org.eclipse.ui.IPartListener2
+	 * )
 	 */
 	public void removePartListener(IPartListener2 listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionService#addPostSelectionListener(org.eclipse.ui.ISelectionListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.ISelectionService#addPostSelectionListener(org.eclipse
+	 * .ui.ISelectionListener)
 	 */
 	public void addPostSelectionListener(ISelectionListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionService#addPostSelectionListener(java.lang.String, org.eclipse.ui.ISelectionListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.ISelectionService#addPostSelectionListener(java.lang.String
+	 * , org.eclipse.ui.ISelectionListener)
 	 */
 	public void addPostSelectionListener(String partId,
 			ISelectionListener listener) {
@@ -936,23 +1247,33 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionService#addSelectionListener(org.eclipse.ui.ISelectionListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.ISelectionService#addSelectionListener(org.eclipse.ui.
+	 * ISelectionListener)
 	 */
 	public void addSelectionListener(ISelectionListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionService#addSelectionListener(java.lang.String, org.eclipse.ui.ISelectionListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.ISelectionService#addSelectionListener(java.lang.String,
+	 * org.eclipse.ui.ISelectionListener)
 	 */
 	public void addSelectionListener(String partId, ISelectionListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.ISelectionService#getSelection()
 	 */
 	public ISelection getSelection() {
@@ -960,7 +1281,9 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.ISelectionService#getSelection(java.lang.String)
 	 */
 	public ISelection getSelection(String partId) {
@@ -968,16 +1291,24 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionService#removePostSelectionListener(org.eclipse.ui.ISelectionListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.ISelectionService#removePostSelectionListener(org.eclipse
+	 * .ui.ISelectionListener)
 	 */
 	public void removePostSelectionListener(ISelectionListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionService#removePostSelectionListener(java.lang.String, org.eclipse.ui.ISelectionListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.ISelectionService#removePostSelectionListener(java.lang
+	 * .String, org.eclipse.ui.ISelectionListener)
 	 */
 	public void removePostSelectionListener(String partId,
 			ISelectionListener listener) {
@@ -985,16 +1316,24 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionService#removeSelectionListener(org.eclipse.ui.ISelectionListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.ISelectionService#removeSelectionListener(org.eclipse.
+	 * ui.ISelectionListener)
 	 */
 	public void removeSelectionListener(ISelectionListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionService#removeSelectionListener(java.lang.String, org.eclipse.ui.ISelectionListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.ISelectionService#removeSelectionListener(java.lang.String
+	 * , org.eclipse.ui.ISelectionListener)
 	 */
 	public void removeSelectionListener(String partId,
 			ISelectionListener listener) {
@@ -1002,8 +1341,12 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#openEditors(org.eclipse.ui.IEditorInput[], java.lang.String[], int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#openEditors(org.eclipse.ui.IEditorInput[],
+	 * java.lang.String[], int)
 	 */
 	public IEditorReference[] openEditors(IEditorInput[] inputs,
 			String[] editorIDs, int matchFlags) throws MultiPartInitException {
