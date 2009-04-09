@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.part;
 
+import java.util.ArrayList;
+
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MContributedPart;
@@ -39,6 +41,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.PartService;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.ServiceLocatorCreator;
@@ -54,6 +57,7 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite,
 	private MContributedPart<MPart<?>> part;
 	private WorkbenchPart implementation;
 	private IEclipseContext context;
+	private ArrayList menuExtenders;
 
 	/**
 	 * @param e4Workbench
@@ -244,7 +248,7 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite,
 	 */
 	public void registerContextMenu(String menuId, MenuManager menuManager,
 			ISelectionProvider selectionProvider) {
-		System.out.println("registerContextMenu: " + menuManager.toString()); //$NON-NLS-1$
+		registerContextMenu(menuId, menuManager, selectionProvider, true);
 	}
 
 	/*
@@ -256,8 +260,7 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite,
 	 */
 	public void registerContextMenu(MenuManager menuManager,
 			ISelectionProvider selectionProvider) {
-		// TODO Auto-generated method stub
-
+		registerContextMenu(getId(), menuManager, selectionProvider, true);
 	}
 
 	/*
@@ -373,6 +376,8 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite,
 	 */
 	public void registerContextMenu(MenuManager menuManager,
 			ISelectionProvider selectionProvider, boolean includeEditorInput) {
+		registerContextMenu(getId(), menuManager, selectionProvider,
+				includeEditorInput);
 	}
 
 	/*
@@ -384,6 +389,11 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite,
 	 */
 	public void registerContextMenu(String menuId, MenuManager menuManager,
 			ISelectionProvider selectionProvider, boolean includeEditorInput) {
+		if (menuExtenders == null) {
+			menuExtenders = new ArrayList(1);
+		}
+		PartSite.registerContextMenu(menuId, menuManager, selectionProvider,
+				includeEditorInput, getPart(), menuExtenders);
 	}
 
 }

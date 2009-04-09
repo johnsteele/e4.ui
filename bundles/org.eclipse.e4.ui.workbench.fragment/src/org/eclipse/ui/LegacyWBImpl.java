@@ -31,6 +31,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.IAction;
@@ -437,7 +438,7 @@ public class LegacyWBImpl implements IWorkbench {
 		if (Display.getCurrent() != null)
 			return Display.getCurrent();
 
-		Shell shell = (Shell) context.get(Shell.class.getName());
+		Shell shell = (Shell) context.get(IServiceConstants.ACTIVE_SHELL);
 		return shell.getDisplay();
 	}
 
