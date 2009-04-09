@@ -27,20 +27,26 @@ import org.eclipse.ui.part.ViewPart;
 public class LegacyViewFactory extends SWTPartFactory {
 
 	private IConfigurationElement findPerspectiveFactory(String id) {
-		IConfigurationElement[] factories = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_PERSPECTIVES);
-		IConfigurationElement theFactory = ExtensionUtils.findExtension(factories, id);
+		IConfigurationElement[] factories = ExtensionUtils
+				.getExtensions(IWorkbenchRegistryConstants.PL_PERSPECTIVES);
+		IConfigurationElement theFactory = ExtensionUtils.findExtension(
+				factories, id);
 		return theFactory;
 	}
 
 	private IConfigurationElement findViewConfig(String id) {
-		IConfigurationElement[] views = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_VIEWS);
-		IConfigurationElement viewContribution = ExtensionUtils.findExtension(views, id);
+		IConfigurationElement[] views = ExtensionUtils
+				.getExtensions(IWorkbenchRegistryConstants.PL_VIEWS);
+		IConfigurationElement viewContribution = ExtensionUtils.findExtension(
+				views, id);
 		return viewContribution;
 	}
 
 	private IConfigurationElement findEditorConfig(String id) {
-		IConfigurationElement[] editors = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_EDITOR);
-		IConfigurationElement editorContribution = ExtensionUtils.findExtension(editors, id);
+		IConfigurationElement[] editors = ExtensionUtils
+				.getExtensions(IWorkbenchRegistryConstants.PL_EDITOR);
+		IConfigurationElement editorContribution = ExtensionUtils
+				.findExtension(editors, id);
 		return editorContribution;
 	}
 
@@ -53,12 +59,13 @@ public class LegacyViewFactory extends SWTPartFactory {
 			IConfigurationElement editorElement) {
 		Composite parent = (Composite) getParentWidget(part);
 
-		//part.setPlugin(viewContribution.getContributor().getName());
+		// part.setPlugin(viewContribution.getContributor().getName());
 		part.setIconURI(editorElement.getAttribute("icon")); //$NON-NLS-1$
 		//part.setName(editorElement.getAttribute("name")); //$NON-NLS-1$
 		EditorPart impl = null;
 		try {
-			impl = (EditorPart) editorElement.createExecutableExtension("class"); //$NON-NLS-1$
+			impl = (EditorPart) editorElement
+					.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
@@ -68,29 +75,33 @@ public class LegacyViewFactory extends SWTPartFactory {
 		try {
 			IEclipseContext parentContext = getContextForParent(part);
 			final IEclipseContext localContext = EclipseContextFactory.create(
-								parentContext, UISchedulerStrategy.getInstance());
-						localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor"); //$NON-NLS-1$
+					parentContext, UISchedulerStrategy.getInstance());
+			localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor"); //$NON-NLS-1$
 			part.setContext(localContext);
-			
+
 			// Assign a 'site' for the newly instantiated part
 			LegacyWPSImpl site = new LegacyWPSImpl(part, impl);
-			impl.init(site, LegacyWBWImpl.hackInput);  // HACK!! needs an editorInput
+			impl.init(site, LegacyWBWImpl.hackInput); // HACK!! needs an
+			// editorInput
 
 			impl.createPartControl(parent);
+			part.setObject(impl);
 			if (parent.getChildren().length > 0)
-				return parent.getChildren()[parent.getChildren().length-1];
+				return parent.getChildren()[parent.getChildren().length - 1];
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	private Control createView(MContributedPart<MPart<?>> part, IConfigurationElement viewContribution) {
+
+	private Control createView(MContributedPart<MPart<?>> part,
+			IConfigurationElement viewContribution) {
 		Composite parent = (Composite) getParentWidget(part);
 
 		ViewPart impl = null;
 		try {
-			impl = (ViewPart) viewContribution.createExecutableExtension("class"); //$NON-NLS-1$
+			impl = (ViewPart) viewContribution
+					.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
@@ -100,19 +111,20 @@ public class LegacyViewFactory extends SWTPartFactory {
 		try {
 			IEclipseContext parentContext = getContextForParent(part);
 			final IEclipseContext localContext = EclipseContextFactory.create(
-								parentContext, UISchedulerStrategy.getInstance());
-						localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor"); //$NON-NLS-1$
+					parentContext, UISchedulerStrategy.getInstance());
+			localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor"); //$NON-NLS-1$
 			part.setContext(localContext);
-			
+
 			// Assign a 'site' for the newly instantiated part
 			LegacyWPSImpl site = new LegacyWPSImpl(part, impl);
 			impl.init(site, null);
 
 			impl.createPartControl(parent);
-			
+			part.setObject(impl);
+
 			// HACK!! presumes it's the -last- child of the parent
 			if (parent.getChildren().length > 0)
-				return parent.getChildren()[parent.getChildren().length-1];
+				return parent.getChildren()[parent.getChildren().length - 1];
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -127,12 +139,12 @@ public class LegacyViewFactory extends SWTPartFactory {
 		if (part instanceof MPerspective) {
 			IConfigurationElement perspFactory = findPerspectiveFactory(partId);
 			if (perspFactory != null)
-				newCtrl = createPerspective((MPerspective<MPart<?>>) part, perspFactory);
+				newCtrl = createPerspective((MPerspective<MPart<?>>) part,
+						perspFactory);
 			return newCtrl;
-		}
-		else if (part instanceof MContributedPart) {
+		} else if (part instanceof MContributedPart) {
 			MContributedPart cp = (MContributedPart) part;
-			
+
 			// HACK!! relies on legacy views -not- having a URI...
 			String uri = cp.getURI();
 			if (uri != null && uri.length() > 0)
@@ -143,18 +155,20 @@ public class LegacyViewFactory extends SWTPartFactory {
 			// if this a view ?
 			IConfigurationElement viewElement = findViewConfig(partId);
 			if (viewElement != null)
-				newCtrl = createView((MContributedPart<MPart<?>>) part, viewElement);
-			
+				newCtrl = createView((MContributedPart<MPart<?>>) part,
+						viewElement);
+
 			IConfigurationElement editorElement = findEditorConfig(partId);
 			if (editorElement != null)
-				newCtrl = createEditor((MContributedPart<MPart<?>>) part, editorElement);
+				newCtrl = createEditor((MContributedPart<MPart<?>>) part,
+						editorElement);
 			if (newCtrl == null) {
 				Composite pc = (Composite) getParentWidget(part);
 				Label lbl = new Label(pc, SWT.BORDER);
 				lbl.setText(part.getId());
 				newCtrl = lbl;
 			}
-			
+
 			return newCtrl;
 		}
 		return null;
@@ -170,13 +184,13 @@ public class LegacyViewFactory extends SWTPartFactory {
 		Widget parentWidget = getParentWidget(part);
 		if (!(parentWidget instanceof Composite))
 			return null;
-		
+
 		Composite perspArea = new Composite((Composite) parentWidget, SWT.NONE);
 		perspArea.setLayout(new FillLayout());
-		
+
 		if (part.getChildren().size() == 0)
 			PerspectiveHelper.loadPerspective(part, perspFactory);
-		
+
 		return perspArea;
 	}
 
