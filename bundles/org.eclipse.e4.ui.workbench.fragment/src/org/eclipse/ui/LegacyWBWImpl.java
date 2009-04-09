@@ -29,6 +29,7 @@ import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
+import org.eclipse.e4.workbench.ui.api.LegacySelectionService;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
@@ -120,51 +121,8 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 					}
 				});
 
-		context.set(ISelectionService.class.getName(), new IContextFunction() {
-			public Object compute(IEclipseContext context, Object[] arguments) {
-				ISelectionService selService = new ISelectionService() {
-					public void removeSelectionListener(String partId,
-							ISelectionListener listener) {
-					}
-
-					public void removeSelectionListener(
-							ISelectionListener listener) {
-					}
-
-					public void removePostSelectionListener(String partId,
-							ISelectionListener listener) {
-					}
-
-					public void removePostSelectionListener(
-							ISelectionListener listener) {
-					}
-
-					public ISelection getSelection(String partId) {
-						return null;
-					}
-
-					public ISelection getSelection() {
-						return null;
-					}
-
-					public void addSelectionListener(String partId,
-							ISelectionListener listener) {
-					}
-
-					public void addSelectionListener(ISelectionListener listener) {
-					}
-
-					public void addPostSelectionListener(String partId,
-							ISelectionListener listener) {
-					}
-
-					public void addPostSelectionListener(
-							ISelectionListener listener) {
-					}
-				};
-				return selService;
-			}
-		});
+		context.set(ISelectionService.class.getName(),
+				new LegacySelectionService(context));
 		context.set(IWorkbenchLocationService.class.getName(),
 				new IContextFunction() {
 
@@ -1230,8 +1188,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * .ui.ISelectionListener)
 	 */
 	public void addPostSelectionListener(ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		getSelectionService().addPostSelectionListener(listener);
 	}
 
 	/*
@@ -1243,8 +1200,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 */
 	public void addPostSelectionListener(String partId,
 			ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		getSelectionService().addPostSelectionListener(partId, listener);
 	}
 
 	/*
@@ -1255,8 +1211,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * ISelectionListener)
 	 */
 	public void addSelectionListener(ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		getSelectionService().addSelectionListener(listener);
 	}
 
 	/*
@@ -1267,8 +1222,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * org.eclipse.ui.ISelectionListener)
 	 */
 	public void addSelectionListener(String partId, ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		getSelectionService().addSelectionListener(partId, listener);
 	}
 
 	/*
@@ -1277,8 +1231,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.ISelectionService#getSelection()
 	 */
 	public ISelection getSelection() {
-		// TODO Auto-generated method stub
-		return null;
+		return getSelectionService().getSelection();
 	}
 
 	/*
@@ -1287,8 +1240,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.ISelectionService#getSelection(java.lang.String)
 	 */
 	public ISelection getSelection(String partId) {
-		// TODO Auto-generated method stub
-		return null;
+		return getSelectionService().getSelection(partId);
 	}
 
 	/*
@@ -1299,8 +1251,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * .ui.ISelectionListener)
 	 */
 	public void removePostSelectionListener(ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		getSelectionService().removePostSelectionListener(listener);
 	}
 
 	/*
@@ -1312,8 +1263,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 */
 	public void removePostSelectionListener(String partId,
 			ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		getSelectionService().removePostSelectionListener(partId, listener);
 	}
 
 	/*
@@ -1324,8 +1274,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * ui.ISelectionListener)
 	 */
 	public void removeSelectionListener(ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		getSelectionService().removeSelectionListener(listener);
 	}
 
 	/*
@@ -1337,8 +1286,7 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 */
 	public void removeSelectionListener(String partId,
 			ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		getSelectionService().removePostSelectionListener(partId, listener);
 	}
 
 	/*

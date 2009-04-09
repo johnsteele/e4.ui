@@ -17,6 +17,7 @@ import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.api.LegacyMenuService;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -28,6 +29,7 @@ import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -310,6 +312,17 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite,
 	 */
 	public void setSelectionProvider(ISelectionProvider provider) {
 		context.set(ISelectionProvider.class.getName(), provider);
+		if (provider != null) {
+			final IEclipseContext outputContext = (IEclipseContext) context
+					.get(IServiceConstants.OUTPUTS);
+			provider
+					.addSelectionChangedListener(new ISelectionChangedListener() {
+						public void selectionChanged(SelectionChangedEvent event) {
+							outputContext.set(IServiceConstants.SELECTION,
+									event.getSelection());
+						}
+					});
+		}
 	}
 
 	/*
