@@ -19,7 +19,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
  *
  */
 public class LegacyEvalContext implements IEvaluationContext {
-	private IEclipseContext eclipseContext = null;
+	public IEclipseContext eclipseContext = null;
 
 	public LegacyEvalContext(IEclipseContext context) {
 		eclipseContext = context;

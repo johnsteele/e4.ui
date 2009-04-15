@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
+import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.swt.widgets.Event;
@@ -43,8 +44,10 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 public class LegacyHandlerService implements IHandlerService {
 	public static class HandlerProxy {
 		IHandler handler = null;
+		private Command command;
 
-		public HandlerProxy(IHandler handler) {
+		public HandlerProxy(Command command, IHandler handler) {
+			this.command = command;
 			this.handler = handler;
 		}
 
@@ -62,7 +65,7 @@ public class LegacyHandlerService implements IHandlerService {
 			context.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, shell);
 			context.set(ISources.ACTIVE_SHELL_NAME, shell);
 			LegacyEvalContext legacy = new LegacyEvalContext(context);
-			ExecutionEvent event = new ExecutionEvent(null,
+			ExecutionEvent event = new ExecutionEvent(command,
 					Collections.EMPTY_MAP, null, legacy);
 			try {
 				handler.execute(event);
@@ -73,6 +76,158 @@ public class LegacyHandlerService implements IHandlerService {
 		}
 	}
 
+	static class EHandlerActivation implements IHandlerActivation {
+
+		IEclipseContext context;
+		private String commandId;
+		private IHandler handler;
+		HandlerProxy proxy;
+
+		/**
+		 * @param context
+		 * @param cmdId
+		 * @param handler
+		 * @param handlerProxy
+		 */
+		public EHandlerActivation(IEclipseContext context, String cmdId,
+				IHandler handler, HandlerProxy handlerProxy) {
+			this.context = context;
+			this.commandId = cmdId;
+			this.handler = handler;
+			this.proxy = handlerProxy;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.handlers.IHandlerActivation#clearActive()
+		 */
+		public void clearActive() {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.handlers.IHandlerActivation#getCommandId()
+		 */
+		public String getCommandId() {
+			return commandId;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.handlers.IHandlerActivation#getDepth()
+		 */
+		public int getDepth() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.handlers.IHandlerActivation#getHandler()
+		 */
+		public IHandler getHandler() {
+			return handler;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.handlers.IHandlerActivation#getHandlerService()
+		 */
+		public IHandlerService getHandlerService() {
+			return (IHandlerService) context.get(IHandlerService.class
+					.getName());
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.ui.handlers.IHandlerActivation#isActive(org.eclipse.core
+		 * .expressions.IEvaluationContext)
+		 */
+		public boolean isActive(IEvaluationContext context) {
+			// TODO Auto-generated method stub
+			return true;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.ui.internal.services.IEvaluationResultCache#clearResult()
+		 */
+		public void clearResult() {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.ui.internal.services.IEvaluationResultCache#evaluate(
+		 * org.eclipse.core.expressions.IEvaluationContext)
+		 */
+		public boolean evaluate(IEvaluationContext context) {
+			// TODO Auto-generated method stub
+			return true;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.ui.internal.services.IEvaluationResultCache#getExpression
+		 * ()
+		 */
+		public Expression getExpression() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.ui.internal.services.IEvaluationResultCache#getSourcePriority
+		 * ()
+		 */
+		public int getSourcePriority() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.ui.internal.services.IEvaluationResultCache#setResult
+		 * (boolean)
+		 */
+		public void setResult(boolean result) {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
+		public int compareTo(Object o) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -80,11 +235,18 @@ public class LegacyHandlerService implements IHandlerService {
 	 * org.eclipse.ui.application.IActionBarConfigurer#registerGlobalAction(
 	 * org.eclipse.jface.action.IAction)
 	 */
-	public static void registerLegacyHandler(IEclipseContext context,
-			String id, String cmdId, IHandler handler) {
+	public static IHandlerActivation registerLegacyHandler(
+			IEclipseContext context, String id, String cmdId, IHandler handler) {
 		EHandlerService hs = (EHandlerService) context
 				.get(EHandlerService.class.getName());
-		hs.activateHandler(cmdId, new HandlerProxy(handler));
+		ECommandService cs = (ECommandService) context
+				.get(ECommandService.class.getName());
+		Command command = cs.getCommand(cmdId);
+		HandlerProxy handlerProxy = new HandlerProxy(command, handler);
+		EHandlerActivation activation = new EHandlerActivation(context, cmdId,
+				handler, handlerProxy);
+		hs.activateHandler(cmdId, handlerProxy);
+		return activation;
 	}
 
 	private IEclipseContext eclipseContext;
@@ -103,8 +265,11 @@ public class LegacyHandlerService implements IHandlerService {
 	 * .handlers.IHandlerActivation)
 	 */
 	public IHandlerActivation activateHandler(IHandlerActivation activation) {
-		// TODO Auto-generated method stub
-		return null;
+		EHandlerActivation eActivation = (EHandlerActivation) activation;
+		EHandlerService hs = (EHandlerService) eActivation.context
+				.get(EHandlerService.class.getName());
+		hs.activateHandler(activation.getCommandId(), eActivation.proxy);
+		return activation;
 	}
 
 	/*
@@ -115,8 +280,8 @@ public class LegacyHandlerService implements IHandlerService {
 	 * org.eclipse.core.commands.IHandler)
 	 */
 	public IHandlerActivation activateHandler(String commandId, IHandler handler) {
-		// TODO Auto-generated method stub
-		return null;
+		return registerLegacyHandler(eclipseContext, commandId, commandId,
+				handler);
 	}
 
 	/*
@@ -129,8 +294,8 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IHandlerActivation activateHandler(String commandId,
 			IHandler handler, Expression expression) {
-		// TODO Auto-generated method stub
-		return null;
+		return registerLegacyHandler(eclipseContext, commandId, commandId,
+				handler);
 	}
 
 	/*
@@ -143,8 +308,8 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IHandlerActivation activateHandler(String commandId,
 			IHandler handler, Expression expression, boolean global) {
-		// TODO Auto-generated method stub
-		return null;
+		return registerLegacyHandler(eclipseContext, commandId, commandId,
+				handler);
 	}
 
 	/*
@@ -157,8 +322,8 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IHandlerActivation activateHandler(String commandId,
 			IHandler handler, Expression expression, int sourcePriorities) {
-		// TODO Auto-generated method stub
-		return null;
+		return registerLegacyHandler(eclipseContext, commandId, commandId,
+				handler);
 	}
 
 	/*
@@ -180,8 +345,10 @@ public class LegacyHandlerService implements IHandlerService {
 	 * .core.commands.Command, org.eclipse.swt.widgets.Event)
 	 */
 	public ExecutionEvent createExecutionEvent(Command command, Event event) {
-		// TODO Auto-generated method stub
-		return null;
+		LegacyEvalContext legacy = new LegacyEvalContext(eclipseContext);
+		ExecutionEvent e = new ExecutionEvent(command, Collections.EMPTY_MAP,
+				event, legacy);
+		return e;
 	}
 
 	/*
@@ -193,8 +360,10 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public ExecutionEvent createExecutionEvent(ParameterizedCommand command,
 			Event event) {
-		// TODO Auto-generated method stub
-		return null;
+		LegacyEvalContext legacy = new LegacyEvalContext(eclipseContext);
+		ExecutionEvent e = new ExecutionEvent(command.getCommand(), command
+				.getParameterMap(), event, legacy);
+		return e;
 	}
 
 	/*
@@ -205,8 +374,10 @@ public class LegacyHandlerService implements IHandlerService {
 	 * .ui.handlers.IHandlerActivation)
 	 */
 	public void deactivateHandler(IHandlerActivation activation) {
-		// TODO Auto-generated method stub
-
+		EHandlerActivation eActivation = (EHandlerActivation) activation;
+		EHandlerService hs = (EHandlerService) eActivation.context
+				.get(EHandlerService.class.getName());
+		hs.deactivateHandler(eActivation.getCommandId(), eActivation.proxy);
 	}
 
 	/*
@@ -217,8 +388,10 @@ public class LegacyHandlerService implements IHandlerService {
 	 * Collection)
 	 */
 	public void deactivateHandlers(Collection activations) {
-		// TODO Auto-generated method stub
-
+		Object[] array = activations.toArray();
+		for (int i = 0; i < array.length; i++) {
+			deactivateHandler((IHandlerActivation) array[i]);
+		}
 	}
 
 	/*
@@ -231,8 +404,9 @@ public class LegacyHandlerService implements IHandlerService {
 	public Object executeCommand(String commandId, Event event)
 			throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException {
-		// TODO Auto-generated method stub
-		return null;
+		EHandlerService hs = (EHandlerService) eclipseContext
+				.get(EHandlerService.class.getName());
+		return hs.executeHandler(commandId);
 	}
 
 	/*
@@ -245,8 +419,7 @@ public class LegacyHandlerService implements IHandlerService {
 	public Object executeCommand(ParameterizedCommand command, Event event)
 			throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException {
-		// TODO Auto-generated method stub
-		return null;
+		return executeCommand(command.getId(), event);
 	}
 
 	/*
@@ -260,8 +433,12 @@ public class LegacyHandlerService implements IHandlerService {
 	public Object executeCommandInContext(ParameterizedCommand command,
 			Event event, IEvaluationContext context) throws ExecutionException,
 			NotDefinedException, NotEnabledException, NotHandledException {
-		// TODO Auto-generated method stub
-		return null;
+		if (context instanceof LegacyEvalContext) {
+			EHandlerService hs = (EHandlerService) ((LegacyEvalContext) context).eclipseContext
+					.get(EHandlerService.class.getName());
+			return hs.executeHandler(command.getId());
+		}
+		return executeCommand(command, event);
 	}
 
 	/*
