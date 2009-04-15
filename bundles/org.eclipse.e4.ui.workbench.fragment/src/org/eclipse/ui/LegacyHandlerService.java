@@ -456,6 +456,34 @@ public class LegacyHandlerService implements IHandlerService {
 	 * @see org.eclipse.ui.handlers.IHandlerService#readRegistry()
 	 */
 	public void readRegistry() {
+		readDefaultHandlers();
+		readHandlers();
+	}
+
+	private void readHandlers() {
+		IConfigurationElement[] elements = ExtensionUtils
+				.getExtensions(IWorkbenchRegistryConstants.PL_HANDLERS);
+		for (IConfigurationElement configElement : elements) {
+			String commandId = configElement
+					.getAttribute(IWorkbenchRegistryConstants.ATT_COMMAND_ID);
+			if (commandId == null || commandId.length() == 0) {
+				continue;
+			}
+			String defaultHandler = configElement
+					.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
+			if ((defaultHandler == null)
+					&& (configElement
+							.getChildren(IWorkbenchRegistryConstants.TAG_CLASS).length == 0)) {
+				continue;
+			}
+			registerLegacyHandler(eclipseContext, commandId, commandId,
+					new org.eclipse.ui.internal.handlers.HandlerProxy(
+							commandId, configElement,
+							IWorkbenchRegistryConstants.ATT_CLASS));
+		}
+	}
+
+	private void readDefaultHandlers() {
 		IConfigurationElement[] elements = ExtensionUtils
 				.getExtensions(IWorkbenchRegistryConstants.PL_COMMANDS);
 		for (IConfigurationElement configElement : elements) {
