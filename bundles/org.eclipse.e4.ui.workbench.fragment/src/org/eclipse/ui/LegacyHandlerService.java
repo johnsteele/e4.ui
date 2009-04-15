@@ -28,10 +28,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
-import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MHandler;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
@@ -85,18 +82,9 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public static void registerLegacyHandler(IEclipseContext context,
 			String id, String cmdId, IHandler handler) {
-		MWindow<?> windowPart = (MWindow<?>) context.get(MWindow.class
-				.getName());
-		LegacyWBImpl legacyWB = (LegacyWBImpl) context.get(LegacyWBImpl.class
-				.getName());
-		MCommand mcmd = legacyWB.commandsById.get(cmdId);
-		if (mcmd == null || windowPart == null)
-			return;
-		MHandler mHandler = ApplicationFactory.eINSTANCE.createMHandler();
-		mHandler.setId(id);
-		mHandler.setObject(new HandlerProxy(handler));
-		mHandler.setCommand(mcmd);
-		windowPart.getHandlers().add(mHandler);
+		EHandlerService hs = (EHandlerService) context
+				.get(EHandlerService.class.getName());
+		hs.activateHandler(cmdId, new HandlerProxy(handler));
 	}
 
 	private IEclipseContext eclipseContext;

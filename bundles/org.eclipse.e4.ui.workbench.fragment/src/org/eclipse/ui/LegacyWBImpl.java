@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -31,6 +32,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
+import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.help.IContext;
@@ -175,7 +177,8 @@ public class LegacyWBImpl implements IWorkbench {
 		context.set(ICommandService.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				if (commandManager == null) {
-					commandManager = new CommandManager();
+					commandManager = (CommandManager) context
+							.get(CommandManager.class.getName());
 					CommandService cs = new CommandService(commandManager);
 					cs.readRegistry();
 					populateCommands();
@@ -271,12 +274,15 @@ public class LegacyWBImpl implements IWorkbench {
 	 * 
 	 */
 	protected void populateCommands() {
+		ECommandService cs = (ECommandService) context
+				.get(ECommandService.class.getName());
 		commandsById = new HashMap<String, MCommand>();
 		MApplication<MWindow<?>> app = (MApplication<MWindow<?>>) context
 				.get(MApplication.class.getName());
 		Command[] cmds = commandManager.getAllCommands();
 		for (int i = 0; i < cmds.length; i++) {
 			Command cmd = cmds[i];
+			cs.getCommand(cmd.getId());
 			MCommand mcmd = ApplicationFactory.eINSTANCE.createMCommand();
 			mcmd.setId(cmd.getId());
 			try {
@@ -291,6 +297,11 @@ public class LegacyWBImpl implements IWorkbench {
 	}
 
 	protected void populateActionSets() {
+		ECommandService cs = (ECommandService) context
+				.get(ECommandService.class.getName());
+		Category category = cs
+				.getCategory(IWorkbenchRegistryConstants.PL_ACTION_SETS);
+		category.define("Action Sets", null); //$NON-NLS-1$
 		MApplication<MWindow<?>> app = (MApplication<MWindow<?>>) context
 				.get(MApplication.class.getName());
 		IConfigurationElement[] actionSetElements = ExtensionUtils
@@ -307,6 +318,10 @@ public class LegacyWBImpl implements IWorkbench {
 						.getLabel(element)));
 				app.getCommand().add(mcmd);
 				commandsById.put(mcmd.getId(), mcmd);
+				Command command = cs.getCommand(id);
+				if (!command.isDefined()) {
+					command.define(mcmd.getName(), null, category);
+				}
 			}
 		}
 	}
