@@ -15,9 +15,12 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IAdaptable;
@@ -36,6 +39,7 @@ import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.workbench.ui.internal.ActiveChildLookupFunction;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.IAction;
@@ -74,10 +78,14 @@ import org.eclipse.ui.internal.operations.WorkbenchOperationSupport;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
+import org.eclipse.ui.internal.wizards.ExportWizardRegistry;
+import org.eclipse.ui.internal.wizards.ImportWizardRegistry;
+import org.eclipse.ui.internal.wizards.NewWizardRegistry;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.keys.IBindingService;
@@ -100,6 +108,8 @@ public class LegacyWBImpl implements IWorkbench {
 	private IEclipseContext context;
 	private CommandManager commandManager;
 	private BindingManager bindingManager;
+	private IBindingService bindingService;
+
 	private CommandImageManager commandImageManager;
 
 	private static Map<MWorkbenchWindow, LegacyWBWImpl> wbwModel2LegacyImpl = new HashMap<MWorkbenchWindow, LegacyWBWImpl>();
@@ -154,6 +164,17 @@ public class LegacyWBImpl implements IWorkbench {
 						return new WorkbenchActivitySupport();
 					}
 				});
+		context.set(IPerspectiveRegistry.class.getName(),
+				new ContextFunction() {
+
+					@Override
+					public Object compute(IEclipseContext context,
+							Object[] arguments) {
+						PerspectiveRegistry perspectiveRegistry = new PerspectiveRegistry();
+						perspectiveRegistry.load();
+						return perspectiveRegistry;
+					}
+				});
 		// private IWorkbenchOperationSupport operationSupport;
 		context.set(IWorkbenchOperationSupport.class.getName(),
 				new IContextFunction() {
@@ -173,18 +194,20 @@ public class LegacyWBImpl implements IWorkbench {
 		});
 		// private IContextService contextService;
 		context.set(IContextService.class.getName(), new ContextFunction() {
+			private ContextService contextService;
+
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				if (contextManager == null) {
 					contextManager = (ContextManager) context
 							.get(ContextManager.class.getName());
-					ContextService cs = new ContextService(contextManager);
-					cs.readRegistry();
+					contextService = new ContextService(contextManager);
+					contextService.readRegistry();
 					EContextService ecs = (EContextService) context
 							.get(EContextService.class.getName());
 					ecs
 							.activateContext("org.eclipse.ui.contexts.dialogAndWindow"); //$NON-NLS-1$
 				}
-				return new ContextService(contextManager);
+				return contextService;
 			}
 		});
 		context.set(PreferenceManager.class.getName(), new IContextFunction() {
@@ -223,6 +246,7 @@ public class LegacyWBImpl implements IWorkbench {
 			}
 		});
 		context.set(IBindingService.class.getName(), new ContextFunction() {
+
 			@Override
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				if (bindingManager == null) {
@@ -235,13 +259,12 @@ public class LegacyWBImpl implements IWorkbench {
 							commandManager);
 					ICommandService cs = (ICommandService) context
 							.get(ICommandService.class.getName());
-					IBindingService bindingService = new BindingService(
-							bindingManager, cs, LegacyWBImpl.this);
+					context.get(IContextService.class.getName());
+					bindingService = new BindingService(bindingManager, cs,
+							LegacyWBImpl.this);
 					bindingService.readRegistryAndPreferences(cs);
 				}
-				ICommandService cs = (ICommandService) context
-						.get(ICommandService.class.getName());
-				return new BindingService(bindingManager, cs, LegacyWBImpl.this);
+				return bindingService;
 			}
 		});
 		context.set(ICommandImageService.class.getName(),
@@ -314,9 +337,31 @@ public class LegacyWBImpl implements IWorkbench {
 						};
 					}
 				});
+
+		context.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
+				new ActiveChildLookupFunction(
+						ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
+						ISources.ACTIVE_WORKBENCH_WINDOW_NAME + "l")); //$NON-NLS-1$
+	}
+
+	static class MakeHandlersGo extends AbstractHandler {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands
+		 * .ExecutionEvent)
+		 */
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			System.err.println("AllHandlerGo: not for executing"); //$NON-NLS-1$
+			return null;
+		}
+
 	}
 
 	protected void populateCommands() {
+		MakeHandlersGo allHandlers = new MakeHandlersGo();
 		ECommandService cs = (ECommandService) context
 				.get(ECommandService.class.getName());
 		commandsById = new HashMap<String, MCommand>();
@@ -325,6 +370,7 @@ public class LegacyWBImpl implements IWorkbench {
 		Command[] cmds = commandManager.getAllCommands();
 		for (int i = 0; i < cmds.length; i++) {
 			Command cmd = cmds[i];
+			cmd.setHandler(allHandlers);
 			cs.getCommand(cmd.getId());
 			MCommand mcmd = ApplicationFactory.eINSTANCE.createMCommand();
 			mcmd.setId(cmd.getId());
@@ -525,8 +571,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getExportWizardRegistry()
 	 */
 	public IWizardRegistry getExportWizardRegistry() {
-		// TODO Auto-generated method stub
-		return null;
+		return ExportWizardRegistry.getInstance();
 	}
 
 	/*
@@ -603,8 +648,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getImportWizardRegistry()
 	 */
 	public IWizardRegistry getImportWizardRegistry() {
-		// TODO Auto-generated method stub
-		return null;
+		return ImportWizardRegistry.getInstance();
 	}
 
 	/*
@@ -659,8 +703,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getNewWizardRegistry()
 	 */
 	public IWizardRegistry getNewWizardRegistry() {
-		// TODO Auto-generated method stub
-		return null;
+		return NewWizardRegistry.getInstance();
 	}
 
 	/*
@@ -679,8 +722,8 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getPerspectiveRegistry()
 	 */
 	public IPerspectiveRegistry getPerspectiveRegistry() {
-		// TODO Auto-generated method stub
-		return null;
+		return (IPerspectiveRegistry) context.get(IPerspectiveRegistry.class
+				.getName());
 	}
 
 	/*
