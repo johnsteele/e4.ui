@@ -29,6 +29,7 @@ import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
+import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.workbench.ui.api.LegacySelectionService;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
@@ -174,6 +175,10 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 					}
 				});
 		readActionSets();
+		EContextService cs = (EContextService) context
+				.get(EContextService.class.getName());
+		cs.activateContext("org.eclipse.ui.contexts.window"); //$NON-NLS-1$
+		cs.getActiveContextIds();
 	}
 
 	/**

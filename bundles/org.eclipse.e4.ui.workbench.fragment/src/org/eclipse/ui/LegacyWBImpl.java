@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -33,11 +34,13 @@ import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.services.ECommandService;
+import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.LegacyActionTools;
+import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -66,15 +69,18 @@ import org.eclipse.ui.internal.commands.CommandImageService;
 import org.eclipse.ui.internal.commands.CommandService;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.operations.WorkbenchOperationSupport;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.model.ContributionComparator;
 import org.eclipse.ui.model.IContributionService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
@@ -93,10 +99,12 @@ import org.osgi.framework.BundleContext;
 public class LegacyWBImpl implements IWorkbench {
 	private IEclipseContext context;
 	private CommandManager commandManager;
+	private BindingManager bindingManager;
 	private CommandImageManager commandImageManager;
 
 	private static Map<MWorkbenchWindow, LegacyWBWImpl> wbwModel2LegacyImpl = new HashMap<MWorkbenchWindow, LegacyWBWImpl>();
 	public HashMap<String, MCommand> commandsById;
+	protected ContextManager contextManager;
 
 	/**
 	 * @param e4Workbench
@@ -164,14 +172,30 @@ public class LegacyWBImpl implements IWorkbench {
 			}
 		});
 		// private IContextService contextService;
-		context.set(IContextService.class.getName(), new IContextFunction() {
+		context.set(IContextService.class.getName(), new ContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
-				return new ContextService(new ContextManager());
+				if (contextManager == null) {
+					contextManager = (ContextManager) context
+							.get(ContextManager.class.getName());
+					ContextService cs = new ContextService(contextManager);
+					cs.readRegistry();
+					EContextService ecs = (EContextService) context
+							.get(EContextService.class.getName());
+					ecs
+							.activateContext("org.eclipse.ui.contexts.dialogAndWindow"); //$NON-NLS-1$
+				}
+				return new ContextService(contextManager);
 			}
 		});
 		context.set(PreferenceManager.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return WorkbenchPlugin.getDefault().getPreferenceManager();
+			}
+		});
+		context.set(IViewRegistry.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return new ViewRegistry();
 			}
 		});
 		context.set(ICommandService.class.getName(), new IContextFunction() {
@@ -196,6 +220,28 @@ public class LegacyWBImpl implements IWorkbench {
 				LegacyHandlerService hs = new LegacyHandlerService(context);
 				hs.readRegistry();
 				return hs;
+			}
+		});
+		context.set(IBindingService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				if (bindingManager == null) {
+					System.err.println("Initialized legacy binding manager"); //$NON-NLS-1$
+					commandManager = (CommandManager) context
+							.get(CommandManager.class.getName());
+					ContextManager contextManager = (ContextManager) context
+							.get(ContextManager.class.getName());
+					bindingManager = new BindingManager(contextManager,
+							commandManager);
+					ICommandService cs = (ICommandService) context
+							.get(ICommandService.class.getName());
+					IBindingService bindingService = new BindingService(
+							bindingManager, cs, LegacyWBImpl.this);
+					bindingService.readRegistryAndPreferences(cs);
+				}
+				ICommandService cs = (ICommandService) context
+						.get(ICommandService.class.getName());
+				return new BindingService(bindingManager, cs, LegacyWBImpl.this);
 			}
 		});
 		context.set(ICommandImageService.class.getName(),
@@ -270,9 +316,6 @@ public class LegacyWBImpl implements IWorkbench {
 				});
 	}
 
-	/**
-	 * 
-	 */
 	protected void populateCommands() {
 		ECommandService cs = (ECommandService) context
 				.get(ECommandService.class.getName());
@@ -693,8 +736,7 @@ public class LegacyWBImpl implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getViewRegistry()
 	 */
 	public IViewRegistry getViewRegistry() {
-		// TODO Auto-generated method stub
-		return null;
+		return (IViewRegistry) context.get(IViewRegistry.class.getName());
 	}
 
 	/*
