@@ -137,4 +137,8 @@
          id="org.eclipse.e4.tm.source.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.e4.tm.tests.feature"
+         version="0.0.0"/>
+
 </feature>
