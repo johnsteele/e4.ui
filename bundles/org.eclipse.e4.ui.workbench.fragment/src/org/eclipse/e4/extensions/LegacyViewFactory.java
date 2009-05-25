@@ -75,8 +75,7 @@ public class LegacyViewFactory extends SWTPartFactory {
 
 		try {
 			IEclipseContext parentContext = getContextForParent(part);
-			final IEclipseContext localContext = EclipseContextFactory.create(
-					parentContext, UISchedulerStrategy.getInstance());
+			final IEclipseContext localContext = part.getContext();
 			localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor"); //$NON-NLS-1$
 			final IEclipseContext outputContext = EclipseContextFactory.create(
 					null, UISchedulerStrategy.getInstance());
@@ -85,7 +84,6 @@ public class LegacyViewFactory extends SWTPartFactory {
 			localContext.set(IServiceConstants.OUTPUTS, outputContext);
 			localContext.set(IEclipseContext.class.getName(), outputContext);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
-			part.setContext(localContext);
 
 			// Assign a 'site' for the newly instantiated part
 			LegacyWPSImpl site = new LegacyWPSImpl(part, impl);
@@ -94,7 +92,6 @@ public class LegacyViewFactory extends SWTPartFactory {
 
 			impl.createPartControl(parent);
 			part.setObject(impl);
-			localContext.set(MContributedPart.class.getName(), part);
 			if (parent.getChildren().length > 0)
 				return parent.getChildren()[parent.getChildren().length - 1];
 		} catch (Exception e) {
@@ -119,8 +116,7 @@ public class LegacyViewFactory extends SWTPartFactory {
 
 		try {
 			IEclipseContext parentContext = getContextForParent(part);
-			final IEclipseContext localContext = EclipseContextFactory.create(
-					parentContext, UISchedulerStrategy.getInstance());
+			final IEclipseContext localContext = part.getContext();
 			localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor"); //$NON-NLS-1$
 			final IEclipseContext outputContext = EclipseContextFactory.create(
 					null, UISchedulerStrategy.getInstance());
@@ -129,7 +125,6 @@ public class LegacyViewFactory extends SWTPartFactory {
 			localContext.set(IServiceConstants.OUTPUTS, outputContext);
 			localContext.set(IEclipseContext.class.getName(), outputContext);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
-			part.setContext(localContext);
 
 			// Assign a 'site' for the newly instantiated part
 			LegacyWPSImpl site = new LegacyWPSImpl(part, impl);
@@ -137,7 +132,6 @@ public class LegacyViewFactory extends SWTPartFactory {
 
 			impl.createPartControl(parent);
 			part.setObject(impl);
-			localContext.set(MContributedPart.class.getName(), part);
 
 			// HACK!! presumes it's the -last- child of the parent
 			if (parent.getChildren().length > 0)
