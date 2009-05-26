@@ -149,9 +149,10 @@ public class LegacyViewFactory extends SWTPartFactory {
 		Control newCtrl = null;
 		if (part instanceof MPerspective) {
 			IConfigurationElement perspFactory = findPerspectiveFactory(partId);
-			if (perspFactory != null)
+			if (perspFactory != null || part.getChildren().size() > 0) {
 				newCtrl = createPerspective((MPerspective<MPart<?>>) part,
 						perspFactory);
+			}
 			return newCtrl;
 		} else if (part instanceof MContributedPart) {
 			MContributedPart cp = (MContributedPart) part;
