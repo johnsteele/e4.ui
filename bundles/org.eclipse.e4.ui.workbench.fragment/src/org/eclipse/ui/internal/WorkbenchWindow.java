@@ -35,6 +35,7 @@ import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
+import org.eclipse.e4.workbench.ui.api.LegacySelectionService;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IAction;
@@ -2157,20 +2158,20 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 */
 	private final void initializeDefaultServices() {
 		// BEGIN: e4 services
-		e4Window.getContext().set(IExtensionTracker.class.getName(),
-				new ContextFunction() {
-
-					@Override
-					public Object compute(IEclipseContext context,
-							Object[] arguments) {
-						if (tracker == null) {
-							tracker = new UIExtensionTracker(getWorkbench()
-									.getDisplay());
-						}
-						return tracker;
-					}
-				});
-
+		final IEclipseContext e4Context = e4Window.getContext();
+		e4Context.set(IExtensionTracker.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				if (tracker == null) {
+					tracker = new UIExtensionTracker(getWorkbench()
+							.getDisplay());
+				}
+				return tracker;
+			}
+		});
+		e4Context.set(IPartService.class.getName(), getPartService());
+		e4Context.set(ISelectionService.class.getName(),
+				new LegacySelectionService(e4Context));
 		// END: e4 services
 		serviceLocator.registerService(IWorkbenchLocationService.class,
 				new WorkbenchLocationService(IServiceScopes.WINDOW_SCOPE,

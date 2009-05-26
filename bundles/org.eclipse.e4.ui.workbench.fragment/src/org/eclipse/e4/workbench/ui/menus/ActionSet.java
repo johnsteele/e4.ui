@@ -85,6 +85,9 @@ public class ActionSet {
 	private void addMenu(MMenu menu, IConfigurationElement element) {
 		String path = element
 				.getAttribute(IWorkbenchRegistryConstants.ATT_PATH);
+		if (path == null || path.length() == 0) {
+			path = IWorkbenchActionConstants.MB_ADDITIONS;
+		}
 		Path menuPath = new Path(path);
 		MMenu subMenu = findMenuFromPath(menu, menuPath, 0);
 		if (subMenu == null) {

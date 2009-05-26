@@ -1836,10 +1836,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Command[] cmds = commandManager.getAllCommands();
 		for (int i = 0; i < cmds.length; i++) {
 			Command cmd = cmds[i];
+			final String cmdId = cmd.getId();
+			if (cmdId.contains("(")) { //$NON-NLS-1$
+				continue;
+			}
 			cmd.setHandler(allHandlers);
-			cs.getCommand(cmd.getId());
+			cs.getCommand(cmdId);
 			MCommand mcmd = ApplicationFactory.eINSTANCE.createMCommand();
-			mcmd.setId(cmd.getId());
+			mcmd.setId(cmdId);
 			try {
 				mcmd.setName(cmd.getName());
 			} catch (NotDefinedException e) {
@@ -1847,7 +1851,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				e.printStackTrace();
 			}
 			app.getCommand().add(mcmd);
-			commandsById.put(cmd.getId(), mcmd);
+			commandsById.put(cmdId, mcmd);
 		}
 	}
 
