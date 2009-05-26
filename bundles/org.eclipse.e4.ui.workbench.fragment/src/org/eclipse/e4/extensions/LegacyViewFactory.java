@@ -9,7 +9,6 @@ import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.menus.PerspectiveHelper;
 import org.eclipse.e4.workbench.ui.renderers.swt.SWTPartFactory;
@@ -162,8 +161,6 @@ public class LegacyViewFactory extends SWTPartFactory {
 			if (uri != null && uri.length() > 0)
 				return null;
 
-			// ensure that the legacy hook is initialized
-			context.get(ILegacyHook.class.getName());
 			// if this a view ?
 			IConfigurationElement viewElement = findViewConfig(partId);
 			if (viewElement != null)

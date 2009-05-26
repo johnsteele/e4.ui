@@ -25,18 +25,25 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.common.EventManager;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -58,17 +65,23 @@ import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.ECommandService;
+import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.swt.Activator;
 import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
 import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchStylingSupport;
 import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchWindowHandler;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
+import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ExternalActionManager.CommandCallback;
 import org.eclipse.jface.action.ExternalActionManager.IActiveChecker;
@@ -403,6 +416,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private ListenerList workbenchListeners = new ListenerList(
 			ListenerList.IDENTITY);
+
+	public HashMap<String, MCommand> commandsById;
 
 	/**
 	 * Creates a new workbench.
@@ -1638,7 +1653,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			public void runWithException() {
 				Command.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_COMMANDS;
-				commandManager = new CommandManager();
+				commandManager = (CommandManager) e4Context
+						.get(CommandManager.class.getName());
 			}
 		});
 
@@ -1654,11 +1670,15 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 		});
 
+		populateCommands();
+		populateActionSets();
+
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 			public void runWithException() {
 				ContextManager.DEBUG = Policy.DEBUG_CONTEXTS;
-				contextManager = new ContextManager();
+				contextManager = (ContextManager) e4Context
+						.get(ContextManager.class.getName());
 			}
 		});
 
@@ -1671,6 +1691,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 				contextService.readRegistry();
 			}
 		});
+
+		EContextService ecs = (EContextService) e4Context
+				.get(EContextService.class.getName());
+		ecs.activateContext(IContextService.CONTEXT_ID_DIALOG_AND_WINDOW);
 
 		serviceLocator.registerService(IContextService.class, contextService);
 
@@ -1784,6 +1808,77 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		serviceLocator.registerService(ISelectionConversionService.class,
 				new SelectionConversionService());
+	}
+
+	static class MakeHandlersGo extends AbstractHandler {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands
+		 * .ExecutionEvent)
+		 */
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			System.err.println("AllHandlerGo: not for executing"); //$NON-NLS-1$
+			return null;
+		}
+
+	}
+
+	protected void populateCommands() {
+		MakeHandlersGo allHandlers = new MakeHandlersGo();
+		ECommandService cs = (ECommandService) e4Context
+				.get(ECommandService.class.getName());
+		commandsById = new HashMap<String, MCommand>();
+		MApplication<MWindow<?>> app = (MApplication<MWindow<?>>) e4Context
+				.get(MApplication.class.getName());
+		Command[] cmds = commandManager.getAllCommands();
+		for (int i = 0; i < cmds.length; i++) {
+			Command cmd = cmds[i];
+			cmd.setHandler(allHandlers);
+			cs.getCommand(cmd.getId());
+			MCommand mcmd = ApplicationFactory.eINSTANCE.createMCommand();
+			mcmd.setId(cmd.getId());
+			try {
+				mcmd.setName(cmd.getName());
+			} catch (NotDefinedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			app.getCommand().add(mcmd);
+			commandsById.put(cmd.getId(), mcmd);
+		}
+	}
+
+	protected void populateActionSets() {
+		ECommandService cs = (ECommandService) e4Context
+				.get(ECommandService.class.getName());
+		Category category = cs
+				.getCategory(IWorkbenchRegistryConstants.PL_ACTION_SETS);
+		category.define("Action Sets", null); //$NON-NLS-1$
+		MApplication<MWindow<?>> app = (MApplication<MWindow<?>>) e4Context
+				.get(MApplication.class.getName());
+		IConfigurationElement[] actionSetElements = ExtensionUtils
+				.getExtensions(IWorkbenchRegistryConstants.PL_ACTION_SETS);
+		for (IConfigurationElement ase : actionSetElements) {
+			IConfigurationElement[] elements = ase
+					.getChildren(IWorkbenchRegistryConstants.TAG_ACTION);
+
+			for (IConfigurationElement element : elements) {
+				String id = MenuHelper.getActionSetCommandId(element);
+				MCommand mcmd = ApplicationFactory.eINSTANCE.createMCommand();
+				mcmd.setId(id);
+				mcmd.setName(LegacyActionTools.removeMnemonics(MenuHelper
+						.getLabel(element)));
+				app.getCommand().add(mcmd);
+				commandsById.put(mcmd.getId(), mcmd);
+				Command command = cs.getCommand(id);
+				if (!command.isDefined()) {
+					command.define(mcmd.getName(), null, category);
+				}
+			}
+		}
 	}
 
 	/**

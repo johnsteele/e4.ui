@@ -27,11 +27,11 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.LegacyWBImpl;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.ide.WorkbenchActionBuilder;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.menus.CommandContributionItem;
@@ -52,14 +52,19 @@ public class MenuHelper {
 			if (menuModel.getItems().size() == 0) {
 				MenuManager barManager = (MenuManager) actionBarConfigurer
 						.getMenuManager();
-				processMenuManager(context, menuModel, barManager.getItems());
-				MenuContribution[] contributions = loadMenuContributions(context);
-				processMenuContributions(context, menuModel, contributions);
-				processActionSets(context, menuModel);
+				loadMainMenu(context, menuModel, barManager);
 			}
 		} else {
 			populateMenu(menuModel);
 		}
+	}
+
+	public static void loadMainMenu(IEclipseContext context, MMenu menuModel,
+			MenuManager barManager) {
+		processMenuManager(context, menuModel, barManager.getItems());
+		MenuContribution[] contributions = loadMenuContributions(context);
+		processMenuContributions(context, menuModel, contributions);
+		processActionSets(context, menuModel);
 	}
 
 	/**
@@ -290,6 +295,11 @@ public class MenuHelper {
 		return null;
 	}
 
+	private static MCommand getCommandById(IEclipseContext context, String cmdId) {
+		Workbench legacyWB = (Workbench) context.get(Workbench.class.getName());
+		return legacyWB.commandsById.get(cmdId);
+	}
+
 	public static MMenuItem createMenuItem(IEclipseContext context,
 			String label, String imgPath, String id, String cmdId) {
 		MMenuItem newItem = ApplicationFactory.eINSTANCE.createMMenuItem();
@@ -297,9 +307,7 @@ public class MenuHelper {
 		newItem.setName(label);
 		newItem.setIconURI(imgPath);
 		if (cmdId != null) {
-			LegacyWBImpl legacyWB = (LegacyWBImpl) context
-					.get(LegacyWBImpl.class.getName());
-			MCommand mcmd = legacyWB.commandsById.get(cmdId);
+			MCommand mcmd = getCommandById(context, cmdId);
 			if (mcmd != null) {
 				newItem.setCommand(mcmd);
 			} else {
