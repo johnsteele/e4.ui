@@ -35,8 +35,6 @@ public class ModeledPageLayout implements IPageLayout {
 		// editorArea.setName("Editor Area");
 
 		perspModel.getChildren().add(editorArea);
-		createPlaceholderFolder(
-				"bottom", BOTTOM, 0.2f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
 	}
 
 	public MPerspective getModel() {

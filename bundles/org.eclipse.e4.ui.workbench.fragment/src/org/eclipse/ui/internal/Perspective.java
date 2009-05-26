@@ -1964,6 +1964,12 @@ public class Perspective {
 		final MPerspective perspectiveModel = ((ModeledPageLayout) layout)
 				.getModel();
 		MPart ea = ModeledPageLayout.findPart(perspectiveModel, "bottom"); //$NON-NLS-1$
+		if (ea == null) {
+			layout
+					.createPlaceholderFolder(
+							"bottom", IPageLayout.BOTTOM, 0.2f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
+			ea = ModeledPageLayout.findPart(perspectiveModel, "bottom"); //$NON-NLS-1$
+		}
 
 		MContributedPart viewModel = ModeledPageLayout.createViewModel(viewId,
 				false);
