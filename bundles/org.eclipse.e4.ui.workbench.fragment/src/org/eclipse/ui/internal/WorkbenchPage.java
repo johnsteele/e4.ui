@@ -1094,14 +1094,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// Show the view.
 		view = persp.showView(viewID, secondaryID);
 		if (view != null) {
-			busyShowView(view, mode);
 
-			IWorkbenchPartReference partReference = getReference(view);
-			PartPane partPane = getPane(partReference);
-			partPane.setInLayout(true);
-
-			window.firePerspectiveChanged(this, getPerspective(),
-					partReference, CHANGE_VIEW_SHOW);
+			window.firePerspectiveChanged(this, getPerspective(), null,
+					CHANGE_VIEW_SHOW);
 			window.firePerspectiveChanged(this, getPerspective(),
 					CHANGE_VIEW_SHOW);
 		}
@@ -2486,6 +2481,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		actionSets = new ActionSetManager(w);
 
 		e4Window = w.getModelWindow();
+		e4Window.getContext().set(IWorkbenchPage.class.getName(), this);
 
 		// Create presentation.
 

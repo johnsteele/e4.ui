@@ -23,6 +23,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 public class ModeledPageLayout implements IPageLayout {
 
 	private MPerspective perspModel;
+	private IPerspectiveDescriptor descriptor;
 
 	public ModeledPageLayout(MPerspective perspModel) {
 		// Create the editor area stack
@@ -34,6 +35,12 @@ public class ModeledPageLayout implements IPageLayout {
 		// editorArea.setName("Editor Area");
 
 		perspModel.getChildren().add(editorArea);
+		createPlaceholderFolder(
+				"bottom", BOTTOM, 0.2f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
+	}
+
+	public MPerspective getModel() {
+		return perspModel;
 	}
 
 	public void addActionSet(String actionSetId) {
@@ -101,12 +108,16 @@ public class ModeledPageLayout implements IPageLayout {
 		return new ModeledPlaceholderFolderLayout(Stack);
 	}
 
+	public void setDescriptor(IPerspectiveDescriptor desc) {
+		descriptor = desc;
+	}
+
 	public IPerspectiveDescriptor getDescriptor() {
-		return null;
+		return descriptor;
 	}
 
 	public static String internalGetEditorArea() {
-		return "org.eclipse.ui.EditorArea"; //$NON-NLS-1$
+		return IPageLayout.ID_EDITOR_AREA;
 	}
 
 	public String getEditorArea() {

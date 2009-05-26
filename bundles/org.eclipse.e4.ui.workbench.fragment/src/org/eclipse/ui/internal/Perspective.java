@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
@@ -761,6 +763,7 @@ public class Perspective {
 		MWindow e4Window = page.getModelWindow();
 		e4Window.getChildren().add(persModel);
 		layout = new ModeledPageLayout(persModel);
+		((ModeledPageLayout) layout).setDescriptor(descriptor);
 		layout.setFixed(descriptor.getFixed());
 
 		// add the placeholders for the sticky folders and their contents
@@ -1958,133 +1961,15 @@ public class Perspective {
 	 */
 	public IViewPart showView(String viewId, String secondaryId)
 			throws PartInitException {
-		ViewFactory factory = getViewFactory();
-		IViewReference ref = factory.createView(viewId, secondaryId);
-		IViewPart part = (IViewPart) ref.getPart(true);
-		if (part == null) {
-			throw new PartInitException(NLS.bind(
-					WorkbenchMessages.ViewFactory_couldNotCreate, ref.getId()));
-		}
-		ViewSite site = (ViewSite) part.getSite();
-		ViewPane pane = (ViewPane) site.getPane();
+		final MPerspective perspectiveModel = ((ModeledPageLayout) layout)
+				.getModel();
+		MPart ea = ModeledPageLayout.findPart(perspectiveModel, "bottom"); //$NON-NLS-1$
 
-		IPreferenceStore store = WorkbenchPlugin.getDefault()
-				.getPreferenceStore();
-		int openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
-
-		if (openViewMode == IPreferenceConstants.OVM_FAST
-				&& fastViewManager != null) {
-			fastViewManager.addViewReference(FastViewBar.FASTVIEWBAR_ID, -1,
-					ref, true);
-			setActiveFastView(ref);
-		} else if (openViewMode == IPreferenceConstants.OVM_FLOAT
-				&& presentation.canDetach()) {
-			presentation.addDetachedPart(pane);
-		} else {
-			if (useNewMinMax(this)) {
-				// Is this view going to show in the trim?
-				LayoutPart vPart = presentation.findPart(viewId, secondaryId);
-
-				// Determine if there is a trim stack that should get the view
-				String trimId = null;
-
-				// If we can locate the correct trim stack then do so
-				if (vPart != null) {
-					String id = null;
-					ILayoutContainer container = vPart.getContainer();
-					if (container instanceof ContainerPlaceholder)
-						id = ((ContainerPlaceholder) container).getID();
-					else if (container instanceof ViewStack)
-						id = ((ViewStack) container).getID();
-					else if (container instanceof DetachedPlaceHolder) {
-						// Views in a detached window don't participate in the
-						// minimize behavior so just revert to the default
-						// behavior
-						presentation.addPart(pane);
-						return part;
-					}
-
-					// Is this place-holder in the trim?
-					if (id != null
-							&& fastViewManager.getFastViews(id).size() > 0) {
-						trimId = id;
-					}
-				}
-
-				// No explicit trim found; If we're maximized then we either
-				// have to find an
-				// arbitrary stack...
-				if (trimId == null && presentation.getMaximizedStack() != null) {
-					if (vPart == null) {
-						ViewStackTrimToolBar blTrimStack = fastViewManager
-								.getBottomRightTrimStack();
-						if (blTrimStack != null) {
-							// OK, we've found a trim stack to add it to...
-							trimId = blTrimStack.getId();
-
-							// Since there was no placeholder we have to add one
-							LayoutPart blPart = presentation.findPart(trimId,
-									null);
-							if (blPart instanceof ContainerPlaceholder) {
-								ContainerPlaceholder cph = (ContainerPlaceholder) blPart;
-								if (cph.getRealContainer() instanceof ViewStack) {
-									ViewStack vs = (ViewStack) cph
-											.getRealContainer();
-
-									// Create a 'compound' id if this is a
-									// multi-instance part
-									String compoundId = ref.getId();
-									if (ref.getSecondaryId() != null)
-										compoundId = compoundId + ':'
-												+ ref.getSecondaryId();
-
-									// Add the new placeholder
-									vs.add(new PartPlaceholder(compoundId));
-								}
-							}
-						}
-					}
-				}
-
-				// If we have a trim stack located then add the view to it
-				if (trimId != null) {
-					fastViewManager.addViewReference(trimId, -1, ref, true);
-				} else {
-					boolean inMaximizedStack = vPart != null
-							&& vPart.getContainer() == presentation
-									.getMaximizedStack();
-
-					// Do the default behavior
-					presentation.addPart(pane);
-
-					// Now, if we're maximized then we have to minimize the new
-					// stack
-					if (presentation.getMaximizedStack() != null
-							&& !inMaximizedStack) {
-						vPart = presentation.findPart(viewId, secondaryId);
-						if (vPart != null
-								&& vPart.getContainer() instanceof ViewStack) {
-							ViewStack vs = (ViewStack) vPart.getContainer();
-							vs.setState(IStackPresentationSite.STATE_MINIMIZED);
-
-							// setting the state to minimized will create the
-							// trim toolbar
-							// so we don't need a null pointer check here...
-							fastViewManager.getViewStackTrimToolbar(vs.getID())
-									.setRestoreOnUnzoom(true);
-						}
-					}
-				}
-			} else {
-				presentation.addPart(pane);
-			}
-		}
-
-		// Ensure that the newly showing part is enabled
-		if (pane != null && pane.getControl() != null)
-			pane.getControl().setEnabled(true);
-
-		return part;
+		MContributedPart viewModel = ModeledPageLayout.createViewModel(viewId,
+				false);
+		ea.getChildren().add(viewModel);
+		ea.setActiveChild(viewModel);
+		return (IViewPart) viewModel.getObject();
 	}
 
 	/**

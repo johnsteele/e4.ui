@@ -56,12 +56,14 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.workbench.swt.Activator;
 import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
+import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchStylingSupport;
 import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchWindowHandler;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -154,7 +156,6 @@ import org.eclipse.ui.internal.contexts.WorkbenchContextSupport;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.handlers.HandlerService;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
-import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.menus.FocusControlSourceProvider;
@@ -444,23 +445,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		e4Context.set(getClass().getName(), this);
 		e4Context.set(IWorkbench.class.getName(), this);
 
-		// for dynamic UI [This seems to be for everything that isn't handled by
-		// some
-		// subclass of RegistryManager. I think that when an extension is moved
-		// to the
-		// RegistryManager implementation, then it should be removed from the
-		// list in
-		// ExtensionEventHandler#appear.
-		// I've found that the new wizard extension in particular is a poor
-		// choice to
-		// use as an example, since the result of reading the registry is not
-		// cached
-		// -- so it is re-read each time. The only real contribution of this
-		// dialog is
-		// to show the user a nice dialog describing the addition.]
-		extensionEventHandler = new ExtensionEventHandler(this);
-		Platform.getExtensionRegistry().addRegistryChangeListener(
-				extensionEventHandler);
 		IServiceLocatorCreator slc = new ServiceLocatorCreator();
 		serviceLocator = (ServiceLocator) slc.createServiceLocator(null, null,
 				new IDisposable() {
@@ -1357,15 +1341,37 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// create workbench window manager
 		windowManager = new WindowManager();
 
-		IIntroRegistry introRegistry = WorkbenchPlugin.getDefault()
-				.getIntroRegistry();
-		if (introRegistry.getIntroCount() > 0) {
-			IProduct product = Platform.getProduct();
-			if (product != null) {
-				introDescriptor = (IntroDescriptor) introRegistry
-						.getIntroForProduct(product.getId());
-			}
+		// BEGIN: early e4 services
+		IProduct product = Platform.getProduct();
+		final String cssURI = product == null ? null : product
+				.getProperty("applicationCSS"); //$NON-NLS-1$;
+		if (cssURI != null) {
+			WorkbenchStylingSupport.initializeStyling(display, cssURI,
+					e4Context);
+		} else {
+			WorkbenchStylingSupport.initializeNullStyling(e4Context);
 		}
+		final PackageAdmin packageAdmin = (PackageAdmin) e4Context
+				.get(PackageAdmin.class.getName());
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				e4Context.set(IResourceUtiltities.class.getName(),
+						new ResourceUtility(packageAdmin));
+			}
+		});
+		e4Context.set(IExtensionTracker.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				if (tracker == null) {
+					tracker = new UIExtensionTracker(getDisplay());
+				}
+				return tracker;
+			}
+		});
+		// END: early e4 services
+
+		WorkbenchPlugin.getDefault().initializeContext(e4Context);
 
 		// TODO Correctly order service initialization
 		// there needs to be some serious consideration given to
@@ -1602,15 +1608,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private final void initializeDefaultServices() {
 		// BEGIN: some e4 services
-		final PackageAdmin packageAdmin = (PackageAdmin) e4Context
-				.get(PackageAdmin.class.getName());
-		StartupThreading.runWithoutExceptions(new StartupRunnable() {
-
-			public void runWithException() {
-				e4Context.set(IResourceUtiltities.class.getName(),
-						new ResourceUtility(packageAdmin));
-			}
-		});
 		// END: some e4 services
 
 		final IContributionService contributionService = new ContributionService(
@@ -3341,10 +3338,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getExtensionTracker()
 	 */
 	public IExtensionTracker getExtensionTracker() {
-		if (tracker == null) {
-			tracker = new UIExtensionTracker(getDisplay());
-		}
-		return tracker;
+		return (IExtensionTracker) e4Context.get(IExtensionTracker.class
+				.getName());
 	}
 
 	/**

@@ -797,11 +797,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @see Window
 	 */
 	public int open() {
-		if (getPages().length == 0) {
-			showEmptyWindowContents();
-		}
 		fireWindowCreated();
-		getWindowAdvisor().openIntro();
+		// getWindowAdvisor().openIntro();
 		// int result = super.open();
 		org.eclipse.e4.workbench.ui.internal.Workbench e4Workbench = (org.eclipse.e4.workbench.ui.internal.Workbench) e4Window
 				.getContext().get(
@@ -2954,6 +2951,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (getActiveWorkbenchPage() == in) {
 			return;
 		}
+		pageList.setActive(in);
 
 		// 1FVGTNR: ITPUI:WINNT - busy cursor for switching perspectives
 	}

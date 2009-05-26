@@ -45,8 +45,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.PartService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
-import org.eclipse.ui.internal.services.IServiceLocatorCreator;
-import org.eclipse.ui.internal.services.ServiceLocatorCreator;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -57,7 +55,7 @@ import org.eclipse.ui.services.IServiceLocator;
 public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite,
 		IEditorSite {
 	private MContributedPart<MPart<?>> part;
-	private WorkbenchPart implementation;
+	private IWorkbenchPart implementation;
 	private IEclipseContext context;
 	private ArrayList menuExtenders;
 
@@ -66,7 +64,7 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite,
 	 * @param part
 	 * @param impl
 	 */
-	public LegacyWPSImpl(MContributedPart<MPart<?>> part, WorkbenchPart impl) {
+	public LegacyWPSImpl(MContributedPart<MPart<?>> part, IWorkbenchPart impl) {
 		this.part = part;
 		this.implementation = impl;
 		context = part.getContext();
@@ -171,13 +169,6 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite,
 				return selProvider;
 			}
 		});
-		context.set(IServiceLocatorCreator.class.getName(),
-				new IContextFunction() {
-					public Object compute(IEclipseContext context,
-							Object[] arguments) {
-						return new ServiceLocatorCreator();
-					}
-				});
 		context.set(IPartService.class.getName(), new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return new PartService(
@@ -271,8 +262,8 @@ public class LegacyWPSImpl implements IWorkbenchPartSite, IViewSite,
 	 * @see org.eclipse.ui.IWorkbenchSite#getPage()
 	 */
 	public IWorkbenchPage getPage() {
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getActivePage();
+		return (IWorkbenchPage) part.getContext().get(
+				IWorkbenchPage.class.getName());
 	}
 
 	/*

@@ -19,11 +19,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.LegacyWBWImpl;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.LegacyWPSImpl;
-import org.eclipse.ui.part.ViewPart;
 
 public class LegacyViewFactory extends SWTPartFactory {
 
@@ -63,9 +63,9 @@ public class LegacyViewFactory extends SWTPartFactory {
 		// part.setPlugin(viewContribution.getContributor().getName());
 		part.setIconURI(editorElement.getAttribute("icon")); //$NON-NLS-1$
 		//part.setName(editorElement.getAttribute("name")); //$NON-NLS-1$
-		EditorPart impl = null;
+		IEditorPart impl = null;
 		try {
-			impl = (EditorPart) editorElement
+			impl = (IEditorPart) editorElement
 					.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -104,9 +104,9 @@ public class LegacyViewFactory extends SWTPartFactory {
 			IConfigurationElement viewContribution) {
 		Composite parent = (Composite) getParentWidget(part);
 
-		ViewPart impl = null;
+		IViewPart impl = null;
 		try {
-			impl = (ViewPart) viewContribution
+			impl = (IViewPart) viewContribution
 					.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			e.printStackTrace();
