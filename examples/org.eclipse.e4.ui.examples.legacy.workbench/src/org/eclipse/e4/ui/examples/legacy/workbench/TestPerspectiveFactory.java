@@ -1,4 +1,4 @@
-package org.eclipse.e4.compatibility;
+package org.eclipse.e4.ui.examples.legacy.workbench;
 
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;

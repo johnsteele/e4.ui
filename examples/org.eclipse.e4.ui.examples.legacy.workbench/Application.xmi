@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<application:MApplication xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/Application" xmlns:workbench="http://www.eclipse.org/ui/2008/Workbench" xsi:schemaLocation="http://www.eclipse.org/ui/2008/Application ../org.eclipse.e4.ui.model.workbench/model/Application.ecore http://www.eclipse.org/ui/2008/Workbench ../org.eclipse.e4.ui.model.workbench/model/Workbench.ecore">
-  <windows xsi:type="workbench:MWorkbenchWindow" name="E4 (Compatibility)" x="50" y="50" width="1024" height="768">
-    <menu id="org.eclipse.ui.main.menu"/>
-    <children xsi:type="workbench:MPerspective" id="org.eclipse.e4.ui.workbench.fragment.testPerspective" iconURI="" name="Test Perspective"/>
-  </windows>
-</application:MApplication>
