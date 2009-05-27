@@ -596,6 +596,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// for. We have to do this before updating in order to get
 		// the PerspectiveBar management correct...see defect 137334
 		getShell().layout();
+		getShell().addShellListener(getShellListener());
 		String title = getWindowConfigurer().basicGetTitle();
 		if (title != null) {
 			getShell().setText(TextProcessor.process(title, TEXT_DELIMITERS));
@@ -1227,7 +1228,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		} finally {
 			result = super.close();
 			// Clear the action sets, fix for bug 27416.
-			getActionPresentation().clearActionSets();
+			// getActionPresentation().clearActionSets();
 			try {
 				// Bring down all of the services ... after the window goes away
 				serviceLocator.dispose();
