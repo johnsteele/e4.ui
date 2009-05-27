@@ -770,6 +770,12 @@ public class Perspective {
 
 		// Run layout engine.
 		factory.createInitialLayout(layout);
+		MPart ea = ModeledPageLayout.findPart(persModel, "bottom"); //$NON-NLS-1$
+		if (ea == null) {
+			layout
+					.createPlaceholderFolder(
+							"bottom", IPageLayout.BOTTOM, 0.2f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
+		}
 	}
 
 	private void removeAlwaysOn(IActionSetDescriptor descriptor) {
@@ -1961,20 +1967,20 @@ public class Perspective {
 	 */
 	public IViewPart showView(String viewId, String secondaryId)
 			throws PartInitException {
+		// org.eclipse.e4.workbench.ui.internal.Workbench e4Workbench =
+		// (org.eclipse.e4.workbench.ui.internal.Workbench) ((WorkbenchWindow)
+		// page
+		// .getWorkbenchWindow()).getModelWindow().getContext().get(
+		// org.eclipse.e4.workbench.ui.internal.Workbench.class.getName());
 		final MPerspective perspectiveModel = ((ModeledPageLayout) layout)
 				.getModel();
 		MPart ea = ModeledPageLayout.findPart(perspectiveModel, "bottom"); //$NON-NLS-1$
-		if (ea == null) {
-			layout
-					.createPlaceholderFolder(
-							"bottom", IPageLayout.BOTTOM, 0.2f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
-			ea = ModeledPageLayout.findPart(perspectiveModel, "bottom"); //$NON-NLS-1$
-		}
 
 		MContributedPart viewModel = ModeledPageLayout.createViewModel(viewId,
 				false);
 		ea.getChildren().add(viewModel);
 		ea.setActiveChild(viewModel);
+		// e4Workbench.createGUI(viewModel);
 		return (IViewPart) viewModel.getObject();
 	}
 
