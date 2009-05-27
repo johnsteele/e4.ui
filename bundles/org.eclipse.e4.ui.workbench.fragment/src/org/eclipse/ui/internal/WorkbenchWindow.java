@@ -20,8 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
@@ -29,12 +32,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
+import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
+import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.workbench.ui.api.LegacySelectionService;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.jface.action.ContributionManager;
@@ -73,11 +78,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.LegacyHandlerService;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerActivation;
@@ -88,6 +95,7 @@ import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
+import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.layout.ITrimManager;
 import org.eclipse.ui.internal.layout.IWindowTrim;
@@ -102,6 +110,7 @@ import org.eclipse.ui.internal.presentations.DefaultActionBarPresentationFactory
 import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
@@ -197,8 +206,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.3
 	 */
 	private ListenerList genericPropertyListeners = new ListenerList();
-
-	private ShellPool detachedWindowShells;
 
 	static final String TEXT_DELIMITERS = TextProcessor.getDefaultDelimiters()
 			+ "-"; //$NON-NLS-1$
@@ -320,6 +327,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// an exception if workbench not created yet.
 		final Workbench workbench = (Workbench) PlatformUI.getWorkbench();
 		createE4Model(workbench);
+		e4Context = e4Window.getContext();
 
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) workbench
 				.getService(IServiceLocatorCreator.class);
@@ -332,7 +340,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 						}
 					}
 				});
-		serviceLocator.setContext(e4Window.getContext());
+		serviceLocator.setContext(e4Context);
 
 		initializeDefaultServices();
 
@@ -597,6 +605,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// the PerspectiveBar management correct...see defect 137334
 		getShell().layout();
 		getShell().addShellListener(getShellListener());
+		getShell().setData(this);
 		String title = getWindowConfigurer().basicGetTitle();
 		if (title != null) {
 			getShell().setText(TextProcessor.process(title, TEXT_DELIMITERS));
@@ -1206,7 +1215,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 			getActionBarAdvisor().dispose();
 			getWindowAdvisor().dispose();
-			detachedWindowShells.dispose();
 
 			// Null out the progress region. Bug 64024.
 			progressRegion = null;
@@ -1557,6 +1565,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			ListenerList.IDENTITY);
 
 	private MWorkbenchWindow e4Window;
+
+	private IEclipseContext e4Context;
 
 	final void addActionSetsListener(final IActionSetsListener listener) {
 		if (actionSetListeners == null) {
@@ -2158,8 +2168,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * window.
 	 */
 	private final void initializeDefaultServices() {
-		// BEGIN: e4 services
-		final IEclipseContext e4Context = e4Window.getContext();
 		e4Context.set(IExtensionTracker.class.getName(), new ContextFunction() {
 			@Override
 			public Object compute(IEclipseContext context, Object[] arguments) {
@@ -2179,6 +2187,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 						getWorkbench(), this, null, null, null, 1));
 		// added back for legacy reasons
 		serviceLocator.registerService(IWorkbenchWindow.class, this);
+		serviceLocator.registerService(getClass(), this);
 
 		final ActionCommandMappingService mappingService = new ActionCommandMappingService();
 		serviceLocator.registerService(IActionCommandMappingService.class,
@@ -2190,6 +2199,39 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				actionPersistence);
 		actionPersistence.read();
 
+		// BEGIN: e4 registration
+		EContextService cs = (EContextService) e4Context
+				.get(EContextService.class.getName());
+		cs.activateContext("org.eclipse.ui.contexts.window"); //$NON-NLS-1$
+		cs.getActiveContextIds();
+		readActionSets();
+	}
+
+	private void readActionSets() {
+		ICommandService cs = (ICommandService) e4Context
+				.get(ICommandService.class.getName());
+		IConfigurationElement[] actionSetElements = ExtensionUtils
+				.getExtensions(IWorkbenchRegistryConstants.PL_ACTION_SETS);
+		for (IConfigurationElement ase : actionSetElements) {
+			IConfigurationElement[] elements = ase
+					.getChildren(IWorkbenchRegistryConstants.TAG_ACTION);
+			for (IConfigurationElement configElement : elements) {
+				String id = MenuHelper.getId(configElement);
+				String cmdId = MenuHelper.getActionSetCommandId(configElement);
+				if (id == null || id.length() == 0) {
+					continue;
+				}
+				Command cmd = cs.getCommand(cmdId);
+				if (!cmd.isDefined()) {
+					continue;
+				}
+				LegacyHandlerService.registerLegacyHandler(e4Context, id,
+						cmdId, new ActionDelegateHandlerProxy(configElement,
+								IWorkbenchRegistryConstants.ATT_CLASS, id,
+								new ParameterizedCommand(cmd, null), this,
+								null, null, null));
+			}
+		}
 	}
 
 	public final Object getService(final Class key) {

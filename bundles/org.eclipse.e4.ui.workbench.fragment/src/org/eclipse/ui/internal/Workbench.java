@@ -140,6 +140,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.LegacyHandlerService;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.WorkbenchException;
@@ -167,7 +168,6 @@ import org.eclipse.ui.internal.contexts.ActiveContextSourceProvider;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.contexts.WorkbenchContextSupport;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
-import org.eclipse.ui.internal.handlers.HandlerService;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
@@ -1201,10 +1201,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * Returns the editor history.
 	 */
 	public EditorHistory getEditorHistory() {
-		if (editorHistory == null) {
-			editorHistory = new EditorHistory();
-		}
-		return editorHistory;
+		return (EditorHistory) e4Context.get(EditorHistory.class.getName());
 	}
 
 	/*
@@ -1384,6 +1381,17 @@ public final class Workbench extends EventManager implements IWorkbench {
 				return tracker;
 			}
 		});
+		e4Context.set(IWorkbenchActivitySupport.class.getName(),
+				new ContextFunction() {
+					@Override
+					public Object compute(IEclipseContext context,
+							Object[] arguments) {
+						if (workbenchActivitySupport == null) {
+							workbenchActivitySupport = new WorkbenchActivitySupport();
+						}
+						return workbenchActivitySupport;
+					}
+				});
 		// END: early e4 services
 
 		WorkbenchPlugin.getDefault().initializeContext(e4Context);
@@ -1402,7 +1410,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		});
 
 		// Initialize the activity support.
-		workbenchActivitySupport = new WorkbenchActivitySupport();
+
 		activityHelper = ActivityPersistanceHelper.getInstance();
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
@@ -1489,7 +1497,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				new CommandCallback(bindingManager, commandManager,
 						new IActiveChecker() {
 							public final boolean isActive(final String commandId) {
-								return workbenchActivitySupport
+								return getActivitySupport()
 										.getActivityManager().getIdentifier(
 												commandId).isEnabled();
 							}
@@ -1623,6 +1631,55 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private final void initializeDefaultServices() {
 		// BEGIN: some e4 services
+		e4Context.set(IWorkbenchBrowserSupport.class.getName(),
+				new ContextFunction() {
+					@Override
+					public Object compute(IEclipseContext context,
+							Object[] arguments) {
+						return WorkbenchBrowserSupport.getInstance();
+					}
+				});
+		e4Context.set(EditorHistory.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				if (editorHistory == null) {
+					editorHistory = new EditorHistory();
+				}
+				return editorHistory;
+			}
+		});
+		e4Context.set(IWorkbenchHelpSystem.class.getName(),
+				new ContextFunction() {
+					@Override
+					public Object compute(IEclipseContext context,
+							Object[] arguments) {
+						return WorkbenchHelpSystem.getInstance();
+					}
+				});
+		e4Context.set(IProgressService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return ProgressManager.getInstance();
+			}
+		});
+		e4Context.set(IThemeManager.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return WorkbenchThemeManager.getInstance();
+			}
+		});
+		e4Context.set(WorkbenchIntroManager.class.getName(),
+				new ContextFunction() {
+					@Override
+					public Object compute(IEclipseContext context,
+							Object[] arguments) {
+						if (introManager == null) {
+							introManager = new WorkbenchIntroManager(
+									Workbench.this);
+						}
+						return introManager;
+					}
+				});
 		// END: some e4 services
 
 		final IContributionService contributionService = new ContributionService(
@@ -1790,17 +1847,40 @@ public final class Workbench extends EventManager implements IWorkbench {
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 			public void runWithException() {
-				handlerService[0] = new HandlerService(commandService[0],
-						evaluationService, serviceLocator);
+				handlerService[0] = new LegacyHandlerService(e4Context);
 				handlerService[0].readRegistry();
 			}
 		});
 		serviceLocator
 				.registerService(IHandlerService.class, handlerService[0]);
-		workbenchContextSupport = new WorkbenchContextSupport(this,
-				contextManager);
-		workbenchCommandSupport = new WorkbenchCommandSupport(bindingManager,
-				commandManager, contextManager, handlerService[0]);
+		// BEGIN: e4 services
+		e4Context.set(IWorkbenchContextSupport.class.getName(),
+				new ContextFunction() {
+					@Override
+					public Object compute(IEclipseContext context,
+							Object[] arguments) {
+						if (workbenchContextSupport == null) {
+							workbenchContextSupport = new WorkbenchContextSupport(
+									Workbench.this, contextManager);
+						}
+						return workbenchContextSupport;
+					}
+				});
+		e4Context.set(IWorkbenchCommandSupport.class.getName(),
+				new ContextFunction() {
+					@Override
+					public Object compute(IEclipseContext context,
+							Object[] arguments) {
+						if (workbenchCommandSupport == null) {
+							workbenchCommandSupport = new WorkbenchCommandSupport(
+									bindingManager, commandManager,
+									contextManager, handlerService[0]);
+						}
+						return workbenchCommandSupport;
+					}
+				});
+		// END: e4 services
+
 		initializeCommandResolver();
 
 		addWindowListener(windowListener);
@@ -3084,7 +3164,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getProgressService()
 	 */
 	public IProgressService getProgressService() {
-		return ProgressManager.getInstance();
+		return (IProgressService) e4Context.get(IProgressService.class
+				.getName());
 	}
 
 	private WorkbenchActivitySupport workbenchActivitySupport;
@@ -3124,15 +3205,18 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private ContextManager contextManager;
 
 	public IWorkbenchActivitySupport getActivitySupport() {
-		return workbenchActivitySupport;
+		return (IWorkbenchActivitySupport) e4Context
+				.get(IWorkbenchActivitySupport.class.getName());
 	}
 
 	public IWorkbenchCommandSupport getCommandSupport() {
-		return workbenchCommandSupport;
+		return (IWorkbenchCommandSupport) e4Context
+				.get(IWorkbenchCommandSupport.class.getName());
 	}
 
 	public IWorkbenchContextSupport getContextSupport() {
-		return workbenchContextSupport;
+		return (IWorkbenchContextSupport) e4Context
+				.get(IWorkbenchContextSupport.class.getName());
 	}
 
 	/**
@@ -3141,7 +3225,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @return The context manager.
 	 */
 	public ContextManager getContextManager() {
-		return contextManager;
+		return (ContextManager) e4Context.get(ContextManager.class.getName());
 	}
 
 	private final IWindowListener windowListener = new IWindowListener() {
@@ -3250,10 +3334,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @since 3.0
 	 */
 	/* package */WorkbenchIntroManager getWorkbenchIntroManager() {
-		if (introManager == null) {
-			introManager = new WorkbenchIntroManager(this);
-		}
-		return introManager;
+		return (WorkbenchIntroManager) e4Context
+				.get(WorkbenchIntroManager.class.getName());
 	}
 
 	private WorkbenchIntroManager introManager;
@@ -3336,7 +3418,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getThemeManager()
 	 */
 	public IThemeManager getThemeManager() {
-		return WorkbenchThemeManager.getInstance();
+		return (IThemeManager) e4Context.get(IThemeManager.class.getName());
 	}
 
 	/**
@@ -3457,7 +3539,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getHelpSystem()
 	 */
 	public IWorkbenchHelpSystem getHelpSystem() {
-		return WorkbenchHelpSystem.getInstance();
+		return (IWorkbenchHelpSystem) e4Context.get(IWorkbenchHelpSystem.class
+				.getName());
 	}
 
 	/*
@@ -3466,7 +3549,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getHelpSystem()
 	 */
 	public IWorkbenchBrowserSupport getBrowserSupport() {
-		return WorkbenchBrowserSupport.getInstance();
+		return (IWorkbenchBrowserSupport) e4Context
+				.get(IWorkbenchBrowserSupport.class.getName());
 	}
 
 	/*
