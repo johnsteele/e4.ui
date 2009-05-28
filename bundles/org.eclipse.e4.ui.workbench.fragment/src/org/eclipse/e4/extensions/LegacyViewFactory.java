@@ -230,7 +230,9 @@ public class LegacyViewFactory extends SWTPartFactory {
 			impl.init(site, null);
 			final ToolBarManager tbm = (ToolBarManager) site.getActionBars()
 					.getToolBarManager();
-			/* final ToolBar tb = */tbm.createControl(parent);
+			if (parent instanceof CTabFolder) {
+				/* final ToolBar tb = */tbm.createControl(parent);
+			}
 
 			impl.createPartControl(parent);
 
