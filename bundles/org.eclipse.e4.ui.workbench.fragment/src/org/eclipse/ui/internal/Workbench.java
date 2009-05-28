@@ -221,9 +221,12 @@ import org.eclipse.ui.wizards.IWizardRegistry;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Filter;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.SynchronousBundleListener;
 import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 
 import com.ibm.icu.util.ULocale;
 
@@ -419,6 +422,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	public HashMap<String, MCommand> commandsById;
 
+	private ServiceTracker locationTracker;
+
 	/**
 	 * Creates a new workbench.
 	 * 
@@ -449,8 +454,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		IEclipseContext appContext = EclipseContextFactory.create(
 				serviceContext, null);
 		appContext.set(IContextConstants.DEBUG_STRING, "application"); //$NON-NLS-1$
-		Location instanceLocation = (Location) appContext.get(Location.class
-				.getName());
+		Location instanceLocation = getInstanceLocation();
 		PackageAdmin packageAdmin = (PackageAdmin) appContext
 				.get(PackageAdmin.class.getName());
 		e4Workbench = new org.eclipse.e4.workbench.ui.internal.Workbench(
@@ -482,6 +486,23 @@ public final class Workbench extends EventManager implements IWorkbench {
 						this, null, null, null, null, 0));
 		// added back for legacy reasons
 		serviceLocator.registerService(IWorkbench.class, this);
+	}
+
+	public Location getInstanceLocation() {
+		if (locationTracker == null) {
+			final BundleContext context = WorkbenchPlugin.getDefault()
+					.getBundleContext();
+			Filter filter = null;
+			try {
+				filter = context.createFilter(Location.INSTANCE_FILTER);
+			} catch (InvalidSyntaxException e) {
+				// ignore this. It should never happen as we have tested the
+				// above format.
+			}
+			locationTracker = new ServiceTracker(context, filter, null);
+			locationTracker.open();
+		}
+		return (Location) locationTracker.getService();
 	}
 
 	private MApplication<? extends MWindow> createE4Model() {
