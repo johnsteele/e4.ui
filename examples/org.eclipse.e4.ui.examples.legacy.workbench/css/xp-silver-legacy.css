@@ -1,0 +1,74 @@
+CTabFolder {
+	font: Tahoma 9px;
+	color: black;
+	background-color: rgb(224, 223, 227);
+	font: normal;
+	simple: false;
+}
+
+CTabFolder:selected {
+	background-color: rgb(254, 254, 254) rgb(224, 223, 227);
+}
+
+CTabFolder.active {
+	background-color: rgb(224, 223, 227);
+}
+
+CTabFolder.active:selected {
+	background-color: rgb(237, 237, 237) rgb(192, 192, 192);
+	font: bold;
+}
+
+#library {
+	background-color: #f4f4f4;
+}
+
+#preview {
+	color: #e5e5e5;
+	background-color: #ffffff;
+}
+
+Gallery {
+	background-color: #f4f4f4;
+}
+
+GalleryItem:selected {
+	background-color: #ff884c;
+}
+
+
+#location {
+	background-color: #f4f4f4;
+}
+
+ToolBar {
+	color: #666666;
+	font: Verdana 8px;
+	background-color: #fffff3;
+}
+
+ToolItem {
+	color: #666666;
+	background-color: #fffff3;
+}
+	
+SashForm {
+	background-color: white;
+}
+
+Text {
+	font: Verdana 8px;
+}      
+
+Label {
+	font: Verdana 8px;
+}
+
+Tree {
+	font: Verdana 8px;
+	color: #666666;
+}
+
+Composite Shell {
+	background-color: #ffffff;
+}
