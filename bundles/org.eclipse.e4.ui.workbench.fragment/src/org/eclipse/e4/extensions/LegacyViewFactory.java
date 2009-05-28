@@ -1,5 +1,8 @@
 package org.eclipse.e4.extensions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
@@ -9,11 +12,10 @@ import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
-import org.eclipse.e4.workbench.ui.menus.PerspectiveHelper;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.e4.workbench.ui.renderers.swt.SWTPartFactory;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -22,13 +24,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.LegacyWBWImpl;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.EditorActionBars;
+import org.eclipse.ui.internal.EditorActionBuilder;
+import org.eclipse.ui.internal.EditorSite;
+import org.eclipse.ui.internal.ViewSite;
+import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.part.LegacyWPSImpl;
-import org.eclipse.ui.part.ViewPart;
 
 public class LegacyViewFactory extends SWTPartFactory {
 
@@ -64,11 +72,16 @@ public class LegacyViewFactory extends SWTPartFactory {
 	private Control createEditor(final MContributedPart<MPart<?>> part,
 			IConfigurationElement editorElement) {
 		final Composite parent = (Composite) getParentWidget(part);
+		EditorDescriptor desc = new EditorDescriptor(part.getId(),
+				editorElement);
 
-		EditorPart impl = null;
+		// part.setPlugin(viewContribution.getContributor().getName());
+		part.setIconURI(editorElement.getAttribute("icon")); //$NON-NLS-1$
+		//part.setName(editorElement.getAttribute("name")); //$NON-NLS-1$
+		IEditorPart impl = null;
+
 		try {
-			impl = (EditorPart) editorElement
-					.createExecutableExtension("class"); //$NON-NLS-1$
+			impl = desc.createEditor();
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
@@ -85,22 +98,26 @@ public class LegacyViewFactory extends SWTPartFactory {
 					"ContributedPart-output"); //$NON-NLS-1$
 			localContext.set(IServiceConstants.OUTPUTS, outputContext);
 			localContext.set(IEclipseContext.class.getName(), outputContext);
-			localContext.set(IEditorInput.class.getName(),
-					LegacyWBWImpl.hackInput);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 
+			part.setObject(impl);
 			// Assign a 'site' for the newly instantiated part
-			LegacyWPSImpl site = new LegacyWPSImpl(part, impl);
-
-			impl.init(site, LegacyWBWImpl.hackInput); // HACK!! needs an
-			// editorInput
+			WorkbenchPage page = (WorkbenchPage) localContext
+					.get(WorkbenchPage.class.getName());
+			ModelEditorReference ref = new ModelEditorReference(part, page);
+			EditorSite site = new EditorSite(ref, impl, page);
+			EditorActionBars bars = getEditorActionBars(desc, page, page
+					.getWorkbenchWindow(), part.getId());
+			site.setActionBars(bars);
+			site.setConfigurationElement(editorElement);
+			impl.init(site, (IEditorInput) localContext.get(IEditorInput.class
+					.getName()));
 
 			impl.createPartControl(parent);
-			part.setObject(impl);
 			localContext.set(MContributedPart.class.getName(), part);
 
 			// Manage the 'dirty' state
-			final EditorPart implementation = impl;
+			final IEditorPart implementation = impl;
 			impl.addPropertyListener(new IPropertyListener() {
 				private CTabItem findItemForPart(CTabFolder ctf) {
 					CTabItem[] items = ctf.getItems();
@@ -140,13 +157,50 @@ public class LegacyViewFactory extends SWTPartFactory {
 		return null;
 	}
 
+	Map<String, EditorActionBars> actionCache = new HashMap<String, EditorActionBars>();
+
+	private EditorActionBars getEditorActionBars(EditorDescriptor desc,
+			WorkbenchPage page, IWorkbenchWindow workbenchWindow, String type) {
+		// Get the editor type.
+
+		// If an action bar already exists for this editor type return it.
+		EditorActionBars actionBars = actionCache.get(type);
+		if (actionBars != null) {
+			actionBars.addRef();
+			return actionBars;
+		}
+
+		// Create a new action bar set.
+		actionBars = new EditorActionBars(page, workbenchWindow, type);
+		actionBars.addRef();
+		actionCache.put(type, actionBars);
+
+		// Read base contributor.
+		IEditorActionBarContributor contr = desc.createActionBarContributor();
+		if (contr != null) {
+			actionBars.setEditorContributor(contr);
+			contr.init(actionBars, page);
+		}
+
+		// Read action extensions.
+		EditorActionBuilder builder = new EditorActionBuilder();
+		contr = builder.readActionExtensions(desc);
+		if (contr != null) {
+			actionBars.setExtensionContributor(contr);
+			contr.init(actionBars, page);
+		}
+
+		// Return action bars.
+		return actionBars;
+	}
+
 	private Control createView(MContributedPart<MPart<?>> part,
 			IConfigurationElement viewContribution) {
 		Composite parent = (Composite) getParentWidget(part);
 
-		ViewPart impl = null;
+		IViewPart impl = null;
 		try {
-			impl = (ViewPart) viewContribution
+			impl = (IViewPart) viewContribution
 					.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -166,12 +220,20 @@ public class LegacyViewFactory extends SWTPartFactory {
 			localContext.set(IEclipseContext.class.getName(), outputContext);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 
+			part.setObject(impl);
 			// Assign a 'site' for the newly instantiated part
-			LegacyWPSImpl site = new LegacyWPSImpl(part, impl);
+			WorkbenchPage page = (WorkbenchPage) localContext
+					.get(WorkbenchPage.class.getName());
+			ModelViewReference ref = new ModelViewReference(part, page);
+			ViewSite site = new ViewSite(ref, impl, page);
+			site.setConfigurationElement(viewContribution);
 			impl.init(site, null);
+			final ToolBarManager tbm = (ToolBarManager) site.getActionBars()
+					.getToolBarManager();
+			/* final ToolBar tb = */tbm.createControl(parent);
 
 			impl.createPartControl(parent);
-			part.setObject(impl);
+
 			localContext.set(MContributedPart.class.getName(), part);
 
 			// HACK!! presumes it's the -last- child of the parent
@@ -190,9 +252,10 @@ public class LegacyViewFactory extends SWTPartFactory {
 		Control newCtrl = null;
 		if (part instanceof MPerspective) {
 			IConfigurationElement perspFactory = findPerspectiveFactory(partId);
-			if (perspFactory != null)
+			if (perspFactory != null || part.getChildren().size() > 0) {
 				newCtrl = createPerspective((MPerspective<MPart<?>>) part,
 						perspFactory);
+			}
 			return newCtrl;
 		} else if (part instanceof MContributedPart) {
 			MContributedPart cp = (MContributedPart) part;
@@ -202,8 +265,6 @@ public class LegacyViewFactory extends SWTPartFactory {
 			if (uri != null && uri.length() > 0)
 				return null;
 
-			// ensure that the legacy hook is initialized
-			context.get(ILegacyHook.class.getName());
 			// if this a view ?
 			IConfigurationElement viewElement = findViewConfig(partId);
 			if (viewElement != null)
@@ -239,9 +300,6 @@ public class LegacyViewFactory extends SWTPartFactory {
 
 		Composite perspArea = new Composite((Composite) parentWidget, SWT.NONE);
 		perspArea.setLayout(new FillLayout());
-
-		if (part.getChildren().size() == 0)
-			PerspectiveHelper.loadPerspective(part, perspFactory);
 
 		return perspArea;
 	}

@@ -16,7 +16,6 @@ import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Workbench common <code>Save</code> action.
@@ -74,8 +73,8 @@ public class SaveAction extends BaseSaveAction implements
 			return;
 		}
 
-		IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getActivePage().getActiveEditor();
+		IEditorPart part = getWorkbenchWindow().getActivePage()
+				.getActiveEditor();
 		if (part != null) {
 			IWorkbenchPage page = part.getSite().getPage();
 			page.saveEditor(part, false);

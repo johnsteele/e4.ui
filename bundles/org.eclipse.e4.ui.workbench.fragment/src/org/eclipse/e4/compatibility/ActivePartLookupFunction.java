@@ -22,23 +22,11 @@ public class ActivePartLookupFunction extends ContextFunction {
 	 */
 	@Override
 	public Object compute(IEclipseContext context, Object[] arguments) {
-		// Find the 'leaf'
 		IEclipseContext childContext = (IEclipseContext) context
 				.getLocal(IServiceConstants.ACTIVE_CHILD);
-		IEclipseContext leafContext = null;
-		while (childContext != null) {
-			leafContext = childContext;
-			childContext = (IEclipseContext) childContext
-					.getLocal(IServiceConstants.ACTIVE_CHILD);
+		if (childContext != null) {
+			return childContext.get(getClass().getName());
 		}
-
-		if (leafContext != null) {
-			Object activePart = leafContext.getLocal(MContributedPart.class
-					.getName());
-			return activePart;
-		}
-
-		return null;
+		return context.get(MContributedPart.class.getName());
 	}
-
 }

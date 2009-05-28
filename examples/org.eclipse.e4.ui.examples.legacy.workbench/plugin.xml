@@ -2,33 +2,32 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.e4.ui.examples.legacy.workbench.TestPerspectiveFactory"
+            id="org.eclipse.e4.ui.examples.legacy.workbench.perspective"
+            name="Legacy Perspective">
+      </perspective>
+   </extension>
+   <extension
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
-            application="org.eclipse.e4.ui.workbench.swt.application"
+            application="org.eclipse.ui.ide.workbench"
             name="Legacy Workbench">
          <property
                name="appName"
                value="Legacy Workbench">
          </property>
          <property
-               name="applicationXMI"
-               value="org.eclipse.e4.ui.examples.legacy.workbench/Application.xmi">
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
          </property>
          <property
                name="applicationCSS"
                value="platform:/plugin/org.eclipse.e4.ui.examples.legacy.workbench/css/xp-silver-legacy.css">
          </property>
       </product>
-   </extension>
-   <extension
-         point="org.eclipse.e4.services">
-      <servicefactory
-            class="org.eclipse.e4.ui.examples.legacy.workbench.WorkspaceValue">
-         <service
-               api="org.eclipse.core.resources.IWorkspace">
-         </service>
-      </servicefactory>
    </extension>
 
 </plugin>

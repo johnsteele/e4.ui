@@ -7,22 +7,5 @@
             class="org.eclipse.e4.extensions.LegacyViewFactory">
       </factory>
    </extension>
-   <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            class="org.eclipse.e4.compatibility.TestPerspectiveFactory"
-            id="org.eclipse.e4.ui.workbench.fragment.testPerspective"
-            name="%perspective.name.f0">
-      </perspective>
-   </extension>
-   <extension
-         point="org.eclipse.e4.services">
-      <servicefactory
-            class="org.eclipse.e4.compatibility.LegacyHookValue">
-         <service
-               api="org.eclipse.e4.workbench.ui.ILegacyHook">
-         </service>
-      </servicefactory>
-   </extension>
 
 </fragment>

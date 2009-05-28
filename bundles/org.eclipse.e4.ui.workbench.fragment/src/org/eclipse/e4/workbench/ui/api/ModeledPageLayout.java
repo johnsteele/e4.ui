@@ -23,6 +23,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 public class ModeledPageLayout implements IPageLayout {
 
 	private MPerspective perspModel;
+	private IPerspectiveDescriptor descriptor;
 
 	public ModeledPageLayout(MPerspective perspModel) {
 		// Create the editor area stack
@@ -31,11 +32,15 @@ public class ModeledPageLayout implements IPageLayout {
 		MStack editorArea = ApplicationFactory.eINSTANCE.createMStack();
 		editorArea.setId(getEditorArea());
 		editorArea.setPolicy("EditorStack"); //$NON-NLS-1$
-		//editorArea.setName("Editor Area");
-		
+		// editorArea.setName("Editor Area");
+
 		perspModel.getChildren().add(editorArea);
 	}
-	
+
+	public MPerspective getModel() {
+		return perspModel;
+	}
+
 	public void addActionSet(String actionSetId) {
 	}
 
@@ -64,21 +69,23 @@ public class ModeledPageLayout implements IPageLayout {
 
 	public void addStandaloneView(String viewId, boolean showTitle,
 			int relationship, float ratio, String refId) {
-		MContributedPart viewModel = insertView(viewId, relationship, ratio, refId, true, false);
-		
+		MContributedPart viewModel = insertView(viewId, relationship, ratio,
+				refId, true, false);
+
 		// Set the state
 		if (viewModel != null) {
-			//viewModel.setShowTitle(showTitle);
+			// viewModel.setShowTitle(showTitle);
 		}
 	}
 
 	public void addStandaloneViewPlaceholder(String viewId, int relationship,
 			float ratio, String refId, boolean showTitle) {
-		MContributedPart viewModel = insertView(viewId, relationship, ratio, refId, false, false);
-		
+		MContributedPart viewModel = insertView(viewId, relationship, ratio,
+				refId, false, false);
+
 		// Set the state
 		if (viewModel != null) {
-			//viewModel.setShowTitle(showTitle);
+			// viewModel.setShowTitle(showTitle);
 		}
 	}
 
@@ -99,14 +106,18 @@ public class ModeledPageLayout implements IPageLayout {
 		return new ModeledPlaceholderFolderLayout(Stack);
 	}
 
+	public void setDescriptor(IPerspectiveDescriptor desc) {
+		descriptor = desc;
+	}
+
 	public IPerspectiveDescriptor getDescriptor() {
-		return null;
+		return descriptor;
 	}
 
 	public static String internalGetEditorArea() {
-		return "org.eclipse.ui.EditorArea"; //$NON-NLS-1$
+		return IPageLayout.ID_EDITOR_AREA;
 	}
-	
+
 	public String getEditorArea() {
 		return internalGetEditorArea();
 	}
@@ -119,11 +130,11 @@ public class ModeledPageLayout implements IPageLayout {
 		MPart view = findPart(perspModel, id);
 		if (view == null || !(view instanceof MContributedPart))
 			return null;
-		
+
 		MStack stack = (MStack) view.getParent();
 		if (stack == null)
 			return null;
-		
+
 		return new ModeledPlaceholderFolderLayout(stack);
 	}
 
@@ -131,7 +142,7 @@ public class ModeledPageLayout implements IPageLayout {
 		MPart view = findPart(perspModel, id);
 		if (view == null || !(view instanceof MContributedPart))
 			return null;
-		
+
 		return new ModeledViewLayout((MContributedPart) view);
 	}
 
@@ -150,65 +161,76 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void setFixed(boolean isFixed) {
-		//perspModel.setFixed(isFixed);
+		// perspModel.setFixed(isFixed);
 	}
-	
+
 	private static int plRelToSwt(int rel) {
 		switch (rel) {
-		case IPageLayout.BOTTOM: return SWT.BOTTOM;
-		case IPageLayout.LEFT: return SWT.LEFT;
-		case IPageLayout.RIGHT: return SWT.RIGHT;
-		case IPageLayout.TOP: return SWT.TOP;
-		default: return 0;
+		case IPageLayout.BOTTOM:
+			return SWT.BOTTOM;
+		case IPageLayout.LEFT:
+			return SWT.LEFT;
+		case IPageLayout.RIGHT:
+			return SWT.RIGHT;
+		case IPageLayout.TOP:
+			return SWT.TOP;
+		default:
+			return 0;
 		}
 	}
-	
 
-    public static MContributedPart createViewModel(String id, boolean visible) { 
-    	MContributedPart viewModel = ApplicationFactory.eINSTANCE.createMContributedPart();
-    	
-    	// HACK!! allow Contributed parts in a perspective
-    	if (id.indexOf("platform:") >= 0) { //$NON-NLS-1$
-    		viewModel.setURI(id);
-    		viewModel.setName("Contrib View"); //$NON-NLS-1$
-    		return viewModel;
-    	}
-    	
-    	viewModel.setId(id);
-    	
-    	// Get the actual view name from the extension registry
-		IConfigurationElement[] views = ExtensionUtils.getExtensions(IWorkbenchRegistryConstants.PL_VIEWS);
-		IConfigurationElement viewContribution = ExtensionUtils.findExtension(views, id);
+	public static MContributedPart createViewModel(String id, boolean visible) {
+		MContributedPart viewModel = ApplicationFactory.eINSTANCE
+				.createMContributedPart();
+
+		// HACK!! allow Contributed parts in a perspective
+		if (id.indexOf("platform:") >= 0) { //$NON-NLS-1$
+			viewModel.setURI(id);
+			viewModel.setName("Contrib View"); //$NON-NLS-1$
+			return viewModel;
+		}
+
+		viewModel.setId(id);
+
+		// Get the actual view name from the extension registry
+		IConfigurationElement[] views = ExtensionUtils
+				.getExtensions(IWorkbenchRegistryConstants.PL_VIEWS);
+		IConfigurationElement viewContribution = ExtensionUtils.findExtension(
+				views, id);
 		if (viewContribution != null) {
 			viewModel.setName(viewContribution.getAttribute("name")); //$NON-NLS-1$
 
 			// Convert the relative path into a bundle URI
 			String imagePath = viewContribution.getAttribute("icon"); //$NON-NLS-1$
-			imagePath = imagePath.replace("$nl$", "");  //$NON-NLS-1$//$NON-NLS-2$
+			if (imagePath != null) {
+				imagePath = imagePath.replace("$nl$", ""); //$NON-NLS-1$//$NON-NLS-2$
+			}
+			if (imagePath != null && imagePath.charAt(0) != '/') {
+				imagePath = '/' + imagePath;
+			}
 			String bundleId = viewContribution.getContributor().getName();
 			String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
 			viewModel.setIconURI(imageURI);
-		}
-		else
+		} else
 			viewModel.setName(id); // No registered view, create error part?
-    	
-    	// HACK!! we don't have an attribute
-    	viewModel.setPolicy(Boolean.toString(visible));
-    	//viewModel.setVisible(visible);
-		
+
+		// HACK!! we don't have an attribute
+		viewModel.setPolicy(Boolean.toString(visible));
+		// viewModel.setVisible(visible);
+
 		return viewModel;
-    }
-    
-    public static MStack createStack(String id, boolean visible) {
-    	MStack newStack = ApplicationFactory.eINSTANCE.createMStack();
-    	newStack.setId(id);
-    	newStack.setPolicy("ViewStack"); //$NON-NLS-1$
-		
+	}
+
+	public static MStack createStack(String id, boolean visible) {
+		MStack newStack = ApplicationFactory.eINSTANCE.createMStack();
+		newStack.setId(id);
+		newStack.setPolicy("ViewStack"); //$NON-NLS-1$
+
 		return newStack;
-    }
-    
-    private MContributedPart insertView(String viewId, int relationship, float ratio,
-			String refId, boolean visible, boolean withStack) {
+	}
+
+	private MContributedPart insertView(String viewId, int relationship,
+			float ratio, String refId, boolean visible, boolean withStack) {
 		MPart refModel = findPart(perspModel, refId);
 		if (refModel == null || !(refModel instanceof MPart))
 			return null;
@@ -217,36 +239,36 @@ public class ModeledPageLayout implements IPageLayout {
 
 		if (withStack) {
 			String stackId = viewId + "MStack"; // Default id...basically unusable //$NON-NLS-1$
-			MStack stack = insertStack(stackId, relationship, ratio, refId, visible);			
+			MStack stack = insertStack(stackId, relationship, ratio, refId,
+					visible);
 			stack.getChildren().add(viewModel);
+		} else {
+			insert(viewModel, (MPart) refModel, plRelToSwt(relationship), ratio);
 		}
-		else {
-			insert(viewModel, (MPart)refModel, plRelToSwt(relationship), ratio);
-		}
-		
+
 		return viewModel;
-    }
-    
-    private MStack insertStack(String stackId, int relationship, float ratio,
+	}
+
+	private MStack insertStack(String stackId, int relationship, float ratio,
 			String refId, boolean visible) {
 		MPart refModel = findPart(perspModel, refId);
 		if (refModel == null || !(refModel instanceof MPart))
 			return null;
-		
-		MStack Stack = createStack(stackId, visible);				
-		insert(Stack, (MPart)refModel, plRelToSwt(relationship), ratio);
-		
+
+		MStack Stack = createStack(stackId, visible);
+		insert(Stack, (MPart) refModel, plRelToSwt(relationship), ratio);
+
 		return Stack;
-    }
-	
+	}
+
 	public static void replace(MPart relTo, MPart newParent) {
 		if (relTo == null || newParent == null)
 			return;
-		
+
 		MPart parent = (MPart) relTo.getParent();
 		if (parent == null)
 			return;
-		
+
 		List kids = parent.getChildren();
 		if (kids == null)
 			return;
@@ -254,7 +276,7 @@ public class ModeledPageLayout implements IPageLayout {
 		kids.add(kids.indexOf(relTo), newParent);
 		kids.remove(relTo);
 	}
-	
+
 	public static void insertParent(MPart newParent, MPart relTo) {
 		if (newParent == null || relTo == null)
 			return;
@@ -267,14 +289,14 @@ public class ModeledPageLayout implements IPageLayout {
 		// Move the child under the new parent
 		newParent.getChildren().add(relTo);
 	}
-    
-	public static void insert(MPart toInsert, MPart relTo,
-			int swtSide, int ratio) {
+
+	public static void insert(MPart toInsert, MPart relTo, int swtSide,
+			int ratio) {
 		if (toInsert == null || relTo == null)
 			return;
-		
+
 		MPart relParent = (MPart) relTo.getParent();
-		
+
 		boolean isStack = relParent instanceof MStack;
 
 		// Create the new sash if we're going to need one
@@ -283,52 +305,50 @@ public class ModeledPageLayout implements IPageLayout {
 			newSash = ApplicationFactory.eINSTANCE.createMSashForm();
 			String label = "Vertical Sash[" + toInsert.getId() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			newSash.setId(label);
-			newSash.setPolicy("Vertical");	//horizontal = false //$NON-NLS-1$
-		}
-		else if ((swtSide == SWT.LEFT || swtSide == SWT.RIGHT) && !isStack) {
+			newSash.setPolicy("Vertical"); //horizontal = false //$NON-NLS-1$
+		} else if ((swtSide == SWT.LEFT || swtSide == SWT.RIGHT) && !isStack) {
 			newSash = ApplicationFactory.eINSTANCE.createMSashForm();
 			String label = "Horizontal Sash[" + toInsert.getId() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			newSash.setId(label);
-			newSash.setPolicy("Horizontal");	//horizontal = true //$NON-NLS-1$
+			newSash.setPolicy("Horizontal"); //horizontal = true //$NON-NLS-1$
 		}
-		
+
 		List parts;
 		if (newSash == null && relParent != null) {
 			parts = relParent.getChildren();
-		}
-		else {
+		} else {
 			insertParent(newSash, relTo);
 			parts = newSash.getChildren();
-			
+
 			List<Integer> weights = newSash.getWeights();
 			weights.add(ratio);
-			weights.add(100-ratio);
+			weights.add(100 - ratio);
 		}
-		
+
 		// Insert the part in the correct location
 		int index = parts.indexOf(relTo);
 		if (swtSide == SWT.BOTTOM || swtSide == SWT.RIGHT) {
 			index++;
-			
+
 		}
-		
+
 		parts.add(index, toInsert);
 	}
 
-	public static void insert(MPart toInsert, MPart relTo,
-			int swtSide, float ratio) {
+	public static void insert(MPart toInsert, MPart relTo, int swtSide,
+			float ratio) {
 		int pct = (int) (ratio * 100);
 		insert(toInsert, relTo, swtSide, pct);
 	}
-	
+
 	private static MPart findElementById(MPart part, String id) {
 		if (id == null || id.length() == 0)
 			return null;
-		
+
 		// is it me?
 		if (id.equals(part.getId()))
 			return part;
-		
+
 		// Recurse
 		EList children = part.getChildren();
 		MPart foundPart = null;
@@ -338,15 +358,15 @@ public class ModeledPageLayout implements IPageLayout {
 			if (foundPart != null)
 				return foundPart;
 		}
-		
+
 		return null;
 	}
-	
+
 	public static MPart findPart(MPart toSearch, String id) {
 		MPart found = findElementById(toSearch, id);
 		if (found instanceof MPart)
 			return (MPart) found;
-		
+
 		return null;
 	}
 }
