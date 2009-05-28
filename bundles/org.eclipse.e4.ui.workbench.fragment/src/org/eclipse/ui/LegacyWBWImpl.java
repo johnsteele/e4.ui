@@ -925,6 +925,20 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 				.createMContributedPart();
 		editorPart.setId(editorId);
 		editorPart.setName(input.getName());
+
+		IConfigurationElement[] editors = ExtensionUtils
+				.getExtensions(IWorkbenchRegistryConstants.PL_EDITOR);
+		IConfigurationElement viewContribution = ExtensionUtils.findExtension(
+				editors, editorId);
+		if (viewContribution != null) {
+			// Convert the relative path into a bundle URI
+			String imagePath = viewContribution.getAttribute("icon"); //$NON-NLS-1$
+			imagePath = imagePath.replace("$nl$", ""); //$NON-NLS-1$//$NON-NLS-2$
+			String bundleId = viewContribution.getContributor().getName();
+			String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
+			editorPart.setIconURI(imageURI);
+		}
+
 		ea.getChildren().add(editorPart);
 		hackInput = input;
 		ea.setActiveChild(editorPart);

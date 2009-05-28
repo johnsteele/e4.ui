@@ -65,9 +65,6 @@ public class LegacyViewFactory extends SWTPartFactory {
 			IConfigurationElement editorElement) {
 		final Composite parent = (Composite) getParentWidget(part);
 
-		// part.setPlugin(viewContribution.getContributor().getName());
-		part.setIconURI(editorElement.getAttribute("icon")); //$NON-NLS-1$
-		//part.setName(editorElement.getAttribute("name")); //$NON-NLS-1$
 		EditorPart impl = null;
 		try {
 			impl = (EditorPart) editorElement
