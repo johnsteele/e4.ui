@@ -1,5 +1,5 @@
 CTabFolder {
-	font: Tahoma 9px;
+	font: Tahoma 8px;
 	color: black;
 	background-color: rgb(224, 223, 227);
 	font: normal;
@@ -19,56 +19,6 @@ CTabFolder.active:selected {
 	font: bold;
 }
 
-#library {
-	background-color: #f4f4f4;
-}
-
-#preview {
-	color: #e5e5e5;
-	background-color: #ffffff;
-}
-
-Gallery {
-	background-color: #f4f4f4;
-}
-
-GalleryItem:selected {
-	background-color: #ff884c;
-}
-
-
-#location {
-	background-color: #f4f4f4;
-}
-
-ToolBar {
-	color: #666666;
-	font: Verdana 8px;
-	background-color: #fffff3;
-}
-
-ToolItem {
-	color: #666666;
-	background-color: #fffff3;
-}
-	
-SashForm {
-	background-color: white;
-}
-
 Text {
-	font: Verdana 8px;
+	font: "Courier-New" 10px;
 }      
-
-Label {
-	font: Verdana 8px;
-}
-
-Tree {
-	font: Verdana 8px;
-	color: #666666;
-}
-
-Composite Shell {
-	background-color: #ffffff;
-}
