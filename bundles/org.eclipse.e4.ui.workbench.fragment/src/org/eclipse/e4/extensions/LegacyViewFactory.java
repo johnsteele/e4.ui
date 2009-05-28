@@ -1,5 +1,8 @@
 package org.eclipse.e4.extensions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
@@ -17,12 +20,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.EditorActionBars;
+import org.eclipse.ui.internal.EditorActionBuilder;
 import org.eclipse.ui.internal.EditorSite;
 import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 public class LegacyViewFactory extends SWTPartFactory {
@@ -59,14 +67,15 @@ public class LegacyViewFactory extends SWTPartFactory {
 	private Control createEditor(MContributedPart<MPart<?>> part,
 			IConfigurationElement editorElement) {
 		Composite parent = (Composite) getParentWidget(part);
+		EditorDescriptor desc = new EditorDescriptor(part.getId(),
+				editorElement);
 
 		// part.setPlugin(viewContribution.getContributor().getName());
 		part.setIconURI(editorElement.getAttribute("icon")); //$NON-NLS-1$
 		//part.setName(editorElement.getAttribute("name")); //$NON-NLS-1$
 		IEditorPart impl = null;
 		try {
-			impl = (IEditorPart) editorElement
-					.createExecutableExtension("class"); //$NON-NLS-1$
+			impl = desc.createEditor();
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
@@ -91,6 +100,9 @@ public class LegacyViewFactory extends SWTPartFactory {
 					.get(WorkbenchPage.class.getName());
 			ModelEditorReference ref = new ModelEditorReference(part, page);
 			EditorSite site = new EditorSite(ref, impl, page);
+			EditorActionBars bars = getEditorActionBars(desc, page, page
+					.getWorkbenchWindow(), part.getId());
+			site.setActionBars(bars);
 			site.setConfigurationElement(editorElement);
 			impl.init(site, (IEditorInput) localContext.get(IEditorInput.class
 					.getName()));
@@ -102,6 +114,43 @@ public class LegacyViewFactory extends SWTPartFactory {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	Map<String, EditorActionBars> actionCache = new HashMap<String, EditorActionBars>();
+
+	private EditorActionBars getEditorActionBars(EditorDescriptor desc,
+			WorkbenchPage page, IWorkbenchWindow workbenchWindow, String type) {
+		// Get the editor type.
+
+		// If an action bar already exists for this editor type return it.
+		EditorActionBars actionBars = actionCache.get(type);
+		if (actionBars != null) {
+			actionBars.addRef();
+			return actionBars;
+		}
+
+		// Create a new action bar set.
+		actionBars = new EditorActionBars(page, workbenchWindow, type);
+		actionBars.addRef();
+		actionCache.put(type, actionBars);
+
+		// Read base contributor.
+		IEditorActionBarContributor contr = desc.createActionBarContributor();
+		if (contr != null) {
+			actionBars.setEditorContributor(contr);
+			contr.init(actionBars, page);
+		}
+
+		// Read action extensions.
+		EditorActionBuilder builder = new EditorActionBuilder();
+		contr = builder.readActionExtensions(desc);
+		if (contr != null) {
+			actionBars.setExtensionContributor(contr);
+			contr.init(actionBars, page);
+		}
+
+		// Return action bars.
+		return actionBars;
 	}
 
 	private Control createView(MContributedPart<MPart<?>> part,

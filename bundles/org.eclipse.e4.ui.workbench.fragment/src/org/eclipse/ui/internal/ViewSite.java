@@ -14,7 +14,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
@@ -55,7 +54,6 @@ public class ViewSite extends PartSite implements IViewSite {
 				return menuMgr;
 			}
 		};
-		e4Context.set(IActionBars.class.getName(), bars);
 		setActionBars(bars);
 	}
 

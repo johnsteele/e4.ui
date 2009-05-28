@@ -12,12 +12,8 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
@@ -44,29 +40,6 @@ public class EditorSite extends PartSite implements IEditorSite {
 			WorkbenchPage page) {
 		super(ref, editor, page);
 
-		SubActionBars bars = new SubActionBars(((WorkbenchPage) page)
-				.getActionBars(), serviceLocator) {
-			private IToolBarManager tbMgr;
-			private MenuManager menuMgr;
-
-			@Override
-			public IToolBarManager getToolBarManager() {
-				if (tbMgr == null) {
-					tbMgr = new ToolBarManager2();
-				}
-				return tbMgr;
-			}
-
-			@Override
-			public IMenuManager getMenuManager() {
-				if (menuMgr == null) {
-					menuMgr = new MenuManager();
-				}
-				return menuMgr;
-			}
-		};
-		e4Context.set(IActionBars.class.getName(), bars);
-		setActionBars(bars);
 		// Initialize the services specific to this editor site.
 		initializeDefaultServices();
 	}

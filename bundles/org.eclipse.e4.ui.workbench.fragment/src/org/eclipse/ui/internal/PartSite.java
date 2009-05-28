@@ -388,6 +388,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * Sets the action bars for the part.
 	 */
 	public void setActionBars(SubActionBars bars) {
+		e4Context.set(IActionBars.class.getName(), bars);
 		actionBars = bars;
 	}
 
