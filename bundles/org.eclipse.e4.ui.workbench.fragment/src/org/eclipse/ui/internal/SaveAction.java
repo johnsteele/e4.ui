@@ -16,87 +16,92 @@ import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Workbench common <code>Save</code> action.
  */
-public class SaveAction extends BaseSaveAction implements IBackgroundSaveListener {
+public class SaveAction extends BaseSaveAction implements
+		IBackgroundSaveListener {
 
-    /**
-     * Create an instance of this class
-     * 
-     * @param window the window
-     */
-    public SaveAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.SaveAction_text, window); 
-        setText(WorkbenchMessages.SaveAction_text); 
-        setToolTipText(WorkbenchMessages.SaveAction_toolTip);
-        setId("save"); //$NON-NLS-1$
-        window.getWorkbench().getHelpSystem().setHelp(this,
+	/**
+	 * Create an instance of this class
+	 * 
+	 * @param window
+	 *            the window
+	 */
+	public SaveAction(IWorkbenchWindow window) {
+		super(WorkbenchMessages.SaveAction_text, window);
+		setText(WorkbenchMessages.SaveAction_text);
+		setToolTipText(WorkbenchMessages.SaveAction_toolTip);
+		setId("save"); //$NON-NLS-1$
+		window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.SAVE_ACTION);
-        setImageDescriptor(WorkbenchImages
-                .getImageDescriptor(ISharedImages.IMG_ETOOL_SAVE_EDIT));
-        setDisabledImageDescriptor(WorkbenchImages
-                .getImageDescriptor(ISharedImages.IMG_ETOOL_SAVE_EDIT_DISABLED));
-        setActionDefinitionId("org.eclipse.ui.file.save"); //$NON-NLS-1$
-        
-        if (window instanceof WorkbenchWindow)
-        	((WorkbenchWindow)window).addBackgroundSaveListener(this);
-    }
-    
-    public void dispose() {
-    	((WorkbenchWindow)getWorkbenchWindow()).removeBackgroundSaveListener(this);
-    	super.dispose();
-    }
+		setImageDescriptor(WorkbenchImages
+				.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVE_EDIT));
+		setDisabledImageDescriptor(WorkbenchImages
+				.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVE_EDIT_DISABLED));
+		setActionDefinitionId("org.eclipse.ui.file.save"); //$NON-NLS-1$
 
-    /* (non-Javadoc)
-     * Method declared on IAction.
-     * Performs the <code>Save</code> action by calling the
-     * <code>IEditorPart.doSave</code> method on the active editor.
-     */
-    public void run() {
-        if (getWorkbenchWindow() == null) {
-            // action has been disposed
-            return;
-        }
-        /* **********************************************************************************
-         * The code below was added to track the view with focus
-         * in order to support save actions from a view (see bug 10234). 
-         */
-        ISaveablePart saveView = getSaveableView();
-        if (saveView != null) {
-            ((WorkbenchPage) getActivePart().getSite().getPage()).savePart(
-                    saveView, getActivePart(), false);
-            return;
-        }
+		if (window instanceof WorkbenchWindow)
+			((WorkbenchWindow) window).addBackgroundSaveListener(this);
+	}
 
-        IEditorPart part = getActiveEditor();
-        if (part != null) {
-            IWorkbenchPage page = part.getSite().getPage();
-            page.saveEditor(part, false);
-        }
-    }
+	public void dispose() {
+		((WorkbenchWindow) getWorkbenchWindow())
+				.removeBackgroundSaveListener(this);
+		super.dispose();
+	}
 
-	/* (non-Javadoc)
-     * Method declared on ActiveEditorAction.
-     */
-    protected void updateState() {
-        /* **********************************************************************************
-         * The code below was added to track the view with focus
-         * in order to support save actions from a view (see bug 10234). 
-         */
-        ISaveablePart saveable = getSaveableView();
-        if (saveable == null) {
-        	saveable = getActiveEditor();
-        }
-        /* **********************************************************************************/
-        if (saveable instanceof ISaveablesSource) {
+	/*
+	 * (non-Javadoc) Method declared on IAction. Performs the <code>Save</code>
+	 * action by calling the <code>IEditorPart.doSave</code> method on the
+	 * active editor.
+	 */
+	public void run() {
+		if (getWorkbenchWindow() == null) {
+			// action has been disposed
+			return;
+		}
+		/* **********************************************************************************
+		 * The code below was added to track the view with focus in order to
+		 * support save actions from a view (see bug 10234).
+		 */
+		ISaveablePart saveView = getSaveableView();
+		if (saveView != null) {
+			((WorkbenchPage) getActivePart().getSite().getPage()).savePart(
+					saveView, getActivePart(), false);
+			return;
+		}
+
+		IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getActivePage().getActiveEditor();
+		if (part != null) {
+			IWorkbenchPage page = part.getSite().getPage();
+			page.saveEditor(part, false);
+		}
+	}
+
+	/*
+	 * (non-Javadoc) Method declared on ActiveEditorAction.
+	 */
+	protected void updateState() {
+		/* **********************************************************************************
+		 * The code below was added to track the view with focus in order to
+		 * support save actions from a view (see bug 10234).
+		 */
+		ISaveablePart saveable = getSaveableView();
+		if (saveable == null) {
+			saveable = getActiveEditor();
+		}
+		/* ********************************************************************************* */
+		if (saveable instanceof ISaveablesSource) {
 			ISaveablesSource modelSource = (ISaveablesSource) saveable;
 			setEnabled(SaveableHelper.needsSave(modelSource));
 			return;
-        }
-        setEnabled(saveable != null && saveable.isDirty());
-    }
+		}
+		setEnabled(saveable != null && saveable.isDirty());
+	}
 
 	public void handleBackgroundSaveStarted() {
 		updateState();

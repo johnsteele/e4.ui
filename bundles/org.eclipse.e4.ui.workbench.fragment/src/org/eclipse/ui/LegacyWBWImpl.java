@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.compatibility.ActivePartLookupFunction;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
@@ -80,6 +81,8 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 		legacyWbImpl = (LegacyWBImpl) context.get(LegacyWBImpl.class.getName());
 		context.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME + "l", this); //$NON-NLS-1$
 		context.set(IWorkbenchWindow.class.getName(), this);
+		context.set(ActivePartLookupFunction.class.getName(),
+				new ActivePartLookupFunction());
 
 		// Register any window-specific services to the context
 		registerServices();
@@ -561,6 +564,15 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getActiveEditor()
 	 */
 	public IEditorPart getActiveEditor() {
+		Object activePart = context.get(ActivePartLookupFunction.class
+				.getName());
+		if (activePart instanceof MContributedPart) {
+			MContributedPart editor = (MContributedPart) activePart;
+			Object impl = editor.getObject();
+			if (impl instanceof IEditorPart)
+				return (IEditorPart) impl;
+		}
+
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -975,8 +987,8 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * boolean)
 	 */
 	public boolean saveEditor(IEditorPart editor, boolean confirm) {
-		// TODO Auto-generated method stub
-		return false;
+		editor.doSave(null);
+		return true;
 	}
 
 	/*
@@ -1147,6 +1159,15 @@ public class LegacyWBWImpl implements IWorkbenchWindow, IWorkbenchPage {
 	 * @see org.eclipse.ui.IPartService#getActivePart()
 	 */
 	public IWorkbenchPart getActivePart() {
+		Object activePart = context.get(ActivePartLookupFunction.class
+				.getName());
+		if (activePart instanceof MContributedPart) {
+			MContributedPart part = (MContributedPart) activePart;
+			Object impl = part.getObject();
+			if (impl instanceof IWorkbenchPart)
+				return (IWorkbenchPart) impl;
+		}
+
 		// TODO Auto-generated method stub
 		return null;
 	}

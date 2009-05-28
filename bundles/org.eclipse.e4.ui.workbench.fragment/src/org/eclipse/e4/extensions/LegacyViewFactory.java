@@ -12,13 +12,18 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.menus.PerspectiveHelper;
+import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.e4.workbench.ui.renderers.swt.SWTPartFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.LegacyWBWImpl;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.part.EditorPart;
@@ -56,9 +61,9 @@ public class LegacyViewFactory extends SWTPartFactory {
 	 * @param editorElement
 	 * @return
 	 */
-	private Control createEditor(MContributedPart<MPart<?>> part,
+	private Control createEditor(final MContributedPart<MPart<?>> part,
 			IConfigurationElement editorElement) {
-		Composite parent = (Composite) getParentWidget(part);
+		final Composite parent = (Composite) getParentWidget(part);
 
 		// part.setPlugin(viewContribution.getContributor().getName());
 		part.setIconURI(editorElement.getAttribute("icon")); //$NON-NLS-1$
@@ -83,15 +88,53 @@ public class LegacyViewFactory extends SWTPartFactory {
 					"ContributedPart-output"); //$NON-NLS-1$
 			localContext.set(IServiceConstants.OUTPUTS, outputContext);
 			localContext.set(IEclipseContext.class.getName(), outputContext);
+			localContext.set(IEditorInput.class.getName(),
+					LegacyWBWImpl.hackInput);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 
 			// Assign a 'site' for the newly instantiated part
 			LegacyWPSImpl site = new LegacyWPSImpl(part, impl);
+
 			impl.init(site, LegacyWBWImpl.hackInput); // HACK!! needs an
 			// editorInput
 
 			impl.createPartControl(parent);
 			part.setObject(impl);
+			localContext.set(MContributedPart.class.getName(), part);
+
+			// Manage the 'dirty' state
+			final EditorPart implementation = impl;
+			impl.addPropertyListener(new IPropertyListener() {
+				private CTabItem findItemForPart(CTabFolder ctf) {
+					CTabItem[] items = ctf.getItems();
+					for (int i = 0; i < items.length; i++) {
+						if (items[i].getData(PartFactory.OWNING_ME) == part) {
+							return items[i];
+						}
+					}
+
+					return null;
+				}
+
+				public void propertyChanged(Object source, int propId) {
+					if (parent instanceof CTabFolder) {
+						CTabFolder ctf = (CTabFolder) parent;
+						CTabItem partItem = findItemForPart(ctf);
+						String itemText = partItem.getText();
+						if (implementation.isDirty()
+								&& itemText.indexOf('*') != 0) {
+							itemText = '*' + itemText;
+						} else if (itemText.indexOf('*') == 0) {
+							itemText = itemText.substring(1);
+						}
+						partItem.setText(itemText);
+					}
+					// DebugUITools.openLaunchConfigurationDialogOnGroup(parent
+					// .getShell(), null,
+					//							"org.eclipse.debug.ui.launchGroup.debug"); //$NON-NLS-1$
+				}
+			});
+
 			if (parent.getChildren().length > 0)
 				return parent.getChildren()[parent.getChildren().length - 1];
 		} catch (Exception e) {
@@ -132,6 +175,7 @@ public class LegacyViewFactory extends SWTPartFactory {
 
 			impl.createPartControl(parent);
 			part.setObject(impl);
+			localContext.set(MContributedPart.class.getName(), part);
 
 			// HACK!! presumes it's the -last- child of the parent
 			if (parent.getChildren().length > 0)
