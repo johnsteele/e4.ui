@@ -15,6 +15,10 @@
                name="applicationXMI"
                value="org.eclipse.e4.ui.examples.legacy.workbench/Application.xmi">
          </property>
+         <property
+               name="applicationCSS"
+               value="platform:/plugin/org.eclipse.e4.ui.examples.legacy.workbench/css/xp-silver-legacy.css">
+         </property>
       </product>
    </extension>
    <extension
