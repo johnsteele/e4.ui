@@ -18,11 +18,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.LegacyWBWImpl;
+import org.eclipse.ui.internal.EditorSite;
+import org.eclipse.ui.internal.ViewSite;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.part.LegacyWPSImpl;
 
 public class LegacyViewFactory extends SWTPartFactory {
 
@@ -84,13 +86,17 @@ public class LegacyViewFactory extends SWTPartFactory {
 			localContext.set(IEclipseContext.class.getName(), outputContext);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 
+			part.setObject(impl);
 			// Assign a 'site' for the newly instantiated part
-			LegacyWPSImpl site = new LegacyWPSImpl(part, impl);
-			impl.init(site, LegacyWBWImpl.hackInput); // HACK!! needs an
-			// editorInput
+			WorkbenchPage page = (WorkbenchPage) localContext
+					.get(WorkbenchPage.class.getName());
+			ModelEditorReference ref = new ModelEditorReference(part, page);
+			EditorSite site = new EditorSite(ref, impl, page);
+			site.setConfigurationElement(editorElement);
+			impl.init(site, (IEditorInput) localContext.get(IEditorInput.class
+					.getName()));
 
 			impl.createPartControl(parent);
-			part.setObject(impl);
 			if (parent.getChildren().length > 0)
 				return parent.getChildren()[parent.getChildren().length - 1];
 		} catch (Exception e) {
@@ -125,12 +131,16 @@ public class LegacyViewFactory extends SWTPartFactory {
 			localContext.set(IEclipseContext.class.getName(), outputContext);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 
+			part.setObject(impl);
 			// Assign a 'site' for the newly instantiated part
-			LegacyWPSImpl site = new LegacyWPSImpl(part, impl);
+			WorkbenchPage page = (WorkbenchPage) localContext
+					.get(WorkbenchPage.class.getName());
+			ModelViewReference ref = new ModelViewReference(part, page);
+			ViewSite site = new ViewSite(ref, impl, page);
+			site.setConfigurationElement(viewContribution);
 			impl.init(site, null);
 
 			impl.createPartControl(parent);
-			part.setObject(impl);
 
 			// HACK!! presumes it's the -last- child of the parent
 			if (parent.getChildren().length > 0)

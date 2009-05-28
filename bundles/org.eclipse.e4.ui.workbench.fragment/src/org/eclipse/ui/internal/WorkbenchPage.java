@@ -28,7 +28,12 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.ApplicationFactory;
+import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.workbench.MPerspective;
+import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
@@ -1283,6 +1288,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		e4Window = w.getModelWindow();
 		e4Context = e4Window.getContext();
 		e4Context.set(IWorkbenchPage.class.getName(), this);
+		e4Context.set(WorkbenchPage.class.getName(), this);
 		selectionService = (ISelectionService) e4Context
 				.get(ISelectionService.class.getName());
 		partList = new WorkbenchPagePartList(selectionService);
@@ -1542,23 +1548,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			throw new IllegalArgumentException();
 		}
 
-		final IEditorPart result[] = new IEditorPart[1];
-		final PartInitException ex[] = new PartInitException[1];
-		BusyIndicator.showWhile(window.getWorkbench().getDisplay(),
-				new Runnable() {
-					public void run() {
-						try {
-							result[0] = busyOpenEditor(input, editorID,
-									activate, matchFlags, editorState);
-						} catch (PartInitException e) {
-							ex[0] = e;
-						}
-					}
-				});
-		if (ex[0] != null) {
-			throw ex[0];
-		}
-		return result[0];
+		MPerspective<?> curPersp = (MPerspective<?>) e4Window.getActiveChild();
+		MPart ea = ModeledPageLayout.findPart(curPersp, ModeledPageLayout
+				.internalGetEditorArea());
+		MContributedPart<MPart<?>> editorPart = ApplicationFactory.eINSTANCE
+				.createMContributedPart();
+		editorPart.setId(editorID);
+		editorPart.setName(input.getName());
+		ea.getChildren().add(editorPart);
+		editorPart.getContext().set(IEditorInput.class.getName(), input);
+		ea.setActiveChild(editorPart);
+		return (IEditorPart) editorPart.getObject();
 	}
 
 	/*
@@ -1592,26 +1592,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			throw ex[0];
 		}
 		return result[0];
-	}
-
-	/**
-	 * @see #openEditor(IEditorInput, String, boolean, int)
-	 */
-	private IEditorPart busyOpenEditor(IEditorInput input, String editorID,
-			boolean activate, int matchFlags, IMemento editorState)
-			throws PartInitException {
-
-		final Workbench workbench = (Workbench) getWorkbenchWindow()
-				.getWorkbench();
-		workbench.largeUpdateStart();
-
-		try {
-			return busyOpenEditorBatched(input, editorID, activate, matchFlags,
-					editorState);
-
-		} finally {
-			workbench.largeUpdateEnd();
-		}
 	}
 
 	/*

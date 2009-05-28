@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,9 +26,11 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -603,6 +606,26 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// is in play, it updates all of the trim it's responsible
 		// for. We have to do this before updating in order to get
 		// the PerspectiveBar management correct...see defect 137334
+		if (getShell().getChildren()[0] instanceof Composite) {
+			try {
+				Field field = Window.class.getDeclaredField("contents"); //$NON-NLS-1$
+				field.setAccessible(true);
+				field.set(this, getShell().getChildren()[0]);
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchFieldException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		// createStatusLine(getShell());
 		getShell().layout();
 		getShell().addShellListener(getShellListener());
 		getShell().setData(this);
@@ -2056,8 +2079,18 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	protected StatusLineManager createStatusLineManager() {
 		// @issue ApplicationWindow and WorkbenchWindow should allow full
 		// IStatusLineManager
-		return (StatusLineManager) getWindowConfigurer()
-				.getPresentationFactory().createStatusLineManager();
+		return new StatusLineManager() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.jface.action.StatusLineManager#getProgressMonitor()
+			 */
+			@Override
+			public IProgressMonitor getProgressMonitor() {
+				return new NullProgressMonitor();
+			}
+		};
 	}
 
 	/**
