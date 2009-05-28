@@ -960,7 +960,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	public IEditorPart[] getDirtyEditors() {
-		return null;
+		return new IEditorPart[0];
 	}
 
 	public ISaveablePart[] getDirtyParts() {
@@ -1551,14 +1551,39 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MPerspective<?> curPersp = (MPerspective<?>) e4Window.getActiveChild();
 		MPart ea = ModeledPageLayout.findPart(curPersp, ModeledPageLayout
 				.internalGetEditorArea());
-		MContributedPart<MPart<?>> editorPart = ApplicationFactory.eINSTANCE
-				.createMContributedPart();
-		editorPart.setId(editorID);
-		editorPart.setName(input.getName());
-		ea.getChildren().add(editorPart);
-		editorPart.getContext().set(IEditorInput.class.getName(), input);
+		MContributedPart<MPart<?>> editorPart = findEditor(ea, editorID, input);
+		if (editorPart == null) {
+			editorPart = ApplicationFactory.eINSTANCE.createMContributedPart();
+			editorPart.setId(editorID);
+			editorPart.setName(input.getName());
+			ea.getChildren().add(editorPart);
+			editorPart.getContext().set(IEditorInput.class.getName(), input);
+		}
 		ea.setActiveChild(editorPart);
 		return (IEditorPart) editorPart.getObject();
+	}
+
+	/**
+	 * @param ea
+	 * @param editorID
+	 * @param input2
+	 * @return
+	 */
+	private MContributedPart<MPart<?>> findEditor(MPart ea, String editorID,
+			IEditorInput input) {
+		final Iterator i = ea.getChildren().iterator();
+		while (i.hasNext()) {
+			MContributedPart<MPart<?>> part = (MContributedPart<MPart<?>>) i
+					.next();
+			if (editorID.equals(part.getId())) {
+				IEditorInput e = (IEditorInput) part.getContext().get(
+						IEditorInput.class.getName());
+				if (input.equals(e)) {
+					return part;
+				}
+			}
+		}
+		return null;
 	}
 
 	/*

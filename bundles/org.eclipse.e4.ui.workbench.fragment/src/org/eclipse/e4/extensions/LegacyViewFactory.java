@@ -14,6 +14,7 @@ import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.renderers.swt.SWTPartFactory;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -187,6 +188,9 @@ public class LegacyViewFactory extends SWTPartFactory {
 			ViewSite site = new ViewSite(ref, impl, page);
 			site.setConfigurationElement(viewContribution);
 			impl.init(site, null);
+			final ToolBarManager tbm = (ToolBarManager) site.getActionBars()
+					.getToolBarManager();
+			/* final ToolBar tb = */tbm.createControl(parent);
 
 			impl.createPartControl(parent);
 
