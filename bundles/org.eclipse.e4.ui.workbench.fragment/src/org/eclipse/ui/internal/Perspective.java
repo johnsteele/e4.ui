@@ -22,11 +22,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.extensions.ExtensionUtils;
+import org.eclipse.e4.extensions.ModelViewReference;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
@@ -414,7 +418,7 @@ public class Perspective {
 	 * Returns the pane for a view reference.
 	 */
 	protected ViewPane getPane(IViewReference ref) {
-		return (ViewPane) ((WorkbenchPartReference) ref).getPane();
+		return null;
 	}
 
 	/**
@@ -584,29 +588,8 @@ public class Perspective {
 
 	public boolean hideView(IViewReference ref) {
 		// If the view is locked just return.
-		ViewPane pane = getPane(ref);
-
-		// Remove the view from the current presentation.
-		if (isFastView(ref)) {
-			if (pane != null) {
-				pane.setFast(false); // force an update of the toolbar
-			}
-			if (activeFastView == ref) {
-				setActiveFastView(null);
-			}
-			if (pane != null) {
-				pane.getControl().setEnabled(true);
-			}
-
-			// Remove the view from the set of fast views
-			if (fastViewManager != null)
-				fastViewManager.removeViewReference(ref, false, true);
-		} else {
-			presentation.removePart(pane);
-		}
-
-		// Dispose view if ref count == 0.
-		getViewFactory().releaseView(ref);
+		ModelViewReference mvr = (ModelViewReference) ref;
+		mvr.getModel().setVisible(false);
 		return true;
 	}
 
@@ -760,6 +743,7 @@ public class Perspective {
 
 		MPerspective<?> persModel = WorkbenchFactory.eINSTANCE
 				.createMPerspective();
+		persModel.setId(persp.getId());
 		MWindow e4Window = page.getModelWindow();
 		e4Window.getChildren().add(persModel);
 		layout = new ModeledPageLayout(persModel);
@@ -770,11 +754,49 @@ public class Perspective {
 
 		// Run layout engine.
 		factory.createInitialLayout(layout);
+		loadExtensions(persModel, ((ModeledPageLayout) layout));
 		MPart ea = ModeledPageLayout.findPart(persModel, "bottom"); //$NON-NLS-1$
 		if (ea == null) {
 			layout
 					.createPlaceholderFolder(
 							"bottom", IPageLayout.BOTTOM, 0.2f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
+		}
+	}
+
+	private static void loadExtensions(MPerspective perspModel,
+			ModeledPageLayout layout) {
+		String perspId = perspModel.getId();
+		if (perspId == null)
+			return;
+
+		IConfigurationElement[] perspExts = ExtensionUtils
+				.getExtensions(IWorkbenchRegistryConstants.PL_PERSPECTIVE_EXTENSIONS);
+		for (int i = 0; i < perspExts.length; i++) {
+			String extTarget = perspExts[i]
+					.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
+			if (perspId.equals(extTarget)) {
+				IConfigurationElement[] viewExts = perspExts[i]
+						.getChildren(IWorkbenchRegistryConstants.TAG_VIEW);
+				for (int j = 0; j < viewExts.length; j++) {
+					String id = viewExts[j]
+							.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+					// String relationship =
+					// viewExts[j].getAttribute("relationship");
+					String relative = viewExts[j]
+							.getAttribute(IWorkbenchRegistryConstants.ATT_RELATIVE);
+					String visible = viewExts[j]
+							.getAttribute(IWorkbenchRegistryConstants.ATT_VISIBLE);
+					// String closeable = viewExts[j].getAttribute("closeable");
+					// String showTitle = viewExts[j].getAttribute("showTitle");
+
+					MPart relPart = ModeledPageLayout.findPart(perspModel,
+							relative);
+					MStack sm = (MStack) relPart.getParent();
+					MContributedPart viewModel = ModeledPageLayout
+							.createViewModel(id, Boolean.parseBoolean(visible));
+					sm.getChildren().add(viewModel);
+				}
+			}
 		}
 	}
 

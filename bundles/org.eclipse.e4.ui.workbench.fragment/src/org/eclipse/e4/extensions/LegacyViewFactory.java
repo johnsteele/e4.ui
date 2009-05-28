@@ -10,7 +10,6 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
-import org.eclipse.e4.workbench.ui.menus.PerspectiveHelper;
 import org.eclipse.e4.workbench.ui.renderers.swt.SWTPartFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -206,9 +205,6 @@ public class LegacyViewFactory extends SWTPartFactory {
 
 		Composite perspArea = new Composite((Composite) parentWidget, SWT.NONE);
 		perspArea.setLayout(new FillLayout());
-
-		if (part.getChildren().size() == 0)
-			PerspectiveHelper.loadPerspective(part, perspFactory);
 
 		return perspArea;
 	}

@@ -21,10 +21,10 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
-import org.eclipse.e4.workbench.ui.api.LegacyServiceLocator;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.menus.MenuLocationURI;
@@ -45,6 +45,8 @@ public class MenuContribution {
 	public MenuContribution(IEclipseContext context,
 			IConfigurationElement element) {
 		this.context = context;
+		window = (IWorkbenchWindow) context.get(IWorkbenchWindow.class
+				.getName());
 		config = element;
 		uri = new MenuLocationURI(config
 				.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI));
@@ -135,8 +137,7 @@ public class MenuContribution {
 								IWorkbenchRegistryConstants.ATT_CLASS,
 								ContributionItem.class);
 				if (i instanceof IWorkbenchContribution) {
-					((IWorkbenchContribution) i)
-							.initialize(new LegacyServiceLocator(context));
+					((IWorkbenchContribution) i).initialize(window);
 				}
 				if (i instanceof CompoundContributionItem) {
 					add(menu, (CompoundContributionItem) i);
@@ -155,6 +156,7 @@ public class MenuContribution {
 	}
 
 	private static Method itemsToFill = null;
+	private IWorkbenchWindow window;
 
 	/**
 	 * @param i

@@ -26,13 +26,9 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.application.ActionBarAdvisor;
-import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.ide.WorkbenchActionBuilder;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -41,23 +37,6 @@ public class MenuHelper {
 
 	public static final String MAIN_MENU_ID = "org.eclipse.ui.main.menu"; //$NON-NLS-1$
 	private static Field urlField;
-
-	public static void loadMenu(IEclipseContext context, MMenu menuModel) {
-		String id = menuModel.getId();
-		if (id == null || id.length() == 0)
-			return;
-
-		if (id.indexOf(MAIN_MENU_ID) >= 0) {
-			IActionBarConfigurer actionBarConfigurer = populateActionBarAdvisor(context);
-			if (menuModel.getItems().size() == 0) {
-				MenuManager barManager = (MenuManager) actionBarConfigurer
-						.getMenuManager();
-				loadMainMenu(context, menuModel, barManager);
-			}
-		} else {
-			populateMenu(menuModel);
-		}
-	}
 
 	public static void loadMainMenu(IEclipseContext context, MMenu menuModel,
 			MenuManager barManager) {
@@ -164,47 +143,6 @@ public class MenuHelper {
 		}
 		return contributions
 				.toArray(new MenuContribution[contributions.size()]);
-	}
-
-	private static void printCEAtts(IConfigurationElement ce, String prefix) {
-		String[] attNames = ce.getAttributeNames();
-		for (int j = 0; j < attNames.length; j++) {
-			System.out
-					.println(prefix
-							+ "Att: " + attNames[j] + " = " + ce.getAttribute(attNames[j])); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-
-	private static void printCEKids(IConfigurationElement ce, String prefix) {
-		IConfigurationElement[] kids = ce.getChildren();
-		for (int i = 0; i < kids.length; i++) {
-			System.out.println(prefix + "Child: " + kids[i].getName()); //$NON-NLS-1$
-			printCEAtts(kids[i], prefix + "  "); //$NON-NLS-1$
-			printCEKids(kids[i], prefix + "  "); //$NON-NLS-1$
-		}
-	}
-
-	private static void populateMenu(MMenu menuModel) {
-		String menuId = menuModel.getId();
-		System.out.println("populateMenu: " + menuId); //$NON-NLS-1$
-		IConfigurationElement[] actionSets = ExtensionUtils
-				.getExtensions(IWorkbenchRegistryConstants.PL_ACTION_SETS);
-		for (int i = 0; i < actionSets.length; i++) {
-			System.out.println("Action Set:" + actionSets[i].getName()); //$NON-NLS-1$
-			printCEAtts(actionSets[i], "  "); //$NON-NLS-1$
-			printCEKids(actionSets[i], "  "); //$NON-NLS-1$
-		}
-	}
-
-	private static IActionBarConfigurer populateActionBarAdvisor(
-			IEclipseContext context) {
-		IWorkbench wb = (IWorkbench) context.get(IWorkbench.class.getName());
-		LegacyActionBarConfigurer abc = new LegacyActionBarConfigurer(context,
-				wb.getActiveWorkbenchWindow());
-		WorkbenchActionBuilder builder = new WorkbenchActionBuilder(abc);
-		// technically, this should be disposed, so per MWindow
-		builder.fillActionBars(ActionBarAdvisor.FILL_MENU_BAR);
-		return abc;
 	}
 
 	/**
