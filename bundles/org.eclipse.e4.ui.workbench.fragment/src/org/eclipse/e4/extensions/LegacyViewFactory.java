@@ -23,6 +23,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
@@ -231,7 +232,8 @@ public class LegacyViewFactory extends SWTPartFactory {
 			final ToolBarManager tbm = (ToolBarManager) site.getActionBars()
 					.getToolBarManager();
 			if (parent instanceof CTabFolder) {
-				/* final ToolBar tb = */tbm.createControl(parent);
+				final ToolBar tb = tbm.createControl(parent);
+				((CTabFolder) parent).setTopRight(tb);
 			}
 
 			impl.createPartControl(parent);
