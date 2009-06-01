@@ -21,7 +21,6 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.WorkbenchPage;
 
 /**
- * @since 3.3
  * 
  */
 public class ModelReference implements IWorkbenchPartReference {
@@ -92,7 +91,10 @@ public class ModelReference implements IWorkbenchPartReference {
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getPart(boolean)
 	 */
 	public IWorkbenchPart getPart(boolean restore) {
-		return (IWorkbenchPart) modelPart.getObject();
+		Object object = modelPart.getObject();
+		if (object instanceof IWorkbenchPart)
+			return (IWorkbenchPart) object;
+		return null;
 	}
 
 	/*

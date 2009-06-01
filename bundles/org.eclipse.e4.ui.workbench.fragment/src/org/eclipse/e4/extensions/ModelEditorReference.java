@@ -15,12 +15,9 @@ import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPage;
 
 /**
- * @since 3.3
- * 
  */
 public class ModelEditorReference extends ModelReference implements
 		IEditorReference {
@@ -48,7 +45,12 @@ public class ModelEditorReference extends ModelReference implements
 	 * 
 	 * @see org.eclipse.ui.IEditorReference#getEditorInput()
 	 */
-	public IEditorInput getEditorInput() throws PartInitException {
+	public IEditorInput getEditorInput() {
+		// the "compatibility" way
+		Object object = getPart(false);
+		if (object instanceof IEditorPart)
+			return ((IEditorPart) object).getEditorInput();
+		// the E4 way
 		return (IEditorInput) getModel().getContext().get(
 				IEditorInput.class.getName());
 	}

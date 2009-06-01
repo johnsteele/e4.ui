@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.compatibility.ActivePartLookupFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
+import org.eclipse.e4.extensions.ModelEditorReference;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MContributedPart;
@@ -1060,8 +1061,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				// The code below is only good for legacy views/editors.
 				Object object = ((MContributedPart<?>) child).getObject();
 				if (object instanceof EditorPart)
-					result.add(new LegacyEditorReference(
-							(MContributedPart<?>) child));
+					result.add(new ModelEditorReference(
+							(MContributedPart<?>) child, this));
 			}
 			if (child instanceof MPart<?>)
 				getContainedEditorRefs(result, (MPart<?>) child);
