@@ -40,6 +40,7 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -101,6 +102,7 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.AbstractMultiEditor;
+import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
@@ -110,6 +112,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		IWorkbenchPage {
 
 	private static final String ATT_AGGREGATE_WORKING_SET_ID = "aggregateWorkingSetId"; //$NON-NLS-1$
+
+	private static final IEditorReference[] noEditorRefs = new IEditorReference[0];
 
 	protected WorkbenchWindow window;
 
@@ -1002,14 +1006,66 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	public IEditorReference[] findEditors(IEditorInput input, String editorId,
 			int matchFlags) {
-		return new IEditorReference[0];
+		IEditorReference[] refs = getEditorReferences();
+		ArrayList<IEditorReference> matches = null;
+		for (IEditorReference ref : refs) {
+			if ((matchFlags & IWorkbenchPage.MATCH_ID) != 0) {
+				String testID = ref.getId();
+				if ((editorId != null) && !(editorId.equals(testID)))
+					continue;
+				if (editorId == null && testID != null)
+					continue;
+			}
+			if ((matchFlags & IWorkbenchPage.MATCH_INPUT) != 0) {
+				IEditorInput testInput;
+				try {
+					testInput = ref.getEditorInput();
+				} catch (PartInitException e) {
+					continue;
+				}
+				if ((input != null) && !(input.equals(testInput)))
+					continue;
+				if (input == null && testInput != null)
+					continue;
+			}
+			if (matches == null)
+				matches = new ArrayList<IEditorReference>(3);
+			matches.add(ref);
+		}
+		if (matches == null)
+			return noEditorRefs;
+		IEditorReference[] result = new IEditorReference[matches.size()];
+		matches.toArray(result);
+		return result;
 	}
 
 	/**
 	 * See IWorkbenchPage.
 	 */
 	public IEditorReference[] getEditorReferences() {
-		return new IEditorReference[0];
+		ArrayList<IEditorReference> result = new ArrayList<IEditorReference>();
+		getContainedEditorRefs(result, e4Window);
+		IEditorReference[] typedResult = new IEditorReference[result.size()];
+		result.toArray(typedResult);
+		return typedResult;
+	}
+
+	private void getContainedEditorRefs(ArrayList<IEditorReference> result,
+			MPart<?> part) {
+		EList<?> children = part.getChildren();
+		for (Object child : children) {
+			if (child instanceof MContributedPart<?>) {
+				// @issue here we are expected to sort views from editors.
+				// However, there is no such distinction for E4 elements.
+				// The code below is only good for legacy views/editors.
+				Object object = ((MContributedPart<?>) child).getObject();
+				if (object instanceof EditorPart)
+					result.add(new LegacyEditorReference(
+							(MContributedPart<?>) child));
+			}
+			if (child instanceof MPart<?>)
+				getContainedEditorRefs(result, (MPart<?>) child);
+		}
 	}
 
 	/**
@@ -1797,8 +1853,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * See IWorkbenchPage.
 	 */
 	public boolean isEditorPinned(IEditorPart editor) {
-		WorkbenchPartReference ref = (WorkbenchPartReference) getReference(editor);
-		return ref != null && ref.isPinned();
+		// TBD we need to add "pinned" attribute somewhere in the E4 model. The
+		// code
+		// below is just to work around a cast class exception
+		IWorkbenchPartReference ref = getReference(editor);
+		if (ref == null)
+			return false;
+		if (ref instanceof WorkbenchPartReference)
+			return ((WorkbenchPartReference) ref).isPinned();
+		return false;
 	}
 
 	/**
