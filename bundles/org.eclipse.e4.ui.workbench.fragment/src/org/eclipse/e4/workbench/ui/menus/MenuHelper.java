@@ -152,6 +152,10 @@ public class MenuHelper {
 	public static void processMenuManager(IEclipseContext context, MMenu menu,
 			IContributionItem[] items) {
 
+		if (items.length == 0) {
+			addMenuItem(context, menu, "Test Item", null, null, //$NON-NLS-1$
+					"test.id", "test.action.id"); //$NON-NLS-1$//$NON-NLS-2$
+		}
 		for (int i = 0; i < items.length; i++) {
 			IContributionItem item = items[i];
 			if (item instanceof MenuManager) {
@@ -196,6 +200,61 @@ public class MenuHelper {
 	}
 
 	/**
+	 * @param menu
+	 * @param manager
+	 */
+	public static void processToolbarManager(IEclipseContext context,
+			MToolBar tbModel, IContributionItem[] items) {
+
+		if (items.length == 0) {
+			addToolbarItem(tbModel, "Test Item", null, null, //$NON-NLS-1$
+					"test.id", "test.action.id"); //$NON-NLS-1$//$NON-NLS-2$
+		}
+		for (int i = 0; i < items.length; i++) {
+			IContributionItem item = items[i];
+			if (item instanceof MenuManager) {
+				// MenuManager m = (MenuManager) item;
+				// MMenuItem menu1 = addMenu(context, menu, m.getMenuText(),
+				// null,
+				// null, m.getId(), null);
+				// processMenuManager(context, menu1.getMenu(), m.getItems());
+			} else if (item instanceof ActionContributionItem) {
+				ActionContributionItem aci = (ActionContributionItem) item;
+				IAction action = aci.getAction();
+				String imageURL = getImageUrl(action.getImageDescriptor());
+				addToolbarItem(tbModel, action.getText(), null, imageURL, aci
+						.getId(), action.getActionDefinitionId());
+			} else if (item instanceof CommandContributionItem) {
+				CommandContributionItem cci = (CommandContributionItem) item;
+				String id = cci.getCommand().getId();
+				ICommandService cs = (ICommandService) context
+						.get(ICommandService.class.getName());
+				Command cmd = cs.getCommand(id);
+				if (cmd.isDefined()) {
+					ICommandImageService cis = (ICommandImageService) context
+							.get(ICommandImageService.class.getName());
+					String imageURL = getImageUrl(cis.getImageDescriptor(cmd
+							.getId(), ICommandImageService.TYPE_DEFAULT));
+					try {
+						addToolbarItem(tbModel, cmd.getName(), null, imageURL,
+								cci.getId(), id);
+					} catch (NotDefinedException e) {
+						// This should not happen
+						e.printStackTrace();
+					}
+				} else {
+					// addMenuItem(context, menu,
+					//							"unloaded:" + id, null, null, cci.getId(), id); //$NON-NLS-1$
+				}
+			} else if (item instanceof Separator) {
+				// addSeparator(menu, item.getId());
+			} else if (item instanceof GroupMarker) {
+				// addSeparator(menu, item.getId());
+			}
+		}
+	}
+
+	/**
 	 * @param imageDescriptor
 	 * @return
 	 */
@@ -234,6 +293,9 @@ public class MenuHelper {
 	}
 
 	private static MCommand getCommandById(IEclipseContext context, String cmdId) {
+		if (context == null)
+			return null;
+
 		Workbench legacyWB = (Workbench) context.get(Workbench.class.getName());
 		return legacyWB.commandsById.get(cmdId);
 	}
@@ -243,6 +305,26 @@ public class MenuHelper {
 		MMenuItem newItem = ApplicationFactory.eINSTANCE.createMMenuItem();
 		newItem.setId(id);
 		newItem.setName(label);
+		newItem.setIconURI(imgPath);
+		if (cmdId != null) {
+			MCommand mcmd = getCommandById(context, cmdId);
+			if (mcmd != null) {
+				newItem.setCommand(mcmd);
+			} else {
+				//				System.err.println("No MCommand defined for " + cmdId); //$NON-NLS-1$
+			}
+		} else {
+			//			System.err.println("No command id for " + id); //$NON-NLS-1$
+		}
+		return newItem;
+	}
+
+	public static MToolBarItem createToolbarItem(IEclipseContext context,
+			String label, String imgPath, String id, String cmdId) {
+		MToolBarItem newItem = ApplicationFactory.eINSTANCE
+				.createMToolBarItem();
+		newItem.setId(id);
+		newItem.setTooltip(label);
 		newItem.setIconURI(imgPath);
 		if (cmdId != null) {
 			MCommand mcmd = getCommandById(context, cmdId);
@@ -295,6 +377,13 @@ public class MenuHelper {
 		MMenuItem newItem = createMenuItem(null, label, imgPath, id, cmdId);
 		MMenu parentMenu = parentMenuItem.getMenu();
 		parentMenu.getItems().add(newItem);
+	}
+
+	public static void addToolbarItem(MToolBar tbModel, String label,
+			String plugin, String imgPath, String id, String cmdId) {
+		MToolBarItem newItem = createToolbarItem(null, label, imgPath, id,
+				cmdId);
+		tbModel.getItems().add(newItem);
 	}
 
 	public static void addMenuItem(IEclipseContext context, MMenu parentMenu,

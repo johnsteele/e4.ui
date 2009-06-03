@@ -8,13 +8,18 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
+import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.e4.workbench.ui.renderers.swt.SWTPartFactory;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -23,7 +28,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
@@ -38,6 +42,7 @@ import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.menus.IMenuService;
 
 public class LegacyViewFactory extends SWTPartFactory {
 
@@ -229,16 +234,38 @@ public class LegacyViewFactory extends SWTPartFactory {
 			ViewSite site = new ViewSite(ref, impl, page);
 			site.setConfigurationElement(viewContribution);
 			impl.init(site, null);
-			final ToolBarManager tbm = (ToolBarManager) site.getActionBars()
-					.getToolBarManager();
-			if (parent instanceof CTabFolder) {
-				final ToolBar tb = tbm.createControl(parent);
-				((CTabFolder) parent).setTopRight(tb);
-			}
+			// final ToolBarManager tbm = (ToolBarManager) site.getActionBars()
+			// .getToolBarManager();
+			// if (parent instanceof CTabFolder) {
+			// final ToolBar tb = tbm.createControl(parent);
+			// ((CTabFolder) parent).setTopRight(tb);
+			// }
 
 			impl.createPartControl(parent);
 
 			localContext.set(MContributedPart.class.getName(), part);
+
+			// Popupate and scrape the old-style contributions...
+			IMenuService menuSvc = (IMenuService) localContext
+					.get(IMenuService.class.getName());
+
+			String tbURI = "toolbar:" + part.getId(); //$NON-NLS-1$
+			ToolBarManager tbMgr = (ToolBarManager) site.getActionBars()
+					.getToolBarManager();
+			menuSvc.populateContributionManager(tbMgr, tbURI);
+			MToolBar viewTB = ApplicationFactory.eINSTANCE.createMToolBar();
+			MenuHelper.processToolbarManager(localContext, viewTB, tbMgr
+					.getItems());
+			part.setToolBar(viewTB);
+
+			String menuURI = "menu:" + part.getId(); //$NON-NLS-1$
+			MenuManager menuMgr = (MenuManager) site.getActionBars()
+					.getMenuManager();
+			menuSvc.populateContributionManager(menuMgr, menuURI);
+			MMenu viewMenu = ApplicationFactory.eINSTANCE.createMMenu();
+			MenuHelper.processMenuManager(localContext, viewMenu, menuMgr
+					.getItems());
+			part.setMenu(viewMenu);
 
 			// HACK!! presumes it's the -last- child of the parent
 			if (parent.getChildren().length > 0)
