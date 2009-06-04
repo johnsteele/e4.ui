@@ -20,6 +20,7 @@
    <requires>
       <import feature="org.eclipse.e4.ui.css.feature" version="0.9.0" match="compatible"/>
       <import feature="org.eclipse.e4.ui.feature" version="0.9.0" match="compatible"/>
+      <import feature="org.eclipse.e4.tests.base.feature" version="0.9.0" match="compatible"/>
    </requires>
 
    <plugin
