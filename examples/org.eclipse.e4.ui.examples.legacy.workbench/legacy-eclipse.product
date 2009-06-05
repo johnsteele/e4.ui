@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Legacy Workbench" uid="org.eclipse.e4.workbench.sdk" id="org.eclipse.e4.ui.examples.legacy.workbench.product" application="org.eclipse.ui.ide.workbench" version="0.9.0" useFeatures="true" includeLaunchers="true">
+<product name="Legacy Workbench" uid="org.eclipse.e4.workbench.sdk" id="org.eclipse.e4.ui.examples.legacy.workbench.product" application="org.eclipse.ui.ide.workbench" version="0.9.0.@qualifier@" useFeatures="true">
 
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+      <programArgs>-showsplash org.eclipse.platform --launcher.XXMaxPermSize 256m</programArgs>
+      <vmArgs>-Xms40m -Xmx256m</vmArgs>
+      <vmArgsMac>-Xdock:icon=../Resources/Eclipse.icns -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
 
-   <launcher>
+   <splash
+      location="org.eclipse.platform" />
+   <launcher name="eclipse">
       <solaris/>
       <win useIco="false">
          <bmp/>
@@ -43,6 +47,18 @@
       <feature id="org.eclipse.wst.xml_ui.feature"/>
       <feature id="org.eclipse.gef"/>
    </features>
+
+   <configurations>
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.update.configurator" autoStart="true" startLevel="3" />
+      <property name="org.eclipse.update.reconcile" value="false" />                                        
+      <property name="osgi.bundles.defaultStartLevel" value="4" />   
+      <property name="eclipse.buildId" value="@qualifier@"/>    
+   </configurations>
 
 
 </product>
