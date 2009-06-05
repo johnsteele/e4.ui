@@ -46,6 +46,7 @@
       <feature id="org.eclipse.emf.sdk"/>
       <feature id="org.eclipse.wst.xml_ui.feature"/>
       <feature id="org.eclipse.gef"/>
+      <feature id="org.eclipse.rcp.configuration"/>
    </features>
 
    <configurations>
