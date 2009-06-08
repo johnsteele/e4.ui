@@ -72,6 +72,7 @@ import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EContextService;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.Activator;
 import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
 import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchStylingSupport;
@@ -1699,6 +1700,20 @@ public final class Workbench extends EventManager implements IWorkbench {
 									Workbench.this);
 						}
 						return introManager;
+					}
+				});
+		e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
+				new ContextFunction() {
+					@Override
+					public Object compute(IEclipseContext context,
+							Object[] arguments) {
+						IEclipseContext childContext = (IEclipseContext) context
+								.getLocal(IServiceConstants.ACTIVE_CHILD);
+						if (childContext != null) {
+							return childContext
+									.get(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+						}
+						return null;
 					}
 				});
 		// END: some e4 services

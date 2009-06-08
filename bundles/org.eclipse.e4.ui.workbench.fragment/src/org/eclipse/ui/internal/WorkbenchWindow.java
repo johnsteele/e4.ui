@@ -78,6 +78,7 @@ import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPersistable;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -2241,6 +2242,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		readActionSets();
 		e4Context.set(ActivePartLookupFunction.class.getName(),
 				new ActivePartLookupFunction());
+		e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, this);
 	}
 
 	private void readActionSets() {
