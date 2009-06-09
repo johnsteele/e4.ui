@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: CSS Nebula
+Bundle-Name: CSS Nebula Support Plug-in (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.css.nebula
 Bundle-Version: 0.9.0.qualifier
 Require-Bundle: org.eclipse.swt;bundle-version="3.4.1",

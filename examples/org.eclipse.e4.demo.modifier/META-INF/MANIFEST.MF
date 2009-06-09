@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Self modifying demo
+Bundle-Name: Self modifying demo (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.demo.modifier;singleton:=true
 Bundle-Version: 0.9.0.qualifier
 Bundle-Activator: org.eclipse.e4.demo.modifier.Activator
