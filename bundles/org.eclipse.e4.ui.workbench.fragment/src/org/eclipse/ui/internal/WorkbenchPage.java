@@ -29,20 +29,16 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.e4.compatibility.ActivePartLookupFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.extensions.ModelEditorReference;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
@@ -1361,41 +1357,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		navigationHistory = new NavigationHistory(this);
 		e4Context.set(INavigationHistory.class.getName(), navigationHistory);
 
-		e4Window.eAdapters().add(new EContentAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.emf.ecore.util.EContentAdapter#notifyChanged(org.
-			 * eclipse.emf.common.notify.Notification)
-			 */
-			@Override
-			public void notifyChanged(Notification notification) {
-				super.notifyChanged(notification);
-				if (ApplicationPackage.Literals.MPART__ACTIVE_CHILD
-						.equals(notification.getFeature())
-						&& notification.getEventType() == Notification.SET) {
-					final Object object = e4Context
-							.get(ActivePartLookupFunction.class.getName());
-					if (object instanceof MContributedPart<?>) {
-						MContributedPart<?> part = (MContributedPart<?>) object;
-						final Object impl = part.getObject();
-						if (impl instanceof IWorkbenchPart) {
-							final IWorkbenchPartReference ref = ((PartSite) ((IWorkbenchPart) impl)
-									.getSite()).getPartReference();
-							partList.setActivePart(ref);
-							if (ref instanceof IEditorReference) {
-								partList
-										.setActiveEditor((IEditorReference) ref);
-							}
-						}
-					} else {
-						partList.setActiveEditor(null);
-						partList.setActivePart(null);
-					}
-				}
-			}
-		});
+		e4Window.eAdapters()
+				.add(new PartsEventTransformer(e4Context, partList));
 
 		// Create presentation.
 		// Get perspective descriptor.

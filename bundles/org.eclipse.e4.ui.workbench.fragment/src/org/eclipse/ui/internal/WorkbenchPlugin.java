@@ -1310,7 +1310,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		context.set(ActionSetRegistry.class.getName(), new ContextFunction() {
 			@Override
 			public Object compute(IEclipseContext context, Object[] arguments) {
-				if (actionSetRegistry != null) {
+				if (actionSetRegistry == null) {
 					actionSetRegistry = new ActionSetRegistry();
 				}
 				return actionSetRegistry;

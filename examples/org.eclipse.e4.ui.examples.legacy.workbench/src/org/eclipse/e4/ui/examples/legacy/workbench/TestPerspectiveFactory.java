@@ -21,6 +21,7 @@ public class TestPerspectiveFactory implements IPerspectiveFactory {
 		outputfolder.addView("org.eclipse.jdt.ui.JavadocView"); //$NON-NLS-1$
 		outputfolder.addView("org.eclipse.team.ccvs.ui.RepositoriesView"); //$NON-NLS-1$
 		outputfolder.addView("org.eclipse.debug.ui.DebugView"); //$NON-NLS-1$
+		outputfolder.addView("org.eclipse.debug.ui.BreakpointView"); //$NON-NLS-1$
 //		outputfolder.addView("org.eclipse.jdt.ui.SourceView"); //$NON-NLS-1$
 //		outputfolder.addPlaceholder("org.eclipse.search.ui.views.SearchView"); //$NON-NLS-1$
 		outputfolder.addPlaceholder("org.eclipse.ui.console.ConsoleView"); //$NON-NLS-1$
