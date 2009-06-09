@@ -1989,21 +1989,27 @@ public class Perspective {
 	 */
 	public IViewPart showView(String viewId, String secondaryId)
 			throws PartInitException {
-		// org.eclipse.e4.workbench.ui.internal.Workbench e4Workbench =
-		// (org.eclipse.e4.workbench.ui.internal.Workbench) ((WorkbenchWindow)
-		// page
-		// .getWorkbenchWindow()).getModelWindow().getContext().get(
-		// org.eclipse.e4.workbench.ui.internal.Workbench.class.getName());
+		// Is it already there?
 		final MPerspective perspectiveModel = ((ModeledPageLayout) layout)
 				.getModel();
-		MPart ea = ModeledPageLayout.findPart(perspectiveModel, "bottom"); //$NON-NLS-1$
+		MPart part = ModeledPageLayout.findPart(perspectiveModel, viewId);
 
-		MContributedPart viewModel = ModeledPageLayout.createViewModel(viewId,
-				false);
-		ea.getChildren().add(viewModel);
-		ea.setActiveChild(viewModel);
-		// e4Workbench.createGUI(viewModel);
-		return (IViewPart) viewModel.getObject();
+		// if not, add it
+		MPart theStack = null;
+		if (part == null) {
+			// Place it in the 'bottom' stack
+			theStack = ModeledPageLayout.findPart(perspectiveModel, "bottom"); //$NON-NLS-1$
+			part = ModeledPageLayout.createViewModel(viewId, false);
+			theStack.getChildren().add(part);
+		} else {
+			// Its stack is where it already is
+			theStack = part.getParent();
+		}
+
+		// OK, make it active
+		theStack.setActiveChild(part);
+
+		return (IViewPart) ((MContributedPart) part).getObject();
 	}
 
 	/**
