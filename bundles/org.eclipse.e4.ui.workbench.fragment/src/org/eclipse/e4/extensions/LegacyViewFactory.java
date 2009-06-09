@@ -241,6 +241,11 @@ public class LegacyViewFactory extends SWTPartFactory {
 			// ((CTabFolder) parent).setTopRight(tb);
 			// }
 
+			// We need to create the actual TB (some parts call 'getControl')
+			ToolBarManager tbMgr = (ToolBarManager) site.getActionBars()
+					.getToolBarManager();
+			tbMgr.createControl(parent);
+
 			impl.createPartControl(parent);
 
 			localContext.set(MContributedPart.class.getName(), part);
@@ -250,8 +255,6 @@ public class LegacyViewFactory extends SWTPartFactory {
 					.get(IMenuService.class.getName());
 
 			String tbURI = "toolbar:" + part.getId(); //$NON-NLS-1$
-			ToolBarManager tbMgr = (ToolBarManager) site.getActionBars()
-					.getToolBarManager();
 			menuSvc.populateContributionManager(tbMgr, tbURI);
 			MToolBar viewTB = ApplicationFactory.eINSTANCE.createMToolBar();
 			MenuHelper.processToolbarManager(localContext, viewTB, tbMgr
