@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.e4.sdk.source.feature"
+      label="%featureName"
+      version="0.9.0.qualifier"
+      provider-name="%providerName">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <includes
+         id="org.eclipse.e4.ui.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.swt.as.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.ui.css.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.xwt.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.xwt.tools.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.resources.platform.patch.source"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.resources.rcp.patch.source"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.languages.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.ui.compatibility.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.server.bespin.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.xwt.css.source.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.e4.tm.source.feature"
+         version="0.0.0"/>
+
+</feature>
