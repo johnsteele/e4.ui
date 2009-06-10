@@ -763,7 +763,7 @@ public class Perspective {
 		}
 	}
 
-	private static void loadExtensions(MPerspective perspModel,
+	private void loadExtensions(MPerspective<?> perspModel,
 			ModeledPageLayout layout) {
 		String perspId = perspModel.getId();
 		if (perspId == null)
@@ -778,26 +778,72 @@ public class Perspective {
 				IConfigurationElement[] viewExts = perspExts[i]
 						.getChildren(IWorkbenchRegistryConstants.TAG_VIEW);
 				for (int j = 0; j < viewExts.length; j++) {
-					String id = viewExts[j]
-							.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-					// String relationship =
-					// viewExts[j].getAttribute("relationship");
-					String relative = viewExts[j]
-							.getAttribute(IWorkbenchRegistryConstants.ATT_RELATIVE);
-					String visible = viewExts[j]
-							.getAttribute(IWorkbenchRegistryConstants.ATT_VISIBLE);
-					// String closeable = viewExts[j].getAttribute("closeable");
-					// String showTitle = viewExts[j].getAttribute("showTitle");
-
-					MPart relPart = ModeledPageLayout.findPart(perspModel,
-							relative);
-					MStack sm = (MStack) relPart.getParent();
-					MContributedPart viewModel = ModeledPageLayout
-							.createViewModel(id, Boolean.parseBoolean(visible));
-					sm.getChildren().add(viewModel);
+					if (viewExts[j] == null)
+						continue; // this view has already being created
+					addView(j, viewExts, perspModel);
 				}
 			}
 		}
+	}
+
+	private MPart addView(int position, IConfigurationElement[] viewExts,
+			MPerspective<?> perspModel) {
+		String id = viewExts[position]
+				.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+		// String relationship =
+		// viewExts[j].getAttribute("relationship");
+		String relative = viewExts[position]
+				.getAttribute(IWorkbenchRegistryConstants.ATT_RELATIVE);
+		String visible = viewExts[position]
+				.getAttribute(IWorkbenchRegistryConstants.ATT_VISIBLE);
+		// String closeable = viewExts[j].getAttribute("closeable");
+		// String showTitle = viewExts[j].getAttribute("showTitle");
+
+		MPart<?> relPart = ModeledPageLayout.findPart(perspModel, relative);
+		if (relPart == null) { // is it declared later in the extensions?
+			for (int i = position + 1; i < viewExts.length; i++) {
+				if (viewExts[i] == null)
+					continue; // this view has already being created
+				String otherID = viewExts[i]
+						.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+				if (otherID == null)
+					continue;
+				if (otherID.equals(relative)) {
+					relPart = addView(i, viewExts, perspModel);
+					if (relPart != null)
+						break;
+				}
+			}
+		}
+		MStack sm;
+		if (relPart != null) {
+			// TBD is the parent of a part always a stack?
+			// How about a sash?
+			sm = (MStack) relPart.getParent();
+		} else { // get a default stack
+			sm = getDefaultStack(perspModel);
+		}
+
+		MContributedPart<?> viewModel = ModeledPageLayout.createViewModel(id,
+				Boolean.parseBoolean(visible));
+		sm.getChildren().add(viewModel);
+		viewExts[position] = null; // only create once
+		return viewModel;
+	}
+
+	private MStack getDefaultStack(MPart<?> part) {
+		// TBD is there a better approach in 3.x?
+		// find any stack in the perspective's ascendants
+		for (Object child : part.getChildren()) {
+			if (child instanceof MStack)
+				return (MStack) child;
+			if (child instanceof MPart<?>) {
+				MStack result = getDefaultStack((MPart<?>) child);
+				if (result != null)
+					return result;
+			}
+		}
+		return null;
 	}
 
 	private void removeAlwaysOn(IActionSetDescriptor descriptor) {
