@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1260,6 +1260,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			}
 		} finally {
 			result = super.close();
+
+			if (result) {
+				// explicitly dispose the shell here, our superclasses does not
+				// handle this scenario because they don't have a reference to
+				// the real shell, see bug 279731
+				Shell shell = getShell();
+				if (shell != null && !shell.isDisposed()) {
+					shell.dispose();
+				}
+			}
+
 			// Clear the action sets, fix for bug 27416.
 			// getActionPresentation().clearActionSets();
 			try {
