@@ -57,11 +57,9 @@ public class PartsEventTransformer extends EContentAdapter {
 		// make sure something actually changed
 		Object oldPart = notification.getOldValue();
 		Object newPart = notification.getNewValue();
-		if (newPart == oldPart)
-			return;
 
 		// create 3.x visibility events
-		if ((oldPart instanceof MContributedPart<?>)
+		if ((newPart != oldPart) && (oldPart instanceof MContributedPart<?>)
 				&& (newPart instanceof MContributedPart<?>))
 			changeVisibility((MContributedPart<?>) oldPart,
 					(MContributedPart<?>) newPart);

@@ -2470,6 +2470,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return IStackPresentationSite.STATE_RESTORED;
 		}
 
+		// TBD concept not yet implemented in E4
+		if (!(ref instanceof WorkbenchPartReference))
+			return IStackPresentationSite.STATE_RESTORED;
+
 		PartPane pane = ((WorkbenchPartReference) ref).getPane();
 
 		if (ref instanceof IViewReference
