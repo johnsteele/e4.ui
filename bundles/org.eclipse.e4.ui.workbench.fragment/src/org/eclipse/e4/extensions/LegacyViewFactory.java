@@ -260,6 +260,7 @@ public class LegacyViewFactory extends SWTPartFactory {
 			MenuHelper.processToolbarManager(localContext, viewTB, tbMgr
 					.getItems());
 			part.setToolBar(viewTB);
+			tbMgr.getControl().dispose();
 
 			String menuURI = "menu:" + part.getId(); //$NON-NLS-1$
 			MenuManager menuMgr = (MenuManager) site.getActionBars()
