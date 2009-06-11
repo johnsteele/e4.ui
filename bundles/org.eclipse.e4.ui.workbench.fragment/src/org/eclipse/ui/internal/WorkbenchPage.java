@@ -1622,21 +1622,23 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 			IConfigurationElement[] editors = ExtensionUtils
 					.getExtensions(IWorkbenchRegistryConstants.PL_EDITOR);
-			IConfigurationElement viewContribution = ExtensionUtils
+			IConfigurationElement editorContribution = ExtensionUtils
 					.findExtension(editors, editorID);
-			if (viewContribution != null) {
+			if (editorContribution != null) {
 				// Convert the relative path into a bundle URI
-				String imagePath = viewContribution.getAttribute("icon"); //$NON-NLS-1$
+				String imagePath = editorContribution.getAttribute("icon"); //$NON-NLS-1$
 				imagePath = imagePath.replace("$nl$", ""); //$NON-NLS-1$//$NON-NLS-2$
 				if (imagePath.charAt(0) != '/') {
 					imagePath = '/' + imagePath;
 				}
-				String bundleId = viewContribution.getContributor().getName();
+				String bundleId = editorContribution.getContributor().getName();
 				String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
 				editorPart.setIconURI(imageURI);
 			}
+			editorPart.setVisible(false);
 			ea.getChildren().add(editorPart);
 			editorPart.getContext().set(IEditorInput.class.getName(), input);
+			editorPart.setVisible(true);
 		}
 		ea.setActiveChild(editorPart);
 		return (IEditorPart) editorPart.getObject();
@@ -2232,7 +2234,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (Util.equals(getPerspective(), desc)) {
 			return;
 		}
-
+		try {
+			getActivePerspective().loadPredefinedPersp(
+					(PerspectiveDescriptor) desc);
+		} catch (WorkbenchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**

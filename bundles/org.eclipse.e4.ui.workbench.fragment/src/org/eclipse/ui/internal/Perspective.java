@@ -2045,11 +2045,19 @@ public class Perspective {
 		if (part == null) {
 			// Place it in the 'bottom' stack
 			theStack = ModeledPageLayout.findPart(perspectiveModel, "bottom"); //$NON-NLS-1$
-			part = ModeledPageLayout.createViewModel(viewId, false);
+			part = ModeledPageLayout.createViewModel(viewId, true);
 			theStack.getChildren().add(part);
 		} else {
 			// Its stack is where it already is
 			theStack = part.getParent();
+
+			// create it if necessary
+			if (!part.isVisible()) {
+				// Move it to the end of the stack
+				theStack.getChildren().remove(part);
+				theStack.getChildren().add(part);
+				part.setVisible(true);
+			}
 		}
 
 		// OK, make it active

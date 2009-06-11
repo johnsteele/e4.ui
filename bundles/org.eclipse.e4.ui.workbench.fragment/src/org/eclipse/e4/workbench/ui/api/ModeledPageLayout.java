@@ -214,9 +214,8 @@ public class ModeledPageLayout implements IPageLayout {
 		} else
 			viewModel.setName(id); // No registered view, create error part?
 
-		// HACK!! we don't have an attribute
-		viewModel.setPolicy(Boolean.toString(visible));
-		// viewModel.setVisible(visible);
+		// sets its visibility (false == placeholder)
+		viewModel.setVisible(visible);
 
 		return viewModel;
 	}

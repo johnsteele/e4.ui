@@ -213,6 +213,7 @@ public class MenuHelper {
 		for (int i = 0; i < items.length; i++) {
 			IContributionItem item = items[i];
 			if (item instanceof MenuManager) {
+				System.out.println("Tb has a MenuManger"); //$NON-NLS-1$
 				// MenuManager m = (MenuManager) item;
 				// MMenuItem menu1 = addMenu(context, menu, m.getMenuText(),
 				// null,
