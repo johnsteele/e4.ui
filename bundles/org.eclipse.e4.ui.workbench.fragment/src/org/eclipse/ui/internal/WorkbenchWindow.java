@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.e4.compatibility.ActivePartLookupFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.extensions.ExtensionUtils;
@@ -2251,8 +2250,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		cs.activateContext("org.eclipse.ui.contexts.window"); //$NON-NLS-1$
 		cs.getActiveContextIds();
 		readActionSets();
-		e4Context.set(ActivePartLookupFunction.class.getName(),
-				new ActivePartLookupFunction());
 		e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, this);
 	}
 

@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.e4.compatibility.ActivePartLookupFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MStack;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.ui.IEditorReference;
@@ -65,8 +65,7 @@ public class PartsEventTransformer extends EContentAdapter {
 					(MContributedPart<?>) newPart);
 
 		// create 3.x activation events
-		final Object object = e4Context.get(ActivePartLookupFunction.class
-				.getName());
+		final Object object = e4Context.get(IServiceConstants.ACTIVE_PART);
 		if (object instanceof MContributedPart<?>) {
 			IWorkbenchPartReference ref = toPartRef((MContributedPart<?>) object);
 			if (ref != null) {
