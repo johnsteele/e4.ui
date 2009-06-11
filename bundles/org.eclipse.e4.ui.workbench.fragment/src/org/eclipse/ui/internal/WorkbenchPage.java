@@ -1638,8 +1638,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			editorPart.setVisible(false);
 			ea.getChildren().add(editorPart);
 			editorPart.getContext().set(IEditorInput.class.getName(), input);
-			editorPart.setVisible(true);
 		}
+		editorPart.setVisible(true);
 		ea.setActiveChild(editorPart);
 		return (IEditorPart) editorPart.getObject();
 	}
