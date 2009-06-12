@@ -14,10 +14,13 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.ui.ide.workbench"
-            name="Legacy Workbench">
+            name="%productName">
+          <property name="windowImages" value="eclipse.gif,eclipse32.gif,eclipse48.gif,eclipse.png,eclipse32.png,eclipse48.png"/> 
+          <property name="aboutImage" value="eclipse_lg.gif"/> 
+          <property name="aboutText" value="%productBlurb"/> 
          <property
                name="appName"
-               value="Legacy Workbench">
+               value="%productName">
          </property>
          <property
                name="preferenceCustomization"
@@ -29,5 +32,12 @@
          </property>
       </product>
    </extension>
+   	<extension
+		point="org.eclipse.ui.intro">
+      <introProductBinding
+            introId="org.eclipse.ui.intro.universal.slate"
+            productId="org.eclipse.e4.examples.legacy.workbench.product">
+      </introProductBinding>
+    </extension>
 
 </plugin>
