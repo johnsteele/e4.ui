@@ -203,7 +203,7 @@ public class ModeledPageLayout implements IPageLayout {
 			String imagePath = viewContribution.getAttribute("icon"); //$NON-NLS-1$
 			if (imagePath != null) {
 				imagePath = imagePath.replace("$nl$", ""); //$NON-NLS-1$//$NON-NLS-2$
-				if (imagePath != null && imagePath.charAt(0) != '/') {
+				if (imagePath.charAt(0) != '/') {
 					imagePath = '/' + imagePath;
 				}
 				String bundleId = viewContribution.getContributor().getName();
