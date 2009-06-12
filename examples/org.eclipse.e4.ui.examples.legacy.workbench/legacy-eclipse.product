@@ -36,15 +36,15 @@
    </plugins>
 
    <features>
-      <feature id="org.eclipse.sdk"/>
-      <feature id="org.eclipse.equinox.p2.user.ui"/>
-      <feature id="org.eclipse.equinox.p2.user.ui.source"/>
-      <feature id="org.eclipse.emf.sdk"/>
-      <feature id="org.eclipse.wst.xml_ui.feature"/>
-      <feature id="org.eclipse.gef"/>
-      <feature id="org.eclipse.rcp.configuration"/>
-      <feature id="org.eclipse.e4.sdk.runtime.feature"/>
-      <feature id="org.eclipse.e4.sdk.source.feature"/>
+      <feature id="org.eclipse.sdk" version="0.0.0"/>
+      <feature id="org.eclipse.equinox.p2.user.ui" version="0.0.0"/>
+      <feature id="org.eclipse.equinox.p2.user.ui.source" version="0.0.0"/>
+      <feature id="org.eclipse.emf.sdk" version="0.0.0"/>
+      <feature id="org.eclipse.wst.xml_ui.feature" version="0.0.0"/>
+      <feature id="org.eclipse.gef" version="0.0.0"/>
+      <feature id="org.eclipse.rcp.configuration" version="0.0.0"/>
+      <feature id="org.eclipse.e4.sdk.runtime.feature" version="0.0.0"/>
+      <feature id="org.eclipse.e4.sdk.source.feature" version="0.0.0"/>
    </features>
 
    <configurations>
