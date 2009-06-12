@@ -35,8 +35,8 @@
    	<extension
 		point="org.eclipse.ui.intro">
       <introProductBinding
-            introId="org.eclipse.ui.intro.universal.slate"
-            productId="org.eclipse.e4.examples.legacy.workbench.product">
+            introId="org.eclipse.ui.intro.universal"
+            productId="org.eclipse.e4.ui.examples.legacy.workbench.product">
       </introProductBinding>
     </extension>
 
