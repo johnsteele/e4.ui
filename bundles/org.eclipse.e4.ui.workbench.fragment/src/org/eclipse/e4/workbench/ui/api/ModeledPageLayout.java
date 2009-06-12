@@ -2,7 +2,6 @@ package org.eclipse.e4.workbench.ui.api;
 
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
@@ -204,13 +203,13 @@ public class ModeledPageLayout implements IPageLayout {
 			String imagePath = viewContribution.getAttribute("icon"); //$NON-NLS-1$
 			if (imagePath != null) {
 				imagePath = imagePath.replace("$nl$", ""); //$NON-NLS-1$//$NON-NLS-2$
+				if (imagePath != null && imagePath.charAt(0) != '/') {
+					imagePath = '/' + imagePath;
+				}
+				String bundleId = viewContribution.getContributor().getName();
+				String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
+				viewModel.setIconURI(imageURI);
 			}
-			if (imagePath != null && imagePath.charAt(0) != '/') {
-				imagePath = '/' + imagePath;
-			}
-			String bundleId = viewContribution.getContributor().getName();
-			String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
-			viewModel.setIconURI(imageURI);
 		} else
 			viewModel.setName(id); // No registered view, create error part?
 
