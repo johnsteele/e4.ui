@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -192,9 +191,9 @@ public class MenuHelper {
 							"unloaded:" + id, null, null, cci.getId(), id); //$NON-NLS-1$
 				}
 			} else if (item instanceof Separator) {
-				addSeparator(menu, item.getId());
+				addSeparator(menu, item.getId(), true);
 			} else if (item instanceof GroupMarker) {
-				addSeparator(menu, item.getId());
+				addSeparator(menu, item.getId(), false);
 			}
 		}
 	}
@@ -403,12 +402,13 @@ public class MenuHelper {
 		parentMenuItem.getMenu().getItems().add(newItem);
 	}
 
-	public static void addSeparator(MMenu parentMenu, String id) {
-		if (id == null)
-			return;
+	public static void addSeparator(MMenu parentMenu, String id, boolean visible) {
 		MMenuItem newItem = ApplicationFactory.eINSTANCE.createMMenuItem();
-		newItem.setId(id);
+		if (id != null) {
+			newItem.setId(id);
+		}
 		newItem.setSeparator(true);
+		newItem.setVisible(visible);
 
 		parentMenu.getItems().add(newItem);
 	}

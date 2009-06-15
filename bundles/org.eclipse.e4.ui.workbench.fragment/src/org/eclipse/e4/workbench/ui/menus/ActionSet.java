@@ -120,7 +120,7 @@ public class ActionSet {
 			String name = child
 					.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 			if (MenuHelper.indexForId(menu, name) == -1) {
-				MenuHelper.addSeparator(menu, name);
+				MenuHelper.addSeparator(menu, name, true);
 			}
 		}
 	}

@@ -129,7 +129,7 @@ public class MenuContribution {
 				menu.getItems().add(item);
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR
 					.equals(elementType)) {
-				MenuHelper.addSeparator(menu, MenuHelper.getId(element));
+				MenuHelper.addSeparator(menu, MenuHelper.getId(element), true);
 			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC
 					.equals(elementType)) {
 				ContributionItem i = (ContributionItem) Util
