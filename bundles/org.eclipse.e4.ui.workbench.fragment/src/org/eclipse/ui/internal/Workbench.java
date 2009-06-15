@@ -13,6 +13,7 @@
 
 package org.eclipse.ui.internal;
 
+import com.ibm.icu.util.ULocale;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,7 +31,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
@@ -170,6 +170,7 @@ import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.contexts.WorkbenchContextSupport;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
+import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.menus.FocusControlSourceProvider;
@@ -229,11 +230,9 @@ import org.osgi.framework.SynchronousBundleListener;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
-import com.ibm.icu.util.ULocale;
-
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
- * primary responsability is the management of workbench windows, dialogs,
+ * primary responsibility is the management of workbench windows, dialogs,
  * wizards, and other workbench-related windows.
  * <p>
  * Note that any code that is run during the creation of a workbench instance
@@ -3384,6 +3383,18 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @since 3.0
 	 */
 	public IntroDescriptor getIntroDescriptor() {
+		if (introDescriptor == null) {
+			IIntroRegistry introRegistry = (IIntroRegistry) e4Context
+					.get(IIntroRegistry.class.getName());
+			if (introRegistry != null && introRegistry.getIntroCount() > 0) {
+				// TODO Avoid referencing platform (bug 272502)
+				IProduct product = Platform.getProduct();
+				if (product != null) {
+					introDescriptor = (IntroDescriptor) introRegistry
+							.getIntroForProduct(product.getId());
+				}
+			}
+		}
 		return introDescriptor;
 	}
 
