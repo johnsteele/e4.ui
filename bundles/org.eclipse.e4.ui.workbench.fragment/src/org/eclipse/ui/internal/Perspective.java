@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.extensions.ModelViewReference;
+import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MStack;
@@ -34,6 +35,7 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -744,7 +746,19 @@ public class Perspective {
 				.createMPerspective();
 		persModel.setId(persp.getId());
 		MWindow e4Window = page.getModelWindow();
-		e4Window.getChildren().add(persModel);
+
+		EList e4Kids = e4Window.getChildren();
+		MStack perspStack;
+		if (e4Kids.size() == 0) {
+			perspStack = ApplicationFactory.eINSTANCE.createMStack();
+			perspStack.setPolicy("EditorStack"); //$NON-NLS-1$
+			e4Kids.add(perspStack);
+		} else {
+			perspStack = (MStack) e4Kids.get(0);
+		}
+
+		// e4Window.getChildren().add(persModel);
+		persModel.setName(persp.getLabel());
 		layout = new ModeledPageLayout(persModel);
 		((ModeledPageLayout) layout).setDescriptor(descriptor);
 		newWizardShortcuts = layout.getNewWizardShortcuts();
@@ -760,12 +774,14 @@ public class Perspective {
 		// Run layout engine.
 		factory.createInitialLayout(layout);
 		loadExtensions(persModel, ((ModeledPageLayout) layout));
-		MPart ea = ModeledPageLayout.findPart(persModel, "bottom"); //$NON-NLS-1$
-		if (ea == null) {
-			layout
-					.createPlaceholderFolder(
-							"bottom", IPageLayout.BOTTOM, 0.2f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
-		}
+		//		MPart ea = ModeledPageLayout.findPart(persModel, "bottom"); //$NON-NLS-1$
+		// if (ea == null) {
+		// layout
+		// .createPlaceholderFolder(
+		//							"bottom", IPageLayout.BOTTOM, 0.2f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
+		// }
+		perspStack.getChildren().add(persModel);
+		perspStack.setActiveChild(persModel);
 	}
 
 	private void loadExtensions(MPerspective<?> perspModel,
@@ -2035,14 +2051,39 @@ public class Perspective {
 		return ref;
 	}
 
+	private MStack findBottomStack(MPerspective persp) {
+		List stacks = new ArrayList();
+		gatherStacks(persp, stacks);
+		if (stacks.size() > 0)
+			return (MStack) stacks.get(stacks.size() - 1);
+		return null;
+	}
+
+	/**
+	 * @param persp
+	 * @param stacks
+	 */
+	private void gatherStacks(MPart part, List stacks) {
+		EList kids = part.getChildren();
+		for (Iterator iterator = kids.iterator(); iterator.hasNext();) {
+			MPart child = (MPart) iterator.next();
+			if (child instanceof MStack) {
+				stacks.add(child);
+			}
+			gatherStacks(child, stacks);
+		}
+	}
+
 	/**
 	 * Shows the view with the given id and secondary id.
 	 */
 	public IViewPart showView(String viewId, String secondaryId)
 			throws PartInitException {
 		// Is it already there?
-		final MPerspective perspectiveModel = ((ModeledPageLayout) layout)
-				.getModel();
+		MWindow e4Window = page.getModelWindow();
+		MStack perspStack = (MStack) e4Window.getChildren().get(0);
+		final MPerspective perspectiveModel = (MPerspective<?>) perspStack
+				.getActiveChild();
 		MPart part = ModeledPageLayout.findPart(perspectiveModel, viewId);
 
 		// if not, add it
@@ -2050,6 +2091,9 @@ public class Perspective {
 		if (part == null) {
 			// Place it in the 'bottom' stack
 			theStack = ModeledPageLayout.findPart(perspectiveModel, "bottom"); //$NON-NLS-1$
+			if (theStack == null)
+				theStack = findBottomStack(perspectiveModel);
+
 			part = ModeledPageLayout.createViewModel(viewId, true);
 			theStack.getChildren().add(part);
 		} else {

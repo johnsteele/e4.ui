@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -35,6 +34,7 @@ import org.eclipse.e4.extensions.ModelEditorReference;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
@@ -1611,7 +1611,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			throw new IllegalArgumentException();
 		}
 
-		MPerspective<?> curPersp = (MPerspective<?>) e4Window.getActiveChild();
+		MStack perspStack = (MStack) e4Window.getChildren().get(0);
+		MPerspective<?> curPersp = (MPerspective<?>) perspStack
+				.getActiveChild();
 		MPart ea = ModeledPageLayout.findPart(curPersp, ModeledPageLayout
 				.internalGetEditorArea());
 		MContributedPart<MPart<?>> editorPart = findEditor(ea, editorID, input);
