@@ -63,6 +63,10 @@
              class="org.eclipse.e4.ui.examples.legacy.workbench.BrowserSplashHandler"
              id="org.eclipse.e4.ui.examples.legacy.workbench.splashHandlers.browser">
        </splashHandler>
+       <splashHandlerProductBinding
+             productId="org.eclipse.e4.ui.examples.legacy.workbench.product"
+             splashId="org.eclipse.e4.ui.examples.legacy.workbench.splashHandlers.browser">
+       </splashHandlerProductBinding>
     </extension>
 
 </plugin>
