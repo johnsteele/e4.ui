@@ -30,6 +30,8 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -296,17 +298,14 @@ public class ModelEditor extends ViewPart {
 		final ModelTracker modelTracker = new ModelTracker(viewer);
 		topObject.eAdapters().add(modelTracker);
 		
-		// Propagate selection changes to the model
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
+		// double-clicks activate the selected part
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
 				TreeSelection selection = (TreeSelection) event.getSelection();
 				MPart<?> selected = (MPart<?>) selection.getFirstElement();
 				// TBD there should be an API to activate MPart 
-				PartFactory factory = (PartFactory) selected.getOwner();
-				if (factory == null)
-					return;
 				modelTracker.suspend(); // don't respond to this activation event
-				factory.activate(selected);
+				ModelUtils.activate(selected);
 				modelTracker.resume();
 			}});
 		
