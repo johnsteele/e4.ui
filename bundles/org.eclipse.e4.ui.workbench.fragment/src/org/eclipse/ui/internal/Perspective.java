@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -146,7 +145,7 @@ public class Perspective {
 
 	protected boolean shouldHideEditorsOnActivate = false;
 
-	protected IPageLayout layout;
+	protected ModeledPageLayout layout;
 
 	/**
 	 * ViewManager constructor comment.
@@ -748,6 +747,12 @@ public class Perspective {
 		e4Window.getChildren().add(persModel);
 		layout = new ModeledPageLayout(persModel);
 		((ModeledPageLayout) layout).setDescriptor(descriptor);
+		newWizardShortcuts = layout.getNewWizardShortcuts();
+		showViewShortcuts = layout.getShowViewShortcuts();
+		perspectiveShortcuts = layout.getPerspectiveShortcuts();
+		showInPartIds = layout.getShowInPartIds();
+		// hideMenuIDs = layout.getHiddenMenuItems();
+		// hideToolBarIDs = layout.getHiddenToolBarItems();
 		layout.setFixed(descriptor.getFixed());
 
 		// add the placeholders for the sticky folders and their contents

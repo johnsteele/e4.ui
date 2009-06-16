@@ -1,5 +1,6 @@
 package org.eclipse.e4.workbench.ui.api;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -23,6 +24,11 @@ public class ModeledPageLayout implements IPageLayout {
 
 	private MPerspective perspModel;
 	private IPerspectiveDescriptor descriptor;
+	private ArrayList newWizardShortcuts = new ArrayList();
+	private ArrayList perspectiveShortcut = new ArrayList();
+	private ArrayList showInPart = new ArrayList();
+	private ArrayList showViewShortcut = new ArrayList();
+	private ArrayList actionSet = new ArrayList();
 
 	public ModeledPageLayout(MPerspective perspModel) {
 		// Create the editor area stack
@@ -41,6 +47,7 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void addActionSet(String actionSetId) {
+		actionSet.add(actionSetId);
 	}
 
 	public void addFastView(String viewId) {
@@ -50,9 +57,11 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void addNewWizardShortcut(String id) {
+		newWizardShortcuts.add(id);
 	}
 
 	public void addPerspectiveShortcut(String id) {
+		perspectiveShortcut.add(id);
 	}
 
 	public void addPlaceholder(String viewId, int relationship, float ratio,
@@ -61,9 +70,11 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void addShowInPart(String id) {
+		showInPart.add(id);
 	}
 
 	public void addShowViewShortcut(String id) {
+		showViewShortcut.add(id);
 	}
 
 	public void addStandaloneView(String viewId, boolean showTitle,
@@ -366,5 +377,33 @@ public class ModeledPageLayout implements IPageLayout {
 			return (MPart) found;
 
 		return null;
+	}
+
+	/**
+	 * @return
+	 */
+	public ArrayList getNewWizardShortcuts() {
+		return newWizardShortcuts;
+	}
+
+	/**
+	 * @return
+	 */
+	public ArrayList getShowViewShortcuts() {
+		return showViewShortcut;
+	}
+
+	/**
+	 * @return
+	 */
+	public ArrayList getPerspectiveShortcuts() {
+		return perspectiveShortcut;
+	}
+
+	/**
+	 * @return
+	 */
+	public ArrayList getShowInPartIds() {
+		return showInPart;
 	}
 }

@@ -1204,6 +1204,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 			return win;
 		}
 
+		win = (WorkbenchWindow) e4Context
+				.get(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+		if (win != null) {
+			return win;
+		}
+
 		// Look at all the shells and pick the first one
 		// that is a workbench window.
 		Shell shells[] = display.getShells();

@@ -17,6 +17,8 @@ import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
+import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
+import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -194,8 +196,24 @@ public class MenuHelper {
 				addSeparator(menu, item.getId(), true);
 			} else if (item instanceof GroupMarker) {
 				addSeparator(menu, item.getId(), false);
+			} else {
+				addMenuRenderer(context, menu, item);
 			}
 		}
+	}
+
+	/**
+	 * @param context
+	 * @param menu
+	 * @param item
+	 */
+	private static void addMenuRenderer(IEclipseContext context, MMenu menu,
+			IContributionItem item) {
+		MMenuItemRenderer r = WorkbenchFactory.eINSTANCE
+				.createMMenuItemRenderer();
+		r.setId(item.getId() == null ? "item:" + menu : item.getId()); //$NON-NLS-1$
+		r.setRenderer(item);
+		menu.getItems().add(r);
 	}
 
 	/**
