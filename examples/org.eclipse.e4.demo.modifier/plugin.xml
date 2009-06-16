@@ -17,5 +17,30 @@
          </property>
       </product>
    </extension>
+<!-- The model viewer -->
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               closeable="true"
+               id="org.eclipse.e4.modeleditor.view"
+               minimized="false"
+               relationship="left"
+               relative="org.eclipse.ui.views.ContentOutline"
+               showTitle="true"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.eclipse.e4.demo.viewer.ModelEditor"
+            id="org.eclipse.e4.modeleditor.view"
+            name="WB Model Editor"
+            restorable="true">
+      </view>
+   </extension>
 
 </plugin>
