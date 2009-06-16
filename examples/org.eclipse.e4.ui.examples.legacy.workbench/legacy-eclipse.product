@@ -19,7 +19,7 @@
    <windowImages i16="/org.eclipse.e4.ui.examples.legacy.workbench/eclipse.gif" i32="/org.eclipse.e4.ui.examples.legacy.workbench/eclipse32.gif" i48="/org.eclipse.e4.ui.examples.legacy.workbench/eclipse48.gif"/>
 
    <splash
-      location="org.eclipse.platform" />
+      location="org.eclipse.e4.ui.examples.legacy.workbench" />
    <launcher name="eclipse">
       <solaris/>
       <win useIco="false">
@@ -27,10 +27,8 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
    </plugins>
