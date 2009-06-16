@@ -197,6 +197,7 @@ public class MenuHelper {
 			} else if (item instanceof GroupMarker) {
 				addSeparator(menu, item.getId(), false);
 			} else {
+				System.err.println("ICI: " + item.getClass().getName()); //$NON-NLS-1$
 				addMenuRenderer(context, menu, item);
 			}
 		}
@@ -211,7 +212,7 @@ public class MenuHelper {
 			IContributionItem item) {
 		MMenuItemRenderer r = WorkbenchFactory.eINSTANCE
 				.createMMenuItemRenderer();
-		r.setId(item.getId() == null ? "item:" + menu : item.getId()); //$NON-NLS-1$
+		r.setId(item.getId() == null ? "item:" + menu.getId() : item.getId()); //$NON-NLS-1$
 		r.setRenderer(item);
 		menu.getItems().add(r);
 	}
