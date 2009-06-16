@@ -11,13 +11,13 @@
 
 package org.eclipse.ui.internal;
 
+import com.ibm.icu.text.MessageFormat;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -80,8 +80,6 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.SynchronousBundleListener;
 
-import com.ibm.icu.text.MessageFormat;
-
 /**
  * This class represents the TOP of the workbench UI world A plugin class is
  * effectively an application wrapper for a plugin & its classes. This class
@@ -108,7 +106,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * The OSGi splash property.
 	 * 
-	 * @sicne 3.4
+	 * @since 3.4
 	 */
 	private static final String PROP_SPLASH_HANDLE = "org.eclipse.equinox.launcher.splash.handle"; //$NON-NLS-1$
 
