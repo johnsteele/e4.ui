@@ -1387,8 +1387,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 		final String cssResourcesURI = product == null ? null : product
 				.getProperty("applicationCSSResources"); //$NON-NLS-1$;
 		if (cssURI != null) {
-			WorkbenchStylingSupport.initializeStyling(display, cssURI,
-					cssResourcesURI, e4Context);
+			StartupThreading.runWithoutExceptions(new StartupRunnable() {
+				public void runWithException() {
+					WorkbenchStylingSupport.initializeStyling(display, cssURI,
+							cssResourcesURI, e4Context);
+				}
+			});
 		} else {
 			WorkbenchStylingSupport.initializeNullStyling(e4Context);
 		}
