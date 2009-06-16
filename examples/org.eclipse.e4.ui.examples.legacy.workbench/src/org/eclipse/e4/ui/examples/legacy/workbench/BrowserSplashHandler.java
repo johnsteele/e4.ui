@@ -127,7 +127,9 @@ public class BrowserSplashHandler extends AbstractSplashHandler {
 	private void createStartupMonitor() {
 		StartupMonitor startupMonitor = new StartupMonitor() {
 			public void applicationRunning() {
-				dispose();
+				Shell shell = getSplash();
+				if (shell != null && !shell.isDisposed())
+					dispose();
 				startupRegistration.unregister(); // unregister ourself
 			}
 			public void update() {
