@@ -60,7 +60,7 @@
     <extension
           point="org.eclipse.ui.splashHandlers">
        <splashHandler
-             class="org.eclipse.e4.ui.examples.legacy.workbench.BrowserSplashHandler"
+             class="org.eclipse.e4.ui.examples.legacy.workbench.AnimationSplashHandler"
              id="org.eclipse.e4.ui.examples.legacy.workbench.splashHandlers.browser">
        </splashHandler>
        <splashHandlerProductBinding
