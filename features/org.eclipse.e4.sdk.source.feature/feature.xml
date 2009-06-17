@@ -22,10 +22,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.e4.swt.as.source.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.e4.ui.css.source.feature"
          version="0.0.0"/>
 
