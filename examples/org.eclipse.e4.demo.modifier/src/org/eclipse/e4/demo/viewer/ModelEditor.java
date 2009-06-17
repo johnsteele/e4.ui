@@ -157,6 +157,7 @@ public class ModelEditor extends ViewPart {
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 				MContributedPart view = (MContributedPart) selection.getFirstElement();
 				sm.getChildren().add(view);
+				ModelUtils.activate(view);
 				viewer.refresh();
 			}
 		}
@@ -227,7 +228,7 @@ public class ModelEditor extends ViewPart {
 			if (element instanceof MPerspective<?>)
 				return "Perspective \"" + ((MPerspective<?>) element).getId() + "\""; 
 			if (element instanceof MWorkbenchWindow)
-				return "Workbench Window"; 
+				return ((MWorkbenchWindow)element).getName();
 			return element.getClass().getSimpleName();
 		}
 	}
@@ -374,6 +375,8 @@ public class ModelEditor extends ViewPart {
 		for (Iterator<?> iterator = features.iterator(); iterator.hasNext();) {
 			EStructuralFeature feature = (EStructuralFeature) iterator.next();
 			String name = feature.getName();
+			if (name == null)
+				name = "";
 			Label label = toolkit.createLabel(newComp, name);
 			label.setLayoutData(new GridData());
 			
@@ -412,7 +415,7 @@ public class ModelEditor extends ViewPart {
 			
 			return text;
 		}
-		else if (name.equals("selectedPart")) {
+		else if (name.equals("activeChild") && eObj instanceof MStack) {
 			MStack sm = (MStack) eObj;
 			
 			CCombo combo = new CCombo(parent, SWT.BORDER | SWT.DROP_DOWN);

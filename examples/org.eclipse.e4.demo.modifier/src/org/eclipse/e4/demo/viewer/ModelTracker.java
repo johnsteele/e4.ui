@@ -74,7 +74,7 @@ public class ModelTracker extends EContentAdapter {
 		if (!(newPart instanceof MContributedPart<?>))
 			return;
 		TreePath path = formPath((MPart<?>) newPart);
-		viewer.setSelection(new TreeSelection(path), true);
+		//viewer.setSelection(new TreeSelection(path), true);
 	}
 
 	/**
