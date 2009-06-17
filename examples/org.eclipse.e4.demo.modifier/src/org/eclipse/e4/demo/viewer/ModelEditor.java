@@ -221,11 +221,11 @@ public class ModelEditor extends ViewPart {
 			if (element instanceof MContributedPart<?>)
 				return ((MContributedPart<?>)element).getName();
 			if (element instanceof MStack)
-				return "Stack";
+				return "Stack: \"" + ((MStack) element).getId() + "\"";
 			if (element instanceof MSashForm<?>)
-				return "Sash";
+				return "Sash: \"" + ((MSashForm<?>) element).getId() + "\"";
 			if (element instanceof MPerspective<?>)
-				return "Perspective"; 
+				return "Perspective \"" + ((MPerspective<?>) element).getId() + "\""; 
 			if (element instanceof MWorkbenchWindow)
 				return "Workbench Window"; 
 			return element.getClass().getSimpleName();

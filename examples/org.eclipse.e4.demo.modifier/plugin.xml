@@ -39,6 +39,7 @@
             class="org.eclipse.e4.demo.viewer.ModelEditor"
             id="org.eclipse.e4.modeleditor.view"
             name="WB Model Editor"
+            icon="icons/mviewer.GIF"
             restorable="true">
       </view>
    </extension>
