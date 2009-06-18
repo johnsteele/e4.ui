@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,17 +21,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -88,6 +92,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+import org.eclipse.ui.branding.IProductConstants;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
@@ -375,9 +380,32 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		e4Window.setWidth(1024);
 		e4Window.setHeight(768);
 		e4Window.setName("MyWindow"); //$NON-NLS-1$
+		initializeWindowImages(e4Window);
 		final MMenu mainMenu = ApplicationFactory.eINSTANCE.createMMenu();
 		mainMenu.setId(MenuHelper.MAIN_MENU_ID);
 		e4Window.setMenu(mainMenu);
+	}
+
+	/**
+	 * Set the images corresponding to the workbench window
+	 */
+	private void initializeWindowImages(MWorkbenchWindow window) {
+		IProduct product = Platform.getProduct();
+		String images = product.getProperty(IProductConstants.WINDOW_IMAGES);
+		if (images == null) {
+			// backwards compatibility
+			images = product.getProperty(IProductConstants.WINDOW_IMAGE);
+		}
+		if (images == null)
+			return;
+		// for now just take the first image - the model currently only accepts
+		// one image
+		if (images.indexOf(',') > 0)
+			images = images.substring(0, images.indexOf(','));
+		URL iconURL = FileLocator.find(product.getDefiningBundle(), new Path(
+				images), null);
+		if (iconURL != null)
+			e4Window.setIconURI(iconURL.toExternalForm());
 	}
 
 	/**
