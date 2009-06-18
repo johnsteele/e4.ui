@@ -15,7 +15,7 @@
       <product
             application="org.eclipse.ui.ide.workbench"
             name="%productName">
-          <property name="windowImages" value="eclipse.gif,eclipse32.gif,eclipse48.gif,eclipse.png,eclipse32.png,eclipse48.png"/> 
+          <property name="windowImages" value="eclipse32.png,eclipse.png,eclipse.gif,eclipse32.gif,eclipse48.gif,eclipse48.png"/> 
           <property name="aboutImage" value="eclipse_lg.gif"/> 
           <property name="aboutText" value="%productBlurb"/> 
          <property
