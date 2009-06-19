@@ -761,13 +761,15 @@ public class Perspective {
 		if (element != null) {
 			// Convert the relative path into a bundle URI
 			String imagePath = element.getAttribute("icon"); //$NON-NLS-1$
-			imagePath = imagePath.replace("$nl$", ""); //$NON-NLS-1$//$NON-NLS-2$
-			if (imagePath.charAt(0) != '/') {
-				imagePath = '/' + imagePath;
+			if (imagePath != null) {
+				imagePath = imagePath.replace("$nl$", ""); //$NON-NLS-1$//$NON-NLS-2$
+				if (imagePath.charAt(0) != '/') {
+					imagePath = '/' + imagePath;
+				}
+				String bundleId = element.getContributor().getName();
+				String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
+				persModel.setIconURI(imageURI);
 			}
-			String bundleId = element.getContributor().getName();
-			String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
-			persModel.setIconURI(imageURI);
 		}
 
 		// e4Window.getChildren().add(persModel);
