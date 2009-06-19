@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -1410,10 +1411,46 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	/**
+	 * Finds and returns a part in the current perspective with the
+	 * corresponding id.
+	 * 
+	 * @param partId
+	 *            the id of the part, must not be <code>null</code>
+	 * @return a part in the current perspective with the specified id
+	 */
+	private MPart<?> findPartInCurrentPerspective(String partId) {
+		Assert.isNotNull(partId);
+		// retrieve the perspective stack from our window
+		MStack perspStack = (MStack) e4Window.getChildren().get(0);
+		// get the active/current one
+		MPerspective<?> curPersp = (MPerspective<?>) perspStack
+				.getActiveChild();
+		// try to find a child part
+		return ModeledPageLayout.findPart(curPersp, partId);
+	}
+
+	/**
 	 * See IWorkbenchPage.
 	 */
 	public boolean isPartVisible(IWorkbenchPart part) {
-		return part != null;
+		if (part == null) {
+			return false;
+		}
+
+		MPart<?> modelPart = findPartInCurrentPerspective(part.getSite()
+				.getId());
+		// couldn't find the part, return false
+		if (modelPart == null) {
+			return false;
+		}
+
+		MPart<?> parent = modelPart.getParent();
+		// no parent, probably not visible
+		if (parent == null) {
+			return false;
+		}
+		// return whether the parent's active child is us
+		return parent.getActiveChild() == modelPart;
 	}
 
 	/**
@@ -1608,10 +1645,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			throw new IllegalArgumentException();
 		}
 
-		MStack perspStack = (MStack) e4Window.getChildren().get(0);
-		MPerspective<?> curPersp = (MPerspective<?>) perspStack
-				.getActiveChild();
-		MPart ea = ModeledPageLayout.findPart(curPersp, ModeledPageLayout
+		// retrieve the editor area
+		MPart ea = findPartInCurrentPerspective(ModeledPageLayout
 				.internalGetEditorArea());
 		MContributedPart<MPart<?>> editorPart = findEditor(ea, editorID, input);
 		if (editorPart == null) {
