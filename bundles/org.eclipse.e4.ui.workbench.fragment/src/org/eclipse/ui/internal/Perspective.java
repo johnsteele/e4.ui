@@ -757,6 +757,19 @@ public class Perspective {
 			perspStack = (MStack) e4Kids.get(0);
 		}
 
+		IConfigurationElement element = persp.getConfigElement();
+		if (element != null) {
+			// Convert the relative path into a bundle URI
+			String imagePath = element.getAttribute("icon"); //$NON-NLS-1$
+			imagePath = imagePath.replace("$nl$", ""); //$NON-NLS-1$//$NON-NLS-2$
+			if (imagePath.charAt(0) != '/') {
+				imagePath = '/' + imagePath;
+			}
+			String bundleId = element.getContributor().getName();
+			String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
+			persModel.setIconURI(imageURI);
+		}
+
 		// e4Window.getChildren().add(persModel);
 		persModel.setName(persp.getLabel());
 		layout = new ModeledPageLayout(persModel);
