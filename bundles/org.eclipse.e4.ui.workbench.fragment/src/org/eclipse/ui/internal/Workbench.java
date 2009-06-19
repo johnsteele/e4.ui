@@ -75,7 +75,7 @@ import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.Activator;
 import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
-import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchStylingSupport;
+import org.eclipse.e4.ui.workbench.swt.internal.CSSStylingSupport;
 import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchWindowHandler;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
@@ -1389,12 +1389,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 		if (cssURI != null) {
 			StartupThreading.runWithoutExceptions(new StartupRunnable() {
 				public void runWithException() {
-					WorkbenchStylingSupport.initializeStyling(display, cssURI,
+					CSSStylingSupport.initializeStyling(display, cssURI,
 							cssResourcesURI, e4Context);
 				}
 			});
-		} else {
-			WorkbenchStylingSupport.initializeNullStyling(e4Context);
 		}
 		final PackageAdmin packageAdmin = (PackageAdmin) e4Context
 				.get(PackageAdmin.class.getName());
