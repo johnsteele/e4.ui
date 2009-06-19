@@ -2,7 +2,6 @@ package org.eclipse.e4.extensions;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
@@ -81,8 +80,16 @@ public class LegacyViewFactory extends SWTPartFactory {
 		EditorDescriptor desc = new EditorDescriptor(part.getId(),
 				editorElement);
 
+		// Convert the relative path into a bundle URI
+		String imagePath = editorElement.getAttribute("icon"); //$NON-NLS-1$
+		imagePath = imagePath.replace("$nl$", ""); //$NON-NLS-1$//$NON-NLS-2$
+		if (imagePath.charAt(0) != '/') {
+			imagePath = '/' + imagePath;
+		}
+		String bundleId = editorElement.getContributor().getName();
+		String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
 		// part.setPlugin(viewContribution.getContributor().getName());
-		part.setIconURI(editorElement.getAttribute("icon")); //$NON-NLS-1$
+		part.setIconURI(imageURI);
 		//part.setName(editorElement.getAttribute("name")); //$NON-NLS-1$
 		IEditorPart impl = null;
 

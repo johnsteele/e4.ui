@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
@@ -29,7 +28,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.extensions.ModelEditorReference;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
@@ -88,7 +86,6 @@ import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
-import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.tweaklets.GrabFocus;
@@ -1621,22 +1618,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			editorPart = ApplicationFactory.eINSTANCE.createMContributedPart();
 			editorPart.setId(editorID);
 			editorPart.setName(input.getName());
-
-			IConfigurationElement[] editors = ExtensionUtils
-					.getExtensions(IWorkbenchRegistryConstants.PL_EDITOR);
-			IConfigurationElement editorContribution = ExtensionUtils
-					.findExtension(editors, editorID);
-			if (editorContribution != null) {
-				// Convert the relative path into a bundle URI
-				String imagePath = editorContribution.getAttribute("icon"); //$NON-NLS-1$
-				imagePath = imagePath.replace("$nl$", ""); //$NON-NLS-1$//$NON-NLS-2$
-				if (imagePath.charAt(0) != '/') {
-					imagePath = '/' + imagePath;
-				}
-				String bundleId = editorContribution.getContributor().getName();
-				String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
-				editorPart.setIconURI(imageURI);
-			}
+			// editor part icon will be set in LegacyViewFactory
 			editorPart.setVisible(false);
 			ea.getChildren().add(editorPart);
 			editorPart.getContext().set(IEditorInput.class.getName(), input);
