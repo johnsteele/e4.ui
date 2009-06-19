@@ -41,7 +41,15 @@ public class LegacySelectionService implements ISelectionService {
 			public void run() {
 				fireSelectionChange();
 			}
-		}, IServiceConstants.SELECTION);
+
+			/*
+			 * for debugging purposes only
+			 */
+			@Override
+			public String toString() {
+				return IServiceConstants.SELECTION;
+			}
+		});
 	}
 
 	/*
