@@ -993,7 +993,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * See IWorkbenchPage.
 	 */
 	public IEditorPart findEditor(IEditorInput input) {
-		return null;
+		IEditorReference[] editorReferences = findEditors(input, null,
+				IWorkbenchPage.MATCH_INPUT);
+		if (editorReferences.length == 0) {
+			return null;
+		}
+		return editorReferences[0].getEditor(true);
 	}
 
 	/**
