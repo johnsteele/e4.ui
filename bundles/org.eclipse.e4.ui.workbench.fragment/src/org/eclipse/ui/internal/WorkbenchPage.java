@@ -2848,7 +2848,29 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage#getViewStack(org.eclipse.ui.IViewPart)
 	 */
 	public IViewPart[] getViewStack(IViewPart part) {
-		return null;
+		// check to make sure this part is in the current perspective
+		MPart<?> modelPart = findPartInCurrentPerspective(part.getSite()
+				.getId());
+		if (modelPart == null) {
+			// if not, return null
+			return null;
+		}
+
+		List<IViewPart> stack = new ArrayList<IViewPart>();
+		// retrieve the parent stack
+		MPart<?> viewStack = modelPart.getParent();
+		// get the contents of the stack
+		EList<?> children = viewStack.getChildren();
+		for (Object child : children) {
+			if (child instanceof MContributedPart<?>) {
+				Object object = ((MContributedPart<?>) child).getObject();
+				// queue it up if it's a view
+				if (object instanceof IViewPart) {
+					stack.add((IViewPart) object);
+				}
+			}
+		}
+		return stack.toArray(new IViewPart[stack.size()]);
 	}
 
 	/**
