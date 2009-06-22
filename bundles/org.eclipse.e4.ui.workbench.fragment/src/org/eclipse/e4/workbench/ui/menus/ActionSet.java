@@ -19,6 +19,8 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
+import org.eclipse.e4.workbench.ui.internal.Activator;
+import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -62,7 +64,8 @@ public class ActionSet {
 		Path menuPath = new Path(path);
 		MMenu subMenu = findMenuFromPath(menu, menuPath, 0);
 		if (subMenu == null) {
-			System.err.println("Failed to find menu for " + path); //$NON-NLS-1$
+			Activator.trace(Policy.DEBUG_MENUS,
+					"Failed to find menu for " + path, null); //$NON-NLS-1$
 			return;
 		}
 		int idx = MenuHelper.indexForId(subMenu, menuPath.lastSegment());
@@ -71,7 +74,8 @@ public class ActionSet {
 					IWorkbenchActionConstants.MB_ADDITIONS);
 		}
 		if (idx == -1) {
-			System.err.println("Failed to find group for " + path); //$NON-NLS-1$
+			Activator.trace(Policy.DEBUG_MENUS,
+					"Failed to find group for " + path, null); //$NON-NLS-1$
 			return;
 		}
 		MMenuItem item = createActionElement(element);
@@ -91,7 +95,8 @@ public class ActionSet {
 		Path menuPath = new Path(path);
 		MMenu subMenu = findMenuFromPath(menu, menuPath, 0);
 		if (subMenu == null) {
-			System.err.println("Failed to find menu for " + path); //$NON-NLS-1$
+			Activator.trace(Policy.DEBUG_MENUS,
+					"Failed to find menu for " + path, null); //$NON-NLS-1$
 			return;
 		}
 		int idx = MenuHelper.indexForId(subMenu, menuPath.lastSegment());
@@ -100,7 +105,8 @@ public class ActionSet {
 					IWorkbenchActionConstants.MB_ADDITIONS);
 		}
 		if (idx == -1) {
-			System.err.println("Failed to find group for " + path); //$NON-NLS-1$
+			Activator.trace(Policy.DEBUG_MENUS,
+					"Failed to find group for " + path, null); //$NON-NLS-1$
 			return;
 		}
 		MMenuItem item = createMenuElement(element);

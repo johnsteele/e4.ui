@@ -74,8 +74,8 @@ import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.Activator;
-import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
 import org.eclipse.e4.ui.workbench.swt.internal.CSSStylingSupport;
+import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
 import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchWindowHandler;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
@@ -1945,7 +1945,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 		 * .ExecutionEvent)
 		 */
 		public Object execute(ExecutionEvent event) throws ExecutionException {
-			System.err.println("AllHandlerGo: not for executing"); //$NON-NLS-1$
+			org.eclipse.e4.workbench.ui.internal.Activator.trace(
+					org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_CMDS,
+					"AllHandlerGo: not for executing", null); //$NON-NLS-1$
 			return null;
 		}
 

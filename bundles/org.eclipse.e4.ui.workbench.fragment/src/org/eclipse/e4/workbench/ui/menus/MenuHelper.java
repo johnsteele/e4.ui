@@ -19,6 +19,8 @@ import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
 import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
+import org.eclipse.e4.workbench.ui.internal.Activator;
+import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -197,7 +199,8 @@ public class MenuHelper {
 			} else if (item instanceof GroupMarker) {
 				addSeparator(menu, item.getId(), false);
 			} else {
-				System.err.println("ICI: " + item.getClass().getName()); //$NON-NLS-1$
+				Activator.trace(Policy.DEBUG_MENUS,
+						"ICI: " + item.getClass().getName(), null); //$NON-NLS-1$
 				addMenuRenderer(context, menu, item);
 			}
 		}
@@ -231,7 +234,8 @@ public class MenuHelper {
 		for (int i = 0; i < items.length; i++) {
 			IContributionItem item = items[i];
 			if (item instanceof MenuManager) {
-				System.out.println("Tb has a MenuManger"); //$NON-NLS-1$
+				Activator
+						.trace(Policy.DEBUG_MENUS, "Tb has a MenuManger", null); //$NON-NLS-1$
 				// MenuManager m = (MenuManager) item;
 				// MMenuItem menu1 = addMenu(context, menu, m.getMenuText(),
 				// null,
