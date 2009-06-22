@@ -6,7 +6,7 @@ CTabFolder {
 	simple: false;
 	maximize-visible: true;
 	minimize-visible: true;
-	tab-height: 30;
+	tab-height: 20;
 }
 
 CTabFolder:selected {
