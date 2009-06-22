@@ -36,9 +36,9 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="org.eclipse.e4.demo.viewer.ModelEditor"
+            class="org.eclipse.e4.demo.viewer.ModelObserverContainer"
             id="org.eclipse.e4.modeleditor.view"
-            name="WB Model Editor"
+            name="E4 Model Editor"
             icon="icons/mviewer.GIF"
             restorable="true">
       </view>

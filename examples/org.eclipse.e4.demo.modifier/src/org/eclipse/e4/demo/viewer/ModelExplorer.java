@@ -11,10 +11,7 @@
 package org.eclipse.e4.demo.viewer;
 
 import java.util.Iterator;
-import java.util.List;
 
-import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -24,11 +21,8 @@ import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.databinding.EMFObservables;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.jface.databinding.swt.ISWTObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -41,67 +35,26 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.part.ViewPart;
 
-// TBD this view is added in a 3.x way: plugin.xml + ViewPart.
-// It would be better to provide complete E4 implementation of it
-// and remove dependency on the "org.eclipse.ui.workbench".
+// TBD labels need to be updated on model element updates, 
+// such as changing name from the property tabs
 
-/*
- * NOTE: this is work-in-progress, don't take those notes too serious. Including this note.
- *  
- * Things that need to be clarified:
- * 1) What is the E4 way for the plug-in to contribute a view 
- * 2) Notifications of model events. It would be nice to have an analog of IPartService;
- * otherwise everybody would have to start adding global listeners
- * 2b) "Global" listeners (extends EContentAdapter) are likely to produce too much overhead. Their
- * use somehow should be restricted to the UI itself.   
- * 2c) EMF notification code generation: calls to the listeners should be wrapped into SafeRunnable
- * 3) Need an API to find currently active leaf, currently active path, tree of active children
- * 3b) Currently "global" listeners get a series of activation events: leaf activates, then its parent,
- * then grandparent, and so on. 
- * 4) Need a standard way of getting a specific model element in the model: 
- * String MPart.toPath() <-> Model.findElement(path)
- * otherwise everybody will be writing tree walkers. XPath?
- * 4b) Derivative of (4): all model elements must have IDs unique for the branch. Even better
- * would be unique ID for the model, when we don't have to walk the tree every time we need 
- * a model element.
- * 5) There should be an API to activate MPart. [Currently PartFactory#activate().]
- * 6) The link between MWorkbenchWindow and MApplication is done differently from other elements.
- * (Not #getParent().) While I understand why it is this way in the current model, it breaks the rhyme. 
- * 
- */
-
-public class ModelEditor extends ViewPart {
-	private FormToolkit toolkit;
-	private ScrolledForm form;
+public class ModelExplorer {
+	
+	private ModelObserverContainer editor;
 	private TreeViewer viewer;
-	private Section left;
-	private Section right;
-	private DataBindingContext dbc;
 	
 	private ImageManagerHelper imageHelper;
 	
@@ -118,7 +71,7 @@ public class ModelEditor extends ViewPart {
 				event.doit = false;
 			}
 			else {
-				event.doit = selection.getFirstElement() instanceof MContributedPart; 
+				event.doit = selection.getFirstElement() instanceof MContributedPart<?>; 
 			}
 		}
 	};
@@ -155,7 +108,7 @@ public class ModelEditor extends ViewPart {
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(event.currentDataType)) {
 				MStack sm = (MStack) event.item.getData();
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-				MContributedPart view = (MContributedPart) selection.getFirstElement();
+				MContributedPart<?> view = (MContributedPart<?>) selection.getFirstElement();
 				sm.getChildren().add(view);
 				ModelUtils.activate(view);
 				viewer.refresh();
@@ -228,55 +181,31 @@ public class ModelEditor extends ViewPart {
 			if (element instanceof MPerspective<?>)
 				return "Perspective \"" + ((MPerspective<?>) element).getId() + "\""; 
 			if (element instanceof MWorkbenchWindow)
-				return ((MWorkbenchWindow)element).getName();
+				return "Workbench Window"; 
 			return element.getClass().getSimpleName();
 		}
 	}
 
-	/**
-	 * The constructor.
-	 */
-	public ModelEditor() {
-	}
-
-	/**
-	 * This is a callback that will allow us to create the viewer and initialize
-	 * it.
-	 */
-	public void createPartControl(Composite parent) {
+	public ModelExplorer(Composite parent, ModelObserverContainer editor) {
+		this.editor = editor;
 		imageHelper = new ImageManagerHelper();
 		// Access services...
-		MPart<?> element = (MPart<?>) parent.getData(PartFactory.OWNING_ME);
+		// XXX this is bad
+		MPart<?> element = (MPart<?>) parent.getParent().getData(PartFactory.OWNING_ME);
 		
-		toolkit = new FormToolkit(parent.getDisplay());
-		form = toolkit.createScrolledForm(parent);
-		form.setText("Workbench Model Editor");
-
-		GridLayout gl = new GridLayout(2, true);
-		form.getBody().setLayout(gl);
-
-		dbc = new DataBindingContext();
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		composite.setLayout(layout);
+		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
+		composite.setLayoutData(data);
 		
-		left = toolkit.createSection(form.getBody(), Section.TITLE_BAR
-				| Section.EXPANDED);
-		left.setText("WB Model");
-		left.setLayout(new FillLayout());
-		left.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		right = toolkit.createSection(form.getBody(), Section.TITLE_BAR
-				| Section.EXPANDED);
-		right.setText("Properties");
-		right.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL));
-
-		Composite comp = toolkit.createComposite(right);
-		comp.setLayout(new GridLayout(2, false));
-		right.setClient(comp);
+		new Label(composite, SWT.NONE).setText("&E4 Model");
 		
-		Tree tree = toolkit.createTree(left, SWT.NONE);
-		tree.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
-		left.setClient(tree);
-		toolkit.paintBordersFor(left);
-		viewer = new TreeViewer(tree);
+		viewer = new TreeViewer(composite);
+		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.getControl().setData("viewpart", this);
@@ -309,8 +238,6 @@ public class ModelEditor extends ViewPart {
 				ModelUtils.activate(selected);
 				modelTracker.resume();
 			}});
-		
-		form.layout(true);
 	}
 	
 	private EObject topObject(MPart<?> part) {
@@ -320,15 +247,16 @@ public class ModelEditor extends ViewPart {
 			lastTop = currentTop;
 			currentTop = currentTop.getParent();
 		}
-		return lastTop.eContainer(); // TBD why link WorkbenchWindow -> Application is not done via parent?
+		return lastTop.eContainer(); 
 	}
 	
+	// TBD propagate selection via context
 	protected void handleSelection(SelectionChangedEvent event) {
 		if (event.getSelection() instanceof IStructuredSelection) {
 			IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 			Object selObj = sel.getFirstElement();
 			if (selObj instanceof EObject) {
-				createCellsFor((EObject)selObj);
+				editor.selected((EObject)selObj);
 			}
 		}
 	}
@@ -360,110 +288,10 @@ public class ModelEditor extends ViewPart {
 	    
 		return eObj.eGet(eFeature);
 	}
-
-	private void createCellsFor(EObject eObj) {
-		Composite curComp = (Composite) right.getClient();
-
-		Composite newComp = toolkit.createComposite(right);
-		newComp.setLayout(new GridLayout(2, false));
-		right.setClient(newComp);
-		
-		if (curComp != null)
-			curComp.dispose();
-		
-		EList<EStructuralFeature> features = eObj.eClass().getEAllStructuralFeatures();
-		for (Iterator<?> iterator = features.iterator(); iterator.hasNext();) {
-			EStructuralFeature feature = (EStructuralFeature) iterator.next();
-			String name = feature.getName();
-			if (name == null)
-				name = "";
-			Label label = toolkit.createLabel(newComp, name);
-			label.setLayoutData(new GridData());
-			
-			Control cellCtrl = createCell(newComp, eObj, feature);
-			cellCtrl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
-			right.layout(true);
-		}
-		
-		right.layout(true);
-	}
-
-	private Control createCell(Composite parent, EObject eObj, EStructuralFeature feature) {
-		String name = feature.getName();
-		Class<?> clazz = feature.getEType().getInstanceClass();
-		String clsStr = clazz.getName();
-		Object propVal = getProperty(eObj, feature.getName());
-		
-		IObservableValue emfObservable = EMFObservables.observeValue(eObj, feature);
-
-		if (clsStr.equals("java.lang.String") || clsStr.equals("int")) {
-			Text text = toolkit.createText(parent, "");			
-			dbc.bindValue(SWTObservables.observeText(text, SWT.Modify), emfObservable, null, null);
-			return text;
-		}
-		else if (clsStr.equals("boolean")) {
-			Button button = toolkit.createButton(parent, "", SWT.CHECK);
-			ISWTObservableValue so = SWTObservables.observeSelection(button);
-			dbc.bindValue(so, emfObservable, null, null);
-			return button;
-		}
-		else if (clsStr.equals("int")) {
-			Text text = toolkit.createText(parent, "");
-			
-			ISWTObservableValue swtObservable = SWTObservables.observeText(text, SWT.Modify);
-			dbc.bindValue(swtObservable, emfObservable, null, null);
-			
-			return text;
-		}
-		else if (name.equals("activeChild") && eObj instanceof MStack) {
-			MStack sm = (MStack) eObj;
-			
-			CCombo combo = new CCombo(parent, SWT.BORDER | SWT.DROP_DOWN);
-			combo.setData(eObj);
-			
-			List<?> kids = sm.getChildren();
-			for (Iterator<?> iterator = kids.iterator(); iterator.hasNext();) {
-				MContributedPart<?> uiElement = (MContributedPart<?>) iterator.next();
-				if (uiElement.isVisible()) {
-					combo.add(uiElement.getName());
-					combo.setData(uiElement.getName(), uiElement);
-				}
-			}
-			MPart<?> selPart = sm.getActiveChild();
-			if (selPart != null)
-				combo.setText(sm.getActiveChild().getName());
-			
-			combo.addModifyListener(new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					CCombo combo = (CCombo) e.widget;
-					MContributedPart<?> data = (MContributedPart<?>) combo.getData(combo.getText());
-					if (data != null) {
-						MStack sm = (MStack) combo.getData();
-						sm.setActiveChild(data);
-					}
-				}
-			});
-			return combo;
-		}
-		
-		return toolkit.createLabel(parent, propVal == null ? "<null> " + clsStr : propVal.getClass().getName()); 
-	}
 	
-	/**
-	 * Passing the focus request to the form.
-	 */
-	public void setFocus() {
-		form.setFocus();
-	}
-
-	/**
-	 * Disposes the toolkit
-	 */
 	public void dispose() {
-		toolkit.dispose();
-		super.dispose();
-		if (imageHelper != null)
-			imageHelper.dispose();
+		// TBD any cleanup?
 	}
-	
+
+
 }
