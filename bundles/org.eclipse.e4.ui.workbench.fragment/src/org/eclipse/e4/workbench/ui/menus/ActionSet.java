@@ -165,20 +165,22 @@ public class ActionSet {
 		String cmdId = MenuHelper.getDefinitionId(element);
 		String id = MenuHelper.getId(element);
 		String label = MenuHelper.getLabel(element);
-		if (label == null && cmdId != null) {
-			ICommandService cs = (ICommandService) context
-					.get(ICommandService.class.getName());
-			Command cmd = cs.getCommand(cmdId);
-			if (cmd.isDefined()) {
-				try {
-					label = cmd.getName();
-				} catch (NotDefinedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		if (label == null) {
+			if (cmdId == null) {
+				label = "none:" + id; //$NON-NLS-1$
+			} else {
+				ICommandService cs = (ICommandService) context
+						.get(ICommandService.class.getName());
+				Command cmd = cs.getCommand(cmdId);
+				if (cmd.isDefined()) {
+					try {
+						label = cmd.getName();
+					} catch (NotDefinedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
-		} else {
-			label = "none:" + id; //$NON-NLS-1$
 		}
 		MMenuItem item = MenuHelper.createMenuItem(context, label, imagePath,
 				id, cmdId);
