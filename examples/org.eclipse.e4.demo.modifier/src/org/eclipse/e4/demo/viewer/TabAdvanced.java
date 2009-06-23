@@ -12,6 +12,7 @@ package org.eclipse.e4.demo.viewer;
 
 import java.util.Iterator;
 
+import org.eclipse.e4.core.services.annotations.Inject;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -212,17 +213,15 @@ public class TabAdvanced {
 		return eObj.eGet(eFeature);
 	}
 
-	public void selected(EObject eObj) {
-		tableViewer.setInput(eObj);
+	@Inject
+	public void setInput(final EObject selection) {
+		tableViewer.setInput(selection);
 	}
 
 	private String getPropertyValue(EObjectFeature eDataObj) {
 		Class<?> clazz = eDataObj.feature.getEType().getInstanceClass();
 		String clsStr = clazz.getName();
 		Object propVal = getProperty(eDataObj.eObj, eDataObj.feature.getName());
-
-		// IObservableValue emfObservable = EMFObservables.observeValue(eObj,
-		// feature);
 
 		if (clsStr.equals("java.lang.String") || clsStr.equals("int")) {
 			if (propVal == null)

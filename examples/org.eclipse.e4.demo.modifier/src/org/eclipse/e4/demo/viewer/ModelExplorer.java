@@ -26,6 +26,7 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MContributedPart;
@@ -36,7 +37,7 @@ import org.eclipse.e4.ui.model.application.MSashForm;
 import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
-import org.eclipse.e4.workbench.ui.renderers.PartFactory;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.databinding.EMFObservables;
 import org.eclipse.emf.databinding.EMFProperties;
@@ -67,12 +68,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
 
-// TBD labels need to be updated on model element updates, 
-// such as changing name from the property tabs
-
+/**
+ * Tree displaying contents of the E4 model.
+ */
 public class ModelExplorer {
 	
-	private ModelObserverContainer editor;
+	private IEclipseContext outputContext;
 	private TreeViewer viewer;
 	
 	private ImageManagerHelper imageHelper;
@@ -175,12 +176,9 @@ public class ModelExplorer {
 		}
 	}
 
-	public ModelExplorer(Composite parent, ModelObserverContainer editor) {
-		this.editor = editor;
+	public ModelExplorer(Composite parent, final IEclipseContext outputContext) {
+		this.outputContext = outputContext;
 		imageHelper = new ImageManagerHelper();
-		// Access services...
-		// XXX this is bad
-		MPart<?> element = (MPart<?>) parent.getParent().getData(PartFactory.OWNING_ME);
 		
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -299,7 +297,11 @@ public class ModelExplorer {
 		viewer.addDragSupport(ops, xFers, dragListener);
 		viewer.addDropSupport(ops, xFers, dropListener);
 		
-		EObject topObject = topObject(element);
+		// TBD this really need to be replaced by an API 
+		// static MApplication getApplication() 
+		// on something
+		MPart<?> element = ModelUtils.getElement(parent);
+		EObject topObject = ModelUtils.topObject(element);
 		viewer.setInput(topObject);
 		
 		// double-clicks activate the selected part
@@ -312,24 +314,12 @@ public class ModelExplorer {
 			}});
 	}
 	
-	private EObject topObject(MPart<?> part) {
-		MPart<?> lastTop = part;
-		MPart<?> currentTop = part.getParent();
-		while (currentTop != null) {
-			lastTop = currentTop;
-			currentTop = currentTop.getParent();
-		}
-		return lastTop.eContainer(); 
-	}
-	
-	// TBD propagate selection via context
 	protected void handleSelection(SelectionChangedEvent event) {
 		if (event.getSelection() instanceof IStructuredSelection) {
 			IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 			Object selObj = sel.getFirstElement();
-			if (selObj instanceof EObject) {
-				editor.selected((EObject)selObj);
-			}
+			if (selObj instanceof EObject)
+				outputContext.set(IServiceConstants.SELECTION, selObj);
 		}
 	}
 
@@ -364,6 +354,5 @@ public class ModelExplorer {
 	public void dispose() {
 		// TBD any cleanup?
 	}
-
 
 }

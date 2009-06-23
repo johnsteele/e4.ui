@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.viewer;
 
+import org.eclipse.e4.core.services.annotations.Inject;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MSashForm;
 import org.eclipse.e4.ui.model.application.MStack;
@@ -54,13 +55,14 @@ public class TabBasic {
         
         stackLayout.topControl = noSelection;
         
-        elementProperties = new PropertiesElement(comp); //new PropertiesElement(comp);
+        elementProperties = new PropertiesElement(comp);
 		contribItemProperties = new PropertiesPart(comp);
 		stackProperties = new PropertiesStack(comp);
 		sashProperties = new PropertiesSash(comp);
 	}
 	
-	public void selected(EObject selected) {
+	@Inject
+	public void setInput(final EObject selected) {
 		if (selected == selectedObject)
 			return;
 		selectedObject = selected;
@@ -80,7 +82,7 @@ public class TabBasic {
 		}
         comp.layout();
 	}
-	
+
 	public void dispose() {
 		contribItemProperties.dispose();
 		stackProperties.dispose();

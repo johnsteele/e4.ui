@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.viewer;
 
-import org.eclipse.emf.ecore.EObject;
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.demo.modifier.ElementView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -56,16 +59,22 @@ public class ModelObserverContainer extends ViewPart {
 	private TabBasic basicArea;
 	private ModelExplorer modelViewer;
 	
+	private ElementView javaScriptView;
+	
 	private ImageManagerHelper imageHelper;
 
 	public void createPartControl(Composite parent) {
 		imageHelper = new ImageManagerHelper();
 		
+		IEclipseContext partContext = ModelUtils.getContext(parent);
+		if (partContext == null)
+			partContext = EclipseContextFactory.create();
+		
 		Composite composite = new Composite(parent, SWT.BORDER);
 		composite.setLayout(new GridLayout(2, true));
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		modelViewer = new ModelExplorer(composite, this);
+		modelViewer = new ModelExplorer(composite, partContext);
 		
 		CTabFolder folder = new CTabFolder(composite, SWT.BOTTOM | SWT.BORDER);
 
@@ -74,14 +83,18 @@ public class ModelObserverContainer extends ViewPart {
 		folder.setLayoutData(gd);
 		
 		CTabItem basicTab = new CTabItem(folder, 0);
-		basicTab.setText("Basic");
+		basicTab.setText("&Basic");
 		Composite basicPage = new Composite(folder, SWT.NONE);
-		basicPage.setLayout(new GridLayout());
+		
+		GridLayout basicLayout = new GridLayout();
+		basicLayout.marginWidth = 0;
+		basicLayout.marginHeight = 0;
+		basicPage.setLayout(basicLayout);
 		basicPage.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
 		basicTab.setControl(basicPage);
 		
 		CTabItem advancedTab = new CTabItem(folder, 1);
-		advancedTab.setText("Advanced");
+		advancedTab.setText("&Advanced");
 		Composite advancedPage = new Composite(folder, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -90,8 +103,22 @@ public class ModelObserverContainer extends ViewPart {
 		advancedPage.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
 		advancedTab.setControl(advancedPage);
 		
+		CTabItem javaScriptTab = new CTabItem(folder, 2);
+		javaScriptTab.setText("&JavaScript");
+		Composite javaScriptPage = new Composite(folder, SWT.NONE);
+		GridLayout jsLayout = new GridLayout();
+		jsLayout.marginWidth = 0;
+		jsLayout.marginHeight = 0;
+		javaScriptPage.setLayout(jsLayout);
+		javaScriptPage.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
+		javaScriptTab.setControl(javaScriptPage);
+		javaScriptView = new ElementView(javaScriptPage);
+		ContextInjectionFactory.inject(javaScriptView, partContext);
+		
 		basicArea = new TabBasic(basicPage);
+		ContextInjectionFactory.inject(basicArea, partContext);
 		propertiesArea = new TabAdvanced(advancedPage);
+		ContextInjectionFactory.inject(propertiesArea, partContext);
 		
 		folder.setSelection(0);
 	}
@@ -111,14 +138,5 @@ public class ModelObserverContainer extends ViewPart {
 			modelViewer.dispose();
 		super.dispose();
 	}
-	
-	// TBD use context to propagate changes in the selected element
-	public void selected(EObject object) {
-		if (propertiesArea != null)
-			propertiesArea.selected(object);
-		if (basicArea != null)
-			basicArea.selected(object);
-	}
-
 	
 }

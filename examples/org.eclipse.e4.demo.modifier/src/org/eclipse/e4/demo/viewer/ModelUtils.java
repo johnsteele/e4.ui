@@ -14,6 +14,8 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * Pieces of code that really should be available as APIs somewhere.
@@ -36,6 +38,50 @@ public class ModelUtils {
 			part = parent;
 			parent = (MPart<MPart<?>>) parent.getParent();
 		}
+	}
+	
+	/**
+	 * Get model element associated with the composite or
+	 * its containers.
+	 * This method may return null.
+	 */
+	static MPart<?> getElement(Composite composite) {
+		for (Composite container = composite; container != null; container = container.getParent()) {
+			Object owner = container.getData(PartFactory.OWNING_ME);
+			if (owner == null)
+				continue;
+			if (owner instanceof MPart<?>)
+				return (MPart<?>) owner;
+		}
+		return null;
+	}
+	
+	/**
+	 * Get context associated with the composite or its containers.
+	 * This method may return null.
+	 */
+	static IEclipseContext getContext(Composite composite) {
+		MPart<?> part = getElement(composite);
+		while (part != null) {
+			IEclipseContext result = part.getContext();
+			if (result != null)
+				return result;
+			part = part.getParent();
+		};
+		return null;
+	}
+	
+	/**
+	 * Returns a model root for a model tree element.
+	 */
+	static public EObject topObject(MPart<?> part) {
+		MPart<?> lastTop = part;
+		MPart<?> currentTop = part.getParent();
+		while (currentTop != null) {
+			lastTop = currentTop;
+			currentTop = currentTop.getParent();
+		}
+		return lastTop.eContainer(); // MWindow -> MApp 
 	}
 
 }
