@@ -68,7 +68,7 @@ public class PropertiesElement extends Composite {
 
 		dbc = new DataBindingContext();
 		
-		id = createTextControl(comp, "&ID:", SWT.READ_ONLY);
+		id = createTextControl(comp, "&ID:", SWT.NONE);
 		
 		GridLayoutFactory.fillDefaults().generateLayout(this);
 	}
