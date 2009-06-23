@@ -38,7 +38,7 @@ public class AnimationSplashHandler extends AbstractSplashHandler {
 			this.start = start;
 			this.end = end;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see java.lang.Thread#run()
 		 */
@@ -46,12 +46,7 @@ public class AnimationSplashHandler extends AbstractSplashHandler {
 			for (int i = start; i < end; i++) {
 				ImageLoader loader = new ImageLoader();
 				try {
-					imageSequence[i] = loader
-							.load(Activator
-									.getContext()
-									.getBundle()
-									.getEntry(
-											"splash/sequence/" + new DecimalFormat("00").format(i+1) + ".jpg").openStream())[0];//$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+					imageSequence[i] = loader.load(Activator.getContext().getBundle().getEntry("splash/sequence/" + new DecimalFormat("00").format(i + 1) + ".jpg").openStream())[0];//$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 				} catch (IOException e) {
 				}
 			}
@@ -59,14 +54,14 @@ public class AnimationSplashHandler extends AbstractSplashHandler {
 	}
 
 	private static final int SEQ_LENGTH = 75;
-	private final int LOOP_POINT=40;
-	private ImageData[] imageSequence = new ImageData[SEQ_LENGTH] ;
+	private final int LOOP_POINT = 40;
+	private ImageData[] imageSequence = new ImageData[SEQ_LENGTH];
 	private GC shellGC;
-	private Image currentImage=null;
-	private int currentImageIdx=0;
+	private Image currentImage = null;
+	private int currentImageIdx = 0;
 	private Timer animationTimer;
-	private boolean firstPass=true;
-	private boolean backward=false;
+	private boolean firstPass = true;
+	private boolean backward = false;
 	private Thread secondHalfLoadingThread;
 
 	/**
@@ -85,17 +80,17 @@ public class AnimationSplashHandler extends AbstractSplashHandler {
 	private void animate() {
 		final Display display = getSplash().getDisplay();
 		shellGC = new GC(getSplash());
-		
+
 		TimerTask animationTask = new TimerTask() {
 			public void run() {
 				switch (currentImageIdx) {
-				case LOOP_POINT:
-					backward = false;
-					break;
-				case SEQ_LENGTH - 1:
-					backward = true;
-					firstPass = false;
-					break;
+					case LOOP_POINT :
+						backward = false;
+						break;
+					case SEQ_LENGTH - 1 :
+						backward = true;
+						firstPass = false;
+						break;
 				}
 
 				if (currentImage != null)
@@ -107,8 +102,10 @@ public class AnimationSplashHandler extends AbstractSplashHandler {
 					} catch (InterruptedException e) {
 					}
 				}
-				if (!shellGC.isDisposed())
-					shellGC.drawImage(currentImage, 0, 0);
+				synchronized (shellGC) {
+					if (!shellGC.isDisposed())
+						shellGC.drawImage(currentImage, 0, 0);
+				}
 
 				if (!backward || firstPass)
 					currentImageIdx++;
@@ -139,16 +136,16 @@ public class AnimationSplashHandler extends AbstractSplashHandler {
 		//register monitor to run event loop during startup
 		//createStartupMonitor();
 		animate();
-	} 
+	}
 
 	private void loadImages() {
-		Thread firstHalfLoadingThread = new ImageLoadingThread(0, LOOP_POINT) ;
+		Thread firstHalfLoadingThread = new ImageLoadingThread(0, LOOP_POINT);
 		firstHalfLoadingThread.setPriority(Thread.MAX_PRIORITY);
-		secondHalfLoadingThread = new ImageLoadingThread(LOOP_POINT,SEQ_LENGTH) ;
+		secondHalfLoadingThread = new ImageLoadingThread(LOOP_POINT, SEQ_LENGTH);
 		firstHalfLoadingThread.run();
 		secondHalfLoadingThread.start();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.splash.AbstractSplashHandler#dispose()
 	 */
@@ -157,8 +154,11 @@ public class AnimationSplashHandler extends AbstractSplashHandler {
 			animationTimer.cancel();
 		if (currentImage != null)
 			currentImage.dispose();
-		if (shellGC != null)
-			shellGC.dispose();
+		if (shellGC != null) {
+			synchronized (shellGC) {
+				shellGC.dispose();
+			}
+		}
 		super.dispose();
 	}
 }
