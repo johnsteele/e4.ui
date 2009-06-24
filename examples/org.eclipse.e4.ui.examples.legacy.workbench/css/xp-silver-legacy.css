@@ -25,3 +25,7 @@ CTabFolder.active:selected {
 Text {
 	font: "Courier-New" 10px;
 }      
+
+ToolBar {
+	background-color: rgb(224, 223, 227);
+}
