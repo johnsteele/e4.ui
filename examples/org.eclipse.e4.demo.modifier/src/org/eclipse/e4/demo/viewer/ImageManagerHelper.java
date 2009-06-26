@@ -35,6 +35,9 @@ public class ImageManagerHelper {
 	}
 
 	public Image getImage(String path) {
+		if (path == null || path.length() == 0)
+			return null;
+		
 		Image image = imageRegistry.get(path);
 		if (image != null)
 			return image;
