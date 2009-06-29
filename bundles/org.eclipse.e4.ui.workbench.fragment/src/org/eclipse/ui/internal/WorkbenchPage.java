@@ -1384,6 +1384,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			window.firePerspectiveActivated(this, desc);
 		}
 
+		// read model extensions
+		ModelExtensionProcessor extProcessor = new ModelExtensionProcessor(
+				e4Window);
+		extProcessor.addModelExtensions();
 	}
 
 	/**

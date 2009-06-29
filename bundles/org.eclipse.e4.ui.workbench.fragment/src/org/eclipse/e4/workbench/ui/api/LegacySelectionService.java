@@ -179,9 +179,13 @@ public class LegacySelectionService implements ISelectionService {
 		if (child != null) {
 			MContributedPart p = (MContributedPart) child
 					.get(MContributedPart.class.getName());
-			if (p != null && p.getObject() != null) {
+			if (p == null)
+				return null;
+			Object object = p.getObject();
+			if (object == null)
+				return null;
+			if (object instanceof IWorkbenchPart)
 				return (IWorkbenchPart) p.getObject();
-			}
 		}
 		return null;
 	}
