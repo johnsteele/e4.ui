@@ -12,10 +12,11 @@ package org.eclipse.e4.demo.viewer;
 
 import java.util.Iterator;
 
-import org.eclipse.e4.core.services.annotations.Inject;
+import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -201,6 +202,7 @@ public class TabAdvanced {
 			public void removeListener(ILabelProviderListener listener) {
 			}
 		});
+		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
 
 	private Object getProperty(EObject eObj, String id) {
@@ -213,8 +215,10 @@ public class TabAdvanced {
 		return eObj.eGet(eFeature);
 	}
 
-	@Inject
-	public void setInput(final EObject selection) {
+	@In
+	public void setSelection(final EObject selection) {
+		if (selection == null)
+			return;
 		tableViewer.setInput(selection);
 	}
 

@@ -97,11 +97,15 @@ public class PropertiesElement extends Composite {
 	}
 	
 	protected Binding bind(Text text, EStructuralFeature feature) {
+		if (selectedObject == null)
+			return null;
 		IObservableValue observable = EMFObservables.observeValue(selectedObject, feature);
 		return dbc.bindValue(SWTObservables.observeText(text, SWT.Modify), observable, null, null);
 	}
 
 	protected Binding bind(Button button, EStructuralFeature feature) {
+		if (selectedObject == null)
+			return null;
 		IObservableValue observable = EMFObservables.observeValue(selectedObject, feature);
 		return dbc.bindValue(SWTObservables.observeSelection(button), observable, null, null);
 	}

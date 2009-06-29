@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.viewer;
 
-import org.eclipse.e4.core.services.annotations.Inject;
+import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MSashForm;
 import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.FillLayout;
@@ -24,7 +25,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 // TBD contents of this control is an MStack
-// TBD pass in selected item via context
 
 public class TabBasic {
 	
@@ -59,10 +59,13 @@ public class TabBasic {
 		contribItemProperties = new PropertiesPart(comp);
 		stackProperties = new PropertiesStack(comp);
 		sashProperties = new PropertiesSash(comp);
+		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
 	
-	@Inject
-	public void setInput(final EObject selected) {
+	@In
+	public void setSelection(final EObject selected) {
+		if (selected == null)
+			return;
 		if (selected == selectedObject)
 			return;
 		selectedObject = selected;

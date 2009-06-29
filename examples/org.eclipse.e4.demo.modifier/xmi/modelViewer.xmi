@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:MSashForm xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:application="http://www.eclipse.org/ui/2008/Application" xmlns:emof="http://schema.omg.org/spec/MOF/2.0/emof.xml"
+    xsi:schemaLocation="http://www.eclipse.org/ui/2008/Application ../../org.eclipse.e4.ui.model.workbench/model/Application.ecore http://schema.omg.org/spec/MOF/2.0/emof.xml http://www.eclipse.org/emf/2002/Ecore" xmi:id="_0"
+    policy="VerticalSash">
+  <children xmi:type="application:MContributedPart" xmi:id="_0.@children.1" name="Model View"
+      tooltip="" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.viewer.ModelExplorer"/>
+  <children xmi:type="application:MStack" xmi:id="_0.@children.0">
+    <children xmi:type="application:MContributedPart" xmi:id="_0.@children.1.@children.0"
+        name="&amp;Basic" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.viewer.TabBasic"/>
+    <children xmi:type="application:MContributedPart" xmi:id="_0.@children.1.@children.1"
+        name="&amp;Advanced" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.viewer.TabAdvanced"/>
+    <children xmi:type="application:MContributedPart" xmi:id="_0.@children.1.@children.2"
+        name="&amp;Javascript" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.ElementView"/>
+  </children>
+  <weights>50</weights>
+  <weights>50</weights>
+</application:MSashForm>

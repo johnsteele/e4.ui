@@ -46,6 +46,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -188,7 +189,12 @@ public class ModelExplorer {
 		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
 		composite.setLayoutData(data);
 		
-		new Label(composite, SWT.NONE).setText("&E4 Model");
+		// add some space around the label
+		Label label = new Label(composite, SWT.NONE);
+		label.setText("&E4 Model");
+		GridData dataLabel = new GridData();
+		dataLabel.horizontalIndent = 5;
+		dataLabel.verticalIndent = 5;
 		
 		viewer = new TreeViewer(composite);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -312,6 +318,7 @@ public class ModelExplorer {
 				// TBD there should be an API to activate MPart 
 				ModelUtils.activate(selected);
 			}});
+		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
 	
 	protected void handleSelection(SelectionChangedEvent event) {
