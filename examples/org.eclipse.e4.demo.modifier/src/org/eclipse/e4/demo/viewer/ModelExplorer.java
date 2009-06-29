@@ -27,6 +27,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.internal.context.EclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MContributedPart;
@@ -177,8 +178,7 @@ public class ModelExplorer {
 		}
 	}
 
-	public ModelExplorer(Composite parent, final IEclipseContext outputContext) {
-		this.outputContext = outputContext;
+	public ModelExplorer(Composite parent) {
 		imageHelper = new ImageManagerHelper();
 		
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -360,6 +360,18 @@ public class ModelExplorer {
 	
 	public void dispose() {
 		// TBD any cleanup?
+	}
+	
+	// TBD this is less than ideal as it requires the knowledge of
+	// the containment structure. I think the proper answer should be
+	// that objects (MParts, CTabs, and so on) don't create unnecessary
+	// contexts.
+	public void contextSet(IEclipseContext context) {
+		Object parent = context.get(EclipseContext.PARENT);
+		if (parent instanceof IEclipseContext)
+			outputContext = (IEclipseContext) parent;
+		else
+			outputContext = context;
 	}
 
 }
