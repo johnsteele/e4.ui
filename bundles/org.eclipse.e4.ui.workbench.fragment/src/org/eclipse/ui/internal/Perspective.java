@@ -30,6 +30,7 @@ import org.eclipse.e4.extensions.ModelViewReference;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MSashForm;
 import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
@@ -79,6 +80,7 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -742,20 +744,30 @@ public class Perspective {
 					WorkbenchMessages.Perspective_unableToLoad, persp.getId()));
 		}
 
-		MPerspective<?> persModel = WorkbenchFactory.eINSTANCE
-				.createMPerspective();
-		persModel.setId(persp.getId());
 		MWindow e4Window = page.getModelWindow();
 
 		EList e4Kids = e4Window.getChildren();
-		MStack perspStack;
 		if (e4Kids.size() == 0) {
-			perspStack = ApplicationFactory.eINSTANCE.createMStack();
-			perspStack.setPolicy("EditorStack"); //$NON-NLS-1$
-			e4Kids.add(perspStack);
-		} else {
-			perspStack = (MStack) e4Kids.get(0);
+			createLegacyWBModel(e4Window);
 		}
+
+		// Add the new perspective to its stack
+		MStack perspStack = (MStack) ModeledPageLayout.findPart(e4Window,
+				"PerspectiveStack"); //$NON-NLS-1$
+
+		// Is it already there?
+		MPerspective<?> perspModel = (MPerspective<?>) ModeledPageLayout
+				.findPart(perspStack, persp.getId());
+		if (perspModel != null) {
+			if (!perspModel.isVisible())
+				perspModel.setVisible(true);
+			perspStack.setActiveChild(perspModel);
+			return;
+		}
+
+		// Not there, create it
+		perspModel = WorkbenchFactory.eINSTANCE.createMPerspective();
+		perspModel.setId(persp.getId());
 
 		IConfigurationElement element = persp.getConfigElement();
 		if (element != null) {
@@ -768,13 +780,13 @@ public class Perspective {
 				}
 				String bundleId = element.getContributor().getName();
 				String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
-				persModel.setIconURI(imageURI);
+				perspModel.setIconURI(imageURI);
 			}
 		}
 
 		// e4Window.getChildren().add(persModel);
-		persModel.setName(persp.getLabel());
-		layout = new ModeledPageLayout(persModel);
+		perspModel.setName(persp.getLabel());
+		layout = new ModeledPageLayout(perspModel);
 		((ModeledPageLayout) layout).setDescriptor(descriptor);
 		newWizardShortcuts = layout.getNewWizardShortcuts();
 		showViewShortcuts = layout.getShowViewShortcuts();
@@ -788,15 +800,52 @@ public class Perspective {
 
 		// Run layout engine.
 		factory.createInitialLayout(layout);
-		loadExtensions(persModel, ((ModeledPageLayout) layout));
+		loadExtensions(perspModel, ((ModeledPageLayout) layout));
 		//		MPart ea = ModeledPageLayout.findPart(persModel, "bottom"); //$NON-NLS-1$
 		// if (ea == null) {
 		// layout
 		// .createPlaceholderFolder(
 		//							"bottom", IPageLayout.BOTTOM, 0.2f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
 		// }
-		perspStack.getChildren().add(persModel);
-		perspStack.setActiveChild(persModel);
+		perspStack.getChildren().add(perspModel);
+		perspStack.setActiveChild(perspModel);
+	}
+
+	/**
+	 * @param e4Window
+	 */
+	private void createLegacyWBModel(MWindow e4Window) {
+		// Add a 'stickyRight' stack and populate it
+		MSashForm<MPart<?>> mainSash = ApplicationFactory.eINSTANCE
+				.createMSashForm();
+		mainSash.setPolicy("Horizontal"); //$NON-NLS-1$
+
+		MStack perspStack = ApplicationFactory.eINSTANCE.createMStack();
+		perspStack.setId("PerspectiveStack"); //$NON-NLS-1$
+		perspStack.setPolicy("EditorStack"); //$NON-NLS-1$
+
+		mainSash.getChildren().add(perspStack);
+
+		MStack stickyRight = ApplicationFactory.eINSTANCE.createMStack();
+		stickyRight.setId("stickyRight"); //$NON-NLS-1$
+		stickyRight.setPolicy("ViewStack"); //$NON-NLS-1$
+		stickyRight.setVisible(false);
+		IStickyViewDescriptor[] descs = WorkbenchPlugin.getDefault()
+				.getViewRegistry().getStickyViews();
+		for (int i = 0; i < descs.length; i++) {
+			IStickyViewDescriptor stickyViewDescriptor = descs[i];
+			String id = stickyViewDescriptor.getId();
+			switch (stickyViewDescriptor.getLocation()) {
+			case IPageLayout.RIGHT:
+				MContributedPart view = ModeledPageLayout.createViewModel(id,
+						false);
+				stickyRight.getChildren().add(view);
+				break;
+			}
+		}
+		mainSash.getChildren().add(stickyRight);
+
+		e4Window.getChildren().add(mainSash);
 	}
 
 	private void loadExtensions(MPerspective<?> perspModel,
@@ -2096,10 +2145,13 @@ public class Perspective {
 			throws PartInitException {
 		// Is it already there?
 		MWindow e4Window = page.getModelWindow();
-		MStack perspStack = (MStack) e4Window.getChildren().get(0);
+		MStack perspStack = (MStack) ModeledPageLayout.findPart(e4Window,
+				"PerspectiveStack"); //$NON-NLS-1$
 		final MPerspective perspectiveModel = (MPerspective<?>) perspStack
 				.getActiveChild();
-		MPart part = ModeledPageLayout.findPart(perspectiveModel, viewId);
+		MPart part = ModeledPageLayout.findPart(e4Window, viewId);
+
+		boolean doLayout = false;
 
 		// if not, add it
 		MPart theStack = null;
@@ -2109,11 +2161,23 @@ public class Perspective {
 			if (theStack == null)
 				theStack = findBottomStack(perspectiveModel);
 
+			// If the stack is hidden, show it
+			if (!theStack.isVisible()) {
+				theStack.setVisible(true);
+				doLayout = true;
+			}
+
 			part = ModeledPageLayout.createViewModel(viewId, true);
 			theStack.getChildren().add(part);
 		} else {
 			// Its stack is where it already is
 			theStack = part.getParent();
+
+			// If the stack is hidden, show it
+			if (!theStack.isVisible()) {
+				theStack.setVisible(true);
+				doLayout = true;
+			}
 
 			// create it if necessary
 			if (!part.isVisible()) {
@@ -2122,6 +2186,11 @@ public class Perspective {
 				theStack.getChildren().add(part);
 				part.setVisible(true);
 			}
+		}
+
+		if (doLayout && theStack.getParent().getWidget() instanceof Composite) {
+			Composite comp = (Composite) theStack.getParent().getWidget();
+			comp.layout(true);
 		}
 
 		// OK, make it active

@@ -1430,7 +1430,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private MPart<?> findPartInCurrentPerspective(String partId) {
 		Assert.isNotNull(partId);
 		// retrieve the perspective stack from our window
-		MStack perspStack = (MStack) e4Window.getChildren().get(0);
+		MStack perspStack = (MStack) ModeledPageLayout.findPart(e4Window,
+				"PerspectiveStack"); //$NON-NLS-1$
 		// get the active/current one
 		MPerspective<?> curPersp = (MPerspective<?>) perspStack
 				.getActiveChild();
@@ -2259,9 +2260,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 *            identifies the new perspective.
 	 */
 	public void setPerspective(final IPerspectiveDescriptor desc) {
-		if (Util.equals(getPerspective(), desc)) {
-			return;
-		}
+		// if (Util.equals(getPerspective(), desc)) {
+		// return;
+		// }
 		try {
 			getActivePerspective().loadPredefinedPersp(
 					(PerspectiveDescriptor) desc);
