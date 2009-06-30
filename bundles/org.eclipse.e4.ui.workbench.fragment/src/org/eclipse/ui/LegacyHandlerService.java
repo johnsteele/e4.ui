@@ -13,7 +13,6 @@ package org.eclipse.ui;
 
 import java.util.Collection;
 import java.util.Collections;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -30,9 +29,9 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EHandlerService;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -61,7 +60,7 @@ public class LegacyHandlerService implements IHandlerService {
 		// }
 
 		public void execute(IEclipseContext context) {
-			Object shell = context.get(Shell.class.getName());
+			Object shell = context.get(IServiceConstants.ACTIVE_SHELL);
 			context.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, shell);
 			context.set(ISources.ACTIVE_SHELL_NAME, shell);
 			LegacyEvalContext legacy = new LegacyEvalContext(context);
