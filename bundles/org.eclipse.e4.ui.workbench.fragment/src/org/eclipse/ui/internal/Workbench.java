@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Category;
@@ -1360,6 +1361,23 @@ public final class Workbench extends EventManager implements IWorkbench {
 				.getBundleContext());
 	}
 
+	private static final String APPLICATION_CSS_RESOURCES_ARG = "-applicationCSSResources"; //$NON-NLS-1$
+	private static final String APPLICATION_CSS_RESOURCES = "applicationCSSResources"; //$NON-NLS-1$
+	private static final String APPLICATION_CSS_ARG = "-applicationCSS"; //$NON-NLS-1$
+	private static final String APPLICATION_CSS = "applicationCSS"; //$NON-NLS-1$
+
+	private Map<String, String> processArgs(String[] args) {
+		HashMap<String, String> argsList = new HashMap<String, String>();
+		for (int i = 0; i < args.length; i++) {
+			if (APPLICATION_CSS_ARG.equals(args[i])) {
+				argsList.put(APPLICATION_CSS, args[++i]);
+			} else if (APPLICATION_CSS_RESOURCES_ARG.equals(args[i])) {
+				argsList.put(APPLICATION_CSS_RESOURCES, args[++i]);
+			}
+		}
+		return argsList;
+	}
+
 	/**
 	 * Initializes the workbench now that the display is created.
 	 * 
@@ -1381,11 +1399,23 @@ public final class Workbench extends EventManager implements IWorkbench {
 		windowManager = new WindowManager();
 
 		// BEGIN: early e4 services
+		final Map<String, String> argsList = processArgs(Platform
+				.getApplicationArgs());
+		String cssURIr = argsList.get(APPLICATION_CSS);
+		String cssResourcesURIr = argsList.get(APPLICATION_CSS_RESOURCES);
 		IProduct product = Platform.getProduct();
-		final String cssURI = product == null ? null : product
-				.getProperty("applicationCSS"); //$NON-NLS-1$;
-		final String cssResourcesURI = product == null ? null : product
-				.getProperty("applicationCSSResources"); //$NON-NLS-1$;
+		if (product != null) {
+			if (cssURIr == null) {
+				cssURIr = product.getProperty(APPLICATION_CSS);
+			}
+			if (cssResourcesURIr == null) {
+				cssResourcesURIr = product
+						.getProperty(APPLICATION_CSS_RESOURCES);
+			}
+		}
+		final String cssURI = cssURIr;
+		final String cssResourcesURI = cssResourcesURIr;
+
 		if (cssURI != null) {
 			StartupThreading.runWithoutExceptions(new StartupRunnable() {
 				public void runWithException() {
