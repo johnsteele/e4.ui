@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.e4.core.services.Logger;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.model.application.MWindow;
@@ -69,7 +71,12 @@ public class ModelExtensionProcessor {
 				return null;
 			String bundleName = contributor.getName();
 			String path = bundleName + '/' + uri;
-			return URI.createPlatformPluginURI(path, false);
+			try {
+				return URI.createPlatformPluginURI(path, false);
+			} catch (RuntimeException e) {
+				log("Model extension has invalid location", e); //$NON-NLS-1$
+				return null;
+			}
 		}
 
 		public String getParentID() {
@@ -96,13 +103,30 @@ public class ModelExtensionProcessor {
 		ModelExtension[] extensions = readExtensionRegistry();
 		for (ModelExtension extension : extensions) {
 			URI uri = extension.getURI();
-			if (uri == null)
+			if (uri == null) {
+				log("Unable to find location for the model extension \"{0}\"", //$NON-NLS-1$
+						extension.contributor.getName());
 				continue;
-			Resource resource = new ResourceSetImpl().getResource(uri, true);
-			MPart<?> extPart = (MPart<?>) resource.getContents().get(0);
+			}
+			Resource resource;
+			try {
+				resource = new ResourceSetImpl().getResource(uri, true);
+			} catch (RuntimeException e) {
+				log("Unable to read model extension", e); //$NON-NLS-1$
+				continue;
+			}
+			EList contents = resource.getContents();
+			if (contents.isEmpty())
+				continue;
+			Object extensionRoot = contents.get(0);
+			if (!(extensionRoot instanceof MPart<?>)) {
+				log("Unable to create model extension \"{0}\"", //$NON-NLS-1$
+						extension.contributor.getName());
+				continue;
+			}
 			MPart defaultParent = findDefaultParent(extension.getParentID());
 			if (defaultParent != null)
-				defaultParent.getChildren().add(extPart);
+				defaultParent.getChildren().add((MPart<?>) extensionRoot);
 		}
 	}
 
@@ -176,5 +200,23 @@ public class ModelExtensionProcessor {
 		ModelExtension[] typedResult = new ModelExtension[result.size()];
 		result.toArray(typedResult);
 		return typedResult;
+	}
+
+	private void log(String msg, Exception e) {
+		IEclipseContext context = e4Window.getContext();
+		Logger logger = (Logger) context.get(Logger.class.getName());
+		if (logger == null)
+			e.printStackTrace();
+		else
+			logger.error(e, msg);
+	}
+
+	private void log(String msg, String arg) {
+		IEclipseContext context = e4Window.getContext();
+		Logger logger = (Logger) context.get(Logger.class.getName());
+		if (logger == null)
+			System.err.println(msg);
+		else
+			logger.error(msg, arg);
 	}
 }
