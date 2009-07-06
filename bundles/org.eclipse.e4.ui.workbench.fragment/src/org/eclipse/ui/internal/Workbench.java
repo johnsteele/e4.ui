@@ -15,13 +15,11 @@ package org.eclipse.ui.internal;
 
 import com.ibm.icu.util.ULocale;
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -93,7 +91,6 @@ import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -407,13 +404,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * state. Initially -1 for unknown number.
 	 */
 	private int progressCount = -1;
-
-	/**
-	 * A field to hold the workbench windows that have been restored. In the
-	 * event that not all windows have been restored, this field allows the
-	 * openWindowsAfterRestore method to open some windows.
-	 */
-	private WorkbenchWindow[] createdWindows;
 
 	/**
 	 * Listener list for registered IWorkbenchListeners .
@@ -2205,119 +2195,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * RESTORE_CODE_EXIT if the workbench should close immediately
 	 */
 	/* package */IStatus restoreState() {
-
-		if (!getWorkbenchConfigurer().getSaveAndRestore()) {
-			String msg = WorkbenchMessages.Workbench_restoreDisabled;
-			return new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
-					IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, null);
-		}
-		// Read the workbench state file.
-		final File stateFile = getWorkbenchStateFile();
-		// If there is no state file cause one to open.
-		if (stateFile == null || !stateFile.exists()) {
-			String msg = WorkbenchMessages.Workbench_noStateToRestore;
-			return new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
-					IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, null);
-		}
-
-		final IStatus result[] = { new Status(IStatus.OK,
-				WorkbenchPlugin.PI_WORKBENCH, IStatus.OK, "", null) }; //$NON-NLS-1$
-		SafeRunner.run(new SafeRunnable(WorkbenchMessages.ErrorReadingState) {
-			public void run() throws Exception {
-				FileInputStream input = new FileInputStream(stateFile);
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(input, "utf-8")); //$NON-NLS-1$
-				IMemento memento = XMLMemento.createReadRoot(reader);
-
-				// Validate known version format
-				String version = memento
-						.getString(IWorkbenchConstants.TAG_VERSION);
-				boolean valid = false;
-				for (int i = 0; i < VERSION_STRING.length; i++) {
-					if (VERSION_STRING[i].equals(version)) {
-						valid = true;
-						break;
-					}
-				}
-				if (!valid) {
-					reader.close();
-					String msg = WorkbenchMessages.Invalid_workbench_state_ve;
-					MessageDialog.openError((Shell) null,
-							WorkbenchMessages.Restoring_Problems, msg);
-					stateFile.delete();
-					result[0] = new Status(IStatus.ERROR,
-							WorkbenchPlugin.PI_WORKBENCH,
-							IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, null);
-					return;
-				}
-
-				// Validate compatible version format
-				// We no longer support the release 1.0 format
-				if (VERSION_STRING[0].equals(version)) {
-					reader.close();
-					String msg = WorkbenchMessages.Workbench_incompatibleSavedStateVersion;
-					boolean ignoreSavedState = new MessageDialog(null,
-							WorkbenchMessages.Workbench_incompatibleUIState,
-							null, msg, MessageDialog.WARNING, new String[] {
-									IDialogConstants.OK_LABEL,
-									IDialogConstants.CANCEL_LABEL }, 0).open() == 0;
-					// OK is the default
-					if (ignoreSavedState) {
-						stateFile.delete();
-						result[0] = new Status(IStatus.WARNING,
-								WorkbenchPlugin.PI_WORKBENCH,
-								IWorkbenchConfigurer.RESTORE_CODE_RESET, msg,
-								null);
-					} else {
-						result[0] = new Status(IStatus.WARNING,
-								WorkbenchPlugin.PI_WORKBENCH,
-								IWorkbenchConfigurer.RESTORE_CODE_EXIT, msg,
-								null);
-					}
-					return;
-				}
-
-				// Restore the saved state
-				final IStatus restoreResult = restoreState(memento);
-				reader.close();
-				if (restoreResult.getSeverity() == IStatus.ERROR) {
-					StartupThreading
-							.runWithoutExceptions(new StartupRunnable() {
-
-								public void runWithException() throws Throwable {
-									StatusManager.getManager().handle(
-											restoreResult, StatusManager.LOG);
-								}
-							});
-
-				}
-			}
-
-			public void handleException(final Throwable e) {
-				StartupThreading.runWithoutExceptions(new StartupRunnable() {
-
-					public void runWithException() {
-						handle(e);
-						String msg = e.getMessage() == null ? "" : e.getMessage(); //$NON-NLS-1$
-						result[0] = new Status(IStatus.ERROR,
-								WorkbenchPlugin.PI_WORKBENCH,
-								IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, e);
-						stateFile.delete();
-					}
-				});
-			}
-
-			private void handle(final Throwable e) {
-				super.handleException(e);
-			}
-		});
-		// ensure at least one window was opened
-		if (result[0].isOK() && windowManager.getWindows().length == 0) {
-			String msg = WorkbenchMessages.Workbench_noWindowsRestored;
-			result[0] = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-					IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, null);
-		}
-		return result[0];
+		// TBD the Save/Restore functionality is not implemented
+		String msg = WorkbenchMessages.Workbench_restoreDisabled;
+		return new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
+				IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, null);
 	}
 
 	/*
@@ -2415,50 +2296,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 	public boolean restart() {
 		// this is the return code from run() to trigger a restart
 		return close(PlatformUI.RETURN_RESTART, false);
-	}
-
-	/*
-	 * Restores the state of the previously saved workbench
-	 */
-	private IStatus restoreState(final IMemento memento) {
-
-		final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,
-				IStatus.OK, WorkbenchMessages.Workbench_problemsRestoring, null);
-
-		final boolean showProgress = PrefUtil.getAPIPreferenceStore()
-				.getBoolean(
-						IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
-
-		try {
-			/*
-			 * Restored windows will be set in the createdWindows field to be
-			 * used by the openWindowsAfterRestore() method
-			 */
-			if (!showProgress) {
-				doRestoreState(memento, result);
-			} else {
-				// Retrieve how many plug-ins were loaded while restoring the
-				// workbench
-				Integer lastProgressCount = memento
-						.getInteger(IWorkbenchConstants.TAG_PROGRESS_COUNT);
-
-				// If we don't know how many plug-ins were loaded last time,
-				// assume we are loading half of the installed plug-ins.
-				final int expectedProgressCount = Math.max(1,
-						lastProgressCount == null ? WorkbenchPlugin
-								.getDefault().getBundleCount() / 2
-								: lastProgressCount.intValue());
-
-				runStartupWithProgress(expectedProgressCount, new Runnable() {
-					public void run() {
-						doRestoreState(memento, result);
-					}
-				});
-			}
-		} finally {
-			openWindowsAfterRestore();
-		}
-		return result;
 	}
 
 	/**
@@ -3680,118 +3517,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	public final Object getAdapter(final Class key) {
 		return serviceLocator.getService(key);
-	}
-
-	private void doRestoreState(final IMemento memento, final MultiStatus status) {
-		IMemento childMem;
-		try {
-			UIStats.start(UIStats.RESTORE_WORKBENCH, "MRUList"); //$NON-NLS-1$
-			IMemento mruMemento = memento
-					.getChild(IWorkbenchConstants.TAG_MRU_LIST);
-			if (mruMemento != null) {
-				status.add(getEditorHistory().restoreState(mruMemento));
-			}
-		} finally {
-			UIStats.end(UIStats.RESTORE_WORKBENCH, this, "MRUList"); //$NON-NLS-1$
-		}
-
-		// Restore advisor state.
-		IMemento advisorState = memento
-				.getChild(IWorkbenchConstants.TAG_WORKBENCH_ADVISOR);
-		if (advisorState != null) {
-			status.add(getAdvisor().restoreState(advisorState));
-		}
-
-		// Get the child windows.
-		IMemento[] children = memento
-				.getChildren(IWorkbenchConstants.TAG_WINDOW);
-
-		createdWindows = new WorkbenchWindow[children.length];
-
-		// Read the workbench windows.
-		for (int i = 0; i < children.length; i++) {
-			childMem = children[i];
-			final WorkbenchWindow[] newWindow = new WorkbenchWindow[1];
-
-			StartupThreading.runWithoutExceptions(new StartupRunnable() {
-
-				public void runWithException() {
-					newWindow[0] = newWorkbenchWindow();
-					newWindow[0].create();
-				}
-			});
-			createdWindows[i] = newWindow[0];
-
-			// allow the application to specify an initial perspective to open
-			// @issue temporary workaround for ignoring initial perspective
-			// String initialPerspectiveId =
-			// getAdvisor().getInitialWindowPerspectiveId();
-			// if (initialPerspectiveId != null) {
-			// IPerspectiveDescriptor desc =
-			// getPerspectiveRegistry().findPerspectiveWithId(initialPerspectiveId);
-			// result.merge(newWindow.restoreState(childMem, desc));
-			// }
-			// add the window so that any work done in newWindow.restoreState
-			// that relies on Workbench methods has windows to work with
-			windowManager.add(newWindow[0]);
-
-			// now that we've added it to the window manager we need to listen
-			// for any exception that might hose us before we get a chance to
-			// open it. If one occurs, remove the new window from the manager.
-			// Assume that the new window is a phantom for now
-			boolean restored = false;
-			try {
-				status.merge(newWindow[0].restoreState(childMem, null));
-				try {
-					newWindow[0].fireWindowRestored();
-				} catch (WorkbenchException e) {
-					status.add(e.getStatus());
-				}
-				// everything worked so far, don't close now
-				restored = true;
-			} finally {
-				if (!restored) {
-					// null the window in newWindowHolder so that it won't be
-					// opened later on
-					createdWindows[i] = null;
-					StartupThreading
-							.runWithoutExceptions(new StartupRunnable() {
-
-								public void runWithException() throws Throwable {
-									newWindow[0].close();
-								}
-							});
-				}
-			}
-		}
-	}
-
-	private void openWindowsAfterRestore() {
-		if (createdWindows == null) {
-			return;
-		}
-		// now open the windows (except the ones that were nulled because we
-		// closed them above)
-		for (int i = 0; i < createdWindows.length; i++) {
-			if (createdWindows[i] != null) {
-				final WorkbenchWindow myWindow = createdWindows[i];
-				StartupThreading.runWithoutExceptions(new StartupRunnable() {
-
-					public void runWithException() throws Throwable {
-						boolean opened = false;
-						try {
-							myWindow.open();
-							opened = true;
-						} finally {
-							if (!opened) {
-								myWindow.close();
-							}
-						}
-					}
-				});
-			}
-		}
-		createdWindows = null;
 	}
 
 	/*
