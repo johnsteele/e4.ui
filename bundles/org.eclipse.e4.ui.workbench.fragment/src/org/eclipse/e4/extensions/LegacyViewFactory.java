@@ -109,7 +109,7 @@ public class LegacyViewFactory extends SWTPartFactory {
 					null, UISchedulerStrategy.getInstance());
 			outputContext.set(IContextConstants.DEBUG_STRING,
 					"ContributedPart-output"); //$NON-NLS-1$
-			localContext.set(IServiceConstants.OUTPUTS, outputContext);
+			localContext.set(IContextConstants.OUTPUTS, outputContext);
 			localContext.set(IEclipseContext.class.getName(), outputContext);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 
@@ -229,7 +229,7 @@ public class LegacyViewFactory extends SWTPartFactory {
 					null, UISchedulerStrategy.getInstance());
 			outputContext.set(IContextConstants.DEBUG_STRING,
 					"ContributedPart-output"); //$NON-NLS-1$
-			localContext.set(IServiceConstants.OUTPUTS, outputContext);
+			localContext.set(IContextConstants.OUTPUTS, outputContext);
 			localContext.set(IEclipseContext.class.getName(), outputContext);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 

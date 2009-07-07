@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -448,7 +450,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		e4Context.set(ISelectionProvider.class.getName(), provider);
 		if (provider != null) {
 			final IEclipseContext outputContext = (IEclipseContext) e4Context
-					.get(IServiceConstants.OUTPUTS);
+					.get(IContextConstants.OUTPUTS);
 			provider
 					.addSelectionChangedListener(new ISelectionChangedListener() {
 						public void selectionChanged(SelectionChangedEvent event) {
