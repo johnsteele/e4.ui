@@ -13,7 +13,7 @@ package org.eclipse.e4.workbench.ui.menus;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
+import java.util.Map;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -21,6 +21,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
+import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
@@ -213,10 +214,10 @@ public class MenuContribution {
 		String cmdId = MenuHelper.getCommandId(element);
 		String id = MenuHelper.getId(element);
 		String label = MenuHelper.getLabel(element);
+		ICommandService cs = (ICommandService) context
+				.get(ICommandService.class.getName());
+		Command cmd = cs.getCommand(cmdId);
 		if (label == null) {
-			ICommandService cs = (ICommandService) context
-					.get(ICommandService.class.getName());
-			Command cmd = cs.getCommand(cmdId);
 			if (cmd.isDefined()) {
 				try {
 					label = cmd.getName();
@@ -228,6 +229,16 @@ public class MenuContribution {
 		}
 		MMenuItem item = MenuHelper.createMenuItem(context, label, imagePath,
 				id, cmdId);
+		final Map<String, String> parms = MenuHelper.getParameters(element);
+		if (!parms.isEmpty()) {
+			final EList<MParameter> modelParms = item.getParameters();
+			for (Map.Entry<String, String> entry : parms.entrySet()) {
+				MParameter p = ApplicationFactory.eINSTANCE.createMParameter();
+				p.setName(entry.getKey());
+				p.setValue(entry.getValue());
+				modelParms.add(p);
+			}
+		}
 		return item;
 	}
 }

@@ -608,8 +608,9 @@ public class MenuHelper {
 	 * @return A map of parameters names to parameter values. All Strings. The
 	 *         map may be empty.
 	 */
-	public static Map getParameters(IConfigurationElement element) {
-		HashMap map = new HashMap();
+	public static Map<String, String> getParameters(
+			IConfigurationElement element) {
+		HashMap<String, String> map = new HashMap<String, String>();
 		IConfigurationElement[] parameters = element
 				.getChildren(IWorkbenchRegistryConstants.TAG_PARAMETER);
 		for (int i = 0; i < parameters.length; i++) {

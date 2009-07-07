@@ -13,6 +13,7 @@ package org.eclipse.ui;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -41,6 +42,8 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  * 
  */
 public class LegacyHandlerService implements IHandlerService {
+	private static final String PARM_MAP = "legacyParameterMap"; //$NON-NLS-1$
+
 	public static class HandlerProxy {
 		IHandler handler = null;
 		private Command command;
@@ -64,8 +67,8 @@ public class LegacyHandlerService implements IHandlerService {
 			context.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, shell);
 			context.set(ISources.ACTIVE_SHELL_NAME, shell);
 			LegacyEvalContext legacy = new LegacyEvalContext(context);
-			ExecutionEvent event = new ExecutionEvent(command,
-					Collections.EMPTY_MAP, null, legacy);
+			ExecutionEvent event = new ExecutionEvent(command, (Map) context
+					.get(PARM_MAP), null, legacy);
 			try {
 				handler.execute(event);
 			} catch (ExecutionException e) {
@@ -403,9 +406,11 @@ public class LegacyHandlerService implements IHandlerService {
 	public Object executeCommand(String commandId, Event event)
 			throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException {
-		EHandlerService hs = (EHandlerService) eclipseContext
-				.get(EHandlerService.class.getName());
-		return hs.executeHandler(commandId);
+		ECommandService cs = (ECommandService) eclipseContext
+				.get(ECommandService.class.getName());
+		final Command command = cs.getCommand(commandId);
+		return executeCommand(ParameterizedCommand.generateCommand(command,
+				null), event);
 	}
 
 	/*
@@ -418,7 +423,10 @@ public class LegacyHandlerService implements IHandlerService {
 	public Object executeCommand(ParameterizedCommand command, Event event)
 			throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException {
-		return executeCommand(command.getId(), event);
+		EHandlerService hs = (EHandlerService) eclipseContext
+				.get(EHandlerService.class.getName());
+		hs.getContext().set(PARM_MAP, command.getParameterMap());
+		return hs.executeHandler(command);
 	}
 
 	/*
@@ -435,7 +443,7 @@ public class LegacyHandlerService implements IHandlerService {
 		if (context instanceof LegacyEvalContext) {
 			EHandlerService hs = (EHandlerService) ((LegacyEvalContext) context).eclipseContext
 					.get(EHandlerService.class.getName());
-			return hs.executeHandler(command.getId());
+			return hs.executeHandler(command);
 		}
 		return executeCommand(command, event);
 	}
