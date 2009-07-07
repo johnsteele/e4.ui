@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MSashForm;
 import org.eclipse.e4.ui.model.application.MStack;
+import org.eclipse.e4.ui.model.application.MTrimmedPart;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
@@ -815,6 +816,9 @@ public class Perspective {
 	 * @param e4Window
 	 */
 	private void createLegacyWBModel(MWindow e4Window) {
+		MTrimmedPart<MPart<?>> trim = ApplicationFactory.eINSTANCE
+				.createMTrimmedPart();
+
 		// Add a 'stickyRight' stack and populate it
 		MSashForm<MPart<?>> mainSash = ApplicationFactory.eINSTANCE
 				.createMSashForm();
@@ -844,8 +848,8 @@ public class Perspective {
 			}
 		}
 		mainSash.getChildren().add(stickyRight);
-
-		e4Window.getChildren().add(mainSash);
+		trim.getChildren().add(mainSash);
+		e4Window.getChildren().add(trim);
 	}
 
 	private void loadExtensions(MPerspective<?> perspModel,
