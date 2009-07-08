@@ -27,7 +27,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -75,8 +74,7 @@ public class LegacyViewFactory extends SWTPartFactory {
 	 * @return
 	 */
 	private Control createEditor(final MContributedPart<MPart<?>> part,
-			IConfigurationElement editorElement) {
-		final Composite parent = (Composite) getParentWidget(part);
+			IConfigurationElement editorElement, final Composite parent) {
 		EditorDescriptor desc = new EditorDescriptor(part.getId(),
 				editorElement);
 
@@ -208,9 +206,7 @@ public class LegacyViewFactory extends SWTPartFactory {
 	}
 
 	private Control createView(MContributedPart<MPart<?>> part,
-			IConfigurationElement viewContribution) {
-		Composite parent = (Composite) getParentWidget(part);
-
+			IConfigurationElement viewContribution, Composite parent) {
 		IViewPart impl = null;
 		try {
 			impl = (IViewPart) viewContribution
@@ -257,7 +253,7 @@ public class LegacyViewFactory extends SWTPartFactory {
 
 			localContext.set(MContributedPart.class.getName(), part);
 
-			// Popupate and scrape the old-style contributions...
+			// Populate and scrape the old-style contributions...
 			IMenuService menuSvc = (IMenuService) localContext
 					.get(IMenuService.class.getName());
 
@@ -288,15 +284,20 @@ public class LegacyViewFactory extends SWTPartFactory {
 	}
 
 	@Override
-	public Object createWidget(MPart<?> part) {
+	public Object createWidget(MPart<?> part, Object parent) {
 		String partId = part.getId();
+
+		if (!(parent instanceof Composite))
+			return null;
+
+		Composite parentComposite = (Composite) parent;
 
 		Control newCtrl = null;
 		if (part instanceof MPerspective) {
 			IConfigurationElement perspFactory = findPerspectiveFactory(partId);
 			if (perspFactory != null || part.getChildren().size() > 0) {
 				newCtrl = createPerspective((MPerspective<MPart<?>>) part,
-						perspFactory);
+						perspFactory, parentComposite);
 			}
 			return newCtrl;
 		} else if (part instanceof MContributedPart) {
@@ -311,12 +312,12 @@ public class LegacyViewFactory extends SWTPartFactory {
 			IConfigurationElement viewElement = findViewConfig(partId);
 			if (viewElement != null)
 				newCtrl = createView((MContributedPart<MPart<?>>) part,
-						viewElement);
+						viewElement, parentComposite);
 
 			IConfigurationElement editorElement = findEditorConfig(partId);
 			if (editorElement != null)
 				newCtrl = createEditor((MContributedPart<MPart<?>>) part,
-						editorElement);
+						editorElement, parentComposite);
 			if (newCtrl == null) {
 				Composite pc = (Composite) getParentWidget(part);
 				Label lbl = new Label(pc, SWT.BORDER);
@@ -332,15 +333,12 @@ public class LegacyViewFactory extends SWTPartFactory {
 	/**
 	 * @param part
 	 * @param perspFactory
+	 * @param parentComposite
 	 * @return
 	 */
 	private Control createPerspective(MPerspective<MPart<?>> part,
-			IConfigurationElement perspFactory) {
-		Widget parentWidget = getParentWidget(part);
-		if (!(parentWidget instanceof Composite))
-			return null;
-
-		Composite perspArea = new Composite((Composite) parentWidget, SWT.NONE);
+			IConfigurationElement perspFactory, Composite parentComposite) {
+		Composite perspArea = new Composite(parentComposite, SWT.NONE);
 		perspArea.setLayout(new FillLayout());
 
 		return perspArea;
