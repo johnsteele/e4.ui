@@ -14,7 +14,7 @@ ETabFolder:selected {
 }
 
 ETabFolder.active {
-	background-color: rgb(246, 246, 251);
+	background-color: rgb(241, 240, 245);
 }
 
 ETabFolder.active:selected {
@@ -29,6 +29,8 @@ ToolBar {
 	background-color: rgb(246, 246, 251);
 }
 
+SashForm {
+	background-color: rgb(241, 240, 245); 
 
 Label {
 	background-color: rgb(246, 246, 251);
