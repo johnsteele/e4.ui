@@ -28,7 +28,7 @@ public class Activator implements BundleActivator {
 
     private ServiceTracker httpServiceTracker;
     protected static volatile BundleContext bundleContext;
-    private static boolean DEBUG;
+    static boolean DEBUG;
     {
     	String debug = System.getProperty("org.eclipse.e4.pde.webui.debug");
 		if (debug != null && !"false".equals(debug.toLowerCase())) {

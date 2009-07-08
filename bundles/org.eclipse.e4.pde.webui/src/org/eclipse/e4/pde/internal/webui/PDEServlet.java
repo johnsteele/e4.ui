@@ -128,7 +128,9 @@ public class PDEServlet extends HttpServlet {
 			writer.append("<input type='submit' value='Login' />");
 			writer.append("<input type='hidden' name='nextURL' value='" + req.getParameter("nextURL") + "' />");
 			writer.append("</form>");
-			writer.append("<script type='text/javascript' src='/listCookies.js'></script>");
+			if (Activator.DEBUG) {
+				writer.append("<script type='text/javascript' src='/listCookies.js'></script>");
+			}
 			writer.append("</body>");
 			writer.append("</html>");
 			return;
