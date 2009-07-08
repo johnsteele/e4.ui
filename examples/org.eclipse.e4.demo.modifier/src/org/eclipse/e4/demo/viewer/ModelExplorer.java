@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.viewer;
 
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +29,6 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.internal.context.EclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MContributedPart;
@@ -367,7 +368,7 @@ public class ModelExplorer {
 	// that objects (MParts, CTabs, and so on) don't create unnecessary
 	// contexts.
 	public void contextSet(IEclipseContext context) {
-		Object parent = context.get(EclipseContext.PARENT);
+		Object parent = context.get(IContextConstants.PARENT);
 		if (parent instanceof IEclipseContext)
 			outputContext = (IEclipseContext) parent;
 		else
