@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -37,7 +36,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.LegacyHandlerService;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
@@ -191,6 +192,11 @@ public abstract class PartSite implements IWorkbenchPartSite {
 				new WorkbenchLocationService(IServiceScopes.PARTSITE_SCOPE,
 						getWorkbenchWindow().getWorkbench(),
 						getWorkbenchWindow(), this, null, null, 2));
+
+		// local handler service for local handlers
+		IHandlerService handlerService = new LegacyHandlerService(e4Context);
+		serviceLocator.registerService(IHandlerService.class, handlerService);
+
 		// added back for legacy reasons
 		serviceLocator.registerService(IWorkbenchPartSite.class, this);
 		e4Context.set(IWorkbenchSiteProgressService.class.getName(),
