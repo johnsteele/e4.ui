@@ -76,8 +76,8 @@ public class Activator implements BundleActivator {
 
 		public Object addingService(ServiceReference reference) {
             HttpService httpService = (HttpService) super.addingService(reference); // calls context.getService(reference);
+            PORT = reference.getProperty(JettyConstants.HTTP_PORT);
             if (DEBUG) {
-            	PORT = reference.getProperty(JettyConstants.HTTP_PORT);
 				System.out.println("listening on: " + PORT);
             }
             if (httpService == null)
