@@ -28,7 +28,7 @@
          </property>
          <property
                name="applicationCSS"
-               value="platform:/plugin/org.eclipse.e4.ui.examples.legacy.workbench/css/xp-silver-legacy.css">
+               value="platform:/plugin/org.eclipse.e4.ui.examples.legacy.workbench/css/webby.css">
          </property>
          <property
           		name="introTitle"
