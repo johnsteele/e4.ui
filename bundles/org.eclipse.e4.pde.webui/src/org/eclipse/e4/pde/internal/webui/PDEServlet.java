@@ -10,16 +10,22 @@
  *******************************************************************************/
 package org.eclipse.e4.pde.internal.webui;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -33,15 +39,20 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EPackageRegistryImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.Resource.Factory;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.BasicExtendedMetaData;
 import org.eclipse.emf.ecore.xmi.XMLResource;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -81,9 +92,68 @@ public class PDEServlet extends HttpServlet {
 					resp.setStatus(405);
 					return;
 				}
+				InputStream is = req.getInputStream(); 
+				int BUFFER_SIZE = 8192;
+				byte[] buffer = new byte[BUFFER_SIZE];
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				int numRead = 0;
+				while ((numRead = is.read(buffer)) > 0) {
+					os.write(buffer, 0, numRead);
+				}
+				String jsonString = new String(os.toByteArray(), "ISO-8859-1");
+				Object json = JSONUtil.read(jsonString);
+//				System.out.println(json);
+				URI siteEcoreURI = URI.createPlatformPluginURI("/org.eclipse.e4.pde.webui/model/Site.ecore", true);
+				ResourceSet resourceSet = createResourceSet(siteEcoreURI);
+				EPackage ePackage = resourceSet.getPackageRegistry().getEPackage("platform:/plugin/org.eclipse.e4.pde.site.model/site.xsd");
+
+				Resource.Factory factory = (Factory) resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().get(Resource.Factory.Registry.DEFAULT_EXTENSION);
+				URI uri = URI.createPlatformResourceURI(resource.getFullPath()
+						.toString(), true);
+				Resource r = factory.createResource(uri);
+				
+				EClass documentRootClass = (EClass) ePackage.getEClassifier("DocumentRoot");
+				EObject documentRoot = ePackage.getEFactoryInstance().create(documentRootClass);
+				EClass siteClass = (EClass) ePackage.getEClassifier("Site");
+				EObject site = ePackage.getEFactoryInstance().create(siteClass);
+				fill(site, (HashMap) json, ePackage.getEFactoryInstance());
+				documentRoot.eSet(documentRootClass.getEStructuralFeature("site"), site);
+				r.getContents().add(documentRoot);
+				
+				OutputStream outputStream = resourceSet.getURIConverter().createOutputStream(uri);
+				r.save(outputStream, new HashMap());
+				outputStream.close();
 		}
 	}
 	
+	private void fill(EObject eObject, HashMap json, EFactory eFactory) {
+		for(Iterator it = json.entrySet().iterator(); it.hasNext(); ) {
+			Entry entry = (Entry) it.next();
+			EStructuralFeature feature = eObject.eClass().getEStructuralFeature((String) entry.getKey());
+			if (entry.getValue() instanceof Collection) {
+				Collection targetCollection = (Collection) eObject.eGet(feature);
+				Collection sourceCollection = (Collection) entry.getValue();
+				for (Iterator it2 = sourceCollection.iterator(); it2
+						.hasNext();) {
+					Object element = it2.next();
+					EClass elementClass = (EClass) feature.getEType();
+					EObject targetElement = eFactory.create(elementClass);
+					fill(targetElement, (HashMap) element, eFactory);
+					targetCollection.add(targetElement);
+				}
+			} else if (entry.getValue() instanceof Map) {
+				EClass elementClass = (EClass) feature.getEType();
+				EObject targetElement = eFactory.create(elementClass);
+				fill(targetElement, (HashMap) entry.getValue(), eFactory);
+				eObject.eSet(feature, targetElement);
+			} else if (entry.getValue() instanceof String) {
+				eObject.eSet(feature, entry.getValue());
+			} else if (entry.getValue() != null) {
+				throw new RuntimeException("unsupported: " + entry.getValue());
+			}
+		}
+	}
+
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		String pathInfo = req.getPathInfo();
 		if (pathInfo.startsWith("/login")) {

@@ -25,7 +25,45 @@ window.e4 = window.e4 || {
 		doSave : function(callback) {}
 	}
 };
- 
+
+treeRoot = {categories:{}, children:[]};
+
+function doSave() {
+	var jsonData = {categoryDef: [], feature: []};
+	for (var i in treeRoot.children) {
+	  var child = treeRoot.children[i];
+	  if (child.id) {
+	    // child is a feature
+	    jsonData.feature.push(child);
+	  } else {
+	    // child is a category
+	    var category = { name: child.name, label: child.label, description: child.label};
+	    jsonData.categoryDef.push(category);
+	    for (var j in child.children) {
+	      var feature = child.children[j];
+	      feature.category = {name: child.name};
+	      jsonData.feature.push(feature);
+	    }
+	  }
+	}
+	var jsonString = dojo.toJson(jsonData);
+	//alert(jsonString);
+	dojo.rawXhrPut({
+        url: "/pde/site" + dojo.doc.location.hash.substring(1), 
+        putData: jsonString,
+        timeout: 5000,
+        load: function(response, ioArgs) {
+        	//alert("success: " + response + ", " + ioArgs);
+			window.e4.status.setDirty(false);
+        	return response;
+        },
+        error: function(response, ioArgs) {
+        	alert("ERROR: " + response + ", " + ioArgs);
+        	return response;
+        }
+	});
+}
+
 dojo.require("dijit.dijit");
 dojo.require("dijit.Dialog");
 dojo.require("dijit.Tree");
@@ -94,7 +132,7 @@ window.onbeforeunload = function (evt) {
   }
 };
 dojo.addOnLoad(function(){
-	dojo.xhrGet( {
+	dojo.xhrGet({
         url: "/pde/site" + dojo.doc.location.hash.substring(1), 
         handleAs: "json-comment-filtered",
         timeout: 5000,
@@ -113,7 +151,6 @@ dojo.addOnLoad(function(){
 });
 		
 function createTree(jsonData){
-	var treeRoot = {categories:{}, children:[]};
 	for (var c in jsonData.categoryDef) {
 	  var category = jsonData.categoryDef[c];
 	  treeRoot.categories[category.name] = category;
@@ -237,5 +274,5 @@ function createTree(jsonData){
     dojo.connect(dojo.byId('buildAll'), 'onclick', function() {
     	alert("Sorry - 'BuildAll' is not yet implemented.");
     });
-    window.e4.saveable.doSave("alert('saving'); window.e4.status.setDirty(false);");
+    window.e4.saveable.doSave("doSave();");
 }
