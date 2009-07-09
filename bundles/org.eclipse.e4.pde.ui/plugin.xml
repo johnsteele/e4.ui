@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="org.eclipse.e4.pde.internal.ui.SiteEditor"
+            class="org.eclipse.e4.pde.internal.ui.BrowserSiteEditor"
             default="false"
             icon="icons/obj16/site_xml_obj.gif"
             id="org.eclipse.e4.pde.ui.siteEditor"

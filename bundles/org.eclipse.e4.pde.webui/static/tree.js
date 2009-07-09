@@ -8,6 +8,24 @@
  * Contributors:
  * Boris Bokowski, IBM Corporation - initial API and implementation
  *******************************************************************************/
+
+var dirty = false;
+
+window.e4 = window.e4 || {
+	status : {
+		setMessage : function(msg) { alert(msg); },
+		setDirty : function(d) {
+			dirty = d;
+			dojo.byId("dirtyIndicator").style.visibility = d ? "visible" : "hidden";
+			dojo.byId("saveButton").style.visibility = d ? "visible" : "hidden";
+		}
+	},
+	
+	saveable : {
+		doSave : function(callback) {}
+	}
+};
+ 
 dojo.require("dijit.dijit");
 dojo.require("dijit.Dialog");
 dojo.require("dijit.Tree");
@@ -17,13 +35,6 @@ dojo.require("dijit.layout.BorderContainer");
 dojo.require("dijit.layout.ContentPane");
 dojo.require("dojo.data.ItemFileReadStore");
 dojo.require("dojo.cookie");
-
-var dirty = false;
-function setDirty(d) {
-	dirty = d;
-	dojo.byId("dirtyIndicator").style.visibility = d ? "visible" : "hidden";
-	dojo.byId("saveButton").style.visibility = d ? "visible" : "hidden";
-}
 
 var modelPrototype = {
 	destroy: function(){
@@ -68,11 +79,11 @@ var modelPrototype = {
 	},
 		
 	onChange: function(/*dojo.data.Item*/ item){
-		setDirty(true);
+		window.e4.status.setDirty(true);
 	},
 	
 	onChildrenChange: function(/*dojo.data.Item*/ parent, /*dojo.data.Item[]*/ newChildrenList){
-		setDirty(true);
+		window.e4.status.setDirty(true);
 	}
 };
 
@@ -226,4 +237,5 @@ function createTree(jsonData){
     dojo.connect(dojo.byId('buildAll'), 'onclick', function() {
     	alert("Sorry - 'BuildAll' is not yet implemented.");
     });
+    window.e4.saveable.doSave("alert('saving'); window.e4.status.setDirty(false);");
 }
