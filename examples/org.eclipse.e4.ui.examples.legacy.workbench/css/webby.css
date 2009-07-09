@@ -6,7 +6,7 @@ ETabFolder {
 	maximize-visible: true;
 	minimize-visible: true;
 	webbyStyle: true;
-	margin: 3;
+	margin: 3px;
 }
 
 ETabFolder:selected {
@@ -14,13 +14,13 @@ ETabFolder:selected {
 }
 
 ETabFolder.active {
-	background-color: rgb(241, 240, 245);
+	background-color: rgb(224, 226, 235);
 }
 
 ETabFolder.active:selected {
 	background-color: rgb(255, 255, 255) rgb(255, 247, 229); 
 }
-  
+
 Composite {
 	background-color: rgb(241, 240, 245); 
 }
@@ -28,6 +28,7 @@ Composite {
 ToolBar {
 	background-color: rgb(246, 246, 251);
 }
+
 
 SashForm {
 	background-color: rgb(241, 240, 245); 
