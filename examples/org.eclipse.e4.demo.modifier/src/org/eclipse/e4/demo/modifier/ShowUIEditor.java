@@ -17,8 +17,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public class ShowUIEditor extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		System.out.println("show UI Editor");
-		MApplication model = (MApplication) HandlerUtil.getVariable(event, MApplication.class.getName());
+		MApplication<?> model = (MApplication<?>) HandlerUtil.getVariable(event, MApplication.class.getName());
 		Shell curWindow = (Shell) model.getContext().get(IServiceConstants.ACTIVE_SHELL);
 		if (curWindow == null)
 			return null;
@@ -29,6 +28,10 @@ public class ShowUIEditor extends AbstractHandler {
 			Shell editorShell = (Shell) uiEditor.getWidget();
 			if(editorShell == null) {
 				uiEditor.setVisible(false);
+			}
+			else {
+				if (!editorShell.isDisposed())
+					return null;
 			}
 		}
 		uiEditor.setVisible(true);
