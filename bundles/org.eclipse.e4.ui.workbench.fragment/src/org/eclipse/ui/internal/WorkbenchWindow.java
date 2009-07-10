@@ -128,7 +128,6 @@ import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.tweaklets.WorkbenchImplementation;
 import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceScopes;
@@ -1840,16 +1839,16 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			getActionBarAdvisor().fillActionBars(flags);
 			//
 			// 3.3 start
-			final IMenuService menuService = (IMenuService) serviceLocator
-					.getService(IMenuService.class);
-			menuService.populateContributionManager(
-					(ContributionManager) getActionBars().getMenuManager(),
-					MenuUtil.MAIN_MENU);
-			ICoolBarManager coolbar = getActionBars().getCoolBarManager();
-			if (coolbar != null) {
-				menuService.populateContributionManager(
-						(ContributionManager) coolbar, MenuUtil.MAIN_TOOLBAR);
-			}
+			// final IMenuService menuService = (IMenuService) serviceLocator
+			// .getService(IMenuService.class);
+			// menuService.populateContributionManager(
+			// (ContributionManager) getActionBars().getMenuManager(),
+			// MenuUtil.MAIN_MENU);
+			// ICoolBarManager coolbar = getActionBars().getCoolBarManager();
+			// if (coolbar != null) {
+			// menuService.populateContributionManager(
+			// (ContributionManager) coolbar, MenuUtil.MAIN_TOOLBAR);
+			// }
 			// 3.3 end
 		} finally {
 			workbench.largeUpdateEnd();

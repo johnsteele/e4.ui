@@ -56,6 +56,7 @@ public class ActionSet {
 	 * @param element
 	 */
 	private void addAction(MMenu menu, IConfigurationElement element) {
+		final String elementId = MenuHelper.getId(element);
 		String path = element
 				.getAttribute(IWorkbenchRegistryConstants.ATT_MENUBAR_PATH);
 		if (path == null) {
@@ -64,8 +65,10 @@ public class ActionSet {
 		Path menuPath = new Path(path);
 		MMenu parentMenu = findMenuFromPath(menu, menuPath, 0);
 		if (parentMenu == null) {
-			Activator.trace(Policy.DEBUG_MENUS,
-					"Failed to find menu for " + path, null); //$NON-NLS-1$
+			Activator
+					.trace(
+							Policy.DEBUG_MENUS,
+							"Failed to find menu for action " + elementId + ':' + path, null); //$NON-NLS-1$
 			return;
 		}
 		int idx = MenuHelper.indexForId(parentMenu, menuPath.lastSegment());
@@ -74,8 +77,10 @@ public class ActionSet {
 					IWorkbenchActionConstants.MB_ADDITIONS);
 		}
 		if (idx == -1) {
-			Activator.trace(Policy.DEBUG_MENUS,
-					"Failed to find group for " + path, null); //$NON-NLS-1$
+			Activator
+					.trace(
+							Policy.DEBUG_MENUS,
+							"Failed to find group for action " + elementId + ':' + path, null); //$NON-NLS-1$
 			return;
 		}
 		MMenuItem item = createActionElement(element);
@@ -87,17 +92,22 @@ public class ActionSet {
 	 * @param element
 	 */
 	private void addMenu(MMenu menu, IConfigurationElement element) {
+		final String elementId = MenuHelper.getId(element);
 		String path = element
 				.getAttribute(IWorkbenchRegistryConstants.ATT_PATH);
 		if (path == null || path.length() == 0) {
 			path = IWorkbenchActionConstants.MB_ADDITIONS;
 		}
 		Path menuPath = new Path(path);
-		MMenu parentMenu = findMenuFromPath(menu, menuPath, 0);
-		if (parentMenu == null) {
-			Activator.trace(Policy.DEBUG_MENUS,
-					"Failed to find menu for " + path, null); //$NON-NLS-1$
-			return;
+		MMenu parentMenu = menu;
+		if (menuPath.segmentCount() > 1) {
+			parentMenu = findMenuFromPath(menu, menuPath, 0);
+		}
+		if (parentMenu == menu) {
+			Activator
+					.trace(
+							Policy.DEBUG_MENUS,
+							"Using parent menu for menu " + elementId + ':' + path, null); //$NON-NLS-1$
 		}
 		String id = MenuHelper.getId(element);
 		MMenuItem item = null;
@@ -109,12 +119,14 @@ public class ActionSet {
 						IWorkbenchActionConstants.MB_ADDITIONS);
 			}
 			if (idx == -1) {
-				Activator.trace(Policy.DEBUG_MENUS,
-						"Failed to find group for " + path, null); //$NON-NLS-1$
+				Activator
+						.trace(
+								Policy.DEBUG_MENUS,
+								"Failed to find group for menu " + elementId + ':' + path, null); //$NON-NLS-1$
 				return;
 			}
 			item = createMenuElement(element);
-			parentMenu.getItems().add(idx, item);
+			parentMenu.getItems().add(idx + 1, item);
 		} else {
 			item = parentMenu.getItems().get(itemIdx);
 		}
@@ -144,7 +156,11 @@ public class ActionSet {
 	private MMenu findMenuFromPath(MMenu menu, Path menuPath, int segment) {
 		int idx = MenuHelper.indexForId(menu, menuPath.segment(segment));
 		if (idx == -1) {
-			return null;
+			if (segment + 1 < menuPath.segmentCount()
+					|| !menuPath.hasTrailingSeparator()) {
+				return null;
+			}
+			return menu;
 		}
 		MMenuItem item = menu.getItems().get(idx);
 		if (item.getMenu() == null) {

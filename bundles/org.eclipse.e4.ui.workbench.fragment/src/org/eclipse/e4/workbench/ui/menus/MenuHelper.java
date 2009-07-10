@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
+import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
@@ -21,7 +22,9 @@ import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -43,10 +46,32 @@ public class MenuHelper {
 
 	public static void loadMainMenu(IEclipseContext context, MMenu menuModel,
 			MenuManager barManager) {
+		// traceMenuModel(menuModel);
 		processMenuManager(context, menuModel, barManager.getItems());
 		MenuContribution[] contributions = loadMenuContributions(context);
 		processMenuContributions(context, menuModel, contributions);
 		processActionSets(context, menuModel);
+	}
+
+	/**
+	 * @param menuModel
+	 */
+	static void traceMenuModel(MMenu menuModel) {
+		menuModel.eAdapters().add(new EContentAdapter() {
+			public void notifyChanged(
+					org.eclipse.emf.common.notify.Notification notification) {
+				super.notifyChanged(notification);
+				if (ApplicationPackage.Literals.MITEM_CONTAINER__ITEMS
+						.equals(notification.getFeature())
+						&& notification.getEventType() == Notification.ADD) {
+					MMenuItem item = (MMenuItem) notification.getNewValue();
+					if ("Refac&tor".equals(item.getName())) { //$NON-NLS-1$
+						Activator.trace(Policy.DEBUG_MENUS, item.getName()
+								+ ':' + item.getId(), new RuntimeException());
+					}
+				}
+			};
+		});
 	}
 
 	/**
@@ -106,7 +131,7 @@ public class MenuHelper {
 	 * @param context
 	 * @param menuModel
 	 */
-	private static void processMenuContributions(IEclipseContext context,
+	static void processMenuContributions(IEclipseContext context,
 			MMenu menuBar, MenuContribution[] contributions) {
 		HashSet<MenuContribution> processedContributions = new HashSet<MenuContribution>();
 		int size = -1;
@@ -133,8 +158,7 @@ public class MenuHelper {
 	/**
 	 * @param context
 	 */
-	private static MenuContribution[] loadMenuContributions(
-			IEclipseContext context) {
+	static MenuContribution[] loadMenuContributions(IEclipseContext context) {
 		ArrayList<MenuContribution> contributions = new ArrayList<MenuContribution>();
 		IConfigurationElement[] elements = ExtensionUtils
 				.getExtensions(IWorkbenchRegistryConstants.PL_MENUS);

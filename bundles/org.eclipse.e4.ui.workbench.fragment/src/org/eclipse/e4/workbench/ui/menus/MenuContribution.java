@@ -82,14 +82,29 @@ public class MenuContribution {
 		if (idx == -1) {
 			return false;
 		}
+		return mergeModel(idx, menu, model);
+	}
+
+	private boolean mergeModel(int idx, MMenu menu, MMenu toInsert) {
 		EList<MMenuItem> items = menu.getItems();
-		MMenuItem[] modelItems = model.getItems().toArray(
-				new MMenuItem[model.getItems().size()]);
+		MMenuItem[] modelItems = toInsert.getItems().toArray(
+				new MMenuItem[toInsert.getItems().size()]);
 		for (int i = 0; i < modelItems.length; i++) {
 			MMenuItem modelItem = modelItems[i];
-			items.add(idx++, modelItem);
+			if (modelItem.getMenu() != null) {
+				int tmpIdx = MenuHelper.indexForId(menu, modelItem.getId());
+				if (tmpIdx == -1) {
+					items.add(idx++, modelItem);
+				} else {
+					mergeModel(0, items.get(tmpIdx).getMenu(), modelItem
+							.getMenu());
+				}
+			} else {
+				items.add(idx++, modelItem);
+			}
 		}
 		return true;
+
 	}
 
 	private int getInsertionIndex(MMenu menu) {
