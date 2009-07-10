@@ -29,6 +29,9 @@ ToolBar {
 	background-color: rgb(246, 246, 251);
 }
 
+ToolBar.active {
+	background-color: rgb(224, 226, 235);
+}
 
 SashForm {
 	background-color: rgb(241, 240, 245); 
