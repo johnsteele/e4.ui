@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.viewer;
 
+import java.util.Iterator;
+
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.widgets.Composite;
 
@@ -82,6 +86,35 @@ public class ModelUtils {
 			currentTop = currentTop.getParent();
 		}
 		return lastTop.eContainer(); // MWindow -> MApp 
+	}
+
+	private static MPart findElementById(MPart part, String id) {
+		if (id == null || id.length() == 0)
+			return null;
+
+		// is it me?
+		if (id.equals(part.getId()))
+			return part;
+
+		// Recurse
+		EList children = part.getChildren();
+		MPart foundPart = null;
+		for (Iterator iterator = children.iterator(); iterator.hasNext();) {
+			MPart childPart = (MPart) iterator.next();
+			foundPart = findElementById(childPart, id);
+			if (foundPart != null)
+				return foundPart;
+		}
+
+		return null;
+	}
+
+	public static MPart findPart(MPart toSearch, String id) {
+		MPart found = findElementById(toSearch, id);
+		if (found instanceof MPart)
+			return (MPart) found;
+
+		return null;
 	}
 
 }

@@ -22,9 +22,28 @@
          name="Model Viewer"
          point="org.eclipse.e4.workbench.model">
       <model
-            parentID="Horizontal Sash[right]"
+            parentID="E4MainWindow"
             location="xmi/modelViewer.xmi">
       </model>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.eclipse.e4.demo.modifier.ShowUIEditor"
+            id="org.eclipse.e4.demo.modifier.showEditor"
+            name="UI Editor">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:window">
+         <command
+               commandId="org.eclipse.e4.demo.modifier.showEditor"
+               label="UI Editor"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
 
 </plugin>
