@@ -124,15 +124,9 @@ public class ModelExtensionProcessor {
 						extension.contributor.getName());
 				continue;
 			}
-
-			MPart<?> root = (MPart<?>) extensionRoot;
-			MPart parentPart = null;
-			if (root instanceof MWindow)
-				parentPart = e4Window;
-			else
-				parentPart = findDefaultParent(extension.getParentID());
-			if (parentPart != null)
-				parentPart.getChildren().add((MPart<?>) extensionRoot);
+			MPart defaultParent = findDefaultParent(extension.getParentID());
+			if (defaultParent != null)
+				defaultParent.getChildren().add((MPart<?>) extensionRoot);
 		}
 	}
 
