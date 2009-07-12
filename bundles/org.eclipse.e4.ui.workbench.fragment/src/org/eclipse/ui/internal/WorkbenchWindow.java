@@ -48,6 +48,7 @@ import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.workbench.ui.api.LegacySelectionService;
+import org.eclipse.e4.workbench.ui.menus.ActionSet;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IAction;
@@ -74,6 +75,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
@@ -119,6 +121,7 @@ import org.eclipse.ui.internal.presentations.DefaultActionBarPresentationFactory
 import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
+import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
@@ -366,6 +369,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		fillActionBars(FILL_ALL_ACTION_BARS);
 		MenuHelper.loadMainMenu(e4Window.getContext(), e4Window.getMenu(),
 				getMenuBarManager());
+		e4ActionSets = MenuHelper.processActionSets(e4Window.getContext(),
+				e4Window.getMenu());
 	}
 
 	/**
@@ -1538,7 +1543,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 		pageList.setActive(in);
 
-		// 1FVGTNR: ITPUI:WINNT - busy cursor for switching perspectives
+		updateActionSets();
 	}
 
 	/**
@@ -1618,7 +1623,32 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * prespective.
 	 */
 	public void updateActionSets() {
-
+		WorkbenchPage page = pageList.getActive();
+		if (page == null) {
+			return;
+		}
+		final IActionSetDescriptor[] actionSets = page.getActionSets();
+		final HashSet<String> set = new HashSet<String>();
+		for (int i = 0; i < actionSets.length; i++) {
+			set.add(actionSets[i].getId());
+		}
+		for (int i = 0; i < e4ActionSets.length; i++) {
+			if (set.contains(e4ActionSets[i].getId())) {
+				e4ActionSets[i].setVisible(true);
+			} else {
+				e4ActionSets[i].setVisible(false);
+			}
+		}
+		Shell shell = getShell();
+		if (shell != null) {
+			Menu bar = shell.getMenuBar();
+			if (bar != null) {
+				final MenuManager manager = (MenuManager) bar.getData();
+				if (manager != null) {
+					manager.update(true);
+				}
+			}
+		}
 	}
 
 	private ListenerList actionSetListeners = null;
@@ -1629,6 +1659,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	private MWorkbenchWindow e4Window;
 
 	private IEclipseContext e4Context;
+
+	private ActionSet[] e4ActionSets;
 
 	final void addActionSetsListener(final IActionSetsListener listener) {
 		if (actionSetListeners == null) {

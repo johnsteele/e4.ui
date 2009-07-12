@@ -11,12 +11,15 @@
 
 package org.eclipse.e4.workbench.ui.menus;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
+import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.workbench.ui.internal.Activator;
@@ -31,6 +34,9 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 public class ActionSet {
 	private IEclipseContext context;
 	private IConfigurationElement config;
+	private boolean visible = true;
+
+	private List<MHandledItem> items = new ArrayList<MHandledItem>();
 
 	public ActionSet(IEclipseContext context, IConfigurationElement element) {
 		this.context = context;
@@ -211,7 +217,21 @@ public class ActionSet {
 		}
 		MMenuItem item = MenuHelper.createMenuItem(context, label, imagePath,
 				id, cmdId);
+		items.add(item);
 		return item;
 	}
 
+	public void setVisible(boolean v) {
+		if (v == visible) {
+			return;
+		}
+		visible = v;
+		for (MHandledItem item : items) {
+			item.setVisible(visible);
+		}
+	}
+
+	public String getId() {
+		return MenuHelper.getId(config);
+	}
 }

@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -44,6 +45,7 @@ import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Rectangle;
@@ -82,6 +84,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -799,7 +802,24 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * Edits the action sets.
 	 */
 	public boolean editActionSets() {
-		return true;
+		Perspective persp = getActivePerspective();
+		if (persp == null) {
+			return false;
+		}
+
+		// Create list dialog.
+		CustomizePerspectiveDialog dlg = window
+				.createCustomizePerspectiveDialog(persp);
+
+		// Open.
+		boolean ret = (dlg.open() == Window.OK);
+		if (ret) {
+			window.updateActionSets();
+			window.firePerspectiveChanged(this, getPerspective(), CHANGE_RESET);
+			window.firePerspectiveChanged(this, getPerspective(),
+					CHANGE_RESET_COMPLETE);
+		}
+		return ret;
 	}
 
 	/**
@@ -886,7 +906,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	public IActionSetDescriptor[] getActionSets() {
 
-		return new IActionSetDescriptor[0];
+		Collection visibleItems = actionSets.getVisibleItems();
+		return (IActionSetDescriptor[]) visibleItems
+				.toArray(new IActionSetDescriptor[visibleItems.size()]);
 	}
 
 	/**
@@ -1388,6 +1410,91 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		ModelExtensionProcessor extProcessor = new ModelExtensionProcessor(
 				e4Window);
 		extProcessor.addModelExtensions();
+		partEvents();
+	}
+
+	private void partEvents() {
+		partList.getPartService().addPartListener(new IPartListener() {
+
+			public void partOpened(IWorkbenchPart part) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void partDeactivated(IWorkbenchPart part) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void partClosed(IWorkbenchPart part) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void partBroughtToTop(IWorkbenchPart part) {
+				calculateActionSets(part);
+			}
+
+			public void partActivated(IWorkbenchPart part) {
+				calculateActionSets(part);
+			}
+		});
+	}
+
+	private ArrayList oldActionSets = new ArrayList();
+
+	void calculateActionSets(IWorkbenchPart part) {
+		ArrayList newActionSets = new ArrayList();
+		if (part != null) {
+			IActionSetDescriptor[] partActionSets = WorkbenchPlugin
+					.getDefault().getActionSetRegistry().getActionSetsFor(
+							part.getSite().getId());
+			for (int i = 0; i < partActionSets.length; i++) {
+				newActionSets.add(partActionSets[i]);
+			}
+		}
+		IEditorPart editor = partList.getActiveEditor();
+		if (editor != null && editor != part) {
+			IActionSetDescriptor[] editorActionSets = WorkbenchPlugin
+					.getDefault().getActionSetRegistry().getActionSetsFor(
+							editor.getSite().getId());
+			for (int i = 0; i < editorActionSets.length; i++) {
+				newActionSets.add(editorActionSets[i]);
+			}
+		}
+		if (oldActionSets.equals(newActionSets)) {
+			return;
+		}
+		IContextService service = (IContextService) window
+				.getService(IContextService.class);
+		try {
+			service.deferUpdates(true);
+
+			// show the new
+			for (int i = 0; i < newActionSets.size(); i++) {
+				actionSets.showAction((IActionSetDescriptor) newActionSets
+						.get(i));
+			}
+
+			// hide the old
+			for (int i = 0; i < oldActionSets.size(); i++) {
+				actionSets.hideAction((IActionSetDescriptor) oldActionSets
+						.get(i));
+			}
+
+			oldActionSets = newActionSets;
+
+		} finally {
+			service.deferUpdates(false);
+		}
+		Perspective persp = getActivePerspective();
+		if (persp == null) {
+			return;
+		}
+
+		window.updateActionSets(); // this calls updateActionBars
+		window.firePerspectiveChanged(WorkbenchPage.this, getPerspective(),
+				CHANGE_ACTION_SET_SHOW);
 	}
 
 	/**

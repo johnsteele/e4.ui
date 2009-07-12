@@ -50,7 +50,7 @@ public class MenuHelper {
 		processMenuManager(context, menuModel, barManager.getItems());
 		MenuContribution[] contributions = loadMenuContributions(context);
 		processMenuContributions(context, menuModel, contributions);
-		processActionSets(context, menuModel);
+		// processActionSets(context, menuModel);
 	}
 
 	/**
@@ -78,12 +78,13 @@ public class MenuHelper {
 	 * @param context
 	 * @param menuModel
 	 */
-	private static void processActionSets(IEclipseContext context,
+	public static ActionSet[] processActionSets(IEclipseContext context,
 			MMenu menuModel) {
 		ActionSet[] sets = loadActionSets(context, menuModel);
 		for (ActionSet actionSet : sets) {
 			actionSet.merge(menuModel);
 		}
+		return sets;
 	}
 
 	/**
