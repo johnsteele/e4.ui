@@ -42,11 +42,13 @@ import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.ui.services.EContextService;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.api.LegacySelectionService;
 import org.eclipse.e4.workbench.ui.menus.ActionSet;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
@@ -86,6 +88,7 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.LegacyHandlerService;
@@ -2310,6 +2313,19 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		cs.getActiveContextIds();
 		readActionSets();
 		e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, this);
+		e4Context.set(ISources.ACTIVE_PART_NAME, new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				Object o = context.get(IServiceConstants.ACTIVE_PART);
+				if (o instanceof MContributedPart<?>) {
+					Object impl = ((MContributedPart) o).getObject();
+					if (impl instanceof IWorkbenchPart) {
+						return impl;
+					}
+				}
+				return null;
+			}
+		});
 	}
 
 	private void readActionSets() {

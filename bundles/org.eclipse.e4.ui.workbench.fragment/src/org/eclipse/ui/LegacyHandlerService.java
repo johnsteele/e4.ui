@@ -28,10 +28,14 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
+import org.eclipse.e4.workbench.ui.renderers.PartFactory;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -336,7 +340,8 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IEvaluationContext createContextSnapshot(boolean includeSelection) {
 		return new LegacyEvalContext(EclipseContextFactory.create(
-				eclipseContext, UISchedulerStrategy.getInstance()));
+				getFocusContext(PlatformUI.getWorkbench().getDisplay()),
+				UISchedulerStrategy.getInstance()));
 	}
 
 	/*
@@ -347,7 +352,8 @@ public class LegacyHandlerService implements IHandlerService {
 	 * .core.commands.Command, org.eclipse.swt.widgets.Event)
 	 */
 	public ExecutionEvent createExecutionEvent(Command command, Event event) {
-		LegacyEvalContext legacy = new LegacyEvalContext(eclipseContext);
+		LegacyEvalContext legacy = new LegacyEvalContext(
+				getFocusContext(PlatformUI.getWorkbench().getDisplay()));
 		ExecutionEvent e = new ExecutionEvent(command, Collections.EMPTY_MAP,
 				event, legacy);
 		return e;
@@ -362,7 +368,8 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public ExecutionEvent createExecutionEvent(ParameterizedCommand command,
 			Event event) {
-		LegacyEvalContext legacy = new LegacyEvalContext(eclipseContext);
+		LegacyEvalContext legacy = new LegacyEvalContext(
+				getFocusContext(PlatformUI.getWorkbench().getDisplay()));
 		ExecutionEvent e = new ExecutionEvent(command.getCommand(), command
 				.getParameterMap(), event, legacy);
 		return e;
@@ -406,8 +413,9 @@ public class LegacyHandlerService implements IHandlerService {
 	public Object executeCommand(String commandId, Event event)
 			throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException {
-		ECommandService cs = (ECommandService) eclipseContext
-				.get(ECommandService.class.getName());
+		ECommandService cs = (ECommandService) getFocusContext(
+				PlatformUI.getWorkbench().getDisplay()).get(
+				ECommandService.class.getName());
 		final Command command = cs.getCommand(commandId);
 		return executeCommand(ParameterizedCommand.generateCommand(command,
 				null), event);
@@ -423,8 +431,9 @@ public class LegacyHandlerService implements IHandlerService {
 	public Object executeCommand(ParameterizedCommand command, Event event)
 			throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException {
-		EHandlerService hs = (EHandlerService) eclipseContext
-				.get(EHandlerService.class.getName());
+		EHandlerService hs = (EHandlerService) getFocusContext(
+				PlatformUI.getWorkbench().getDisplay()).get(
+				EHandlerService.class.getName());
 		hs.getContext().set(PARM_MAP, command.getParameterMap());
 		return hs.executeHandler(command);
 	}
@@ -558,6 +567,31 @@ public class LegacyHandlerService implements IHandlerService {
 	public void dispose() {
 		// TODO Auto-generated method stub
 
+	}
+
+	private IEclipseContext getFocusContext(Display display) {
+		// find the first useful part in the model
+		Control control = display.getFocusControl();
+		Object partObj = null;
+		while (control != null && !(partObj instanceof MPart<?>)) {
+			partObj = control.getData(PartFactory.OWNING_ME);
+			control = control.getParent();
+		}
+		if (partObj == null) {
+			return eclipseContext;
+		}
+		// get the applicable context (or parent)
+		MPart<?> part = (MPart<?>) partObj;
+		return getContext(part);
+	}
+
+	private IEclipseContext getContext(MPart<?> part) {
+		IEclipseContext c = null;
+		while (c == null && part != null) {
+			c = part.getContext();
+			part = part.getParent();
+		}
+		return c == null ? eclipseContext : c;
 	}
 
 }
