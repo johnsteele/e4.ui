@@ -57,14 +57,9 @@ public class LegacyHandlerService implements IHandlerService {
 			this.handler = handler;
 		}
 
-		// public boolean canExecute(IEclipseContext context) {
-		// System.err.println(context);
-		// if (handler instanceof IHandler2) {
-		// ((IHandler2) handler)
-		// .setEnabled(new LegacyEvalContext(context));
-		// }
-		// return handler.isEnabled();
-		// }
+		public boolean canExecute(IEclipseContext context) {
+			return handler.isEnabled();
+		}
 
 		public void execute(IEclipseContext context) {
 			Object shell = context.get(IServiceConstants.ACTIVE_SHELL);

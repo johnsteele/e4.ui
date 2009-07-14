@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
@@ -502,7 +503,43 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * </p>
 	 */
 	void submitGlobalActions() {
+		final IHandlerService handlerService = (IHandlerService) serviceLocator
+				.getService(IHandlerService.class);
 
+		/*
+		 * Mash the action sets and global actions together, with global actions
+		 * taking priority.
+		 */
+		Map handlersByCommandId = new HashMap();
+		handlersByCommandId.putAll(globalActionHandlersByCommandId);
+
+		List newHandlers = new ArrayList(handlersByCommandId.size());
+
+		Iterator existingIter = handlerActivations.iterator();
+		while (existingIter.hasNext()) {
+			IHandlerActivation next = (IHandlerActivation) existingIter.next();
+
+			String cmdId = next.getCommandId();
+
+			Object handler = handlersByCommandId.get(cmdId);
+			if (handler == next.getHandler()) {
+				handlersByCommandId.remove(cmdId);
+				newHandlers.add(next);
+			} else {
+				handlerService.deactivateHandler(next);
+			}
+		}
+
+		// final Expression expression = new ActiveShellExpression(shell);
+		for (Iterator iterator = handlersByCommandId.entrySet().iterator(); iterator
+				.hasNext();) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			String commandId = (String) entry.getKey();
+			IHandler handler = (IHandler) entry.getValue();
+			newHandlers.add(handlerService.activateHandler(commandId, handler));
+		}
+
+		handlerActivations = newHandlers;
 	}
 
 	/**
@@ -1545,8 +1582,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			return;
 		}
 		pageList.setActive(in);
-
 		updateActionSets();
+		if (isClosing()) {
+			return;
+		}
+		firePageActivated(in);
 	}
 
 	/**

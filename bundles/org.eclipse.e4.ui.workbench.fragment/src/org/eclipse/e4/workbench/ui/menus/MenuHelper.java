@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.e4.workbench.ui.menus;
 
 import java.lang.reflect.Field;
@@ -7,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -31,7 +42,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.LegacyHandlerService;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.Workbench;
@@ -195,6 +208,36 @@ public class MenuHelper {
 				ActionContributionItem aci = (ActionContributionItem) item;
 				IAction action = aci.getAction();
 				String imageURL = getImageUrl(action.getImageDescriptor());
+
+				String commandID = action.getActionDefinitionId();
+				if (commandID == null)
+					commandID = aci.getId();
+
+				if (action.getActionDefinitionId() == null && commandID != null) {
+					// check that we have a command; create it if necessary
+					Workbench legacyWB = (Workbench) context
+							.get(Workbench.class.getName());
+					legacyWB.addCommand(commandID, action.getText());
+
+					// create handler
+					IHandler handler = new ActionHandler(action);
+					LegacyHandlerService.registerLegacyHandler(context,
+							commandID, commandID, handler);
+
+					// update action definition if needed
+					if (action.getActionDefinitionId() == null)
+						action.setActionDefinitionId(commandID);
+					// } else if (action.getActionDefinitionId() != null) {
+					// // create handler
+					// Activator.trace(Policy.DEBUG_MENUS,
+					//							"trying to register some action: " + action, null); //$NON-NLS-1$
+					// if (!(action instanceof CommandAction)) {
+					// IHandler handler = new ActionHandler(action);
+					// LegacyHandlerService.registerLegacyHandler(context, aci
+					// .getId(), action.getActionDefinitionId(),
+					// handler);
+					// }
+				}
 				addMenuItem(context, menu, action.getText(), null, imageURL,
 						aci.getId(), action.getActionDefinitionId());
 			} else if (item instanceof CommandContributionItem) {

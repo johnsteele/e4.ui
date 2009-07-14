@@ -2002,6 +2002,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		}
 	}
 
+	// TBD update to use #addCommand()
 	protected void populateActionSets() {
 		ECommandService cs = (ECommandService) e4Context
 				.get(ECommandService.class.getName());
@@ -3663,6 +3664,28 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	public ServiceLocator getServiceLocator() {
 		return serviceLocator;
+	}
+
+	// TBD this seems like an API that should be in the model
+	public void addCommand(String id, String name) {
+		MApplication<MWindow<?>> app = (MApplication<MWindow<?>>) e4Context
+				.get(MApplication.class.getName());
+		MCommand newCommand = ApplicationFactory.eINSTANCE.createMCommand();
+		newCommand.setId(id);
+		newCommand.setName(name);
+		app.getCommand().add(newCommand);
+		commandsById.put(newCommand.getId(), newCommand);
+
+		ECommandService cs = (ECommandService) e4Context
+				.get(ECommandService.class.getName());
+		Command command = cs.getCommand(id);
+		if (!command.isDefined()) {
+			Category category = cs
+					.getCategory(IWorkbenchRegistryConstants.PL_ACTION_SETS);
+			if (!category.isDefined())
+				category.define("Action Sets", null); //$NON-NLS-1$
+			command.define(newCommand.getName(), null, category);
+		}
 	}
 
 }
