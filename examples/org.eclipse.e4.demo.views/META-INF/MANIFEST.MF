@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: LegacyViews Plug-in
+Bundle-Name: LegacyViews Plug-in (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.demo.views;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: org.eclipse.e4.demio.views.Activator
@@ -11,3 +11,4 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.core.resources
+Bundle-Vendor: Eclipse.org

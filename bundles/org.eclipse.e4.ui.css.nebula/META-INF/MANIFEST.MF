@@ -14,3 +14,4 @@ Export-Package: org.eclipse.e4.ui.css.nebula.dom,
  org.eclipse.e4.ui.css.nebula.gallery,
  org.eclipse.e4.ui.css.nebula.helpers,
  org.eclipse.e4.ui.css.nebula.properties.css2
+Bundle-Vendor: Eclipse.org

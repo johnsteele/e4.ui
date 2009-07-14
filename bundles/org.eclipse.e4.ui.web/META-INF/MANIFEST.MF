@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Eclipse UI web embedding
+Bundle-Name: Eclipse UI web embedding (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.web
 Bundle-Version: 0.9.0.qualifier
 Require-Bundle: org.eclipse.swt,
@@ -11,3 +11,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Export-Package: org.eclipse.e4.ui.internal.web;x-internal:=true,
  org.eclipse.e4.ui.web
+Bundle-Vendor: Eclipse.org

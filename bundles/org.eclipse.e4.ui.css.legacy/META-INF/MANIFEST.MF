@@ -10,3 +10,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.e4.ui.css.legacy,
  org.eclipse.e4.ui.css.legacy.presentation
+Bundle-Vendor: Eclipse.org
