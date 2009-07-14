@@ -9,8 +9,8 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.renderers.PartFactory;
-import org.eclipse.e4.workbench.ui.renderers.PartRenderer;
+import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
+import org.eclipse.e4.workbench.ui.renderers.PartRenderingEngine;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -22,7 +22,7 @@ public class ShowUIEditor extends AbstractHandler {
 		if (curWindow == null)
 			return null;
 		
-		MWorkbenchWindow winPart = (MWorkbenchWindow) curWindow.getData(PartFactory.OWNING_ME);
+		MWorkbenchWindow winPart = (MWorkbenchWindow) curWindow.getData(AbstractPartRenderer.OWNING_ME);
 		MPart uiEditor = ModelUtils.findPart(winPart, "UI Editor");
 		if (uiEditor.isVisible()) {
 			Shell editorShell = (Shell) uiEditor.getWidget();

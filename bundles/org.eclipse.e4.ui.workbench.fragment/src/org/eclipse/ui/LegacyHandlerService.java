@@ -33,7 +33,7 @@ import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
-import org.eclipse.e4.workbench.ui.renderers.PartFactory;
+import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -574,7 +574,7 @@ public class LegacyHandlerService implements IHandlerService {
 		Control control = display.getFocusControl();
 		Object partObj = null;
 		while (control != null && !(partObj instanceof MPart<?>)) {
-			partObj = control.getData(PartFactory.OWNING_ME);
+			partObj = control.getData(AbstractPartRenderer.OWNING_ME);
 			control = control.getParent();
 		}
 		if (partObj == null) {

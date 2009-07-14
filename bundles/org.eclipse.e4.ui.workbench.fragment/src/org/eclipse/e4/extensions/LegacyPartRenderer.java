@@ -16,8 +16,8 @@ import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
-import org.eclipse.e4.workbench.ui.renderers.PartFactory;
-import org.eclipse.e4.workbench.ui.renderers.swt.SWTPartFactory;
+import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
+import org.eclipse.e4.workbench.ui.renderers.swt.SWTPartRenderer;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.menus.IMenuService;
 
-public class LegacyViewFactory extends SWTPartFactory {
+public class LegacyPartRenderer extends SWTPartRenderer {
 
 	private IConfigurationElement findPerspectiveFactory(String id) {
 		IConfigurationElement[] factories = ExtensionUtils
@@ -133,7 +133,7 @@ public class LegacyViewFactory extends SWTPartFactory {
 				private CTabItem findItemForPart(CTabFolder ctf) {
 					CTabItem[] items = ctf.getItems();
 					for (int i = 0; i < items.length; i++) {
-						if (items[i].getData(PartFactory.OWNING_ME) == part) {
+						if (items[i].getData(AbstractPartRenderer.OWNING_ME) == part) {
 							return items[i];
 						}
 					}

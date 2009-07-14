@@ -16,7 +16,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.renderers.PartFactory;
+import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.widgets.Composite;
@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 public class ModelUtils {
 	
 	/**
-	 * This code is copied from the {@link PartFactory#activate(MPart)}
+	 * This code is copied from the {@link AbstractPartRenderer#activate(MPart)}
 	 */
 	static public void activate(MPart<?> part) {
 		MPart<MPart<?>> parent = (MPart<MPart<?>>) part.getParent();
@@ -51,7 +51,7 @@ public class ModelUtils {
 	 */
 	static MPart<?> getElement(Composite composite) {
 		for (Composite container = composite; container != null; container = container.getParent()) {
-			Object owner = container.getData(PartFactory.OWNING_ME);
+			Object owner = container.getData(AbstractPartRenderer.OWNING_ME);
 			if (owner == null)
 				continue;
 			if (owner instanceof MPart<?>)
