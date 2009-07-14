@@ -2366,6 +2366,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				return null;
 			}
 		});
+		// local handler service for local handlers
+		IHandlerService handlerService = new LegacyHandlerService(e4Context);
+		serviceLocator.registerService(IHandlerService.class, handlerService);
 	}
 
 	private void readActionSets() {
