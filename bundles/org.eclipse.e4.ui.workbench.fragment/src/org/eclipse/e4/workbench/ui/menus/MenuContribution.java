@@ -11,22 +11,26 @@
 
 package org.eclipse.e4.workbench.ui.menus;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Map;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MParameter;
+import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
+import org.eclipse.e4.workbench.ui.internal.Activator;
+import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.actions.CompoundContributionItem;
+import org.eclipse.ui.LegacyEvalContext;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.menus.MenuLocationURI;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -148,62 +152,29 @@ public class MenuContribution {
 				MenuHelper.addSeparator(menu, MenuHelper.getId(element), true);
 			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC
 					.equals(elementType)) {
-				ContributionItem i = (ContributionItem) Util
-						.safeLoadExecutableExtension(element,
-								IWorkbenchRegistryConstants.ATT_CLASS,
-								ContributionItem.class);
-				if (i instanceof IWorkbenchContribution) {
-					((IWorkbenchContribution) i).initialize(window);
-				}
-				if (i instanceof CompoundContributionItem) {
-					add(menu, (CompoundContributionItem) i);
-				}
+				addRenderer(menu, element);
 			}
 		}
 	}
 
 	/**
 	 * @param menu
-	 * @param i
+	 * @param element
 	 */
-	private void add(MMenu menu, CompoundContributionItem i) {
-		IContributionItem[] items = getItems(i);
-		MenuHelper.processMenuManager(context, menu, items);
-	}
-
-	private static Method itemsToFill = null;
-	private IWorkbenchWindow window;
-
-	/**
-	 * @param i
-	 * @return
-	 */
-	private IContributionItem[] getItems(CompoundContributionItem i) {
-		try {
-			if (itemsToFill == null) {
-				itemsToFill = CompoundContributionItem.class.getDeclaredMethod(
-						"getContributionItemsToFill", null); //$NON-NLS-1$
-				itemsToFill.setAccessible(true);
-			}
-			return (IContributionItem[]) itemsToFill.invoke(i, null);
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private void addRenderer(MMenu menu, IConfigurationElement element) {
+		ContributionItem i = (ContributionItem) Util
+				.safeLoadExecutableExtension(element,
+						IWorkbenchRegistryConstants.ATT_CLASS,
+						ContributionItem.class);
+		if (i instanceof IWorkbenchContribution) {
+			((IWorkbenchContribution) i).initialize(window);
 		}
-		return null;
+		MMenuItemRenderer renderer = MenuHelper.addMenuRenderer(context, menu,
+				i);
+		associateVisibleWhen(element, renderer);
 	}
+
+	private IWorkbenchWindow window;
 
 	/**
 	 * @param element
@@ -242,8 +213,8 @@ public class MenuContribution {
 				}
 			}
 		}
-		MMenuItem item = MenuHelper.createMenuItem(context, label, imagePath,
-				id, cmdId);
+		final MMenuItem item = MenuHelper.createMenuItem(context, label,
+				imagePath, id, cmdId);
 		final Map<String, String> parms = MenuHelper.getParameters(element);
 		if (!parms.isEmpty()) {
 			final EList<MParameter> modelParms = item.getParameters();
@@ -254,6 +225,47 @@ public class MenuContribution {
 				modelParms.add(p);
 			}
 		}
+
+		associateVisibleWhen(element, item);
 		return item;
+	}
+
+	/**
+	 * @param element
+	 * @param item
+	 */
+	private void associateVisibleWhen(final IConfigurationElement element,
+			final MMenuItem item) {
+		IConfigurationElement[] visibleWhen = element
+				.getChildren(IWorkbenchRegistryConstants.TAG_VISIBLE_WHEN);
+		if (visibleWhen.length > 0) {
+			IConfigurationElement[] visibleChild = visibleWhen[0].getChildren();
+			if (visibleChild.length > 0) {
+				try {
+					final Expression visWhen = ExpressionConverter.getDefault()
+							.perform(visibleChild[0]);
+					final LegacyEvalContext legacyEvalContext = new LegacyEvalContext(
+							context);
+					context.runAndTrack(new Runnable() {
+						public void run() {
+							boolean visible = true;
+							try {
+								visible = visWhen.evaluate(legacyEvalContext) != EvaluationResult.FALSE;
+							} catch (CoreException e) {
+								Activator.trace(Policy.DEBUG_MENUS,
+										"Failed to evaluate visibleWhen", e); //$NON-NLS-1$
+							}
+							Activator.trace(Policy.DEBUG_MENUS,
+									"visibleWhen set to " + visible, null); //$NON-NLS-1$
+
+							item.setVisible(visible);
+						}
+					});
+				} catch (CoreException e) {
+					Activator.trace(Policy.DEBUG_MENUS,
+							"Failed to parse visibleWhen", e); //$NON-NLS-1$
+				}
+			}
+		}
 	}
 }

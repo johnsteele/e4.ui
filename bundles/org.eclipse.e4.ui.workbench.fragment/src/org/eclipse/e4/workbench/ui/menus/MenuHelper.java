@@ -236,13 +236,14 @@ public class MenuHelper {
 	 * @param menu
 	 * @param item
 	 */
-	private static void addMenuRenderer(IEclipseContext context, MMenu menu,
-			IContributionItem item) {
+	public static MMenuItemRenderer addMenuRenderer(IEclipseContext context,
+			MMenu menu, IContributionItem item) {
 		MMenuItemRenderer r = WorkbenchFactory.eINSTANCE
 				.createMMenuItemRenderer();
 		r.setId(item.getId() == null ? "item:" + menu.getId() : item.getId()); //$NON-NLS-1$
 		r.setRenderer(item);
 		menu.getItems().add(r);
+		return r;
 	}
 
 	/**
