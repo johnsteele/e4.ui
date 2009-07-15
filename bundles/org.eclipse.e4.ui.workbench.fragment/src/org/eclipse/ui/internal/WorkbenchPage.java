@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ModelEditorReference;
+import org.eclipse.e4.extensions.ModelReference;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -555,7 +556,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 			// Remove editor from the presentation
 
-			partRemoved((WorkbenchPartReference) ref);
+			partRemoved(ref);
 		}
 
 		// Notify interested listeners after the close
@@ -755,14 +756,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * The part will be queued for disposal after all listeners have been
 	 * notified
 	 */
-	/* package */void partRemoved(WorkbenchPartReference ref) {
+	/* package */void partRemoved(IWorkbenchPartReference ref) {
 		disposePart(ref);
 	}
 
-	private void disposePart(WorkbenchPartReference ref) {
-		partList.removePart(ref);
-		ref.dispose();
-
+	private void disposePart(IWorkbenchPartReference ref) {
+		if (ref instanceof WorkbenchPartReference) {
+			partList.removePart((WorkbenchPartReference) ref);
+			((WorkbenchPartReference) ref).dispose();
+		} else if (ref instanceof ModelReference) {
+			MContributedPart<?> modelPart = ((ModelReference) ref).getModel();
+			modelPart.setVisible(false);
+		}
 	}
 
 	/**
