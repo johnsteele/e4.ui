@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.e4.demo.modifier;
 
 import org.eclipse.core.databinding.observable.Observables;
@@ -64,16 +74,12 @@ public class ElementView {
 				+ "out.println(me);" + delim;
 		for (EStructuralFeature feature : value.eClass()
 				.getEAllStructuralFeatures()) {
-			System.err.println(feature.getEType().getInstanceClass());
-
 			Object val = value.eGet(feature);
 
 			if (!(val instanceof String) && !(val instanceof Boolean)
 					&& !(val instanceof Number)) {
 				continue;
 			}
-
-			System.err.println("FEATURE: " + feature.getName());
 
 			String propName = feature.getName().substring(0, 1).toUpperCase()
 					+ feature.getName().substring(1);
@@ -108,18 +114,13 @@ public class ElementView {
 	}
 
 	protected void runJS(String jScript) {
-		Object result;
 		try {
 			ScriptableObject.putProperty(jsScope, "selectedElement",
 					new EMFScriptable((EObject) selectedElement.getValue()));
-			System.err.println("SCOPE: " + jsScope);
-			System.err.println("SCRIPT: " + jScript);
-			result = jsContext.evaluateString(jsScope, jScript,
+			jsContext.evaluateString(jsScope, jScript,
 					"LCV Evaluator", 0, null); //$NON-NLS-1$
-			System.out.println("after eval: result = " + result.toString()); //$NON-NLS-1$
 		} catch (RuntimeException e) {
 			e.printStackTrace();
-			System.out.println("Exception!!"); //$NON-NLS-1$
 			initJS();
 		}
 	}
