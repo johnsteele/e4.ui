@@ -1,7 +1,5 @@
 ETabFolder {
-	color: black;
 	background-color: rgb(246, 246, 251);
-	font: normal;
 	simple: true;
 	maximize-visible: false;
 	minimize-visible: false;
@@ -9,15 +7,21 @@ ETabFolder {
 	margin: 3px;
 }
 
-ETabFolder:selected {
+ETabItem {
+	color: black;
+	background-color: rgb(246, 246, 251);
+	font: normal;
+}
+
+ETabItem:selected {
 	background-color: rgb(255, 255, 255) rgb(246, 245, 250); 
 }
 
-ETabFolder.active {
+ETabItem.active {
 	background-color: rgb(224, 226, 235);
 }
 
-ETabFolder.active:selected {
+ETabItem.active:selected {
 	background-color: rgb(255, 255, 255) rgb(255, 247, 229); 
 }
 
