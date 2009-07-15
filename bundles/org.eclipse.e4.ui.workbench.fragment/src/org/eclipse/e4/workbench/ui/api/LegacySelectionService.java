@@ -173,7 +173,9 @@ public class LegacySelectionService implements ISelectionService {
 	private IWorkbenchPart getActivePart() {
 		IEclipseContext currentActive = windowContext;
 		IEclipseContext child;
-		while ((child = (IEclipseContext) currentActive.get("activeChild")) != null && child != currentActive) { //$NON-NLS-1$
+		while ((child = (IEclipseContext) currentActive
+				.get(IServiceConstants.ACTIVE_CHILD)) != null
+				&& child != currentActive) {
 			currentActive = child;
 		}
 		if (child != null) {
