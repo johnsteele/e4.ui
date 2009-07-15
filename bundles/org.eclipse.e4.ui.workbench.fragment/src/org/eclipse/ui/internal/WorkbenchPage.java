@@ -2121,6 +2121,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * 
 	 */
 	public boolean saveAllEditors(boolean confirm, boolean addNonPartSources) {
+		// TBD the code below is oversimplified. See 3.x version for all things
+		// that have to be done:
+		// return getEditorManager().saveAll(confirm, false, addNonPartSources);
+
+		ISaveablePart[] dirtyParts = getDirtyParts();
+		for (ISaveablePart part : dirtyParts) {
+			part.doSave(new NullProgressMonitor());
+		}
+
 		return true;
 	}
 
@@ -3123,10 +3132,31 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @return all open parts, including non-participating editors.
 	 */
 	IWorkbenchPartReference[] getAllParts() {
-		ArrayList allParts = new ArrayList();
+		ArrayList<IWorkbenchPartReference> result = new ArrayList<IWorkbenchPartReference>();
+		getContainedPartRefs(result, e4Window);
+		IWorkbenchPartReference[] typedResult = new IWorkbenchPartReference[result
+				.size()];
+		result.toArray(typedResult);
+		return typedResult;
+	}
 
-		return (IWorkbenchPartReference[]) allParts
-				.toArray(new IWorkbenchPartReference[allParts.size()]);
+	// TBD this code repeats multiple times in variations (get editors, get
+	// views, get parts). When typically callers filter them some more (isDirty,
+	// isVisble, etc.).
+	// This needs to be a generic utility
+	private void getContainedPartRefs(
+			ArrayList<IWorkbenchPartReference> result, MPart<?> part) {
+		EList<?> children = part.getChildren();
+		for (Object child : children) {
+			if (child instanceof MContributedPart<?>) {
+				Object object = ((MContributedPart<?>) child).getObject();
+				if (object instanceof IWorkbenchPart)
+					result.add(new ModelReference((MContributedPart<?>) child,
+							this));
+			}
+			if (child instanceof MPart<?>)
+				getContainedPartRefs(result, (MPart<?>) child);
+		}
 	}
 
 	/**

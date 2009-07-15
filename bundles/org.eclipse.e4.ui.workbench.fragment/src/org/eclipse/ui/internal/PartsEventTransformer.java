@@ -67,7 +67,7 @@ public class PartsEventTransformer extends EContentAdapter {
 				IWorkbenchPartReference ref = toPartRef((MContributedPart<?>) part);
 				if (ref != null) {
 					boolean isVisible = ((MContributedPart<?>) part)
-							.isVisible(); // should always be true at this point
+							.isVisible();
 					if (isVisible)
 						partList.firePartOpened(ref);
 					else
