@@ -2153,7 +2153,7 @@ public class Perspective {
 				"PerspectiveStack"); //$NON-NLS-1$
 		final MPerspective perspectiveModel = (MPerspective<?>) perspStack
 				.getActiveChild();
-		MPart part = ModeledPageLayout.findPart(e4Window, viewId);
+		MPart part = ModeledPageLayout.findPart(perspectiveModel, viewId);
 
 		boolean doLayout = false;
 
