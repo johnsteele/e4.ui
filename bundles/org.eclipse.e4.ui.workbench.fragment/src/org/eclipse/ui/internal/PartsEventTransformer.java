@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.util.EContentAdapter;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPart;
@@ -74,12 +75,19 @@ public class PartsEventTransformer extends EContentAdapter {
 				if (ref instanceof IEditorReference) {
 					IEditorReference editorReference = (IEditorReference) ref;
 					partList.setActiveEditor(editorReference);
-					e4Context.set(ISources.ACTIVE_EDITOR_NAME, editorReference
-							.getEditor(true));
+					final IEditorPart editor = editorReference.getEditor(true);
+					e4Context.set(ISources.ACTIVE_EDITOR_NAME, editor);
+					e4Context.set(ISources.ACTIVE_EDITOR_ID_NAME, editor
+							.getSite().getId());
+					e4Context.set(ISources.ACTIVE_EDITOR_INPUT_NAME, editor
+							.getEditorInput());
 				}
 			}
 		} else {
 			partList.setActiveEditor(null);
+			e4Context.set(ISources.ACTIVE_EDITOR_NAME, null);
+			e4Context.set(ISources.ACTIVE_EDITOR_ID_NAME, null);
+			e4Context.set(ISources.ACTIVE_EDITOR_INPUT_NAME, null);
 			partList.setActivePart(null);
 		}
 	}

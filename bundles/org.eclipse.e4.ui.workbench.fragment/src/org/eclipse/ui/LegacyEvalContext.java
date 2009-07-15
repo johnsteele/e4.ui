@@ -43,7 +43,11 @@ public class LegacyEvalContext implements IEvaluationContext {
 	}
 
 	public Object getVariable(String name) {
-		return eclipseContext.get(name);
+		final Object obj = eclipseContext.get(name);
+		if (obj == null) {
+			return IEvaluationContext.UNDEFINED_VARIABLE;
+		}
+		return obj;
 	}
 
 	public IEvaluationContext getRoot() {
