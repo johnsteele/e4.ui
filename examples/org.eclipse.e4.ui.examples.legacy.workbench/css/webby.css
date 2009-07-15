@@ -21,11 +21,11 @@ ETabFolder.active:selected {
 	background-color: rgb(255, 255, 255) rgb(255, 247, 229); 
 }
 
-Composite {
+.perspectiveLayout, .marginWrapper {
 	background-color: rgb(241, 240, 245); 
 }
 
-ToolBar {
+ToolBar.inactive {
 	background-color: rgb(246, 246, 251);
 }
 

@@ -14,6 +14,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
@@ -342,6 +343,9 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 	private Control createPerspective(MPerspective<MPart<?>> part,
 			IConfigurationElement perspFactory, Composite parentComposite) {
 		Composite perspArea = new Composite(parentComposite, SWT.NONE);
+		IStylingEngine stylingEngine = (IStylingEngine) part.getContext().get(
+				IStylingEngine.SERVICE_NAME);
+		stylingEngine.setClassname(perspArea, "perspectiveLayout"); //$NON-NLS-1$
 		perspArea.setLayout(new FillLayout());
 
 		return perspArea;
