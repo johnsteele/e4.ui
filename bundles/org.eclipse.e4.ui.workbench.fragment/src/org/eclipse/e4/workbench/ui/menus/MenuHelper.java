@@ -572,6 +572,12 @@ public class MenuHelper {
 		return id;
 	}
 
+	public static boolean getRetarget(IConfigurationElement element) {
+		String r = element
+				.getAttribute(IWorkbenchRegistryConstants.ATT_RETARGET);
+		return Boolean.valueOf(r);
+	}
+
 	public static String getName(IConfigurationElement element) {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 	}

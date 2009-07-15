@@ -2384,7 +2384,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			for (IConfigurationElement configElement : elements) {
 				String id = MenuHelper.getId(configElement);
 				String cmdId = MenuHelper.getActionSetCommandId(configElement);
-				if (id == null || id.length() == 0) {
+				if (id == null || id.length() == 0
+						|| MenuHelper.getRetarget(configElement)) {
 					continue;
 				}
 				Command cmd = cs.getCommand(cmdId);

@@ -32,6 +32,8 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.workbench.ui.internal.Activator;
+import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
 import org.eclipse.swt.widgets.Control;
@@ -65,6 +67,8 @@ public class LegacyHandlerService implements IHandlerService {
 			Object shell = context.get(IServiceConstants.ACTIVE_SHELL);
 			context.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, shell);
 			context.set(ISources.ACTIVE_SHELL_NAME, shell);
+			Activator.trace(Policy.DEBUG_CMDS, "execute " + command + " and " //$NON-NLS-1$ //$NON-NLS-2$
+					+ handler + " with: " + context, null); //$NON-NLS-1$
 			LegacyEvalContext legacy = new LegacyEvalContext(context);
 			ExecutionEvent event = new ExecutionEvent(command, (Map) context
 					.get(PARM_MAP), null, legacy);
