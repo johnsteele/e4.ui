@@ -85,8 +85,8 @@ public class ModelExplorer {
 		public void dragFinished(DragSourceEvent event) {
 		}
 		public void dragSetData(DragSourceEvent event) {
-			IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-			System.out.println("count: " + selection.size());
+//			IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+//			System.out.println("count: " + selection.size());
 		}
 		public void dragStart(DragSourceEvent event) {
 			IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();

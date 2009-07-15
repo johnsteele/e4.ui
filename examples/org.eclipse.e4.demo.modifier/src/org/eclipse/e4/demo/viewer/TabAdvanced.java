@@ -90,7 +90,6 @@ public class TabAdvanced {
 
 		@Override
 		protected Object getValue(Object element) {
-			System.out.println("getValue");
 			Object result = getPropertyValue((EObjectFeature) element);
 			if (isBoolean((EObjectFeature) element)) {
 				if (result.equals("true"))
@@ -103,7 +102,6 @@ public class TabAdvanced {
 
 		@Override
 		protected void setValue(Object element, Object value) {
-			System.out.println("setValue " + value);
 			EObjectFeature dataObject = (EObjectFeature) element;
 			if (isBoolean(dataObject)) {
 				// NOTE: Workaround for the order of events:
