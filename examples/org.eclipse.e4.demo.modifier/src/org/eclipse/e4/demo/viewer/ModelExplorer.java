@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.viewer;
 
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -85,8 +83,8 @@ public class ModelExplorer {
 		public void dragFinished(DragSourceEvent event) {
 		}
 		public void dragSetData(DragSourceEvent event) {
-//			IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-//			System.out.println("count: " + selection.size());
+			IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+			System.out.println("count: " + selection.size());
 		}
 		public void dragStart(DragSourceEvent event) {
 			IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
@@ -179,7 +177,8 @@ public class ModelExplorer {
 		}
 	}
 
-	public ModelExplorer(Composite parent) {
+	public ModelExplorer(Composite parent, final IEclipseContext outputContext) {
+		this.outputContext = outputContext;
 		imageHelper = new ImageManagerHelper();
 		
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -361,18 +360,6 @@ public class ModelExplorer {
 	
 	public void dispose() {
 		// TBD any cleanup?
-	}
-	
-	// TBD this is less than ideal as it requires the knowledge of
-	// the containment structure. I think the proper answer should be
-	// that objects (MParts, CTabs, and so on) don't create unnecessary
-	// contexts.
-	public void contextSet(IEclipseContext context) {
-		Object parent = context.get(IContextConstants.PARENT);
-		if (parent instanceof IEclipseContext)
-			outputContext = (IEclipseContext) parent;
-		else
-			outputContext = context;
 	}
 
 }
