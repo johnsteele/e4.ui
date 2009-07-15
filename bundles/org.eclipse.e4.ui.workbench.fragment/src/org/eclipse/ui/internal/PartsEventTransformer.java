@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 
@@ -70,8 +71,12 @@ public class PartsEventTransformer extends EContentAdapter {
 			IWorkbenchPartReference ref = toPartRef((MContributedPart<?>) object);
 			if (ref != null) {
 				partList.setActivePart(ref);
-				if (ref instanceof IEditorReference)
-					partList.setActiveEditor((IEditorReference) ref);
+				if (ref instanceof IEditorReference) {
+					IEditorReference editorReference = (IEditorReference) ref;
+					partList.setActiveEditor(editorReference);
+					e4Context.set(ISources.ACTIVE_EDITOR_NAME, editorReference
+							.getEditor(true));
+				}
 			}
 		} else {
 			partList.setActiveEditor(null);
