@@ -411,8 +411,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private ListenerList workbenchListeners = new ListenerList(
 			ListenerList.IDENTITY);
 
-	public HashMap<String, MCommand> commandsById;
-
 	private ServiceTracker locationTracker;
 
 	/**
@@ -1977,7 +1975,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		MakeHandlersGo allHandlers = new MakeHandlersGo();
 		ECommandService cs = (ECommandService) e4Context
 				.get(ECommandService.class.getName());
-		commandsById = new HashMap<String, MCommand>();
 		MApplication<MWindow<?>> app = (MApplication<MWindow<?>>) e4Context
 				.get(MApplication.class.getName());
 		Command[] cmds = commandManager.getAllCommands();
@@ -1985,6 +1982,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 			Command cmd = cmds[i];
 			final String cmdId = cmd.getId();
 			if (cmdId.contains("(")) { //$NON-NLS-1$
+				org.eclipse.e4.workbench.ui.internal.Activator.trace(
+						org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_CMDS,
+						"Invalid command: " + cmd, null); //$NON-NLS-1$
 				continue;
 			}
 			cmd.setHandler(allHandlers);
@@ -1998,7 +1998,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 				e.printStackTrace();
 			}
 			app.getCommand().add(mcmd);
-			commandsById.put(cmdId, mcmd);
 		}
 	}
 
@@ -2019,15 +2018,18 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			for (IConfigurationElement element : elements) {
 				String id = MenuHelper.getActionSetCommandId(element);
-				MCommand mcmd = ApplicationFactory.eINSTANCE.createMCommand();
-				mcmd.setId(id);
-				mcmd.setName(LegacyActionTools.removeMnemonics(MenuHelper
-						.getLabel(element)));
-				app.getCommand().add(mcmd);
-				commandsById.put(mcmd.getId(), mcmd);
-				Command command = cs.getCommand(id);
-				if (!command.isDefined()) {
-					command.define(mcmd.getName(), null, category);
+				if (id != null
+						&& id.startsWith(MenuHelper.ACTION_SET_CMD_PREFIX)) {
+					MCommand mcmd = ApplicationFactory.eINSTANCE
+							.createMCommand();
+					mcmd.setId(id);
+					mcmd.setName(LegacyActionTools.removeMnemonics(MenuHelper
+							.getLabel(element)));
+					app.getCommand().add(mcmd);
+					Command command = cs.getCommand(id);
+					if (!command.isDefined()) {
+						command.define(mcmd.getName(), null, category);
+					}
 				}
 			}
 		}
@@ -3674,7 +3676,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		newCommand.setId(id);
 		newCommand.setName(name);
 		app.getCommand().add(newCommand);
-		commandsById.put(newCommand.getId(), newCommand);
 
 		ECommandService cs = (ECommandService) e4Context
 				.get(ECommandService.class.getName());

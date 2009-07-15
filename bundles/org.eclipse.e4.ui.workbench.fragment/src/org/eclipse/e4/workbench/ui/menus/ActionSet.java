@@ -195,7 +195,7 @@ public class ActionSet {
 	private MMenuItem createActionElement(IConfigurationElement element) {
 		String imagePath = MenuHelper.getImageUrl(MenuHelper
 				.getIconDescriptor(element));
-		String cmdId = MenuHelper.getDefinitionId(element);
+		String cmdId = MenuHelper.getActionSetCommandId(element);
 		String id = MenuHelper.getId(element);
 		String label = MenuHelper.getLabel(element);
 		if (label == null) {

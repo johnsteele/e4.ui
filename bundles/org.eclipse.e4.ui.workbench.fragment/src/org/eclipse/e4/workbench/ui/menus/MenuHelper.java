@@ -24,6 +24,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
@@ -54,6 +55,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class MenuHelper {
 
+	public static final String ACTION_SET_CMD_PREFIX = "AS::"; //$NON-NLS-1$
 	public static final String MAIN_MENU_ID = "org.eclipse.ui.main.menu"; //$NON-NLS-1$
 	private static Field urlField;
 
@@ -136,9 +138,17 @@ public class MenuHelper {
 			return id;
 		}
 		id = MenuHelper.getId(element);
-		String actionSetId = element.getDeclaringExtension()
-				.getUniqueIdentifier();
-		return "AS::" + actionSetId + '/' + id; //$NON-NLS-1$
+		String actionSetId = null;
+		Object obj = element.getParent();
+		while (obj instanceof IConfigurationElement && actionSetId == null) {
+			IConfigurationElement parent = (IConfigurationElement) obj;
+			if (parent.getName().equals(
+					IWorkbenchRegistryConstants.TAG_ACTION_SET)) {
+				actionSetId = MenuHelper.getId(parent);
+			}
+			obj = parent.getParent();
+		}
+		return ACTION_SET_CMD_PREFIX + actionSetId + '/' + id;
 	}
 
 	/**
@@ -388,8 +398,15 @@ public class MenuHelper {
 		if (context == null)
 			return null;
 
-		Workbench legacyWB = (Workbench) context.get(Workbench.class.getName());
-		return legacyWB.commandsById.get(cmdId);
+		MApplication app = (MApplication) context.get(MApplication.class
+				.getName());
+		final EList<MCommand> cmds = app.getCommand();
+		for (MCommand cmd : cmds) {
+			if (cmdId.equals(cmd.getId())) {
+				return cmd;
+			}
+		}
+		return null;
 	}
 
 	public static MMenuItem createMenuItem(IEclipseContext context,

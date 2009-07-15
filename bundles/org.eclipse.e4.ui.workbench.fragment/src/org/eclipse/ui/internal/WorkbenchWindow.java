@@ -51,6 +51,8 @@ import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.api.LegacySelectionService;
+import org.eclipse.e4.workbench.ui.internal.Activator;
+import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.e4.workbench.ui.menus.ActionSet;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.jface.action.ContributionManager;
@@ -2351,7 +2353,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				.get(EContextService.class.getName());
 		cs.activateContext("org.eclipse.ui.contexts.window"); //$NON-NLS-1$
 		cs.getActiveContextIds();
-		readActionSets();
 		e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, this);
 		e4Context.set(ISources.ACTIVE_PART_NAME, new ContextFunction() {
 			@Override
@@ -2369,6 +2370,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// local handler service for local handlers
 		IHandlerService handlerService = new LegacyHandlerService(e4Context);
 		serviceLocator.registerService(IHandlerService.class, handlerService);
+		readActionSets();
 	}
 
 	private void readActionSets() {
@@ -2387,6 +2389,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				}
 				Command cmd = cs.getCommand(cmdId);
 				if (!cmd.isDefined()) {
+					Activator.trace(Policy.DEBUG_CMDS, "Still no command for " //$NON-NLS-1$
+							+ cmdId, null);
 					continue;
 				}
 				LegacyHandlerService.registerLegacyHandler(e4Context, id,
