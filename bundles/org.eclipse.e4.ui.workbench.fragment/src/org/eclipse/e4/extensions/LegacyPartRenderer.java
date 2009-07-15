@@ -80,12 +80,15 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 
 		// Convert the relative path into a bundle URI
 		String imagePath = editorElement.getAttribute("icon"); //$NON-NLS-1$
-		imagePath = imagePath.replace("$nl$", ""); //$NON-NLS-1$//$NON-NLS-2$
-		if (imagePath.charAt(0) != '/') {
-			imagePath = '/' + imagePath;
+		String imageURI = imagePath;
+		if (!imagePath.startsWith("platform:")) { //$NON-NLS-1$
+			imagePath = imagePath.replace("$nl$", ""); //$NON-NLS-1$//$NON-NLS-2$
+			if (imagePath.charAt(0) != '/') {
+				imagePath = '/' + imagePath;
+			}
+			String bundleId = editorElement.getContributor().getName();
+			imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
 		}
-		String bundleId = editorElement.getContributor().getName();
-		String imageURI = "platform:/plugin/" + bundleId + imagePath; //$NON-NLS-1$
 		// part.setPlugin(viewContribution.getContributor().getName());
 		part.setIconURI(imageURI);
 		//part.setName(editorElement.getAttribute("name")); //$NON-NLS-1$
