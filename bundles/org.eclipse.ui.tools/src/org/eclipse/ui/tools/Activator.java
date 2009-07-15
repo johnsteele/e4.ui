@@ -168,7 +168,12 @@ public class Activator extends AbstractUIPlugin implements IStartup {
 				});
 			}
 		};
-		PlatformUI.getWorkbench().getDisplay().addFilter(SWT.KeyUp, filter);
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				display.addFilter(SWT.KeyUp, filter);
+			}
+		});
 	}
 
 	/*
