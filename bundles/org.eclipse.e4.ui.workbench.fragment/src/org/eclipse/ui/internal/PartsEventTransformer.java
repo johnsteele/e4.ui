@@ -47,7 +47,37 @@ public class PartsEventTransformer extends EContentAdapter {
 	public void notifyChanged(Notification notification) {
 		super.notifyChanged(notification);
 
-		// at this time we only interpreting E4 activation events
+		/*
+		 * We create partOpened / partClosed events based on both MPartWidget
+		 * events.
+		 * 
+		 * The initial MPartVisible events are sent early and don't have the
+		 * actual implementation included. The MPartWidget events are sent as a
+		 * final step of "part is created" and therefore we use it to create
+		 * partOpened events. When the part is closed the widget is set to null.
+		 */
+		if (ApplicationPackage.Literals.MPART__WIDGET.equals(notification
+				.getFeature())) {
+			if (notification.getEventType() != Notification.SET)
+				return;
+			if (notification.getOldValue() == notification.getNewValue())
+				return; // avoid extra notifications
+			Object part = notification.getNotifier();
+			if (part instanceof MContributedPart<?>) {
+				IWorkbenchPartReference ref = toPartRef((MContributedPart<?>) part);
+				if (ref != null) {
+					boolean isVisible = ((MContributedPart<?>) part)
+							.isVisible(); // should always be true at this point
+					if (isVisible)
+						partList.firePartOpened(ref);
+					else
+						partList.firePartClosed(ref);
+				}
+			}
+			return;
+		}
+
+		// Interpret E4 activation events:
 		if (!ApplicationPackage.Literals.MPART__ACTIVE_CHILD
 				.equals(notification.getFeature()))
 			return;
