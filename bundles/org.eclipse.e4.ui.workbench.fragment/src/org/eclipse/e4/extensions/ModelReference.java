@@ -11,7 +11,13 @@
 
 package org.eclipse.e4.extensions;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.workbench.ui.internal.Activator;
+import org.eclipse.e4.workbench.ui.internal.Policy;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IPropertyListener;
@@ -27,6 +33,7 @@ public class ModelReference implements IWorkbenchPartReference {
 
 	private MContributedPart<?> modelPart;
 	private WorkbenchPage page;
+	private Image titleImage;
 
 	public ModelReference(MContributedPart<?> model, WorkbenchPage page) {
 		modelPart = model;
@@ -132,7 +139,20 @@ public class ModelReference implements IWorkbenchPartReference {
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getTitleImage()
 	 */
 	public Image getTitleImage() {
-		// TODO Auto-generated method stub
+		if (titleImage != null) {
+			return titleImage;
+		}
+		if (modelPart.getIconURI() != null) {
+			try {
+				titleImage = JFaceResources.getResources().createImage(
+						ImageDescriptor.createFromURL(new URL(modelPart
+								.getIconURI())));
+				return titleImage;
+			} catch (MalformedURLException e) {
+				Activator.trace(Policy.DEBUG_WORKBENCH, "Failed to get image", //$NON-NLS-1$
+						e);
+			}
+		}
 		return null;
 	}
 
