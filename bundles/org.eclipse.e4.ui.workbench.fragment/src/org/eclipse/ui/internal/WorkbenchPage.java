@@ -1771,7 +1771,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// retrieve the editor area
 		MPart ea = findPartInCurrentPerspective(ModeledPageLayout
 				.internalGetEditorArea());
-		MContributedPart<MPart<?>> editorPart = findEditor(ea, editorID, input);
+		MContributedPart<MPart<?>> editorPart = null;
+		// TBD need to add processing for other flags: MATCH_INPUT, MATCH_ID
+		if (matchFlags != IWorkbenchPage.MATCH_NONE)
+			editorPart = findEditor(ea, editorID, input);
 		if (editorPart == null) {
 			editorPart = ApplicationFactory.eINSTANCE.createMContributedPart();
 			editorPart.setId(editorID);
