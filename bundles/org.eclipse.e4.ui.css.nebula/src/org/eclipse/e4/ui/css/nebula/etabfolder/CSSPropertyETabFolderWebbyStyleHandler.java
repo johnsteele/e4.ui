@@ -3,7 +3,7 @@ package org.eclipse.e4.ui.css.nebula.etabfolder;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
-import org.eclipse.swt.custom.ETabFolder;
+import org.eclipse.e4.ui.widgets.ETabFolder;
 import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.css.CSSValue;
 
