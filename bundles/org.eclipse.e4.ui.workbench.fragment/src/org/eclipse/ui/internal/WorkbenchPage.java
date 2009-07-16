@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
+import org.eclipse.e4.workbench.ui.internal.IValueFunction;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -1781,6 +1782,23 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			editorPart.getContext().set(IEditorInput.class.getName(), input);
 		}
 		editorPart.setVisible(true);
+
+		// Manage the 'close' button
+		final IEclipseContext editorContext = editorPart.getContext();
+		final MContributedPart<MPart<?>> theEditor = editorPart;
+		IValueFunction closeFunc = new IValueFunction() {
+			public Object getValue() {
+				Object impl = ((MContributedPart<?>) theEditor).getObject();
+				if (impl instanceof EditorPart) {
+					EditorPart edPart = (EditorPart) impl;
+					boolean closed = closeEditor(edPart, true);// savePrompt(edPart);
+					return closed;
+				}
+				return new Boolean(true);
+			}
+		};
+		editorContext.set("canCloseFunc", closeFunc); //$NON-NLS-1$
+
 		ea.setActiveChild(editorPart);
 		return (IEditorPart) editorPart.getObject();
 	}

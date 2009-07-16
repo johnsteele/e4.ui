@@ -133,7 +133,8 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 
 			// Manage the 'dirty' state
 			final IEditorPart implementation = impl;
-			impl.addPropertyListener(new IPropertyListener() {
+			localContext.set("isDirty", implementation.isDirty()); //$NON-NLS-1$
+			localContext.runAndTrack(new Runnable() {
 				private CTabItem findItemForPart(CTabFolder ctf) {
 					CTabItem[] items = ctf.getItems();
 					for (int i = 0; i < items.length; i++) {
@@ -145,22 +146,27 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 					return null;
 				}
 
-				public void propertyChanged(Object source, int propId) {
+				public void run() {
+					boolean dirty = (Boolean) localContext.get("isDirty"); //$NON-NLS-1$
 					if (parent instanceof CTabFolder) {
 						CTabFolder ctf = (CTabFolder) parent;
 						CTabItem partItem = findItemForPart(ctf);
+						if (partItem == null)
+							return;
+
 						String itemText = partItem.getText();
-						if (implementation.isDirty()
-								&& itemText.indexOf('*') != 0) {
+						if (dirty && itemText.indexOf('*') != 0) {
 							itemText = '*' + itemText;
 						} else if (itemText.indexOf('*') == 0) {
 							itemText = itemText.substring(1);
 						}
 						partItem.setText(itemText);
 					}
-					// DebugUITools.openLaunchConfigurationDialogOnGroup(parent
-					// .getShell(), null,
-					//							"org.eclipse.debug.ui.launchGroup.debug"); //$NON-NLS-1$
+				}
+			});
+			impl.addPropertyListener(new IPropertyListener() {
+				public void propertyChanged(Object source, int propId) {
+					localContext.set("isDirty", implementation.isDirty()); //$NON-NLS-1$
 				}
 			});
 
