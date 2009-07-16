@@ -372,6 +372,9 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public static MPart findPart(MPart toSearch, String id) {
+		if (toSearch == null)
+			return null;
+
 		MPart found = findElementById(toSearch, id);
 		if (found instanceof MPart)
 			return (MPart) found;
