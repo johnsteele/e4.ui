@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.css.nebula.engine;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyTextHandler;
 import org.eclipse.e4.ui.css.nebula.dom.NebulaElementProvider;
-import org.eclipse.e4.ui.css.nebula.etabfolder.CSSPropertyETabFolderWebbyStyleHandler;
 import org.eclipse.e4.ui.css.nebula.properties.css2.CSSPropertyBackgroundNebulaHandler;
 import org.eclipse.e4.ui.css.nebula.properties.css2.CSSPropertyTextNebulaHandler;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
@@ -44,12 +43,7 @@ public class CSSNebulaEngineImpl extends CSSSWTEngineImpl {
 		// Register Nebula CSS Property Text Handler
 		super.registerCSSPropertyHandler(ICSSPropertyTextHandler.class,
 				CSSPropertyTextNebulaHandler.INSTANCE);
-		super.initializeCSSPropertyHandlers();
-		
-		//Register ETabFolder CSS Property webbyStyle
-		super.registerCSSProperty("webbyStyle", CSSPropertyETabFolderWebbyStyleHandler.class);  
-		super.registerCSSPropertyHandler(CSSPropertyETabFolderWebbyStyleHandler.class,
-				CSSPropertyETabFolderWebbyStyleHandler.INSTANCE);
+		super.initializeCSSPropertyHandlers();		
 	}
 
 }
