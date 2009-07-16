@@ -94,14 +94,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.e4.ui.widgets.fragment"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.e4.pde.ui"
          download-size="0"
          install-size="0"
@@ -131,6 +123,13 @@
 
    <plugin
          id="org.eclipse.e4.ui.workbench.renderers.swt.contributions"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.e4.ui.widgets"
          download-size="0"
          install-size="0"
          version="0.0.0"
