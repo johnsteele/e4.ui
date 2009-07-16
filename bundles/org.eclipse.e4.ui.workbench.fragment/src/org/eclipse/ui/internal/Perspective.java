@@ -2155,6 +2155,12 @@ public class Perspective {
 				.getActiveChild();
 		MPart part = ModeledPageLayout.findPart(perspectiveModel, viewId);
 
+		// also check 'stickyRight' since it's not in a perspective
+		if (part == null) {
+			MStack stickyRight = (MStack) ModeledPageLayout.findPart(e4Window,
+					"stickyRight"); //$NON-NLS-1$
+			part = ModeledPageLayout.findPart(stickyRight, viewId);
+		}
 		boolean doLayout = false;
 
 		// if not, add it
