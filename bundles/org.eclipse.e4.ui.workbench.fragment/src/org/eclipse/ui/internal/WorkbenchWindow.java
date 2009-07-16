@@ -90,6 +90,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -127,6 +128,7 @@ import org.eclipse.ui.internal.presentations.DefaultActionBarPresentationFactory
 import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
+import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
@@ -1264,9 +1266,30 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		return PlatformUI.getWorkbench();
 	}
 
+	/*
+	 * The implementation of this method is copied from the 3.x
+	 * WorkbenchWindow's implementation. This is for rendering the group labels
+	 * within the 'Customize Perspective' dialog, amongst other places.
+	 */
 	public String getToolbarLabel(String actionSetId) {
+		ActionSetRegistry registry = WorkbenchPlugin.getDefault()
+				.getActionSetRegistry();
+		IActionSetDescriptor actionSet = registry.findActionSet(actionSetId);
+		if (actionSet != null) {
+			return actionSet.getLabel();
+		}
 
-		return WorkbenchMessages.WorkbenchWindow_FileToolbar;
+		if (IWorkbenchActionConstants.TOOLBAR_FILE
+				.equalsIgnoreCase(actionSetId)) {
+			return WorkbenchMessages.WorkbenchWindow_FileToolbar;
+		}
+
+		if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE
+				.equalsIgnoreCase(actionSetId)) {
+			return WorkbenchMessages.WorkbenchWindow_NavigateToolbar;
+		}
+
+		return null;
 	}
 
 	/**
