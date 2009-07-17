@@ -234,7 +234,7 @@ public class ModeledPageLayout implements IPageLayout {
 		MStack newStack = ApplicationFactory.eINSTANCE.createMStack();
 		newStack.setId(id);
 		newStack.setPolicy("ViewStack"); //$NON-NLS-1$
-
+		newStack.setVisible(visible);
 		return newStack;
 	}
 
