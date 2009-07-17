@@ -3,8 +3,11 @@ ETabFolder {
 	simple: true;
 	maximize-visible: false;
 	minimize-visible: false;
-	webbyStyle: true;
+	webby-style: true;
 	margin: 3px;
+	tab-area-keyline-color: rgb(201, 200, 204);
+	body-keyline-color: rgb(201, 200, 204);
+	tab-keyline-color: rgb(208, 207, 212);
 }
 
 ETabFolder.active {
