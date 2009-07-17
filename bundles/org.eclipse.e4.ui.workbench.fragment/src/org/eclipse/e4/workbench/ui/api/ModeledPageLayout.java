@@ -264,6 +264,20 @@ public class ModeledPageLayout implements IPageLayout {
 		if (refModel == null || !(refModel instanceof MPart))
 			return null;
 
+		// If the 'refModel' is -not- a stack then find one
+		// This covers cases where the defining layout is adding
+		// Views relative to other views and relying on the stacks
+		// being automatically created.
+		if (!(refModel instanceof MStack)) {
+			while (refModel.getParent() != null) {
+				refModel = refModel.getParent();
+				if (refModel instanceof MStack)
+					break;
+			}
+			if (!(refModel instanceof MStack))
+				return null;
+		}
+
 		MStack Stack = createStack(stackId, visible);
 		insert(Stack, (MPart) refModel, plRelToSwt(relationship), ratio);
 
