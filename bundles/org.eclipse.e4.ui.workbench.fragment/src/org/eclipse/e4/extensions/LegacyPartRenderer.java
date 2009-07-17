@@ -33,6 +33,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.EditorActionBars;
 import org.eclipse.ui.internal.EditorActionBuilder;
@@ -355,6 +356,29 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 		perspArea.setLayout(new FillLayout());
 
 		return perspArea;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.ui.renderers.swt.SWTPartRenderer#disposeWidget
+	 * (org.eclipse.e4.ui.model.application.MPart)
+	 */
+	@Override
+	public void disposeWidget(MPart<?> part) {
+		if (part instanceof MContributedPart) {
+			MContributedPart mpart = (MContributedPart) part;
+			Object obj = mpart.getObject();
+			if (obj instanceof IWorkbenchPart) {
+				((IWorkbenchPart) obj).dispose();
+			}
+		}
+		super.disposeWidget(part);
+		if (part instanceof MContributedPart) {
+			MContributedPart mpart = (MContributedPart) part;
+			mpart.setObject(null);
+		}
 	}
 
 }
