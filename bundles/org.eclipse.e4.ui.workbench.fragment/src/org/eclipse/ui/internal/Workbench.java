@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.ContextManager;
@@ -69,6 +70,7 @@ import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.EBindingService;
 import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -89,6 +91,7 @@ import org.eclipse.jface.action.ExternalActionManager.IExecuteApplicable;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -1942,6 +1945,15 @@ public final class Workbench extends EventManager implements IWorkbench {
 						return workbenchCommandSupport;
 					}
 				});
+		EBindingService e4BindingService = new EBindingService() {
+			public TriggerSequence getBestActiveBindingFor(
+					ParameterizedCommand command) {
+				if (bindingService[0] == null)
+					return null;
+				return bindingService[0].getBestActiveBindingFor(command);
+			}
+		};
+		e4Context.set(EBindingService.class.getName(), e4BindingService);
 		// END: e4 services
 
 		initializeCommandResolver();
