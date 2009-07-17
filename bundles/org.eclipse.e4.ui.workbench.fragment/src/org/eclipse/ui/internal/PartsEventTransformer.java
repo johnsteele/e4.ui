@@ -20,6 +20,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -68,9 +69,13 @@ public class PartsEventTransformer extends EContentAdapter {
 				if (ref != null) {
 					boolean isVisible = ((MContributedPart<?>) part)
 							.isVisible();
-					if (isVisible)
+					if (isVisible) {
+						SaveablesList modelManager = (SaveablesList) ref
+								.getPart(true).getSite().getService(
+										ISaveablesLifecycleListener.class);
+						modelManager.postOpen(ref.getPart(true));
 						partList.firePartOpened(ref);
-					else
+					} else
 						partList.firePartClosed(ref);
 				}
 			}
