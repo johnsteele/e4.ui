@@ -107,7 +107,8 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 		try {
 			IEclipseContext parentContext = getContextForParent(part);
 			final IEclipseContext localContext = part.getContext();
-			localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor"); //$NON-NLS-1$
+			localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor(" //$NON-NLS-1$
+					+ desc.getLabel() + ")"); //$NON-NLS-1$
 			final IEclipseContext outputContext = EclipseContextFactory.create(
 					null, UISchedulerStrategy.getInstance());
 			outputContext.set(IContextConstants.DEBUG_STRING,
@@ -231,7 +232,8 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 		try {
 			IEclipseContext parentContext = getContextForParent(part);
 			final IEclipseContext localContext = part.getContext();
-			localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor"); //$NON-NLS-1$
+			localContext.set(IContextConstants.DEBUG_STRING, "Legacy View(" //$NON-NLS-1$
+					+ part.getName() + ")"); //$NON-NLS-1$
 			final IEclipseContext outputContext = EclipseContextFactory.create(
 					null, UISchedulerStrategy.getInstance());
 			outputContext.set(IContextConstants.DEBUG_STRING,
