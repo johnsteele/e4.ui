@@ -70,6 +70,15 @@ public class PartsEventTransformer extends EContentAdapter {
 					boolean isVisible = ((MContributedPart<?>) part)
 							.isVisible();
 					if (isVisible) {
+						if (notification.getNewValue() == null) {
+							/*
+							 * not sure if this is the right place to fix bug
+							 * 283922 but if there is no widget and
+							 * isVisible==true, we must be shutting down, and we
+							 * should not send partOpened notifications.
+							 */
+							return;
+						}
 						SaveablesList modelManager = (SaveablesList) ref
 								.getPart(true).getSite().getService(
 										ISaveablesLifecycleListener.class);
