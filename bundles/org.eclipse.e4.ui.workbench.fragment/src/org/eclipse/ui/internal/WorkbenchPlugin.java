@@ -1389,6 +1389,14 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 						return operationSupport;
 					}
 				});
+		context.set(IPerspectiveRegistry.class.getName(),
+				new ContextFunction() {
+					@Override
+					public Object compute(IEclipseContext context,
+							Object[] arguments) {
+						return getPerspectiveRegistry();
+					}
+				});
 		context.set(PreferenceManager.class.getName(), new ContextFunction() {
 			@Override
 			public Object compute(IEclipseContext context, Object[] arguments) {
