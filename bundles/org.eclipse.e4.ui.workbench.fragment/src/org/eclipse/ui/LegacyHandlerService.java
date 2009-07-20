@@ -13,7 +13,6 @@ package org.eclipse.ui;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -43,12 +42,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.services.ISourceProviderService;
 
-/**
- * @since 3.3
- * 
- */
 public class LegacyHandlerService implements IHandlerService {
 	private static final String PARM_MAP = "legacyParameterMap"; //$NON-NLS-1$
 
@@ -258,56 +252,10 @@ public class LegacyHandlerService implements IHandlerService {
 
 	private IEclipseContext eclipseContext;
 	private IEvaluationContext evalContext;
-	private ISourceProviderListener sourceListener;
 
 	public LegacyHandlerService(IEclipseContext context) {
 		eclipseContext = context;
 		evalContext = new LegacyEvalContext(eclipseContext);
-		ISourceProviderService sps = (ISourceProviderService) eclipseContext
-				.get(ISourceProviderService.class.getName());
-		final ISourceProvider sp = sps
-				.getSourceProvider(ISources.SHOW_IN_SELECTION);
-		sp.addSourceProviderListener(getSourceListener());
-	}
-
-	private ISourceProviderListener getSourceListener() {
-		if (sourceListener == null) {
-			sourceListener = new ISourceProviderListener() {
-				public void sourceChanged(int sourcePriority,
-						String sourceName, Object sourceValue) {
-					boolean updated = updateVariable(ISources.SHOW_IN_INPUT,
-							sourceName, sourceValue);
-					if (!updated) {
-						updated = updateVariable(ISources.SHOW_IN_SELECTION,
-								sourceName, sourceValue);
-					}
-				}
-
-				public void sourceChanged(int sourcePriority,
-						Map sourceValuesByName) {
-					final Iterator i = sourceValuesByName.entrySet().iterator();
-					while (i.hasNext()) {
-						Map.Entry entry = (Map.Entry) i.next();
-						sourceChanged(0, (String) entry.getKey(), entry
-								.getValue());
-					}
-				}
-			};
-		}
-		return sourceListener;
-	}
-
-	boolean updateVariable(String name, String sourceName, Object sourceValue) {
-		if (name.equals(sourceName)) {
-			if (sourceValue == null
-					|| sourceValue == IEvaluationContext.UNDEFINED_VARIABLE) {
-				eclipseContext.remove(name);
-			} else {
-				eclipseContext.set(name, sourceValue);
-			}
-			return true;
-		}
-		return false;
 	}
 
 	/*

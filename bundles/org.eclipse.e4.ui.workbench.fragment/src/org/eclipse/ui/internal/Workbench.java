@@ -27,6 +27,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +42,7 @@ import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -133,6 +135,7 @@ import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
@@ -415,6 +418,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 			ListenerList.IDENTITY);
 
 	private ServiceTracker locationTracker;
+
+	private ISourceProviderListener sourceListener;
 
 	/**
 	 * Creates a new workbench.
@@ -1954,6 +1959,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 		};
 		e4Context.set(EBindingService.class.getName(), e4BindingService);
+
+		final ISourceProvider showInProvider = sourceProviderService
+				.getSourceProvider(ISources.SHOW_IN_SELECTION);
+		showInProvider.addSourceProviderListener(getSourceListener());
 		// END: e4 services
 
 		initializeCommandResolver();
@@ -1963,6 +1972,46 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		serviceLocator.registerService(ISelectionConversionService.class,
 				new SelectionConversionService());
+	}
+
+	private ISourceProviderListener getSourceListener() {
+		if (sourceListener == null) {
+			sourceListener = new ISourceProviderListener() {
+				public void sourceChanged(int sourcePriority,
+						String sourceName, Object sourceValue) {
+					boolean updated = updateVariable(ISources.SHOW_IN_INPUT,
+							sourceName, sourceValue);
+					if (!updated) {
+						updated = updateVariable(ISources.SHOW_IN_SELECTION,
+								sourceName, sourceValue);
+					}
+				}
+
+				public void sourceChanged(int sourcePriority,
+						Map sourceValuesByName) {
+					final Iterator i = sourceValuesByName.entrySet().iterator();
+					while (i.hasNext()) {
+						Map.Entry entry = (Map.Entry) i.next();
+						sourceChanged(0, (String) entry.getKey(), entry
+								.getValue());
+					}
+				}
+			};
+		}
+		return sourceListener;
+	}
+
+	boolean updateVariable(String name, String sourceName, Object sourceValue) {
+		if (name.equals(sourceName)) {
+			if (sourceValue == null
+					|| sourceValue == IEvaluationContext.UNDEFINED_VARIABLE) {
+				e4Context.remove(name);
+			} else {
+				e4Context.set(name, sourceValue);
+			}
+			return true;
+		}
+		return false;
 	}
 
 	static class MakeHandlersGo extends AbstractHandler {
@@ -3594,6 +3643,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 			final ISelection localSelection, final ISelection localEditorInput) {
 		menuSourceProvider.addShowingMenus(menuIds, localSelection,
 				localEditorInput);
+		e4Context.set(ISources.ACTIVE_MENU_NAME, menuIds);
+		e4Context.set(ISources.ACTIVE_MENU_SELECTION_NAME, localSelection);
+		e4Context.set(ISources.ACTIVE_MENU_EDITOR_INPUT_NAME, localEditorInput);
+		org.eclipse.e4.workbench.ui.internal.Activator.trace(
+				org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_MENUS,
+				"Adding menus " + menuIds + ", selection: " + localSelection, //$NON-NLS-1$ //$NON-NLS-2$
+				null);
 	}
 
 	/**
@@ -3611,6 +3667,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 			final ISelection localSelection, final ISelection localEditorInput) {
 		menuSourceProvider.removeShowingMenus(menuIds, localSelection,
 				localEditorInput);
+		e4Context.set(ISources.ACTIVE_MENU_NAME, null);
+		e4Context.set(ISources.ACTIVE_MENU_SELECTION_NAME, null);
+		e4Context.set(ISources.ACTIVE_MENU_EDITOR_INPUT_NAME, null);
+		org.eclipse.e4.workbench.ui.internal.Activator.trace(
+				org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_MENUS,
+				"Clearing menus " + menuIds, null); //$NON-NLS-1$
 	}
 
 	/*
