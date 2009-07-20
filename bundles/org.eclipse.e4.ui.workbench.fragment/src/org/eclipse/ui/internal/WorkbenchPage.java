@@ -66,6 +66,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INavigationHistory;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
@@ -105,7 +106,6 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.AbstractMultiEditor;
 import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
@@ -1774,8 +1774,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// Special handling for external editors (they have no tabs...)
 		if ("org.eclipse.ui.systemExternalEditor".equals(editorID) //$NON-NLS-1$
 				|| "org.eclipse.ui.browser.editorSupport".equals(editorID)) { //$NON-NLS-1$
-			if (input instanceof FileEditorInput) {
-				FileEditorInput fileInput = (FileEditorInput) input;
+			if (input instanceof IPathEditorInput) {
+				IPathEditorInput fileInput = (IPathEditorInput) input;
 				String fullPath = fileInput.getPath().toOSString();
 				Program.launch(fullPath);
 				return null;
