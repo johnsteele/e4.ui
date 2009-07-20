@@ -596,8 +596,23 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @return IPerspectiveRegistry. The registry for the receiver.
 	 */
 	public IPerspectiveRegistry getPerspectiveRegistry() {
-		return (IPerspectiveRegistry) e4Context.get(IPerspectiveRegistry.class
-				.getName());
+		if (perspRegistry == null) {
+			perspRegistry = new PerspectiveRegistry();
+			// the load methods can touch on WorkbenchImages if
+			// an image is
+			// missing so we need to wrap the call in
+			// a startup block for the case where a custom
+			// descriptor exists on
+			// startup that does not have an image
+			// associated with it. See bug 196352.
+			StartupThreading.runWithoutExceptions(new StartupRunnable() {
+				public void runWithException() throws Throwable {
+					perspRegistry.load();
+				}
+			});
+
+		}
+		return perspRegistry;
 	}
 
 	/**
@@ -1372,32 +1387,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 							operationSupport = new WorkbenchOperationSupport();
 						}
 						return operationSupport;
-					}
-				});
-		context.set(IPerspectiveRegistry.class.getName(),
-				new ContextFunction() {
-					@Override
-					public Object compute(IEclipseContext context,
-							Object[] arguments) {
-						if (perspRegistry == null) {
-							perspRegistry = new PerspectiveRegistry();
-							// the load methods can touch on WorkbenchImages if
-							// an image is
-							// missing so we need to wrap the call in
-							// a startup block for the case where a custom
-							// descriptor exists on
-							// startup that does not have an image
-							// associated with it. See bug 196352.
-							StartupThreading
-									.runWithoutExceptions(new StartupRunnable() {
-										public void runWithException()
-												throws Throwable {
-											perspRegistry.load();
-										}
-									});
-
-						}
-						return perspRegistry;
 					}
 				});
 		context.set(PreferenceManager.class.getName(), new ContextFunction() {
