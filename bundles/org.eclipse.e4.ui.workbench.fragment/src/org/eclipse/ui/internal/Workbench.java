@@ -72,6 +72,7 @@ import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.services.EBindingService;
 import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EContextService;
@@ -1786,6 +1787,29 @@ public final class Workbench extends EventManager implements IWorkbench {
 										.getPerspectiveBarVisible();
 							}
 						});
+		e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME,
+				new ContextFunction() {
+					@Override
+					public Object compute(IEclipseContext context,
+							Object[] arguments) {
+						IEclipseContext childContext = (IEclipseContext) context
+								.getLocal(IServiceConstants.ACTIVE_CHILD);
+						if (childContext != null) {
+							return childContext
+									.get(ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME);
+						}
+						MPerspective persp = (MPerspective) context
+								.get(MPerspective.class.getName());
+						final String perspId = persp == null ? null : persp
+								.getId();
+						org.eclipse.e4.workbench.ui.internal.Activator
+								.trace(
+										org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_CMDS,
+										"asked for perspective " + perspId, //$NON-NLS-1$
+										null);
+						return perspId;
+					}
+				});
 		// END: some e4 services
 
 		final IContributionService contributionService = new ContributionService(
