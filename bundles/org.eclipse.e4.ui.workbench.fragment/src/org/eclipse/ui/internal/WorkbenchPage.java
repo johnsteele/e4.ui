@@ -40,6 +40,7 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
 import org.eclipse.e4.workbench.ui.internal.IValueFunction;
+import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -1815,7 +1816,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		};
 		editorContext.set("canCloseFunc", closeFunc); //$NON-NLS-1$
 
-		ea.setActiveChild(editorPart);
+		if (activate) {
+			// Activate the UI Model part
+			AbstractPartRenderer renderer = (AbstractPartRenderer) editorPart
+					.getOwner();
+			if (renderer != null)
+				renderer.activate(editorPart);
+
+			// Set the initial focus
+			Object impl = editorPart.getObject();
+			if (impl instanceof EditorPart) {
+				EditorPart edPart = (EditorPart) impl;
+				edPart.setFocus();
+			}
+		}
+
 		return (IEditorPart) editorPart.getObject();
 	}
 
