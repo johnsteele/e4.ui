@@ -1751,6 +1751,41 @@ public final class Workbench extends EventManager implements IWorkbench {
 						return null;
 					}
 				});
+		e4Context.set(ISources.ACTIVE_PART_NAME, new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				IEclipseContext childContext = (IEclipseContext) context
+						.getLocal(IServiceConstants.ACTIVE_CHILD);
+				if (childContext != null) {
+					return childContext.get(ISources.ACTIVE_PART_NAME);
+				}
+				return null;
+			}
+		});
+		e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME,
+				new ContextFunction() {
+					@Override
+					public Object compute(IEclipseContext context,
+							Object[] arguments) {
+						WorkbenchWindow window = (WorkbenchWindow) context
+								.get(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+						return window == null ? false : window
+								.getCoolBarVisible();
+					}
+				});
+		e4Context
+				.set(
+						ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME,
+						new ContextFunction() {
+							@Override
+							public Object compute(IEclipseContext context,
+									Object[] arguments) {
+								WorkbenchWindow window = (WorkbenchWindow) context
+										.get(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+								return window == null ? false : window
+										.getPerspectiveBarVisible();
+							}
+						});
 		// END: some e4 services
 
 		final IContributionService contributionService = new ContributionService(
