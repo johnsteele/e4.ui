@@ -1771,7 +1771,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		// Special handling for external editors (they have no tabs...)
-		if ("org.eclipse.ui.systemExternalEditor".equals(editorID)) { //$NON-NLS-1$
+		if ("org.eclipse.ui.systemExternalEditor".equals(editorID) //$NON-NLS-1$
+				|| "org.eclipse.ui.browser.editorSupport".equals(editorID)) { //$NON-NLS-1$
 			if (input instanceof FileEditorInput) {
 				FileEditorInput fileInput = (FileEditorInput) input;
 				String fullPath = fileInput.getPath().toOSString();
