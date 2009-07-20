@@ -51,6 +51,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -103,6 +104,7 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.AbstractMultiEditor;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
@@ -1766,6 +1768,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			throws PartInitException {
 		if (input == null || editorID == null) {
 			throw new IllegalArgumentException();
+		}
+
+		// Special handling for external editors (they have no tabs...)
+		if ("org.eclipse.ui.systemExternalEditor".equals(editorID)) { //$NON-NLS-1$
+			if (input instanceof FileEditorInput) {
+				FileEditorInput fileInput = (FileEditorInput) input;
+				String fullPath = fileInput.getPath().toOSString();
+				Program.launch(fullPath);
+				return null;
+			}
 		}
 
 		// retrieve the editor area
