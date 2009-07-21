@@ -3231,10 +3231,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		EList<?> children = part.getChildren();
 		for (Object child : children) {
 			if (child instanceof MContributedPart<?>) {
-				Object object = ((MContributedPart<?>) child).getObject();
-				if (object instanceof IWorkbenchPart)
-					result.add(new ModelReference((MContributedPart<?>) child,
-							this));
+				MContributedPart<?> contributedChild = (MContributedPart<?>) child;
+				if (contributedChild.isVisible()) {
+					Object object = contributedChild.getObject();
+					if (object instanceof IWorkbenchPart)
+						result.add(new ModelReference(contributedChild, this));
+				}
 			}
 			if (child instanceof MPart<?>)
 				getContainedPartRefs(result, (MPart<?>) child);
