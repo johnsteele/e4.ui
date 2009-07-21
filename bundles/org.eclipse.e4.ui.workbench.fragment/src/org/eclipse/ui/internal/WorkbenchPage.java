@@ -2463,12 +2463,37 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 *            identifies the new perspective.
 	 */
 	public void setPerspective(final IPerspectiveDescriptor desc) {
-		// if (Util.equals(getPerspective(), desc)) {
-		// return;
-		// }
 		try {
-			getActivePerspective().loadPredefinedPersp(
-					(PerspectiveDescriptor) desc);
+			Perspective oldPersp = getActivePerspective();
+			if ((oldPersp != null)
+					&& oldPersp.getDesc().getId() == desc.getId())
+				return;
+
+			Perspective newPersp = findPerspective(desc);
+			if (newPersp == null) {
+				newPersp = new Perspective((PerspectiveDescriptor) desc, this);
+				perspList.add(newPersp);
+			}
+			// TBD firePerspectivePreDeactivate
+			if (oldPersp != null) {
+				// TBD: exceptions due to null presentations
+				// oldPersp.onDeactivate();
+				// TBD firePerspectiveDeactivated
+			}
+			// Activate the new layout
+			perspList.setActive(newPersp);
+			// also need to let E4 know
+			MPerspective e4perspective = findPerspectiveE4(e4Window, desc
+					.getId());
+			if (e4perspective != null
+					&& e4perspective.getParent().getActiveChild() != e4perspective)
+				e4perspective.getParent().setActiveChild(e4perspective);
+
+			if (newPersp != null) {
+				// TBD exceptions due to null presentations
+				// newPersp.onActivate();
+				// TBD firePerspectiveActivated(this, newPersp.getDesc());
+			}
 		} catch (WorkbenchException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -3470,5 +3495,25 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	public MWindow getModelWindow() {
 		return e4Window;
+	}
+
+	// TBD this code repeats multiple times in variations (get editors, get
+	// views, get parts). When typically callers filter them some more (isDirty,
+	// isVisble, etc.).
+	// This needs to be a generic utility
+	private MPerspective findPerspectiveE4(MPart<?> part, String id) {
+		EList<?> children = part.getChildren();
+		for (Object child : children) {
+			if (child instanceof MPerspective<?>) {
+				if (id.equals(((MPerspective) child).getId()))
+					return (MPerspective) child;
+			}
+			if (child instanceof MPart<?>) {
+				MPerspective found = findPerspectiveE4((MPart<?>) child, id);
+				if (found != null)
+					return found;
+			}
+		}
+		return null;
 	}
 }

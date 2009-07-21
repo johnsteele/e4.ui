@@ -15,13 +15,16 @@ import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MStack;
+import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISources;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 
@@ -112,6 +115,21 @@ public class PartsEventTransformer extends EContentAdapter {
 
 		// create 3.x activation events
 		final Object object = e4Context.get(IServiceConstants.ACTIVE_PART);
+		if ((newPart != oldPart) && newPart instanceof MPerspective<?>) {
+			// let legacy Workbench know about perspective activation
+			IWorkbenchPage page = (IWorkbenchPage) e4Context
+					.get(IWorkbenchPage.class.getName());
+			if (page != null) {
+				String id = ((MPerspective<?>) newPart).getId();
+				IPerspectiveDescriptor[] descriptors = page
+						.getOpenPerspectives();
+				for (IPerspectiveDescriptor desc : descriptors) {
+					if (!id.equals(desc.getId()))
+						continue;
+					page.setPerspective(desc);
+				}
+			}
+		}
 		if (object instanceof MContributedPart<?>) {
 			IWorkbenchPartReference ref = toPartRef((MContributedPart<?>) object);
 			if (ref != null) {
