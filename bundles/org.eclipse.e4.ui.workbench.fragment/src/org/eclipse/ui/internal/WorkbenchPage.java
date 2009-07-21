@@ -363,6 +363,30 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (!((GrabFocus) Tweaklets.get(GrabFocus.KEY)).grabFocusAllowed(part)) {
 			return;
 		}
+
+		// TBD we have no shared parts so far. Processing below should be
+		// updated once shared parts are implemented
+		if (part instanceof EditorPart) {
+			MPart ea = findPartInCurrentPerspective(ModeledPageLayout
+					.internalGetEditorArea());
+			String editorID = ((EditorPart) part).getEditorSite().getId();
+			IEditorInput editorInput = ((EditorPart) part).getEditorInput();
+			MContributedPart<MPart<?>> editorPart = findEditor(ea, editorID,
+					editorInput);
+			if (editorPart != null) {
+				editorPart.setVisible(true);
+				ea.setActiveChild(editorPart);
+			} else {
+				try {
+					openEditor(editorInput, editorID, true, MATCH_NONE);
+				} catch (PartInitException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} else {
+			// TBD implement functionality for views
+		}
 	}
 
 	/**
