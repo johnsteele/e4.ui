@@ -232,7 +232,7 @@ public class MenuHelper {
 					// create handler
 					IHandler handler = new ActionHandler(action);
 					LegacyHandlerService.registerLegacyHandler(context,
-							commandID, commandID, handler);
+							commandID, commandID, handler, null);
 
 					// update action definition if needed
 					if (action.getActionDefinitionId() == null)

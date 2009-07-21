@@ -1752,6 +1752,17 @@ public final class Workbench extends EventManager implements IWorkbench {
 						return null;
 					}
 				});
+		e4Context.set(ISources.ACTIVE_ACTION_SETS_NAME, new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				IEclipseContext childContext = (IEclipseContext) context
+						.getLocal(IServiceConstants.ACTIVE_CHILD);
+				if (childContext != null) {
+					return childContext.get(ISources.ACTIVE_ACTION_SETS_NAME);
+				}
+				return null;
+			}
+		});
 		e4Context.set(ISources.ACTIVE_PART_NAME, new ContextFunction() {
 			@Override
 			public Object compute(IEclipseContext context, Object[] arguments) {
@@ -1759,6 +1770,17 @@ public final class Workbench extends EventManager implements IWorkbench {
 						.getLocal(IServiceConstants.ACTIVE_CHILD);
 				if (childContext != null) {
 					return childContext.get(ISources.ACTIVE_PART_NAME);
+				}
+				return null;
+			}
+		});
+		e4Context.set(ISources.ACTIVE_SITE_NAME, new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				IEclipseContext childContext = (IEclipseContext) context
+						.getLocal(IServiceConstants.ACTIVE_CHILD);
+				if (childContext != null) {
+					return childContext.get(ISources.ACTIVE_SITE_NAME);
 				}
 				return null;
 			}

@@ -112,6 +112,7 @@ import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.SwtUtil;
+import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
@@ -535,12 +536,15 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 
 		// final Expression expression = new ActiveShellExpression(shell);
+		final WorkbenchWindowExpression expr = new WorkbenchWindowExpression(
+				this);
 		for (Iterator iterator = handlersByCommandId.entrySet().iterator(); iterator
 				.hasNext();) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			String commandId = (String) entry.getKey();
 			IHandler handler = (IHandler) entry.getValue();
-			newHandlers.add(handlerService.activateHandler(commandId, handler));
+			newHandlers.add(handlerService.activateHandler(commandId, handler,
+					expr));
 		}
 
 		handlerActivations = newHandlers;
@@ -678,6 +682,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
 						org.eclipse.e4.workbench.ui.internal.Workbench.class
 								.getName());
 		e4Workbench.createGUI(e4Window);
+
+		e4Context
+				.set(
+						org.eclipse.e4.workbench.ui.internal.Workbench.LOCAL_ACTIVE_SHELL,
+						getShell());
 
 		// It's time for a layout ... to insure that if TrimLayout
 		// is in play, it updates all of the trim it's responsible
@@ -1696,6 +1705,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			return;
 		}
 		final IActionSetDescriptor[] actionSets = page.getActionSets();
+		e4Context.set(ISources.ACTIVE_ACTION_SETS_NAME, actionSets);
 		final HashSet<String> set = new HashSet<String>();
 		for (int i = 0; i < actionSets.length; i++) {
 			set.add(actionSets[i].getId());
@@ -2390,6 +2400,19 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				return null;
 			}
 		});
+		e4Context.set(ISources.ACTIVE_SITE_NAME, new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				Object o = context.get(IServiceConstants.ACTIVE_PART);
+				if (o instanceof MContributedPart<?>) {
+					Object impl = ((MContributedPart) o).getObject();
+					if (impl instanceof IWorkbenchPart) {
+						return ((IWorkbenchPart) impl).getSite();
+					}
+				}
+				return null;
+			}
+		});
 		// local handler service for local handlers
 		IHandlerService handlerService = new LegacyHandlerService(e4Context);
 		serviceLocator.registerService(IHandlerService.class, handlerService);
@@ -2397,6 +2420,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	}
 
 	private void readActionSets() {
+		WorkbenchWindowExpression windowExpression = new WorkbenchWindowExpression(
+				this);
 		ICommandService cs = (ICommandService) e4Context
 				.get(ICommandService.class.getName());
 		IConfigurationElement[] actionSetElements = ExtensionUtils
@@ -2421,7 +2446,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 						cmdId, new ActionDelegateHandlerProxy(configElement,
 								IWorkbenchRegistryConstants.ATT_CLASS, id,
 								new ParameterizedCommand(cmd, null), this,
-								null, null, null));
+								null, null, null), windowExpression);
 			}
 		}
 	}

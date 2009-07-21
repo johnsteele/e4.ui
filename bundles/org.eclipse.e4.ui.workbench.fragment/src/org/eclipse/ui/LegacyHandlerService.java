@@ -22,8 +22,12 @@ import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.expressions.ElementHandler;
+import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -42,13 +46,16 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
 
 public class LegacyHandlerService implements IHandlerService {
 	private static final String PARM_MAP = "legacyParameterMap"; //$NON-NLS-1$
+	private static final String HANDLER_PREFIX = "HDL_"; //$NON-NLS-1$
 
 	public static class HandlerProxy {
 		IHandler handler = null;
-		private Command command;
+		Command command;
+		EHandlerActivation activation = null;
 
 		public HandlerProxy(Command command, IHandler handler) {
 			this.command = command;
@@ -77,12 +84,16 @@ public class LegacyHandlerService implements IHandlerService {
 		}
 	}
 
-	static class EHandlerActivation implements IHandlerActivation {
+	static class EHandlerActivation implements IHandlerActivation, Runnable {
 
 		IEclipseContext context;
 		private String commandId;
 		private IHandler handler;
 		HandlerProxy proxy;
+		Expression activeWhen;
+		boolean active;
+		int sourcePriority;
+		boolean participating = true;
 
 		/**
 		 * @param context
@@ -91,11 +102,15 @@ public class LegacyHandlerService implements IHandlerService {
 		 * @param handlerProxy
 		 */
 		public EHandlerActivation(IEclipseContext context, String cmdId,
-				IHandler handler, HandlerProxy handlerProxy) {
+				IHandler handler, HandlerProxy handlerProxy, Expression expr) {
 			this.context = context;
 			this.commandId = cmdId;
 			this.handler = handler;
 			this.proxy = handlerProxy;
+			this.activeWhen = expr;
+			this.sourcePriority = SourcePriorityNameMapping
+					.computeSourcePriority(activeWhen);
+			proxy.activation = this;
 		}
 
 		/*
@@ -104,8 +119,7 @@ public class LegacyHandlerService implements IHandlerService {
 		 * @see org.eclipse.ui.handlers.IHandlerActivation#clearActive()
 		 */
 		public void clearActive() {
-			// TODO Auto-generated method stub
-
+			active = true;
 		}
 
 		/*
@@ -154,8 +168,7 @@ public class LegacyHandlerService implements IHandlerService {
 		 * .expressions.IEvaluationContext)
 		 */
 		public boolean isActive(IEvaluationContext context) {
-			// TODO Auto-generated method stub
-			return true;
+			return active;
 		}
 
 		/*
@@ -165,7 +178,6 @@ public class LegacyHandlerService implements IHandlerService {
 		 * org.eclipse.ui.internal.services.IEvaluationResultCache#clearResult()
 		 */
 		public void clearResult() {
-			// TODO Auto-generated method stub
 
 		}
 
@@ -177,8 +189,17 @@ public class LegacyHandlerService implements IHandlerService {
 		 * org.eclipse.core.expressions.IEvaluationContext)
 		 */
 		public boolean evaluate(IEvaluationContext context) {
-			// TODO Auto-generated method stub
-			return true;
+			if (activeWhen == null) {
+				active = true;
+			} else {
+				try {
+					active = activeWhen.evaluate(context) != EvaluationResult.FALSE;
+				} catch (CoreException e) {
+					Activator.trace(Policy.DEBUG_CMDS,
+							"Failed to calculate active", e); //$NON-NLS-1$
+				}
+			}
+			return active;
 		}
 
 		/*
@@ -189,8 +210,7 @@ public class LegacyHandlerService implements IHandlerService {
 		 * ()
 		 */
 		public Expression getExpression() {
-			// TODO Auto-generated method stub
-			return null;
+			return activeWhen;
 		}
 
 		/*
@@ -201,8 +221,7 @@ public class LegacyHandlerService implements IHandlerService {
 		 * ()
 		 */
 		public int getSourcePriority() {
-			// TODO Auto-generated method stub
-			return 0;
+			return sourcePriority;
 		}
 
 		/*
@@ -223,10 +242,83 @@ public class LegacyHandlerService implements IHandlerService {
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
 		 */
 		public int compareTo(Object o) {
-			// TODO Auto-generated method stub
-			return 0;
+			EHandlerActivation activation = (EHandlerActivation) o;
+			int difference;
+
+			// Check the priorities
+			int thisPriority = this.getSourcePriority();
+			int thatPriority = activation.getSourcePriority();
+
+			// rogue bit problem - ISources.ACTIVE_MENU
+			int thisLsb = 0;
+			int thatLsb = 0;
+
+			if (((thisPriority & ISources.ACTIVE_MENU) | (thatPriority & ISources.ACTIVE_MENU)) != 0) {
+				thisLsb = thisPriority & 1;
+				thisPriority = (thisPriority >> 1) & 0x7fffffff;
+				thatLsb = thatPriority & 1;
+				thatPriority = (thatPriority >> 1) & 0x7fffffff;
+			}
+
+			difference = thisPriority - thatPriority;
+			if (difference != 0) {
+				return difference;
+			}
+
+			// if all of the higher bits are the same, check the
+			// difference of the LSB
+			difference = thisLsb - thatLsb;
+			if (difference != 0) {
+				return difference;
+			}
+
+			// Check depth
+			final int thisDepth = this.getDepth();
+			final int thatDepth = activation.getDepth();
+			difference = thisDepth - thatDepth;
+			return difference;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return "EHA: " + active + ":" + sourcePriority + ":" + commandId + ": " + proxy //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					+ ": " + handler + ": " + context; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Runnable#run()
+		 */
+		public void run() {
+			if (!participating) {
+				return;
+			}
+			final EHandlerService hs = (EHandlerService) context
+					.get(EHandlerService.class.getName());
+			Object obj = context.get(HANDLER_PREFIX + commandId);
+
+			if (evaluate(new LegacyEvalContext(context))) {
+				if (obj instanceof HandlerProxy) {
+					final EHandlerActivation bestActivation = ((HandlerProxy) obj).activation;
+					final int comparison = bestActivation.compareTo(this);
+					if (comparison < 0) {
+						hs.activateHandler(commandId, proxy);
+					}
+				} else if (obj == null) {
+					hs.activateHandler(commandId, proxy);
+				}
+			} else {
+				if (obj == proxy) {
+					hs.deactivateHandler(commandId, proxy);
+				}
+			}
+		}
 	}
 
 	/*
@@ -237,16 +329,16 @@ public class LegacyHandlerService implements IHandlerService {
 	 * org.eclipse.jface.action.IAction)
 	 */
 	public static IHandlerActivation registerLegacyHandler(
-			IEclipseContext context, String id, String cmdId, IHandler handler) {
-		EHandlerService hs = (EHandlerService) context
-				.get(EHandlerService.class.getName());
+			final IEclipseContext context, String id, final String cmdId,
+			IHandler handler, Expression activeWhen) {
+
 		ECommandService cs = (ECommandService) context
 				.get(ECommandService.class.getName());
 		Command command = cs.getCommand(cmdId);
 		HandlerProxy handlerProxy = new HandlerProxy(command, handler);
-		EHandlerActivation activation = new EHandlerActivation(context, cmdId,
-				handler, handlerProxy);
-		hs.activateHandler(cmdId, handlerProxy);
+		final EHandlerActivation activation = new EHandlerActivation(context,
+				cmdId, handler, handlerProxy, activeWhen);
+		context.runAndTrack(activation);
 		return activation;
 	}
 
@@ -267,9 +359,8 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IHandlerActivation activateHandler(IHandlerActivation activation) {
 		EHandlerActivation eActivation = (EHandlerActivation) activation;
-		EHandlerService hs = (EHandlerService) eActivation.context
-				.get(EHandlerService.class.getName());
-		hs.activateHandler(activation.getCommandId(), eActivation.proxy);
+		eActivation.participating = true;
+		eActivation.context.runAndTrack(eActivation);
 		return activation;
 	}
 
@@ -282,7 +373,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IHandlerActivation activateHandler(String commandId, IHandler handler) {
 		return registerLegacyHandler(eclipseContext, commandId, commandId,
-				handler);
+				handler, null);
 	}
 
 	/*
@@ -296,7 +387,7 @@ public class LegacyHandlerService implements IHandlerService {
 	public IHandlerActivation activateHandler(String commandId,
 			IHandler handler, Expression expression) {
 		return registerLegacyHandler(eclipseContext, commandId, commandId,
-				handler);
+				handler, expression);
 	}
 
 	/*
@@ -310,7 +401,7 @@ public class LegacyHandlerService implements IHandlerService {
 	public IHandlerActivation activateHandler(String commandId,
 			IHandler handler, Expression expression, boolean global) {
 		return registerLegacyHandler(eclipseContext, commandId, commandId,
-				handler);
+				handler, expression);
 	}
 
 	/*
@@ -324,7 +415,7 @@ public class LegacyHandlerService implements IHandlerService {
 	public IHandlerActivation activateHandler(String commandId,
 			IHandler handler, Expression expression, int sourcePriorities) {
 		return registerLegacyHandler(eclipseContext, commandId, commandId,
-				handler);
+				handler, expression);
 	}
 
 	/*
@@ -379,6 +470,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public void deactivateHandler(IHandlerActivation activation) {
 		EHandlerActivation eActivation = (EHandlerActivation) activation;
+		eActivation.participating = false;
 		EHandlerService hs = (EHandlerService) eActivation.context
 				.get(EHandlerService.class.getName());
 		hs.deactivateHandler(eActivation.getCommandId(), eActivation.proxy);
@@ -487,10 +579,33 @@ public class LegacyHandlerService implements IHandlerService {
 							.getChildren(IWorkbenchRegistryConstants.TAG_CLASS).length == 0)) {
 				continue;
 			}
+			Expression activeWhen = null;
+			final IConfigurationElement[] awChildren = configElement
+					.getChildren(IWorkbenchRegistryConstants.TAG_ACTIVE_WHEN);
+			if (awChildren.length > 0) {
+				final IConfigurationElement[] subChildren = awChildren[0]
+						.getChildren();
+				if (subChildren.length != 1) {
+					Activator.trace(Policy.DEBUG_CMDS,
+							"Incorrect activeWhen element " + commandId, null); //$NON-NLS-1$
+					continue;
+				}
+				final ElementHandler elementHandler = ElementHandler
+						.getDefault();
+				final ExpressionConverter converter = ExpressionConverter
+						.getDefault();
+				try {
+					activeWhen = elementHandler.create(converter,
+							subChildren[0]);
+				} catch (CoreException e) {
+					Activator.trace(Policy.DEBUG_CMDS,
+							"Incorrect activeWhen element " + commandId, e); //$NON-NLS-1$
+				}
+			}
 			registerLegacyHandler(eclipseContext, commandId, commandId,
 					new org.eclipse.ui.internal.handlers.HandlerProxy(
 							commandId, configElement,
-							IWorkbenchRegistryConstants.ATT_CLASS));
+							IWorkbenchRegistryConstants.ATT_CLASS), activeWhen);
 		}
 	}
 
@@ -513,7 +628,8 @@ public class LegacyHandlerService implements IHandlerService {
 			registerLegacyHandler(eclipseContext, id, id,
 					new org.eclipse.ui.internal.handlers.HandlerProxy(id,
 							configElement,
-							IWorkbenchRegistryConstants.ATT_DEFAULT_HANDLER));
+							IWorkbenchRegistryConstants.ATT_DEFAULT_HANDLER),
+					null);
 
 		}
 	}
