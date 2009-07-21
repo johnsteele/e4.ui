@@ -14,12 +14,12 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.ui.ide.workbench"
-            name="e4 Compatibility Platform">
-          <property name="windowImages" value="eclipse.gif,eclipse32.gif,eclipse48.gif"/> 
+            name="%productName">
+          <property name="windowImages" value="eclipse32.png,eclipse.png,eclipse.gif,eclipse32.gif,eclipse48.gif,eclipse48.png"/> 
           <property name="aboutImage" value="eclipse_lg.gif"/> 
          <property
                name="appName"
-               value="e4 Compatibility Platform">
+               value="%productName">
          </property>
          <property
                name="preferenceCustomization"
@@ -62,6 +62,10 @@
              class="org.eclipse.e4.ui.examples.legacy.workbench.AnimationSplashHandler"
              id="org.eclipse.e4.ui.examples.legacy.workbench.splashHandlers.browser">
        </splashHandler>
+       <splashHandlerProductBinding
+             productId="org.eclipse.e4.ui.examples.legacy.workbench.product"
+             splashId="org.eclipse.e4.ui.examples.legacy.workbench.splashHandlers.browser">
+       </splashHandlerProductBinding>
     </extension>
 
 </plugin>
