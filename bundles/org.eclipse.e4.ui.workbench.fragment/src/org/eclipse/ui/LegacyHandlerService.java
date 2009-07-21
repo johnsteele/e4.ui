@@ -82,6 +82,10 @@ public class LegacyHandlerService implements IHandlerService {
 				e.printStackTrace();
 			}
 		}
+
+		public IHandler getHandler() {
+			return handler;
+		}
 	}
 
 	static class EHandlerActivation implements IHandlerActivation, Runnable {
