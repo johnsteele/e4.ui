@@ -87,6 +87,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.MultiPartInitException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
@@ -249,20 +250,30 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	public void activate(IWorkbenchPart part) {
 		// Sanity check.
-		if (!certifyPart(part)) {
+		if (part == null || !certifyPart(part) || window.isClosing()) {
 			return;
 		}
 
-		if (window.isClosing()) {
-			return;
+		// Activate the part and set its focus
+		IWorkbenchPartReference ref = getReference(part);
+		if (ref instanceof ModelReference) {
+			ModelReference modelRef = (ModelReference) ref;
+			MContributedPart<?> modelElement = modelRef.getModel();
+			if (modelElement != null) {
+				AbstractPartRenderer renderer = (AbstractPartRenderer) modelElement
+						.getOwner();
+				if (renderer != null)
+					renderer.activate(modelElement);
+
+				// set the Focus to the newly active part
+				part.setFocus();
+			}
 		}
 
-		if (composite != null
-				&& composite.isVisible()
-				&& !((GrabFocus) Tweaklets.get(GrabFocus.KEY))
-						.grabFocusAllowed(part)) {
-			return;
-		}
+		// Update the action bars
+		SubActionBars bars = (SubActionBars) ((PartSite) part.getSite())
+				.getActionBars();
+		bars.partChanged(part);
 	}
 
 	/**
@@ -1808,7 +1819,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				Object impl = ((MContributedPart<?>) theEditor).getObject();
 				if (impl instanceof EditorPart) {
 					EditorPart edPart = (EditorPart) impl;
-					boolean closed = closeEditor(edPart, true);// savePrompt(edPart);
+					boolean closed = closeEditor(edPart, true);
 					return closed;
 				}
 				return new Boolean(true);
@@ -1817,17 +1828,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		editorContext.set("canCloseFunc", closeFunc); //$NON-NLS-1$
 
 		if (activate) {
-			// Activate the UI Model part
-			AbstractPartRenderer renderer = (AbstractPartRenderer) editorPart
-					.getOwner();
-			if (renderer != null)
-				renderer.activate(editorPart);
-
 			// Set the initial focus
 			Object impl = editorPart.getObject();
-			if (impl instanceof EditorPart) {
-				EditorPart edPart = (EditorPart) impl;
-				edPart.setFocus();
+			if (impl instanceof IWorkbenchPart) {
+				activate((IWorkbenchPart) impl);
 			}
 		}
 
