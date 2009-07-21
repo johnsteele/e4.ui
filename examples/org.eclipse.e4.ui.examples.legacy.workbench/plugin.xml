@@ -17,6 +17,7 @@
             name="%productName">
           <property name="windowImages" value="eclipse32.png,eclipse.png,eclipse.gif,eclipse32.gif,eclipse48.gif,eclipse48.png"/> 
           <property name="aboutImage" value="eclipse_lg.gif"/> 
+          <property name="aboutText" value="%productBlurb"/> 
          <property
                name="appName"
                value="%productName">
