@@ -906,7 +906,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage
 	 */
 	public IViewReference findViewReference(String viewId, String secondaryId) {
-		// TODO search the model for the view and return a "ref"
+		MPart modelPart = ModeledPageLayout.findPart(e4Window, viewId);
+		if (modelPart instanceof MContributedPart<?>) {
+			IWorkbenchPart wbPart = (IWorkbenchPart) ((MContributedPart<?>) modelPart)
+					.getObject();
+			return (IViewReference) getReference(wbPart);
+		}
 		return null;
 	}
 
