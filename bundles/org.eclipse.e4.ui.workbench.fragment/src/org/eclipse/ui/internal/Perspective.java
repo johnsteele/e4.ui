@@ -906,9 +906,10 @@ public class Perspective {
 		}
 		MStack sm;
 		if (relPart != null) {
-			// TBD is the parent of a part always a stack?
-			// How about a sash?
-			sm = (MStack) relPart.getParent();
+			MPart<?> stackPart = relPart;
+			while (!(stackPart instanceof MStack))
+				stackPart = stackPart.getParent();
+			sm = (MStack) stackPart;
 		} else { // get a default stack
 			sm = getDefaultStack(perspModel);
 		}
