@@ -2044,6 +2044,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 		final ISourceProvider showInProvider = sourceProviderService
 				.getSourceProvider(ISources.SHOW_IN_SELECTION);
 		showInProvider.addSourceProviderListener(getSourceListener());
+		final ISourceProvider focusProvider = sourceProviderService
+				.getSourceProvider(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME);
+		focusProvider.addSourceProviderListener(getSourceListener());
 		// END: e4 services
 
 		initializeCommandResolver();
@@ -2065,6 +2068,16 @@ public final class Workbench extends EventManager implements IWorkbench {
 					if (!updated) {
 						updated = updateVariable(ISources.SHOW_IN_SELECTION,
 								sourceName, sourceValue);
+					}
+					if (!updated) {
+						updated = updateVariable(
+								ISources.ACTIVE_FOCUS_CONTROL_ID_NAME,
+								sourceName, sourceValue);
+					}
+					if (!updated) {
+						updated = updateVariable(
+								ISources.ACTIVE_FOCUS_CONTROL_NAME, sourceName,
+								sourceValue);
 					}
 				}
 
