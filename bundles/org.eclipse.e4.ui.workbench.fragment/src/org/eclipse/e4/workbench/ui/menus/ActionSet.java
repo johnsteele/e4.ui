@@ -22,11 +22,17 @@ import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
+import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
+import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.menus.CommandContributionItem;
 
 /**
  * 
@@ -198,6 +204,23 @@ public class ActionSet {
 		String cmdId = MenuHelper.getActionSetCommandId(element);
 		String id = MenuHelper.getId(element);
 		String label = MenuHelper.getLabel(element);
+		int style = MenuHelper.getStyle(element);
+		if (style == CommandContributionItem.STYLE_PULLDOWN) {
+			IWorkbenchWindow window = (IWorkbenchWindow) context
+					.get(IWorkbenchWindow.class.getName());
+			// we need to treat a pulldown action as a renderer, since the
+			// action
+			// itself contains the rendering code
+			ActionDescriptor desc = new ActionDescriptor(element,
+					ActionDescriptor.T_WORKBENCH_PULLDOWN, window);
+			final ActionContributionItem item = new ActionContributionItem(desc
+					.getAction());
+			MMenuItemRenderer r = WorkbenchFactory.eINSTANCE
+					.createMMenuItemRenderer();
+			r.setId(item.getId() == null ? "item:" + id : item.getId()); //$NON-NLS-1$
+			r.setRenderer(item);
+			return r;
+		}
 		if (label == null) {
 			if (cmdId == null) {
 				label = "none:" + id; //$NON-NLS-1$
