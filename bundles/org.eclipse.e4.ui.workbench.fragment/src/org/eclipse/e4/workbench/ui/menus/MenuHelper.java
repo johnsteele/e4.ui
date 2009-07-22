@@ -197,6 +197,110 @@ public class MenuHelper {
 				.toArray(new MenuContribution[contributions.size()]);
 	}
 
+	static abstract class ProcessItem {
+		static final ProcessItem MENU = new ProcessMenuItem();
+		static final ProcessItem TOOLBAR = new ProcessToolBarItem();
+
+		public void process(IEclipseContext context,
+				CommandContributionItem cci, Object modelParent) {
+			String id = cci.getCommand().getId();
+			ICommandService cs = (ICommandService) context
+					.get(ICommandService.class.getName());
+			Command cmd = cs.getCommand(id);
+			if (cmd.isDefined()) {
+				ICommandImageService cis = (ICommandImageService) context
+						.get(ICommandImageService.class.getName());
+				String imageURL = getImageUrl(cis.getImageDescriptor(cmd
+						.getId(), ICommandImageService.TYPE_DEFAULT));
+				try {
+					addModelItem(context, modelParent, cmd.getName(), imageURL,
+							cci.getId(), id);
+				} catch (NotDefinedException e) {
+					// This should not happen
+					e.printStackTrace();
+				}
+			} else {
+				addModelItem(context, modelParent,
+						"unloaded:" + id, null, cci.getId(), id); //$NON-NLS-1$
+			}
+		}
+
+		public void process(IEclipseContext context,
+				ActionContributionItem aci, Object modelParent) {
+			IAction action = aci.getAction();
+			String commandID = action.getActionDefinitionId();
+			if (commandID == null)
+				commandID = aci.getId();
+			if (commandID == null) {
+				commandID = action.getId();
+			}
+			if (commandID == null) {
+				// last resort, this is goofy
+				commandID = "GEN::" + System.identityHashCode(aci); //$NON-NLS-1$
+			}
+
+			if (action.getActionDefinitionId() == null && commandID != null) {
+				// check that we have a command; create it if necessary
+				Workbench legacyWB = (Workbench) context.get(Workbench.class
+						.getName());
+				String label = action.getText();
+				if (label == null) {
+					label = action.getToolTipText();
+				}
+				if (label == null) {
+					label = "label for " + commandID; //$NON-NLS-1$
+				}
+				legacyWB.addCommand(commandID, label);
+
+				// create handler
+				IHandler handler = new ActionHandler(action);
+				LegacyHandlerService.registerLegacyHandler(context, commandID,
+						commandID, handler, null);
+
+				// update action definition if needed
+				if (action.getActionDefinitionId() == null)
+					action.setActionDefinitionId(commandID);
+			}
+			addModelItem(context, modelParent, action, aci.getId());
+		}
+
+		public void addModelItem(IEclipseContext context, Object modelParent,
+				IAction action, String id) {
+			String imageURL = getImageUrl(action.getImageDescriptor());
+
+			addModelItem(context, modelParent, action.getText(), imageURL, id,
+					action.getActionDefinitionId());
+		}
+
+		public abstract void addModelItem(IEclipseContext context,
+				Object modelParent, String label, String imageURL, String id,
+				String cmdId);
+
+		static class ProcessToolBarItem extends ProcessItem {
+
+			@Override
+			public void addModelItem(IEclipseContext context,
+					Object modelParent, String label, String imageURL,
+					String id, String cmdId) {
+				MToolBarItem newItem = createToolbarItem(context, label,
+						imageURL, id, cmdId);
+				MToolBar tbModel = (MToolBar) modelParent;
+				tbModel.getItems().add(newItem);
+			}
+
+		}
+
+		static class ProcessMenuItem extends ProcessItem {
+			@Override
+			public void addModelItem(IEclipseContext context,
+					Object modelParent, String label, String imageURL,
+					String id, String cmdId) {
+				MMenu menu = (MMenu) modelParent;
+				addMenuItem(context, menu, label, null, imageURL, id, cmdId);
+			}
+		}
+	}
+
 	/**
 	 * @param menu
 	 * @param manager
@@ -217,62 +321,14 @@ public class MenuHelper {
 				processMenuManager(context, menu1.getMenu(), m.getItems());
 			} else if (item instanceof ActionContributionItem) {
 				ActionContributionItem aci = (ActionContributionItem) item;
-				IAction action = aci.getAction();
-				String imageURL = getImageUrl(action.getImageDescriptor());
-
-				String commandID = action.getActionDefinitionId();
-				if (commandID == null)
-					commandID = aci.getId();
-
-				if (action.getActionDefinitionId() == null && commandID != null) {
-					// check that we have a command; create it if necessary
-					Workbench legacyWB = (Workbench) context
-							.get(Workbench.class.getName());
-					legacyWB.addCommand(commandID, action.getText());
-
-					// create handler
-					IHandler handler = new ActionHandler(action);
-					LegacyHandlerService.registerLegacyHandler(context,
-							commandID, commandID, handler, null);
-
-					// update action definition if needed
-					if (action.getActionDefinitionId() == null)
-						action.setActionDefinitionId(commandID);
-					// } else if (action.getActionDefinitionId() != null) {
-					// // create handler
-					// Activator.trace(Policy.DEBUG_MENUS,
-					//							"trying to register some action: " + action, null); //$NON-NLS-1$
-					// if (!(action instanceof CommandAction)) {
-					// IHandler handler = new ActionHandler(action);
-					// LegacyHandlerService.registerLegacyHandler(context, aci
-					// .getId(), action.getActionDefinitionId(),
-					// handler);
-					// }
+				if ((aci.getAction().getStyle() | IAction.AS_DROP_DOWN_MENU) == 0) {
+					ProcessItem.MENU.process(context, aci, menu);
+				} else {
+					addMenuRenderer(context, menu, item);
 				}
-				addMenuItem(context, menu, action.getText(), null, imageURL,
-						aci.getId(), action.getActionDefinitionId());
 			} else if (item instanceof CommandContributionItem) {
 				CommandContributionItem cci = (CommandContributionItem) item;
-				String id = cci.getCommand().getId();
-				ICommandService cs = (ICommandService) context
-						.get(ICommandService.class.getName());
-				Command cmd = cs.getCommand(id);
-				if (cmd.isDefined()) {
-					ICommandImageService cis = (ICommandImageService) context
-							.get(ICommandImageService.class.getName());
-					String imageURL = getImageUrl(cis.getImageDescriptor(cmd
-							.getId(), ICommandImageService.TYPE_DEFAULT));
-					try {
-						addMenuItem(context, menu, cmd.getName(), null,
-								imageURL, cci.getId(), id);
-					} catch (NotDefinedException e) {
-						// This should not happen
-						e.printStackTrace();
-					}
-				} else {
-					addMenuItem(context, menu,
-							"unloaded:" + id, null, null, cci.getId(), id); //$NON-NLS-1$
-				}
+				ProcessItem.MENU.process(context, cci, menu);
 			} else if (item instanceof Separator) {
 				addSeparator(menu, item.getId(), true);
 			} else if (item instanceof GroupMarker) {
@@ -333,67 +389,14 @@ public class MenuHelper {
 				// processMenuManager(context, menu1.getMenu(), m.getItems());
 			} else if (item instanceof ActionContributionItem) {
 				ActionContributionItem aci = (ActionContributionItem) item;
-				IAction action = aci.getAction();
-				String imageURL = getImageUrl(action.getImageDescriptor());
-				String commandID = action.getActionDefinitionId();
-				if (commandID == null)
-					commandID = aci.getId();
-				if (commandID == null) {
-					commandID = action.getId();
+				if ((aci.getAction().getStyle() | IAction.AS_DROP_DOWN_MENU) == 0) {
+					ProcessItem.TOOLBAR.process(context, aci, tbModel);
+				} else {
+					addToolRenderer(context, tbModel, item);
 				}
-				if (commandID == null) {
-					commandID = "GEN::" + System.identityHashCode(aci); //$NON-NLS-1$
-				}
-
-				if (action.getActionDefinitionId() == null && commandID != null) {
-					// check that we have a command; create it if necessary
-					Workbench legacyWB = (Workbench) context
-							.get(Workbench.class.getName());
-					legacyWB.addCommand(commandID, action.getText());
-
-					// create handler
-					IHandler handler = new ActionHandler(action);
-					LegacyHandlerService.registerLegacyHandler(context,
-							commandID, commandID, handler, null);
-
-					// update action definition if needed
-					if (action.getActionDefinitionId() == null)
-						action.setActionDefinitionId(commandID);
-					// } else if (action.getActionDefinitionId() != null) {
-					// // create handler
-					// Activator.trace(Policy.DEBUG_MENUS,
-					//							"trying to register some action: " + action, null); //$NON-NLS-1$
-					// if (!(action instanceof CommandAction)) {
-					// IHandler handler = new ActionHandler(action);
-					// LegacyHandlerService.registerLegacyHandler(context, aci
-					// .getId(), action.getActionDefinitionId(),
-					// handler);
-					// }
-				}
-				MToolBarItem newItem = createToolbarItem(context, action
-						.getText(), imageURL, aci.getId(), action
-						.getActionDefinitionId());
-				tbModel.getItems().add(newItem);
 			} else if (item instanceof CommandContributionItem) {
 				CommandContributionItem cci = (CommandContributionItem) item;
-				String id = cci.getCommand().getId();
-				ICommandService cs = (ICommandService) context
-						.get(ICommandService.class.getName());
-				Command cmd = cs.getCommand(id);
-				if (cmd.isDefined()) {
-					ICommandImageService cis = (ICommandImageService) context
-							.get(ICommandImageService.class.getName());
-					String imageURL = getImageUrl(cis.getImageDescriptor(cmd
-							.getId(), ICommandImageService.TYPE_DEFAULT));
-					try {
-						MToolBarItem newItem = createToolbarItem(context, cmd
-								.getName(), imageURL, cci.getId(), id);
-						tbModel.getItems().add(newItem);
-					} catch (NotDefinedException e) {
-						// This should not happen
-						e.printStackTrace();
-					}
-				}
+				ProcessItem.TOOLBAR.process(context, cci, tbModel);
 			} else if (item instanceof Separator) {
 				// addSeparator(menu, item.getId());
 			} else if (item instanceof GroupMarker) {
