@@ -18,8 +18,8 @@ ETabItem {
 	color: black;
 	background-color: rgb(241, 240, 245);
 	font: normal;
-	top-padding: 3px;
-	bottom-padding: 3px;
+	padding-top: 3px;
+	padding-bottom: 3px;
 }
 
 ETabItem:selected {
