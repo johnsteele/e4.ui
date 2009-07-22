@@ -3497,8 +3497,24 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (inputs.length != editorIDs.length)
 			throw new IllegalArgumentException();
 
-		final IEditorReference[] results = new IEditorReference[inputs.length];
-		return results;
+		ArrayList refs = new ArrayList();
+
+		for (int i = 0; i < inputs.length; i++) {
+			IEditorPart ed = null;
+			try {
+				// brute force approach
+				ed = openEditor(inputs[i], editorIDs[i], true, matchFlags);
+			} catch (PartInitException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (ed != null) {
+				refs.add(((PartSite) ed.getSite()).getPartReference());
+			}
+		}
+
+		return (IEditorReference[]) refs.toArray(new IEditorReference[refs
+				.size()]);
 	}
 
 	public void resetHiddenEditors() {
