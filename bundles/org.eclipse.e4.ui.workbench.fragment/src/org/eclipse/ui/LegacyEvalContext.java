@@ -11,6 +11,7 @@
 
 package org.eclipse.ui;
 
+import java.util.Collections;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -20,14 +21,14 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
  */
 public class LegacyEvalContext implements IEvaluationContext {
 	public IEclipseContext eclipseContext = null;
+	private boolean allowActivation;
 
 	public LegacyEvalContext(IEclipseContext context) {
 		eclipseContext = context;
 	}
 
 	public void setAllowPluginActivation(boolean value) {
-		// TODO Auto-generated method stub
-
+		allowActivation = value;
 	}
 
 	public Object resolveVariable(String name, Object[] args)
@@ -44,10 +45,7 @@ public class LegacyEvalContext implements IEvaluationContext {
 
 	public Object getVariable(String name) {
 		final Object obj = eclipseContext.get(name);
-		if (obj == null) {
-			return IEvaluationContext.UNDEFINED_VARIABLE;
-		}
-		return obj;
+		return obj == null ? IEvaluationContext.UNDEFINED_VARIABLE : obj;
 	}
 
 	public IEvaluationContext getRoot() {
@@ -61,12 +59,13 @@ public class LegacyEvalContext implements IEvaluationContext {
 	}
 
 	public Object getDefaultVariable() {
-		return eclipseContext.get("selection"); //$NON-NLS-1$
+		final Object obj = eclipseContext
+				.get(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+		return obj == null ? Collections.EMPTY_LIST : obj;
 	}
 
 	public boolean getAllowPluginActivation() {
-		// TODO Auto-generated method stub
-		return false;
+		return allowActivation;
 	}
 
 	public void addVariable(String name, Object value) {
