@@ -31,6 +31,7 @@ import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
 import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
+import org.eclipse.e4.ui.model.workbench.MToolItemRenderer;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
@@ -299,6 +300,16 @@ public class MenuHelper {
 		return r;
 	}
 
+	public static MToolItemRenderer addToolRenderer(IEclipseContext context,
+			MToolBar bar, IContributionItem item) {
+		MToolItemRenderer r = WorkbenchFactory.eINSTANCE
+				.createMToolItemRenderer();
+		r.setId(item.getId() == null ? "item:" + bar.getId() : item.getId()); //$NON-NLS-1$
+		r.setRenderer(item);
+		bar.getItems().add(r);
+		return r;
+	}
+
 	/**
 	 * @param menu
 	 * @param manager
@@ -324,8 +335,45 @@ public class MenuHelper {
 				ActionContributionItem aci = (ActionContributionItem) item;
 				IAction action = aci.getAction();
 				String imageURL = getImageUrl(action.getImageDescriptor());
-				addToolbarItem(tbModel, action.getText(), null, imageURL, aci
-						.getId(), action.getActionDefinitionId());
+				String commandID = action.getActionDefinitionId();
+				if (commandID == null)
+					commandID = aci.getId();
+				if (commandID == null) {
+					commandID = action.getId();
+				}
+				if (commandID == null) {
+					commandID = "GEN::" + System.identityHashCode(aci); //$NON-NLS-1$
+				}
+
+				if (action.getActionDefinitionId() == null && commandID != null) {
+					// check that we have a command; create it if necessary
+					Workbench legacyWB = (Workbench) context
+							.get(Workbench.class.getName());
+					legacyWB.addCommand(commandID, action.getText());
+
+					// create handler
+					IHandler handler = new ActionHandler(action);
+					LegacyHandlerService.registerLegacyHandler(context,
+							commandID, commandID, handler, null);
+
+					// update action definition if needed
+					if (action.getActionDefinitionId() == null)
+						action.setActionDefinitionId(commandID);
+					// } else if (action.getActionDefinitionId() != null) {
+					// // create handler
+					// Activator.trace(Policy.DEBUG_MENUS,
+					//							"trying to register some action: " + action, null); //$NON-NLS-1$
+					// if (!(action instanceof CommandAction)) {
+					// IHandler handler = new ActionHandler(action);
+					// LegacyHandlerService.registerLegacyHandler(context, aci
+					// .getId(), action.getActionDefinitionId(),
+					// handler);
+					// }
+				}
+				MToolBarItem newItem = createToolbarItem(context, action
+						.getText(), imageURL, aci.getId(), action
+						.getActionDefinitionId());
+				tbModel.getItems().add(newItem);
 			} else if (item instanceof CommandContributionItem) {
 				CommandContributionItem cci = (CommandContributionItem) item;
 				String id = cci.getCommand().getId();
@@ -338,20 +386,23 @@ public class MenuHelper {
 					String imageURL = getImageUrl(cis.getImageDescriptor(cmd
 							.getId(), ICommandImageService.TYPE_DEFAULT));
 					try {
-						addToolbarItem(tbModel, cmd.getName(), null, imageURL,
-								cci.getId(), id);
+						MToolBarItem newItem = createToolbarItem(context, cmd
+								.getName(), imageURL, cci.getId(), id);
+						tbModel.getItems().add(newItem);
 					} catch (NotDefinedException e) {
 						// This should not happen
 						e.printStackTrace();
 					}
-				} else {
-					// addMenuItem(context, menu,
-					//							"unloaded:" + id, null, null, cci.getId(), id); //$NON-NLS-1$
 				}
 			} else if (item instanceof Separator) {
 				// addSeparator(menu, item.getId());
 			} else if (item instanceof GroupMarker) {
 				// addSeparator(menu, item.getId());
+			} else {
+				Activator.trace(Policy.DEBUG_MENUS,
+						"unknown tool item: " + item.getClass().getName() //$NON-NLS-1$
+								+ " in " + context, null); //$NON-NLS-1$
+				addToolRenderer(context, tbModel, item);
 			}
 		}
 	}
@@ -435,6 +486,8 @@ public class MenuHelper {
 		newItem.setId(id);
 		newItem.setTooltip(label);
 		newItem.setIconURI(imgPath);
+		Activator.trace(Policy.DEBUG_MENUS, "createToolbarItem: " + id //$NON-NLS-1$
+				+ ": " + label + ": " + cmdId, null); //$NON-NLS-1$//$NON-NLS-2$
 		if (cmdId != null) {
 			MCommand mcmd = getCommandById(context, cmdId);
 			if (mcmd != null) {
