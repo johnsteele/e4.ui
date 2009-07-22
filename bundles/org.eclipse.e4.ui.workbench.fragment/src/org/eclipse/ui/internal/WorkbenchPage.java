@@ -1825,19 +1825,35 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// retrieve the editor area
 		MPart ea = findPartInCurrentPerspective(ModeledPageLayout
 				.internalGetEditorArea());
-		MContributedPart<MPart<?>> editorPart = null;
+
 		// TBD need to add processing for other flags: MATCH_INPUT, MATCH_ID
-		if (matchFlags != IWorkbenchPage.MATCH_NONE)
-			editorPart = findEditor(ea, editorID, input);
-		if (editorPart == null) {
-			editorPart = ApplicationFactory.eINSTANCE.createMContributedPart();
-			editorPart.setId(editorID);
-			editorPart.setName(input.getName());
-			// editor part icon will be set in LegacyViewFactory
-			editorPart.setVisible(false);
-			ea.getChildren().add(editorPart);
-			editorPart.getContext().set(IEditorInput.class.getName(), input);
+		if (matchFlags != IWorkbenchPage.MATCH_NONE) {
+			// Find a matching editor
+			MContributedPart<MPart<?>> existingEditor = findEditor(ea,
+					editorID, input);
+			if (existingEditor != null && activate) {
+				// Set the initial focus
+				Object impl = existingEditor.getObject();
+				if (impl instanceof IWorkbenchPart) {
+					activate((IWorkbenchPart) impl);
+				} else {
+					ea.setActiveChild(existingEditor);
+				}
+
+				// return the existing editor
+				return (IEditorPart) impl;
+			}
 		}
+
+		// No patching editor found, create one
+		MContributedPart<MPart<?>> editorPart = ApplicationFactory.eINSTANCE
+				.createMContributedPart();
+		editorPart.setId(editorID);
+		editorPart.setName(input.getName());
+		// editor part icon will be set in LegacyViewFactory
+		editorPart.setVisible(false);
+		ea.getChildren().add(editorPart);
+		editorPart.getContext().set(IEditorInput.class.getName(), input);
 		editorPart.setVisible(true);
 
 		// Manage the 'close' button
