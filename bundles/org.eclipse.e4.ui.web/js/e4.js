@@ -48,8 +48,12 @@ window.e4 = {
 		setMessage : function(msg) {
 			return e4RPC("status", "setMessage", msg);
 		},
+		dirty : false,
 		setDirty : function(dirty) {
-			return e4RPC("status", "setDirty", dirty);
+			if (window.e4.status.dirty != dirty {
+				window.e4.status.dirty = dirty;
+				return e4RPC("status", "setDirty", dirty);
+			}
 		}
 	},
 	

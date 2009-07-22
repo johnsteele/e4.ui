@@ -185,6 +185,11 @@ function createTree(jsonData){
 				model.onChange(modelObject);
 			})
 		);
+		connections.push(
+			dojo.connect(inputElement, "onkeypress", function() {
+				model.onChange(modelObject);
+			})
+		);
 	}
 	myTree = new dijit.Tree({
 		id: "myTree",
