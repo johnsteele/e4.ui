@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -326,7 +325,7 @@ public class WorkbenchSiteProgressService implements
 	 * ()
 	 */
 	public void warnOfContentChange() {
-		site.getPane().showHighlight();
+		// site.getPane().showHighlight();
 	}
 
 	/*
