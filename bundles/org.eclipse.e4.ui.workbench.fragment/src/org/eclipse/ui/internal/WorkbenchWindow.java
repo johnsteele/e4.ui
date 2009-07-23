@@ -24,6 +24,7 @@ import java.util.Set;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
@@ -82,6 +83,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartService;
@@ -535,16 +537,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			}
 		}
 
-		// final Expression expression = new ActiveShellExpression(shell);
-		final WorkbenchWindowExpression expr = new WorkbenchWindowExpression(
-				this);
-		for (Iterator iterator = handlersByCommandId.entrySet().iterator(); iterator
-				.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			String commandId = (String) entry.getKey();
-			IHandler handler = (IHandler) entry.getValue();
-			newHandlers.add(handlerService.activateHandler(commandId, handler,
-					expr));
+		final Shell shell = getShell();
+		if (shell != null) {
+			final Expression expression = new ActiveShellExpression(shell);
+			for (Iterator iterator = handlersByCommandId.entrySet().iterator(); iterator
+					.hasNext();) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				String commandId = (String) entry.getKey();
+				IHandler handler = (IHandler) entry.getValue();
+				newHandlers.add(handlerService.activateHandler(commandId,
+						handler, expression));
+			}
 		}
 
 		handlerActivations = newHandlers;
@@ -683,11 +686,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 								.getName());
 		e4Workbench.createGUI(e4Window);
 
-		e4Context
-				.set(
-						org.eclipse.e4.workbench.ui.internal.Workbench.LOCAL_ACTIVE_SHELL,
-						getShell());
-
 		// It's time for a layout ... to insure that if TrimLayout
 		// is in play, it updates all of the trim it's responsible
 		// for. We have to do this before updating in order to get
@@ -711,6 +709,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				e.printStackTrace();
 			}
 		}
+		e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, getShell());
 		// createStatusLine(getShell());
 		getShell().layout();
 		getShell().addShellListener(getShellListener());
@@ -719,6 +718,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (title != null) {
 			getShell().setText(TextProcessor.process(title, TEXT_DELIMITERS));
 		}
+
+		submitGlobalActions();
 
 		fireWindowOpened();
 		if (perspectiveSwitcher != null) {

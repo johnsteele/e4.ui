@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -21,6 +19,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.extensions.ModelReference;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.MenuManager;
@@ -343,7 +342,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @return the shell containing this part
 	 */
 	public Shell getShell() {
-		return (Shell) e4Context.get(Shell.class.getName());
+		return page.getWorkbenchWindow().getShell();
 	}
 
 	/**

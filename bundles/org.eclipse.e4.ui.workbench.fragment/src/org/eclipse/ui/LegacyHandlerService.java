@@ -35,7 +35,6 @@ import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EHandlerService;
-import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
@@ -45,6 +44,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.expressions.AndExpression;
+import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
 
@@ -67,9 +68,6 @@ public class LegacyHandlerService implements IHandlerService {
 		}
 
 		public void execute(IEclipseContext context) {
-			Object shell = context.get(IServiceConstants.ACTIVE_SHELL);
-			context.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, shell);
-			context.set(ISources.ACTIVE_SHELL_NAME, shell);
 			Activator.trace(Policy.DEBUG_CMDS, "execute " + command + " and " //$NON-NLS-1$ //$NON-NLS-2$
 					+ handler + " with: " + context, null); //$NON-NLS-1$
 			LegacyEvalContext legacy = new LegacyEvalContext(context);
@@ -348,10 +346,16 @@ public class LegacyHandlerService implements IHandlerService {
 
 	private IEclipseContext eclipseContext;
 	private IEvaluationContext evalContext;
+	private Expression defaultExpression = null;
 
 	public LegacyHandlerService(IEclipseContext context) {
 		eclipseContext = context;
 		evalContext = new LegacyEvalContext(eclipseContext);
+		IWorkbenchWindow window = (IWorkbenchWindow) eclipseContext
+				.get(IWorkbenchWindow.class.getName());
+		if (window != null) {
+			defaultExpression = new WorkbenchWindowExpression(window);
+		}
 	}
 
 	/*
@@ -377,7 +381,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IHandlerActivation activateHandler(String commandId, IHandler handler) {
 		return registerLegacyHandler(eclipseContext, commandId, commandId,
-				handler, null);
+				handler, defaultExpression);
 	}
 
 	/*
@@ -390,8 +394,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IHandlerActivation activateHandler(String commandId,
 			IHandler handler, Expression expression) {
-		return registerLegacyHandler(eclipseContext, commandId, commandId,
-				handler, expression);
+		return activateHandler(commandId, handler, expression, false);
 	}
 
 	/*
@@ -404,8 +407,15 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IHandlerActivation activateHandler(String commandId,
 			IHandler handler, Expression expression, boolean global) {
+		if (global || defaultExpression == null) {
+			return registerLegacyHandler(eclipseContext, commandId, commandId,
+					handler, expression);
+		}
+		AndExpression andExpr = new AndExpression();
+		andExpr.add(expression);
+		andExpr.add(defaultExpression);
 		return registerLegacyHandler(eclipseContext, commandId, commandId,
-				handler, expression);
+				handler, andExpr);
 	}
 
 	/*
@@ -418,8 +428,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IHandlerActivation activateHandler(String commandId,
 			IHandler handler, Expression expression, int sourcePriorities) {
-		return registerLegacyHandler(eclipseContext, commandId, commandId,
-				handler, expression);
+		return activateHandler(commandId, handler, expression, false);
 	}
 
 	/*
@@ -688,9 +697,15 @@ public class LegacyHandlerService implements IHandlerService {
 		// find the first useful part in the model
 		Control control = display.getFocusControl();
 		Object partObj = null;
-		while (control != null && !(partObj instanceof MPart<?>)) {
+		Object localContext = null;
+		while (control != null && localContext == null
+				&& !(partObj instanceof MPart<?>)) {
 			partObj = control.getData(AbstractPartRenderer.OWNING_ME);
+			localContext = control.getData("localContext"); //$NON-NLS-1$
 			control = control.getParent();
+		}
+		if (localContext != null) {
+			return (IEclipseContext) localContext;
 		}
 		if (partObj == null) {
 			return eclipseContext;

@@ -82,6 +82,7 @@ import org.eclipse.e4.ui.workbench.swt.internal.CSSStylingSupport;
 import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
 import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchWindowHandler;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
+import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -119,6 +120,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
@@ -2089,22 +2092,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			sourceListener = new ISourceProviderListener() {
 				public void sourceChanged(int sourcePriority,
 						String sourceName, Object sourceValue) {
-					boolean updated = updateVariable(ISources.SHOW_IN_INPUT,
-							sourceName, sourceValue);
-					if (!updated) {
-						updated = updateVariable(ISources.SHOW_IN_SELECTION,
-								sourceName, sourceValue);
-					}
-					if (!updated) {
-						updated = updateVariable(
-								ISources.ACTIVE_FOCUS_CONTROL_ID_NAME,
-								sourceName, sourceValue);
-					}
-					if (!updated) {
-						updated = updateVariable(
-								ISources.ACTIVE_FOCUS_CONTROL_NAME, sourceName,
-								sourceValue);
-					}
+					updateChangedVariable(sourceName, sourceValue);
 				}
 
 				public void sourceChanged(int sourcePriority,
@@ -2121,6 +2109,36 @@ public final class Workbench extends EventManager implements IWorkbench {
 		return sourceListener;
 	}
 
+	void updateChangedVariable(String sourceName, Object sourceValue) {
+		boolean updated = updateVariable(ISources.SHOW_IN_INPUT, sourceName,
+				sourceValue);
+		if (!updated) {
+			updated = updateVariable(ISources.SHOW_IN_SELECTION, sourceName,
+					sourceValue);
+		}
+		if (!updated) {
+			updated = updateVariable(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME,
+					sourceName, sourceValue);
+		}
+		if (!updated) {
+			updated = updateVariable(ISources.ACTIVE_FOCUS_CONTROL_NAME,
+					sourceName, sourceValue);
+		}
+		if (!updated) {
+			updated = updateVariable(ISources.ACTIVE_SHELL_NAME, sourceName,
+					sourceValue);
+			if (updated) {
+				org.eclipse.e4.workbench.ui.internal.Activator
+						.trace(
+								org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_WORKBENCH,
+								"activated shell: " + sourceValue, null); //$NON-NLS-1$
+				if (sourceValue instanceof Shell) {
+					activateShell((Shell) sourceValue);
+				}
+			}
+		}
+	}
+
 	boolean updateVariable(String name, String sourceName, Object sourceValue) {
 		if (name.equals(sourceName)) {
 			if (sourceValue == null
@@ -2132,6 +2150,38 @@ public final class Workbench extends EventManager implements IWorkbench {
 			return true;
 		}
 		return false;
+	}
+
+	void activateShell(final Shell shell) {
+		if (shell.getParent() instanceof Shell) {
+			final String localContext = "localContext"; //$NON-NLS-1$
+			Object obj = shell.getData(localContext);
+			if (obj instanceof IEclipseContext) {
+				e4Context.set(IServiceConstants.ACTIVE_CHILD, obj);
+			} else {
+				final IEclipseContext shellContext = EclipseContextFactory
+						.create(e4Context, UISchedulerStrategy.getInstance());
+				shellContext.set(IContextConstants.DEBUG_STRING,
+						"Shell Context (" + shell + ")"); //$NON-NLS-1$//$NON-NLS-2$
+				shell.setData(localContext, shellContext);
+				e4Context.set(IServiceConstants.ACTIVE_CHILD, shellContext);
+				shell.addDisposeListener(new DisposeListener() {
+					public void widgetDisposed(DisposeEvent e) {
+						shell.setData(localContext, null);
+						if (shellContext instanceof org.eclipse.e4.core.services.IDisposable) {
+							((org.eclipse.e4.core.services.IDisposable) shellContext)
+									.dispose();
+						}
+					}
+				});
+			}
+		} else {
+			if (shell.getData() instanceof WorkbenchWindow) {
+				e4Context.set(IServiceConstants.ACTIVE_CHILD,
+						((WorkbenchWindow) shell.getData()).getModelWindow()
+								.getContext());
+			}
+		}
 	}
 
 	static class MakeHandlersGo extends AbstractHandler {
