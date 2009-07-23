@@ -4,10 +4,13 @@ ETabFolder {
 	maximize-visible: false;
 	minimize-visible: false;
 	webby-style: true;
-	margin: 3px;
-	tab-area-keyline-color: rgb(201, 200, 204);
-	body-keyline-color: rgb(201, 200, 204);
-	tab-keyline-color: rgb(208, 207, 212);
+	margin: 3px;	
+	border-color: rgb(201, 200, 204)
+	
+/* Can be expressed individually
+	border-top-color: rgb(201, 200, 204);
+	border-bottom-color: rgb(201, 200, 204);
+*/	
 }
 
 ETabFolder.active {
@@ -23,6 +26,7 @@ ETabItem {
 	margin-top: 3px;
 	margin-left: 2px;
 	margin-right: 0px;
+	border-color: rgb(208, 207, 212);
 }
 
 ETabItem:selected {
