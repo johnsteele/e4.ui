@@ -631,6 +631,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	public void closePerspective(IPerspectiveDescriptor desc,
 			boolean saveParts, boolean closePage) {
+		Perspective persp = findPerspective(desc);
+		if (persp != null) {
+			perspList.openedList.remove(persp);
+			perspList.usedList.remove(persp);
+		}
 	}
 
 	/**
@@ -656,6 +661,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	public void closePerspective(IPerspectiveDescriptor desc,
 			IPerspectiveDescriptor descToActivate, boolean saveParts,
 			boolean closePage) {
+		Perspective persp = findPerspective(desc);
+		if (persp != null) {
+			perspList.openedList.remove(persp);
+			perspList.usedList.remove(persp);
+		}
 	}
 
 	/**
@@ -1121,7 +1131,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return typedResult;
 	}
 
-	private void getContainedEditorRefs(ArrayList<IEditorReference> result,
+	public void getContainedEditorRefs(ArrayList<IEditorReference> result,
 			MPart<?> part) {
 		EList<?> children = part.getChildren();
 		for (Object child : children) {
@@ -1880,6 +1890,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			else
 				bringToTop(workbenchPart);
 		}
+
 		return (IEditorPart) editorPart.getObject();
 	}
 

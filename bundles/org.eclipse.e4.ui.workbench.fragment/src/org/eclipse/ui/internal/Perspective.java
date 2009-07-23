@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.extensions.ModelViewReference;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
@@ -37,6 +38,7 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
+import org.eclipse.e4.workbench.ui.internal.IValueFunction;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -49,6 +51,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -810,6 +813,26 @@ public class Perspective {
 		// }
 		perspStack.getChildren().add(perspModel);
 		perspStack.setActiveChild(perspModel);
+
+		// Manage the 'close' button
+		final MPerspective<?> thePerspModel = perspModel;
+		final PerspectiveDescriptor theDesc = descriptor;
+		final IEclipseContext perspContext = perspModel.getContext();
+		IValueFunction closeFunc = new IValueFunction() {
+			public Object getValue() {
+				ArrayList<IEditorReference> result = new ArrayList<IEditorReference>();
+				page.getContainedEditorRefs(result, thePerspModel);
+				IEditorReference[] openEditors = new IEditorReference[result
+						.size()];
+				result.toArray(openEditors);
+				boolean okToClose = page.closeEditors(openEditors, true);
+				if (okToClose)
+					page.closePerspective(theDesc, true, false);
+				return okToClose;
+			}
+		};
+		perspContext.set("canCloseFunc", closeFunc); //$NON-NLS-1$
+		perspContext.set(Perspective.class.getName(), this);
 	}
 
 	/**

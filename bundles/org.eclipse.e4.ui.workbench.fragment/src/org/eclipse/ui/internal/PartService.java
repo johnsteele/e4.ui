@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-
 import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -287,7 +286,7 @@ public class PartService implements IPartService {
 			return;
 		}
 
-		if (oldRef != null) {
+		if (oldRef != null && oldRef.getPart(false) != null) {
 			firePartDeactivated(oldRef);
 		}
 
