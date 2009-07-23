@@ -6,8 +6,8 @@ ETabFolder {
 	webby-style: true;
 	margin: 2px;	
 	tab-margin-offset: 4px;
-	border-color: rgb(201, 200, 204)
 	
+	border-color: rgb(201, 200, 204)
 /* Can be expressed individually
 	border-top-color: rgb(201, 200, 204);
 	border-bottom-color: rgb(201, 200, 204);
@@ -20,7 +20,7 @@ ETabFolder.active {
    
 ETabItem {
 	color: black;
-	background-color: rgb(241, 240, 245);
+	background-color: rgb(241, 240, 245);  /* unselected tabs can have diff color than folder background */
 	font: normal;
 	padding-top: 4px;
 	padding-bottom: 4px;
@@ -32,7 +32,7 @@ ETabItem {
 
 ETabItem:selected {
 	background-color: rgb(255, 255, 255) rgb(246, 245, 250); 
-	padding-top: 7px;
+	padding-top: 7px;  /* make the selected tab a bit taller */
 }
 
 ETabItem.active {
