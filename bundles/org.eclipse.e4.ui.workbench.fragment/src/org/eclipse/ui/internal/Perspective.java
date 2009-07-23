@@ -30,6 +30,7 @@ import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.extensions.ModelViewReference;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MItemPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MSashForm;
 import org.eclipse.e4.ui.model.application.MStack;
@@ -826,8 +827,36 @@ public class Perspective {
 						.size()];
 				result.toArray(openEditors);
 				boolean okToClose = page.closeEditors(openEditors, true);
-				if (okToClose)
+				if (okToClose) {
+					// Explicitly 'dispose' all created views
+					List<MStack> stacks = new ArrayList<MStack>();
+					gatherStacks(thePerspModel, stacks);
+					for (Iterator iterator = stacks.iterator(); iterator
+							.hasNext();) {
+						MStack mStack = (MStack) iterator.next();
+						String policy = mStack.getPolicy();
+						if (policy == null)
+							continue;
+						if (policy.indexOf("ViewStack") >= 0) { //$NON-NLS-1$
+							EList<MItemPart<?>> vsKids = mStack.getChildren();
+							for (Iterator iterator2 = vsKids.iterator(); iterator2
+									.hasNext();) {
+								MContributedPart<MPart<?>> view = (MContributedPart<MPart<?>>) iterator2
+										.next();
+								if (view.getObject() instanceof IViewPart) {
+									System.out
+											.println("Disposing view: " + view.getId()); //$NON-NLS-1$
+									Control ctrl = (Control) view.getWidget();
+									if (ctrl.getMenu() != null)
+										ctrl.setMenu(null);
+									IViewPart vp = (IViewPart) view.getObject();
+									vp.dispose();
+								}
+							}
+						}
+					}
 					page.closePerspective(theDesc, true, false);
+				}
 				return okToClose;
 			}
 		};
