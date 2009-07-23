@@ -83,6 +83,9 @@ import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
 import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchWindowHandler;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IAction;
@@ -963,6 +966,18 @@ public final class Workbench extends EventManager implements IWorkbench {
 		if (getWorkbenchConfigurer().getSaveAndRestore()) {
 			SafeRunner.run(new SafeRunnable() {
 				public void run() {
+
+					org.eclipse.e4.workbench.ui.internal.Activator
+							.trace(
+									org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_WORKBENCH,
+									"saveing model to " + getXmiLocation(), null); //$NON-NLS-1$
+					try {
+						e4Workbench.getModel().eResource().save(null);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
 					XMLMemento mem = recordWorkbenchState();
 					// Save the IMemento to a file.
 					saveMementoToFile(mem);
@@ -1005,6 +1020,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		runEventLoop = false;
 		return true;
+	}
+
+	private String getXmiLocation() {
+		return WorkbenchPlugin.getDefault().getDataLocation().append(
+				"workbench.xmi").toOSString(); //$NON-NLS-1$
 	}
 
 	/*
@@ -1390,7 +1410,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// Set up the JFace preference store
 		JFaceUtil.initializeJFacePreferences();
 
-		e4Workbench.setWorkbenchModel(createE4Model());
+		MApplication<? extends MWindow> model = createE4Model();
+		e4Workbench.setWorkbenchModel(model);
+		// because we created the model we need to set the resource correctly
+		Resource resource = new XMIResourceImpl();
+		resource.getContents().add(model);
+		String resourceLoc = getXmiLocation();
+		resource.setURI(URI.createFileURI(resourceLoc));
 
 		// create workbench window manager
 		windowManager = new WindowManager();
