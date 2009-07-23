@@ -1872,14 +1872,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		};
 		editorContext.set("canCloseFunc", closeFunc); //$NON-NLS-1$
 
-		if (activate) {
-			// Set the initial focus
-			Object impl = editorPart.getObject();
-			if (impl instanceof IWorkbenchPart) {
-				activate((IWorkbenchPart) impl);
-			}
+		Object impl = editorPart.getObject();
+		if (impl instanceof IWorkbenchPart) { // TBD this is always the case?
+			IWorkbenchPart workbenchPart = (IWorkbenchPart) impl;
+			if (activate)
+				activate(workbenchPart);
+			else
+				bringToTop(workbenchPart);
 		}
-
 		return (IEditorPart) editorPart.getObject();
 	}
 
