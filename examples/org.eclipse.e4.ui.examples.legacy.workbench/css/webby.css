@@ -5,6 +5,7 @@ ETabFolder {
 	minimize-visible: false;
 	webby-style: true;
 	margin: 3px;	
+	tab-margin-offset: 5px;
 	border-color: rgb(201, 200, 204)
 	
 /* Can be expressed individually
