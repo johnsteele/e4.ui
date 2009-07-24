@@ -1,6 +1,7 @@
 package org.eclipse.e4.ui.examples.legacy.workbench;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,11 +33,13 @@ public class ReStyle extends AbstractHandler implements IHandler {
 
 					//Read in the style sheet again since it may have changed
 					URL url = (URL) display.getData("org.eclipse.e4.ui.css.core.cssURL"); //$NON-NLS-1$
-					InputStreamReader streamReader = new InputStreamReader(
-							url.openStream());
+					InputStream stream = url.openStream();
+					InputStreamReader streamReader = new InputStreamReader(stream);
 					
 					engine.reset();
 					engine.parseStyleSheet(streamReader);
+					stream.close();
+					streamReader.close();
 					engine.applyStyles(shell, true, false);
 					shell.layout(true, true);
 				} catch (MalformedURLException e) {
