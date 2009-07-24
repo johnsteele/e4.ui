@@ -844,8 +844,6 @@ public class Perspective {
 								MContributedPart<MPart<?>> view = (MContributedPart<MPart<?>>) iterator2
 										.next();
 								if (view.getObject() instanceof IViewPart) {
-									System.out
-											.println("Disposing view: " + view.getId()); //$NON-NLS-1$
 									Control ctrl = (Control) view.getWidget();
 									if (ctrl.getMenu() != null)
 										ctrl.setMenu(null);
@@ -862,6 +860,9 @@ public class Perspective {
 		};
 		perspContext.set("canCloseFunc", closeFunc); //$NON-NLS-1$
 		perspContext.set(Perspective.class.getName(), this);
+
+		// Always show the progress view since we don't have progress trim yet
+		showView("org.eclipse.ui.views.ProgressView", null); //$NON-NLS-1$
 	}
 
 	/**
