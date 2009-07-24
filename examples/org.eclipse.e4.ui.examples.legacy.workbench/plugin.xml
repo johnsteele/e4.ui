@@ -83,7 +83,7 @@
             locationURI="menu:window">
          <command
                commandId="org.eclipse.e4.ui.examples.legacy.workbench.reStyle"
-               label="Update From Style Sheet"
+               label="Refresh From Style Sheet"
                style="push">
          </command>
       </menuContribution>
