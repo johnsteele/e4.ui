@@ -635,6 +635,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (persp != null) {
 			perspList.openedList.remove(persp);
 			perspList.usedList.remove(persp);
+
+			// If we close the last perspective there is no active one...
+			if (perspList.openedList.isEmpty())
+				perspList.setActive(null);
 		}
 	}
 
@@ -665,6 +669,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (persp != null) {
 			perspList.openedList.remove(persp);
 			perspList.usedList.remove(persp);
+
+			// If we close the last perspective there is no active one...
+			if (perspList.openedList.isEmpty())
+				perspList.setActive(null);
 		}
 	}
 
