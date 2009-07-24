@@ -975,7 +975,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 									org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_WORKBENCH,
 									"saveing model to " + getXmiLocation(), null); //$NON-NLS-1$
 					try {
-						e4Workbench.getModel().eResource().save(null);
+						// because we created the model we need to set the
+						// resource correctly
+						Resource resource = new XMIResourceImpl();
+						resource.getContents().add(e4Workbench.getModel());
+						String resourceLoc = getXmiLocation();
+						resource.setURI(URI.createFileURI(resourceLoc));
+
+						resource.save(null);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -1415,11 +1422,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		MApplication<? extends MWindow> model = createE4Model();
 		e4Workbench.setWorkbenchModel(model);
-		// because we created the model we need to set the resource correctly
-		Resource resource = new XMIResourceImpl();
-		resource.getContents().add(model);
-		String resourceLoc = getXmiLocation();
-		resource.setURI(URI.createFileURI(resourceLoc));
 
 		// create workbench window manager
 		windowManager = new WindowManager();
