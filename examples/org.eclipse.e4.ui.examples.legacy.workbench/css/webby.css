@@ -43,13 +43,13 @@ ETabItem.active:selected {
 }
 
 #PerspectiveStack {
-	background-color: rgb(246, 246, 251);
+	background-color: rgb(241, 240, 245); 
 	margin: 0px;	
 	tab-margin-offset: 12px;
 }
 
 #PerspectiveStack > ETabItem {
-	background-color: rgb(241, 240, 245);  
+	background-color: rgb(246, 246, 251);
 	padding-top: 6px;
 	padding-bottom: 2px;
 	margin-top: 0px;
@@ -60,7 +60,7 @@ ETabItem.active:selected {
 }
 
 #PerspectiveStack > ETabItem.active {
-	background-color: rgb(241, 240, 245);  
+	background-color: rgb(241, 240, 245); 
 }
 
 #PerspectiveStack > ETabItem.active:selected {
