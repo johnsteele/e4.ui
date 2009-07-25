@@ -12,12 +12,13 @@
 package org.eclipse.e4.ui.examples.legacy.workbench;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.Timer;
-import java.util.TimerTask;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.splash.AbstractSplashHandler;
 
@@ -25,44 +26,42 @@ import org.eclipse.ui.splash.AbstractSplashHandler;
  *
  */
 public class AnimationSplashHandler extends AbstractSplashHandler {
-	private class ImageLoadingThread extends Thread {
-
-		private int start;
-		private int end;
-
-		/**
-		 * @param start
-		 * @param end
-		 */
-		public ImageLoadingThread(int start, int end) {
-			this.start = start;
-			this.end = end;
+	
+	private final class BundleProgressMonitor extends NullProgressMonitor {
+		private static final int NB_TICKS = 42;
+		private int worked = 0 ;
+		private int total = 0 ;
+		
+		public void worked(int work) {
+			worked++ ;	
+			updateProgressBar();
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Thread#run()
-		 */
-		public void run() {
-			for (int i = start; i < end; i++) {
-				ImageLoader loader = new ImageLoader();
-				try {
-					imageSequence[i] = loader.load(Activator.getContext().getBundle().getEntry("splash/sequence/" + new DecimalFormat("00").format(i + 1) + ".jpg").openStream())[0];//$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-				} catch (IOException e) {
+		public void done() {
+			worked = total ;
+			updateProgressBar();
+		}
+
+		public void beginTask(String name, int totalWork) {
+			total = totalWork ;	
+			updateProgressBar();
+		}
+
+		private void updateProgressBar() {
+			int currentImgIdx = (int) (NB_TICKS / (float)total  * worked) ;
+			for (int i = 0 ; i < NB_TICKS ; i++) {
+				Image imgToDraw = (i < currentImgIdx) ? imgProgressDark : imgProgressLight ;
+				synchronized (shellGC) {
+					shellGC.drawImage(imgToDraw, 11 + (11 * i), 292);
 				}
 			}
 		}
 	}
 
-	private static final int SEQ_LENGTH = 75;
-	private final int LOOP_POINT = 40;
-	private ImageData[] imageSequence = new ImageData[SEQ_LENGTH];
+	private Image imgProgressDark = null;
+	private Image imgProgressLight = null;
+
 	private GC shellGC;
-	private Image currentImage = null;
-	private int currentImageIdx = 0;
-	private Timer animationTimer;
-	private boolean firstPass = true;
-	private boolean backward = false;
-	private Thread secondHalfLoadingThread;
 
 	/**
 	 * 
@@ -72,50 +71,8 @@ public class AnimationSplashHandler extends AbstractSplashHandler {
 	}
 
 	private void configureUISplash() {
-		getSplash().setSize(455, 295);
-		getSplash().setLayout(new FillLayout());
+		getSplash().setSize(480, 320);
 		getSplash().setVisible(true);
-	}
-
-	private void animate() {
-		final Display display = getSplash().getDisplay();
-		shellGC = new GC(getSplash());
-
-		TimerTask animationTask = new TimerTask() {
-			public void run() {
-				switch (currentImageIdx) {
-					case LOOP_POINT :
-						backward = false;
-						break;
-					case SEQ_LENGTH - 1 :
-						backward = true;
-						firstPass = false;
-						break;
-				}
-
-				if (currentImage != null)
-					currentImage.dispose();
-				currentImage = new Image(display, imageSequence[currentImageIdx]);
-				if (secondHalfLoadingThread.isAlive()) {
-					try {
-						secondHalfLoadingThread.join();
-					} catch (InterruptedException e) {
-					}
-				}
-				synchronized (shellGC) {
-					if (!shellGC.isDisposed())
-						shellGC.drawImage(currentImage, 0, 0);
-				}
-
-				if (!backward || firstPass)
-					currentImageIdx++;
-				else
-					currentImageIdx--;
-			}
-		};
-		animationTimer = new Timer();
-		//33 ms/frame == 30 frames/sec
-		animationTimer.schedule(animationTask, 0, 33);
 	}
 
 	/*
@@ -125,40 +82,54 @@ public class AnimationSplashHandler extends AbstractSplashHandler {
 	 *      org.eclipse.ui.IWorkbench)
 	 */
 	public void init(final Shell splash) {
-		// Load image sequence
-		loadImages();
 		// Store the shell
 		super.init(splash);
+		// Load image sequence
+		loadImages();
 		// Configure the shell layout
 		configureUISplash();
 		// Force the UI to layout
 		splash.layout(true);
-		//register monitor to run event loop during startup
-		//createStartupMonitor();
-		animate();
+		// create the GC we will draw on
+		shellGC = new GC(getSplash());
 	}
 
 	private void loadImages() {
-		Thread firstHalfLoadingThread = new ImageLoadingThread(0, LOOP_POINT);
-		firstHalfLoadingThread.setPriority(Thread.MAX_PRIORITY);
-		secondHalfLoadingThread = new ImageLoadingThread(LOOP_POINT, SEQ_LENGTH);
-		firstHalfLoadingThread.run();
-		secondHalfLoadingThread.start();
+		ImageLoader loader = new ImageLoader();
+		
+		try {
+			ImageData imageDataProgressDark = loader.load(Activator.getContext().getBundle().getEntry("splash/progress-dark.png").openStream())[0];//$NON-NLS-1$
+			ImageData imageDataProgressLight = loader.load(Activator.getContext().getBundle().getEntry("splash/progress-light.png").openStream())[0]; //$NON-NLS-1$
+			
+			imgProgressDark = new Image(getSplash().getDisplay(), imageDataProgressDark) ;
+			imgProgressLight = new Image(getSplash().getDisplay(), imageDataProgressLight) ;
+		} catch (IOException e1) {
+		}
+		
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.splash.AbstractSplashHandler#getBundleProgressMonitor()
+	 */
+	@Override
+	public IProgressMonitor getBundleProgressMonitor() {
+		return new BundleProgressMonitor();
+	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.splash.AbstractSplashHandler#dispose()
 	 */
 	public void dispose() {
-		if (animationTimer != null)
-			animationTimer.cancel();
-		if (currentImage != null)
-			currentImage.dispose();
 		if (shellGC != null) {
 			synchronized (shellGC) {
 				shellGC.dispose();
 			}
 		}
+		if (imgProgressDark != null)
+			imgProgressDark.dispose() ;
+		if (imgProgressLight != null)
+			imgProgressLight.dispose() ;
+		
 		super.dispose();
 	}
 }
