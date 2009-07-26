@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.workbench.ui.menus;
 
+import java.util.ArrayList;
 import java.util.Map;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -27,8 +28,10 @@ import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
+import org.eclipse.e4.workbench.ui.internal.Trackable;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.LegacyEvalContext;
 import org.eclipse.ui.commands.ICommandService;
@@ -42,19 +45,48 @@ import org.eclipse.ui.menus.IWorkbenchContribution;
  * 
  */
 public class MenuContribution {
+	/**
+	 * 
+	 */
+	private static final String WINDOW_IS_CLOSED = "MenuContribution.window.isClosed"; //$NON-NLS-1$
 	private IConfigurationElement config;
 	private IEclipseContext context;
 	private MenuLocationURI uri;
 	private MMenu model;
+	private ArrayList<TrackVisible> trackers = new ArrayList<TrackVisible>();
 
 	public MenuContribution(IEclipseContext context,
 			IConfigurationElement element) {
 		this.context = context;
 		window = (IWorkbenchWindow) context.get(IWorkbenchWindow.class
 				.getName());
+		context.set(WINDOW_IS_CLOSED, Boolean.FALSE);
 		config = element;
 		uri = new MenuLocationURI(config
 				.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI));
+		window.getWorkbench().addWindowListener(new IWindowListener() {
+
+			public void windowOpened(IWorkbenchWindow window) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void windowDeactivated(IWorkbenchWindow window) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void windowClosed(IWorkbenchWindow window) {
+				if (window == MenuContribution.this.window) {
+					cleanUp();
+				}
+			}
+
+			public void windowActivated(IWorkbenchWindow window) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 	}
 
 	public MenuLocationURI getURI() {
@@ -230,6 +262,39 @@ public class MenuContribution {
 		return item;
 	}
 
+	class TrackVisible extends Trackable {
+		private MMenuItem item;
+		private LegacyEvalContext legacyEvalContext;
+		private Expression visWhen;
+		boolean participating = true;
+
+		public TrackVisible(MMenuItem item, IEclipseContext context,
+				Expression visWhen) {
+			super(context);
+			this.item = item;
+			this.legacyEvalContext = new LegacyEvalContext(trackingContext);
+			this.visWhen = visWhen;
+		}
+
+		public void run() {
+			if (!participating) {
+				return;
+			}
+			trackingContext.get(WINDOW_IS_CLOSED);
+			boolean visible = true;
+			try {
+				visible = visWhen.evaluate(legacyEvalContext) != EvaluationResult.FALSE;
+			} catch (CoreException e) {
+				Activator.trace(Policy.DEBUG_MENUS,
+						"Failed to evaluate visibleWhen", e); //$NON-NLS-1$
+			}
+			Activator.trace(Policy.DEBUG_MENUS,
+					"visibleWhen set to " + visible, null); //$NON-NLS-1$
+
+			item.setVisible(visible);
+		}
+	}
+
 	/**
 	 * @param element
 	 * @param item
@@ -244,28 +309,23 @@ public class MenuContribution {
 				try {
 					final Expression visWhen = ExpressionConverter.getDefault()
 							.perform(visibleChild[0]);
-					final LegacyEvalContext legacyEvalContext = new LegacyEvalContext(
-							context);
-					context.runAndTrack(new Runnable() {
-						public void run() {
-							boolean visible = true;
-							try {
-								visible = visWhen.evaluate(legacyEvalContext) != EvaluationResult.FALSE;
-							} catch (CoreException e) {
-								Activator.trace(Policy.DEBUG_MENUS,
-										"Failed to evaluate visibleWhen", e); //$NON-NLS-1$
-							}
-							Activator.trace(Policy.DEBUG_MENUS,
-									"visibleWhen set to " + visible, null); //$NON-NLS-1$
-
-							item.setVisible(visible);
-						}
-					});
+					TrackVisible runnable = new TrackVisible(item, context,
+							visWhen);
+					trackers.add(runnable);
+					context.runAndTrack(runnable);
 				} catch (CoreException e) {
 					Activator.trace(Policy.DEBUG_MENUS,
 							"Failed to parse visibleWhen", e); //$NON-NLS-1$
 				}
 			}
 		}
+	}
+
+	void cleanUp() {
+		for (TrackVisible tracker : trackers) {
+			tracker.participating = false;
+		}
+		context.set(WINDOW_IS_CLOSED, Boolean.TRUE);
+		trackers.clear();
 	}
 }

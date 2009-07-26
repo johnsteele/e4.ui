@@ -17,6 +17,9 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
+import org.eclipse.e4.workbench.ui.internal.Activator;
+import org.eclipse.e4.workbench.ui.internal.Policy;
+import org.eclipse.e4.workbench.ui.internal.Trackable;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
@@ -46,6 +49,9 @@ import org.eclipse.ui.menus.IMenuService;
 
 public class LegacyPartRenderer extends SWTPartRenderer {
 
+	private static final String IS_DIRTY = "isDirty"; //$NON-NLS-1$
+	private static final String EDITOR_DISPOSED = "editorDisposed"; //$NON-NLS-1$
+
 	private IConfigurationElement findPerspectiveFactory(String id) {
 		IConfigurationElement[] factories = ExtensionUtils
 				.getExtensions(IWorkbenchRegistryConstants.PL_PERSPECTIVES);
@@ -69,6 +75,8 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 				.findExtension(editors, id);
 		return editorContribution;
 	}
+
+	private Map<IEditorPart, Trackable> trackables = new HashMap<IEditorPart, Trackable>();
 
 	/**
 	 * @param part
@@ -135,8 +143,9 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 
 			// Manage the 'dirty' state
 			final IEditorPart implementation = impl;
-			localContext.set("isDirty", implementation.isDirty()); //$NON-NLS-1$
-			localContext.runAndTrack(new Runnable() {
+			localContext.set(IS_DIRTY, implementation.isDirty());
+			localContext.set(EDITOR_DISPOSED, Boolean.FALSE);
+			Trackable updateDirty = new Trackable(localContext) {
 				private CTabItem findItemForPart(CTabFolder ctf) {
 					CTabItem[] items = ctf.getItems();
 					for (int i = 0; i < items.length; i++) {
@@ -149,7 +158,12 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 				}
 
 				public void run() {
-					boolean dirty = (Boolean) localContext.get("isDirty"); //$NON-NLS-1$
+					if (!participating) {
+						return;
+					}
+					trackingContext
+							.get(EDITOR_DISPOSED);
+					boolean dirty = (Boolean) trackingContext.get(IS_DIRTY);
 					if (parent instanceof CTabFolder) {
 						CTabFolder ctf = (CTabFolder) parent;
 						CTabItem partItem = findItemForPart(ctf);
@@ -165,10 +179,12 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 						partItem.setText(itemText);
 					}
 				}
-			});
+			};
+			trackables.put(implementation, updateDirty);
+			localContext.runAndTrack(updateDirty);
 			impl.addPropertyListener(new IPropertyListener() {
 				public void propertyChanged(Object source, int propId) {
-					localContext.set("isDirty", implementation.isDirty()); //$NON-NLS-1$
+					localContext.set(IS_DIRTY, implementation.isDirty());
 				}
 			});
 
@@ -374,6 +390,13 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 			Object obj = mpart.getObject();
 			if (obj instanceof IWorkbenchPart) {
 				((IWorkbenchPart) obj).dispose();
+				if (obj instanceof IEditorPart) {
+					Activator.trace(Policy.DEBUG_RENDERER,
+							"Disposing tracker for " + obj, null); //$NON-NLS-1$
+					Trackable t = trackables.remove(obj);
+					t.participating = false;
+					part.getContext().set(EDITOR_DISPOSED, Boolean.TRUE);
+				}
 			}
 		}
 		super.disposeWidget(part);
