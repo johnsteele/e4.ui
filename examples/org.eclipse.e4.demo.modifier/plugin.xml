@@ -29,6 +29,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
+            categoryId="org.eclipse.e4.ui.category"
             defaultHandler="org.eclipse.e4.demo.modifier.ShowUIEditor"
             id="org.eclipse.e4.demo.modifier.showEditor"
             name="UI Editor">
@@ -37,7 +38,7 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="menu:window">
+            locationURI="menu:org.eclipse.e4.samples">
          <command
                commandId="org.eclipse.e4.demo.modifier.showEditor"
                label="UI Editor"
