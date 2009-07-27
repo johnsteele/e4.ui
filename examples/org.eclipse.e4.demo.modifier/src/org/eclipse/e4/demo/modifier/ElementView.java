@@ -12,7 +12,10 @@ package org.eclipse.e4.demo.modifier;
 
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.value.*;
+import org.eclipse.core.databinding.observable.value.ComputedValue;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.annotations.Inject;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -21,8 +24,12 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.*;
-import org.mozilla.javascript.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.ImporterTopLevel;
+import org.mozilla.javascript.ScriptableObject;
 
 public class ElementView {
 	private Realm realm;
@@ -99,10 +106,26 @@ public class ElementView {
 	}
 
 	/**
+	 * TBD this method is not needed; clean it up
 	 * @param selection
 	 */
 	@Inject
 	public void setInput(final EObject selection) {
+		if (selection==null) {
+			return;
+		}
+		realm.asyncExec(new Runnable() {
+			public void run() {
+				selectedElement.setValue(selection);
+			}
+		});
+	}
+
+	/**
+	 * @param selection
+	 */
+	@In
+	public void setSelection(final EObject selection) {
 		if (selection==null) {
 			return;
 		}
