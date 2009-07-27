@@ -43,14 +43,17 @@ public class AnimationSplashHandler extends AbstractSplashHandler {
 		}
 
 		public void beginTask(String name, int totalWork) {
-			total = totalWork ;	
+			// there are exactly 19 bundles being loaded in the legacy workbench as of 20090722
+			// thus, we prefer to use an hardcoded value for the "length" of the monitor, instead of relying 
+			// on the arbitrary rule assuming there are 1/10 of the installed bundles which are actually loaded
+			total = 19 ; // total = totalWork ;	
 			updateProgressBar();
 		}
 
 		private void updateProgressBar() {
 			int currentImgIdx = (int) (NB_TICKS / (float)total  * worked) ;
 			for (int i = 0 ; i < NB_TICKS ; i++) {
-				Image imgToDraw = (i < currentImgIdx) ? imgProgressDark : imgProgressLight ;
+				Image imgToDraw = (i <= currentImgIdx) ? imgProgressDark : imgProgressLight ;
 				synchronized (shellGC) {
 					shellGC.drawImage(imgToDraw, 11 + (11 * i), 292);
 				}
