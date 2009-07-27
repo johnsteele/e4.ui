@@ -45,7 +45,7 @@ ETabItem.active:selected {
 #PerspectiveStack {
 	background-color: rgb(241, 240, 245); 
 	margin: 0px;	
-	tab-margin-offset: 12px;
+	tab-margin-offset: 9px;
 }
 
 #PerspectiveStack > ETabItem {
