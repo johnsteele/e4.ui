@@ -86,7 +86,7 @@
             categoryId="org.eclipse.e4.ui.category"
             defaultHandler="org.eclipse.e4.ui.examples.legacy.workbench.GeneratePsfHandler"
             id="org.eclipse.e4.ui.examples.generatePsfProject"
-            name="Generate PSF Project">
+            name="Generate e4 Example Project">
       </command>
    </extension>
    <extension
