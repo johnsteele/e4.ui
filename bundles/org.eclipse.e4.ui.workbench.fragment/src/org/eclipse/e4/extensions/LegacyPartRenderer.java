@@ -38,6 +38,7 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.internal.EditorActionBars;
 import org.eclipse.ui.internal.EditorActionBuilder;
 import org.eclipse.ui.internal.EditorSite;
@@ -161,8 +162,7 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 					if (!participating) {
 						return;
 					}
-					trackingContext
-							.get(EDITOR_DISPOSED);
+					trackingContext.get(EDITOR_DISPOSED);
 					boolean dirty = (Boolean) trackingContext.get(IS_DIRTY);
 					if (parent instanceof CTabFolder) {
 						CTabFolder ctf = (CTabFolder) parent;
@@ -231,6 +231,15 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 
 		// Return action bars.
 		return actionBars;
+	}
+
+	private void disposeEditorActionBars(EditorActionBars actionBars) {
+		actionBars.removeRef();
+		if (actionBars.getRef() <= 0) {
+			String type = actionBars.getEditorType();
+			actionCache.remove(type);
+			actionBars.dispose();
+		}
 	}
 
 	private Control createView(MContributedPart<MPart<?>> part,
@@ -402,6 +411,21 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 		super.disposeWidget(part);
 		if (part instanceof MContributedPart) {
 			MContributedPart mpart = (MContributedPart) part;
+			Object obj = mpart.getObject();
+			if (obj instanceof IWorkbenchPart) {
+				if (obj instanceof IEditorPart) {
+					EditorSite site = (EditorSite) ((IEditorPart) obj)
+							.getEditorSite();
+					disposeEditorActionBars((EditorActionBars) site
+							.getActionBars());
+					site.dispose();
+				} else if (obj instanceof IViewPart) {
+					ViewSite site = (ViewSite) ((IViewPart) obj).getViewSite();
+					SubActionBars bars = (SubActionBars) site.getActionBars();
+					bars.dispose();
+					site.dispose();
+				}
+			}
 			mpart.setObject(null);
 		}
 	}
