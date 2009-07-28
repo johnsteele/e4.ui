@@ -27,6 +27,7 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.SubActionBars;
 
 /**
  * Transforms E4 MPart events into 3.x legacy events.
@@ -133,6 +134,13 @@ public class PartsEventTransformer extends EContentAdapter {
 		if (object instanceof MContributedPart<?>) {
 			IWorkbenchPartReference ref = toPartRef((MContributedPart<?>) object);
 			if (ref != null) {
+				// set the Focus to the newly active part
+				IWorkbenchPart part = ref.getPart(true);
+				part.setFocus();
+				// Update the action bars
+				SubActionBars bars = (SubActionBars) ((PartSite) part.getSite())
+						.getActionBars();
+				bars.partChanged(part);
 				partList.setActivePart(ref);
 				if (ref instanceof IEditorReference) {
 					IEditorReference editorReference = (IEditorReference) ref;

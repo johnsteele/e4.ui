@@ -87,7 +87,6 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.MultiPartInitException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
@@ -265,15 +264,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				if (renderer != null)
 					renderer.activate(modelElement);
 
-				// set the Focus to the newly active part
-				part.setFocus();
 			}
 		}
 
-		// Update the action bars
-		SubActionBars bars = (SubActionBars) ((PartSite) part.getSite())
-				.getActionBars();
-		bars.partChanged(part);
 	}
 
 	/**
