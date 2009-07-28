@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.internal.context.EclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.ECommandService;
@@ -484,6 +485,8 @@ public class LegacyHandlerService implements IHandlerService {
 	public void deactivateHandler(IHandlerActivation activation) {
 		EHandlerActivation eActivation = (EHandlerActivation) activation;
 		eActivation.participating = false;
+		//TODO This should not be necessary. See bug 284604
+		((EclipseContext) eActivation.context).removeRunAndTrack(eActivation);
 		EHandlerService hs = (EHandlerService) eActivation.context
 				.get(EHandlerService.class.getName());
 		hs.deactivateHandler(eActivation.getCommandId(), eActivation.proxy);
