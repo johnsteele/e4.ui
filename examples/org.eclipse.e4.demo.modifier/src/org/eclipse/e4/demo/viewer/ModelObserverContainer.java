@@ -74,7 +74,7 @@ public class ModelObserverContainer extends ViewPart {
 		composite.setLayout(new GridLayout(2, true));
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		modelViewer = new ModelExplorer(composite);
+		modelViewer = new ModelExplorer(composite, partContext);
 		
 		CTabFolder folder = new CTabFolder(composite, SWT.BOTTOM | SWT.BORDER);
 
