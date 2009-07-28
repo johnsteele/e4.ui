@@ -398,7 +398,6 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 			MContributedPart mpart = (MContributedPart) part;
 			Object obj = mpart.getObject();
 			if (obj instanceof IWorkbenchPart) {
-				((IWorkbenchPart) obj).dispose();
 				if (obj instanceof IEditorPart) {
 					Activator.trace(Policy.DEBUG_RENDERER,
 							"Disposing tracker for " + obj, null); //$NON-NLS-1$
@@ -413,6 +412,7 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 			MContributedPart mpart = (MContributedPart) part;
 			Object obj = mpart.getObject();
 			if (obj instanceof IWorkbenchPart) {
+				((IWorkbenchPart) obj).dispose();
 				if (obj instanceof IEditorPart) {
 					EditorSite site = (EditorSite) ((IEditorPart) obj)
 							.getEditorSite();

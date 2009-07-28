@@ -88,8 +88,7 @@ public class PartsEventTransformer extends EContentAdapter {
 										ISaveablesLifecycleListener.class);
 						modelManager.postOpen(ref.getPart(true));
 						partList.firePartOpened(ref);
-					} else
-						partList.firePartClosed(ref);
+					}
 				}
 			}
 			return;

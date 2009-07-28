@@ -816,6 +816,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			((WorkbenchPartReference) ref).dispose();
 		} else if (ref instanceof ModelReference) {
 			MContributedPart<?> modelPart = ((ModelReference) ref).getModel();
+			partList.firePartClosed(ref);
 			modelPart.setVisible(false);
 		}
 	}
