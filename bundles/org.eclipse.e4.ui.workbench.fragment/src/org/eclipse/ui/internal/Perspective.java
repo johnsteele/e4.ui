@@ -821,6 +821,9 @@ public class Perspective {
 		final IEclipseContext perspContext = perspModel.getContext();
 		IValueFunction closeFunc = new IValueFunction() {
 			public Object getValue() {
+				if (page.getOpenPerspectives().length == 1)
+					return false;
+
 				ArrayList<IEditorReference> result = new ArrayList<IEditorReference>();
 				page.getContainedEditorRefs(result, thePerspModel);
 				IEditorReference[] openEditors = new IEditorReference[result
