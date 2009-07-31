@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.ui.incubator.testRunner.commands.category"
+            name="Launch Category">
+      </category>
+      <command
+            categoryId="org.eclipse.ui.incubator.testRunner.commands.category"
+            defaultHandler="org.eclipse.ui.incubator.testrunner.handlers.LaunchTestsHandler"
+            id="org.eclipse.ui.incubator.testRunner.commands.launchTests"
+            name="Launch Tests">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.ui.incubator.testRunner.commands.launchTests"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+5">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="org.eclipse.ui.incubator.utilsMenu"
+               label="Utils"
+               mnemonic="U">
+            <command
+                  commandId="org.eclipse.ui.incubator.testRunner.commands.launchTests"
+                  id="org.eclipse.ui.incubator.testRunner.commands.launchTests"
+                  mnemonic="L">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+
+</plugin>
