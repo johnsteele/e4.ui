@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ModelEditorReference;
 import org.eclipse.e4.extensions.ModelReference;
@@ -589,6 +590,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			// Remove editor from the presentation
 
 			partRemoved(ref);
+			// now that it has disappeared from the model, dispose its context
+			MContributedPart<?> mEditorPart = ((ModelEditorReference) ref)
+					.getModel();
+			mEditorPart.eAdapters().clear();
+			((IDisposable) mEditorPart.getContext()).dispose();
+			mEditorPart.setContext(null);
 		}
 
 		// Notify interested listeners after the close
