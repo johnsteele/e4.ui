@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.viewer;
 
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -76,7 +74,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class ModelExplorer {
 	
-	private IEclipseContext outputContext;
+	private IEclipseContext context;
 	private TreeViewer viewer;
 	
 	private ImageManagerHelper imageHelper;
@@ -327,7 +325,7 @@ public class ModelExplorer {
 			IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 			Object selObj = sel.getFirstElement();
 			if (selObj instanceof EObject)
-				outputContext.set(IServiceConstants.SELECTION, selObj);
+				context.modify(IServiceConstants.SELECTION, selObj);
 		}
 	}
 
@@ -363,16 +361,8 @@ public class ModelExplorer {
 		// TBD any cleanup?
 	}
 	
-	// TBD this is less than ideal as it requires the knowledge of
-	// the containment structure. I think the proper answer should be
-	// that objects (MParts, CTabs, and so on) don't create unnecessary
-	// contexts.
 	public void contextSet(IEclipseContext context) {
-		Object parent = context.get(IContextConstants.PARENT);
-		if (parent instanceof IEclipseContext)
-			outputContext = (IEclipseContext) parent;
-		else
-			outputContext = context;
+		this.context = context;
 	}
 
 }
