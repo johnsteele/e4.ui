@@ -2351,6 +2351,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * window.
 	 */
 	private final void initializeDefaultServices() {
+		e4Context.declareModifiable(IServiceConstants.SELECTION);
+
 		e4Context.set(IExtensionTracker.class.getName(), new ContextFunction() {
 			@Override
 			public Object compute(IEclipseContext context, Object[] arguments) {

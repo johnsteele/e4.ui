@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
@@ -20,7 +19,6 @@ import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.e4.workbench.ui.internal.Trackable;
-import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
 import org.eclipse.e4.workbench.ui.renderers.swt.SWTPartRenderer;
@@ -118,12 +116,6 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 			final IEclipseContext localContext = part.getContext();
 			localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor(" //$NON-NLS-1$
 					+ desc.getLabel() + ")"); //$NON-NLS-1$
-			final IEclipseContext outputContext = EclipseContextFactory.create(
-					null, UISchedulerStrategy.getInstance());
-			outputContext.set(IContextConstants.DEBUG_STRING,
-					"ContributedPart-output"); //$NON-NLS-1$
-			localContext.set(IContextConstants.OUTPUTS, outputContext);
-			localContext.set(IEclipseContext.class.getName(), outputContext);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 
 			part.setObject(impl);
@@ -259,12 +251,6 @@ public class LegacyPartRenderer extends SWTPartRenderer {
 			final IEclipseContext localContext = part.getContext();
 			localContext.set(IContextConstants.DEBUG_STRING, "Legacy View(" //$NON-NLS-1$
 					+ part.getName() + ")"); //$NON-NLS-1$
-			final IEclipseContext outputContext = EclipseContextFactory.create(
-					null, UISchedulerStrategy.getInstance());
-			outputContext.set(IContextConstants.DEBUG_STRING,
-					"ContributedPart-output"); //$NON-NLS-1$
-			localContext.set(IContextConstants.OUTPUTS, outputContext);
-			localContext.set(IEclipseContext.class.getName(), outputContext);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 
 			part.setObject(impl);

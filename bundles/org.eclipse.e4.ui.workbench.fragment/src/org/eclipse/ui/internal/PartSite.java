@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.extensions.ModelReference;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.MenuManager;
@@ -143,7 +142,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	protected final ServiceLocator serviceLocator;
 
-	protected IEclipseContext e4Context;
+	final protected IEclipseContext e4Context;
 
 	/**
 	 * Build the part site.
@@ -454,13 +453,11 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	public void setSelectionProvider(ISelectionProvider provider) {
 		e4Context.set(ISelectionProvider.class.getName(), provider);
 		if (provider != null) {
-			final IEclipseContext outputContext = (IEclipseContext) e4Context
-					.get(IContextConstants.OUTPUTS);
 			provider
 					.addSelectionChangedListener(new ISelectionChangedListener() {
 						public void selectionChanged(SelectionChangedEvent event) {
-							outputContext.set(IServiceConstants.SELECTION,
-									event.getSelection());
+							e4Context.modify(IServiceConstants.SELECTION, event
+									.getSelection());
 						}
 					});
 		}
