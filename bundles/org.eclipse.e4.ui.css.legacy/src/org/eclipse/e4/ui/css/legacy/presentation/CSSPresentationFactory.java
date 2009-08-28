@@ -1,14 +1,15 @@
 package org.eclipse.e4.ui.css.legacy.presentation;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.internal.css.legacy.presentation.CSSTabFolder;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultMultiTabListener;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultSimpleTabListener;
-import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultThemeListener;
 import org.eclipse.ui.internal.presentations.util.PresentablePartFolder;
 import org.eclipse.ui.internal.presentations.util.StandardEditorSystemMenu;
 import org.eclipse.ui.internal.presentations.util.StandardViewSystemMenu;
@@ -19,7 +20,7 @@ import org.eclipse.ui.presentations.WorkbenchPresentationFactory;
 
 /**
  * 
- * @since 3.4
+ * @since 3.5
  * 
  */
 public class CSSPresentationFactory extends
@@ -71,10 +72,6 @@ public class CSSPresentationFactory extends
 		TabbedStackPresentation result = new TabbedStackPresentation(site,
 				partFolder, new StandardEditorSystemMenu(site));
 
-		DefaultThemeListener themeListener = new DefaultThemeListener(folder,
-				result.getTheme());
-		result.getTheme().addListener(themeListener);
-
 		new DefaultMultiTabListener(result.getApiPreferences(),
 				IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, folder);
 
@@ -114,16 +111,10 @@ public class CSSPresentationFactory extends
 		TabbedStackPresentation result = new TabbedStackPresentation(site,
 				partFolder, new StandardViewSystemMenu(site));
 
-		DefaultThemeListener themeListener = new DefaultThemeListener(folder,
-				result.getTheme());
-		result.getTheme().addListener(themeListener);
-
 		new DefaultSimpleTabListener(result.getApiPreferences(),
 				IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
 				folder);
 
 		return result;
 	}
-
-
 }

@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.css.legacy.presentation;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabFolder;
+import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabItem;
+import org.eclipse.ui.internal.presentations.util.AbstractTabItem;
 
 /**
- * @since 3.1
+ * @since 3.5
  */
 public class CSSTabFolder extends DefaultTabFolder {
 
@@ -26,4 +31,23 @@ public class CSSTabFolder extends DefaultTabFolder {
     public void updateColors() {
     	//do nothing, CSS will handle
     }
+    
+    public AbstractTabItem add(int index, int flags) {
+    	DefaultTabItem result = (DefaultTabItem) super.add(index, flags);  
+    	Widget widget = result.getWidget();
+
+    	CSSEngine engine = getEngine(widget.getDisplay());
+    	if(engine != null) {
+    		engine.applyStyles(widget, true);
+    	}
+    	
+        return result;
+    }
+    
+	private CSSEngine getEngine(Display display) {
+		//TODO post 0.9 this can be retrieved via API on SWTElement
+		return (CSSEngine) display.getData("org.eclipse.e4.ui.css.core.engine");
+	}
+
+
 }
