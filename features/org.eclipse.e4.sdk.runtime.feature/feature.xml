@@ -65,4 +65,8 @@
          id="org.eclipse.e4.xwt.emf.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.e4.xwt.workbench.feature"
+         version="0.0.0"/>
+
 </feature>
