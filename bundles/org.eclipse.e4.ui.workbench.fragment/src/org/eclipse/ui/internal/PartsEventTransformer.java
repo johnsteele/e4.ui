@@ -100,7 +100,8 @@ public class PartsEventTransformer extends EContentAdapter {
 			return;
 
 		// at this time we only interpreting SET events
-		if (notification.getEventType() != Notification.SET)
+		if (notification.getEventType() != Notification.SET
+				|| notification.getEventType() != Notification.CREATE)
 			return;
 
 		// make sure something actually changed

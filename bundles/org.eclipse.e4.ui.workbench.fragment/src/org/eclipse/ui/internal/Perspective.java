@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.compatibility.LegacyView;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.extensions.ModelViewReference;
@@ -865,7 +866,11 @@ public class Perspective {
 		perspContext.set(Perspective.class.getName(), this);
 
 		// Always show the progress view since we don't have progress trim yet
-		showView("org.eclipse.ui.views.ProgressView", null); //$NON-NLS-1$
+		MPart prgViewPart = ModeledPageLayout.findPart(perspModel,
+				"org.eclipse.ui.views.ProgressView"); //$NON-NLS-1$
+		prgViewPart.setVisible(true);
+		// prgViewPart.getParent().setActiveChild(prgViewPart);
+		//showView("org.eclipse.ui.views.ProgressView", null); //$NON-NLS-1$
 	}
 
 	/**
@@ -2263,7 +2268,8 @@ public class Perspective {
 		// OK, make it active
 		theStack.setActiveChild(part);
 
-		return (IViewPart) ((MContributedPart) part).getObject();
+		LegacyView lView = (LegacyView) ((MContributedPart) part).getObject();
+		return lView != null ? lView.getViewPart() : null;
 	}
 
 	/**

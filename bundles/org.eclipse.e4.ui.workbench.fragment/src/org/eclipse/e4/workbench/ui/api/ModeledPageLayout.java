@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.e4.compatibility.LegacyView;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
@@ -200,6 +201,7 @@ public class ModeledPageLayout implements IPageLayout {
 			return viewModel;
 		}
 
+		viewModel.setURI(LegacyView.LEGACY_VIEW_URI);
 		viewModel.setId(id);
 
 		// Get the actual view name from the extension registry

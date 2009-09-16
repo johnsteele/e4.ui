@@ -29,6 +29,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.compatibility.LegacyEditor;
+import org.eclipse.e4.compatibility.LegacyView;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ModelEditorReference;
@@ -927,9 +929,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	public IViewReference findViewReference(String viewId, String secondaryId) {
 		MPart modelPart = ModeledPageLayout.findPart(e4Window, viewId);
 		if (modelPart instanceof MContributedPart<?>) {
-			IWorkbenchPart wbPart = (IWorkbenchPart) ((MContributedPart<?>) modelPart)
-					.getObject();
-			return (IViewReference) getReference(wbPart);
+			Object obj = ((MContributedPart<?>) modelPart).getObject();
+			if (!(obj instanceof LegacyView))
+				return null;
+
+			LegacyView lv = (LegacyView) obj;
+			return (IViewReference) getReference(lv.getViewPart());
 		}
 		return null;
 	}
@@ -1867,6 +1872,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// No patching editor found, create one
 		MContributedPart<MPart<?>> editorPart = ApplicationFactory.eINSTANCE
 				.createMContributedPart();
+		editorPart.setURI(LegacyEditor.LEGACY_VIEW_URI);
 		editorPart.setId(editorID);
 		editorPart.setName(input.getName());
 		// editor part icon will be set in LegacyViewFactory
@@ -1900,7 +1906,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				bringToTop(workbenchPart);
 		}
 
-		return (IEditorPart) editorPart.getObject();
+		LegacyEditor le = (LegacyEditor) editorPart.getObject();
+		return le.getEditorWBPart();
 	}
 
 	/**
