@@ -78,6 +78,7 @@ import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.events.EventBrokerFactory;
+import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.Activator;
 import org.eclipse.e4.ui.workbench.swt.internal.CSSStylingSupport;
 import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
@@ -459,7 +460,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		IEclipseContext appContext = EclipseContextFactory.create(
 				serviceContext, null);
 		appContext.set(IContextConstants.DEBUG_STRING, "application"); //$NON-NLS-1$
-		appContext.set(IContextConstants.EVENT, EventBrokerFactory
+		appContext.set(IEventBroker.class.getName(), EventBrokerFactory
 				.newEventBroker());
 		Location instanceLocation = getInstanceLocation();
 		PackageAdmin packageAdmin = (PackageAdmin) appContext
