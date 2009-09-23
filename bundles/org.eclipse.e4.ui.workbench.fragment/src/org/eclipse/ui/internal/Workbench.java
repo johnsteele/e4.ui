@@ -465,9 +465,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Location instanceLocation = getInstanceLocation();
 		PackageAdmin packageAdmin = (PackageAdmin) appContext
 				.get(PackageAdmin.class.getName());
+		String engineURI = "platform:/plugin/org.eclipse.e4.ui.workbench.swt/"; //$NON-NLS-1$
+		engineURI += "org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine"; //$NON-NLS-1$
+
 		e4Workbench = new org.eclipse.e4.workbench.ui.internal.Workbench(
 				instanceLocation, Platform.getExtensionRegistry(),
-				packageAdmin, appContext, new WorkbenchWindowHandler());
+				packageAdmin, appContext, new WorkbenchWindowHandler(),
+				engineURI);
 		e4Context = e4Workbench.getContext();
 		e4Context.set(getClass().getName(), this);
 		e4Context.set(IWorkbench.class.getName(), this);
