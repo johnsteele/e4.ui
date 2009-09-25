@@ -5,8 +5,8 @@ addRepository(type:0,location:http${#58}//download.eclipse.org/modeling/emf/upda
 addRepository(type:1,location:http${#58}//download.eclipse.org/modeling/emf/updates/interim,name:EMF I-builds);\
 addRepository(type:0,location:http${#58}//download.eclipse.org/tools/gef/updates/interim,name:GEF I-builds);\
 addRepository(type:1,location:http${#58}//download.eclipse.org/tools/gef/updates/interim,name:GEF I-builds);\
-addRepository(type:0,location:http${#58}//download.eclipse.org/webtools/downloads/drops/R3.2/I-3.2I-20090910052601/updateSite,name:WTP R3.2 update site);\
-addRepository(type:1,location:http${#58}//download.eclipse.org/webtools/downloads/drops/R3.2/I-3.2I-20090910052601/updateSite,name:WTP R3.2 update site);\
+addRepository(type:0,location:http${#58}//download.eclipse.org/webtools/downloads/drops/R3.2/S-3.2.0M2-20090924194346/updateSite,name:WTP R3.2 update site);\
+addRepository(type:1,location:http${#58}//download.eclipse.org/webtools/downloads/drops/R3.2/S-3.2.0M2-20090924194346/updateSite,name:WTP R3.2 update site);\
   mkdir(path:${installFolder}/dropins);
 requires.1.namespace=org.eclipse.equinox.p2.iu
 requires.1.name=toolingorg.eclipse.configuration.macosx
