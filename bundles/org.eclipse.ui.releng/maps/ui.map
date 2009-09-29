@@ -35,5 +35,5 @@ plugin@org.eclipse.ui.tests.views.properties.tabbed=HEAD,:pserver:anonymous@dev.
 plugin@org.eclipse.ui.tests.performance=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,
 plugin@org.eclipse.ui.tests.harness=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,
 
-feature@org.eclipse.ui.test.master.feature=HEAD,:pserver:anonymous@ottcvs1.ottawa.ibm.com:/home/cvs/desktop,,org.eclipse.ui.automated.build/org.eclipse.ui.test.master.feature
+feature@org.eclipse.ui.test.master.feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,,platform-incubator/ui/org.eclipse.ui.automated.build/org.eclipse.ui.test.master.feature
 
