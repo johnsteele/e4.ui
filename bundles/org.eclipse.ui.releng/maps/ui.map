@@ -36,6 +36,8 @@ plugin@org.eclipse.ui.tests.performance=HEAD,:pserver:anonymous@dev.eclipse.org:
 plugin@org.eclipse.ui.tests.harness=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,
 
 feature@org.eclipse.ui.test.master.feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,,platform-incubator/ui/org.eclipse.ui.automated.build/org.eclipse.ui.test.master.feature
+feature@org.eclipse.ui.test.platform.patch=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,,platform-incubator/ui/org.eclipse.ui.automated.build/org.eclipse.ui.test.platform.patch
+feature@org.eclipse.ui.test.rcp.patch=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,,platform-incubator/ui/org.eclipse.ui.automated.build/org.eclipse.ui.test.rcp.patch
 
 plugin@org.eclipse.test=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,
 fragment@org.eclipse.ant.optional.junit=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,
