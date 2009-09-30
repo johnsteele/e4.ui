@@ -156,11 +156,6 @@
 			<outputproperty name="method" value="xml"/>
 		</xslt>
 		<move file="${p2.repo}/out_content.xml" tofile="${p2.repo}/content.xml" />
-		<generateTestProperties
-							buildDirectory="${buildDirectory}"
-							featureId="org.eclipse.ui.test.master.feature"
-							outputFile="${buildDirectory}/test.properties"
-						/>
 		<antcall target="test"/>
 	</target>
 
@@ -168,7 +163,6 @@
 	<!-- Steps to do to test the build results -->
 	<!-- ===================================================================== -->
 	<property name="testDir" value="${buildDirectory}/tests"/>
-	<property file="${buildDirectory}/test.properties" />
 	
 	<property name="install" value="${testDir}/test-eclipse" />
 	<!--property name="os" value="${baseos}"/>
