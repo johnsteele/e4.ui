@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.ui.test.master.feature"
-      label="Automated test master build Feature"
+      id="org.eclipse.ui.test.platform.patch"
+      label="Platform feature Patch"
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -16,78 +16,54 @@
       [Enter License Description here.]
    </license>
 
-   <includes
-         id="org.eclipse.ui.test.platform.patch"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.ui.test.rcp.patch"
-         version="0.0.0"/>
+   <requires>
+      <import feature="org.eclipse.platform" version="3.6.0.v20090924-9dEtGN9FsUVljz-xgiscJFMIa1DPIQdRz" patch="true"/>
+   </requires>
 
    <plugin
-         id="org.eclipse.core.tests.harness"
+         id="org.eclipse.ui.ide"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.test.performance"
+         id="org.eclipse.ui.ide.application"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ui.tests"
+         id="org.eclipse.ui.navigator"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ui.tests.harness"
+         id="org.eclipse.ui.navigator.resources"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ui.tests.navigator"
+         id="org.eclipse.ui.presentations.r21"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ui.tests.rcp"
+         id="org.eclipse.ui.views"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ui.tests.views.properties.tabbed"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.test"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.ant.optional.junit"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"/>
-
-   <plugin
-         id="org.eclipse.jface.tests.databinding"
+         id="org.eclipse.ui.views.properties.tabbed"
          download-size="0"
          install-size="0"
          version="0.0.0"
