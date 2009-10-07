@@ -193,7 +193,7 @@
 		<mkdir dir="${junit-report-output}" />
 
 		<antcall target="all-tests" />
-		<copydir dest="${buildDirectory}/${buildLabel}" src="${results}"></copydir>
+		<copydir dest="${buildDirectory}/${buildLabel}/results" src="${results}"></copydir>
 	</target>
 	
 	<target name="setup">
