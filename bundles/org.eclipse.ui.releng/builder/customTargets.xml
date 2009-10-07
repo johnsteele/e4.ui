@@ -193,6 +193,10 @@
 		<mkdir dir="${junit-report-output}" />
 
 		<antcall target="all-tests" />
+	  	<xslt style="${builder}/test-output.xsl" extension=".txt" includes="*.xml" destdir="${results}/text" basedir="${results}/xml">
+	  		<outputproperty name="method" value="text"/>
+	  	</xslt>
+
 		<copydir dest="${buildDirectory}/${buildLabel}/results" src="${results}"></copydir>
 	</target>
 	
