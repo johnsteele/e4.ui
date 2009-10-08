@@ -22,9 +22,6 @@ relengDir=$optLocal/org.eclipse.ui.releng
 javaHome=/opt/local/ibm-java2-i386-50
 
 
-cvs -d :pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse update \
-  -d org.eclipse.ui.releng
-
 buildLabel=I${builddate}-${buildtime}
 buildTopDir=${optLocal}/builds/${buildLabel}
 buildDir=${buildTopDir}/${buildLabel}
