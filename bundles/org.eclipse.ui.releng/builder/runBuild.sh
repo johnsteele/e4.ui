@@ -9,8 +9,8 @@ buildtime=$( date +%H%M )
 optLocal=/opt/local/eclipse
 cd $optLocal
 
-eclipseBuildId=I20091006-0800
-basebuilder=$optLocal/I1006-0800/eclipse
+eclipseBuildId=N20091008-1211
+basebuilder=$optLocal/N1008-1211/eclipse
 
 pdeDir=$( find $basebuilder/ -name "org.eclipse.pde.build_*" | sort | head -1  )
 buildfile=$pdeDir/scripts/build.xml
