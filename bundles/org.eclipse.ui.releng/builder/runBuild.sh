@@ -40,12 +40,12 @@ $javaHome/bin/java  -cp $cpAndMain \
 
 
 sendComplete () {
-mailx -s "[success] Build ${buildLable}" \
+mailx -s "[success] Build ${buildLabel}" \
   pwebster@ca.ibm.com <$buildDir/results/text/mail.txt
 }
 
 sendFailures () {
-mailx -s "[fail] Build ${buildLable}" \
+mailx -s "[fail] Build ${buildLabel}" \
   pwebster@ca.ibm.com <$buildDir/results/text/mail.txt
 }
 
