@@ -38,6 +38,12 @@ window.e4 = {
 		}
 	}, 
 	
+	log: {
+		info : function(msg) {
+			return e4RPC("log", "info", msg);
+		}
+	}, 
+	
 	menus : {
 		addContextMenuItem : function(label, callback) {
 			return e4RPC("menus", "addContextMenuItem", label, callback);

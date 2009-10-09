@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            class="org.eclipse.e4.ui.internal.gadgets.opensocial.OpenSocialView"
+            id="opensocial-demo.view"
+            name="Gadget"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.eclipse.e4.ui.internal.gadgets.opensocial.OpenGadgetHandler"
+            id="opensocialdemo.opengadget"
+            name="Open Gadget">
+      </command>
+   </extension>
+
+</plugin>

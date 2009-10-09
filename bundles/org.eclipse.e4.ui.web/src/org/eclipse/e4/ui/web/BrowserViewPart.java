@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.ui.internal.web.Base64;
 import org.eclipse.e4.ui.internal.web.BrowserRPC;
 import org.eclipse.e4.ui.internal.web.E4BrowserUtil;
@@ -41,6 +43,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 public abstract class BrowserViewPart extends ViewPart implements ISaveablePart2 {
 
@@ -107,6 +110,15 @@ public abstract class BrowserViewPart extends ViewPart implements ISaveablePart2
 			}
 		});
 		
+		browserRPC.addRPCHandler("log", new BrowserRPCHandler() {
+			public Object handle(Object[] args) {
+				if ("info".equals(args[1])) {
+					StatusManager.getManager().handle(new Status(IStatus.INFO, "opensocial-demo", (String) args[2]));
+				}
+				return null;
+			}
+		});
+		
 		browserRPC.addRPCHandler("menus", new BrowserRPCHandler() {
 			public Object handle(Object[] args) {
 				if ("addContextMenuItem".equals(args[1])) {
@@ -142,10 +154,13 @@ public abstract class BrowserViewPart extends ViewPart implements ISaveablePart2
 			}
 		});
 		
+		configureBrowser(browser);
 		// context menu
 		hookContextMenu();
 	}
 	
+	abstract protected void configureBrowser(Browser browser);
+
 	protected abstract String getNewWindowViewId();
 	
 	protected BrowserViewPart openWindow(WindowEvent event) {
