@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.compatibility;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -25,6 +27,7 @@ import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.internal.ViewSite;
@@ -41,12 +44,20 @@ import org.eclipse.ui.menus.IMenuService;
  */
 public class LegacyView {
 	public final static String LEGACY_VIEW_URI = "platform:/plugin/org.eclipse.ui.workbench/org.eclipse.e4.compatibility.LegacyView"; //$NON-NLS-1$
-	private IViewPart viewPart;
 	private IViewPart impl;
 
 	public LegacyView(Composite parent, IEclipseContext context,
 			MContributedPart part) {
-		parent.setLayout(new FillLayout());
+		// KLUDGE: the progress view assumes a grid layout, we should fix that
+		// in 3.6
+		Set kludge = new HashSet();
+		kludge.add("org.eclipse.ui.views.ProgressView"); //$NON-NLS-1$
+		kludge.add("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
+		if (kludge.contains(part.getId())) {
+			parent.setLayout(new GridLayout());
+		} else {
+			parent.setLayout(new FillLayout());
+		}
 
 		// Button btn = new Button(parent, SWT.BORDER);
 		// btn.setText(part.getName());
@@ -123,7 +134,7 @@ public class LegacyView {
 	 * @return The implementation of the cient's 3.x view part
 	 */
 	public IViewPart getViewPart() {
-		return viewPart;
+		return impl;
 	}
 
 	private IConfigurationElement findViewConfig(String id) {

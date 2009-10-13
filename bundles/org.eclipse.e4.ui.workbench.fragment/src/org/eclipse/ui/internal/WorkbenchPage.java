@@ -1857,7 +1857,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					editorID, input);
 			if (existingEditor != null && activate) {
 				// Set the initial focus
-				Object impl = existingEditor.getObject();
+				LegacyEditor le = (LegacyEditor) existingEditor.getObject();
+				Object impl = le.getEditorWBPart();
 				if (impl instanceof IWorkbenchPart) {
 					activate((IWorkbenchPart) impl);
 				} else {
@@ -1897,7 +1898,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		};
 		editorContext.set("canCloseFunc", closeFunc); //$NON-NLS-1$
 
-		Object impl = editorPart.getObject();
+		LegacyEditor le = (LegacyEditor) editorPart.getObject();
+		Object impl = le.getEditorWBPart();
 		if (impl instanceof IWorkbenchPart) { // TBD this is always the case?
 			IWorkbenchPart workbenchPart = (IWorkbenchPart) impl;
 			if (activate)
@@ -1906,7 +1908,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				bringToTop(workbenchPart);
 		}
 
-		LegacyEditor le = (LegacyEditor) editorPart.getObject();
 		return le.getEditorWBPart();
 	}
 

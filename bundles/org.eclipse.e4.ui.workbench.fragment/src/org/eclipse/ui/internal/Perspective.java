@@ -868,7 +868,9 @@ public class Perspective {
 		// Always show the progress view since we don't have progress trim yet
 		MPart prgViewPart = ModeledPageLayout.findPart(perspModel,
 				"org.eclipse.ui.views.ProgressView"); //$NON-NLS-1$
-		prgViewPart.setVisible(true);
+		if (prgViewPart != null) {
+			prgViewPart.setVisible(true);
+		}
 		// prgViewPart.getParent().setActiveChild(prgViewPart);
 		//showView("org.eclipse.ui.views.ProgressView", null); //$NON-NLS-1$
 	}
