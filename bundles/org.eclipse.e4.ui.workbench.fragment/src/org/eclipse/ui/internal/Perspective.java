@@ -29,18 +29,17 @@ import org.eclipse.e4.compatibility.LegacyView;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.extensions.ModelViewReference;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
-import org.eclipse.e4.ui.model.application.MContributedPart;
-import org.eclipse.e4.ui.model.application.MItemPart;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MSashForm;
-import org.eclipse.e4.ui.model.application.MStack;
-import org.eclipse.e4.ui.model.application.MTrimmedPart;
+import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MView;
+import org.eclipse.e4.ui.model.application.MViewSashContainer;
+import org.eclipse.e4.ui.model.application.MViewStack;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.workbench.MPerspective;
-import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
-import org.eclipse.e4.workbench.ui.internal.IValueFunction;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -53,7 +52,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -758,12 +756,12 @@ public class Perspective {
 		}
 
 		// Add the new perspective to its stack
-		MStack perspStack = (MStack) ModeledPageLayout.findPart(e4Window,
-				"PerspectiveStack"); //$NON-NLS-1$
+		MElementContainer<MUIElement> perspStack = (MElementContainer<MUIElement>) ModeledPageLayout
+				.findElementById(e4Window, "PerspectiveStack"); //$NON-NLS-1$
 
 		// Is it already there?
-		MPerspective<?> perspModel = (MPerspective<?>) ModeledPageLayout
-				.findPart(perspStack, persp.getId());
+		MPerspective perspModel = (MPerspective) ModeledPageLayout.findPart(
+				perspStack, persp.getId());
 		if (perspModel != null) {
 			if (!perspModel.isVisible())
 				perspModel.setVisible(true);
@@ -772,7 +770,7 @@ public class Perspective {
 		}
 
 		// Not there, create it
-		perspModel = WorkbenchFactory.eINSTANCE.createMPerspective();
+		perspModel = MApplicationFactory.eINSTANCE.createPerspective();
 		perspModel.setId(persp.getId());
 
 		IConfigurationElement element = persp.getConfigElement();
@@ -816,53 +814,55 @@ public class Perspective {
 		perspStack.getChildren().add(perspModel);
 		perspStack.setActiveChild(perspModel);
 
-		// Manage the 'close' button
-		final MPerspective<?> thePerspModel = perspModel;
-		final PerspectiveDescriptor theDesc = descriptor;
 		final IEclipseContext perspContext = perspModel.getContext();
-		IValueFunction closeFunc = new IValueFunction() {
-			public Object getValue() {
-				if (page.getOpenPerspectives().length == 1)
-					return false;
-
-				ArrayList<IEditorReference> result = new ArrayList<IEditorReference>();
-				page.getContainedEditorRefs(result, thePerspModel);
-				IEditorReference[] openEditors = new IEditorReference[result
-						.size()];
-				result.toArray(openEditors);
-				boolean okToClose = page.closeEditors(openEditors, true);
-				if (okToClose) {
-					// Explicitly 'dispose' all created views
-					List<MStack> stacks = new ArrayList<MStack>();
-					gatherStacks(thePerspModel, stacks);
-					for (Iterator iterator = stacks.iterator(); iterator
-							.hasNext();) {
-						MStack mStack = (MStack) iterator.next();
-						String policy = mStack.getPolicy();
-						if (policy == null)
-							continue;
-						if (policy.indexOf("ViewStack") >= 0) { //$NON-NLS-1$
-							EList<MItemPart<?>> vsKids = mStack.getChildren();
-							for (Iterator iterator2 = vsKids.iterator(); iterator2
-									.hasNext();) {
-								MContributedPart<MPart<?>> view = (MContributedPart<MPart<?>>) iterator2
-										.next();
-								if (view.getObject() instanceof IViewPart) {
-									Control ctrl = (Control) view.getWidget();
-									if (ctrl.getMenu() != null)
-										ctrl.setMenu(null);
-									IViewPart vp = (IViewPart) view.getObject();
-									vp.dispose();
-								}
-							}
-						}
-					}
-					page.closePerspective(theDesc, true, false);
-				}
-				return okToClose;
-			}
-		};
-		perspContext.set("canCloseFunc", closeFunc); //$NON-NLS-1$
+		// Manage the 'close' button
+		// final MPerspective thePerspModel = perspModel;
+		// final PerspectiveDescriptor theDesc = descriptor;
+		// IValueFunction closeFunc = new IValueFunction() {
+		// public Object getValue() {
+		// if (page.getOpenPerspectives().length == 1)
+		// return false;
+		//
+		// ArrayList<IEditorReference> result = new
+		// ArrayList<IEditorReference>();
+		// page.getContainedEditorRefs(result, thePerspModel);
+		// IEditorReference[] openEditors = new IEditorReference[result
+		// .size()];
+		// result.toArray(openEditors);
+		// boolean okToClose = page.closeEditors(openEditors, true);
+		// if (okToClose) {
+		// // Explicitly 'dispose' all created views
+		// List<MStack> stacks = new ArrayList<MStack>();
+		// gatherStacks(thePerspModel, stacks);
+		// for (Iterator iterator = stacks.iterator(); iterator
+		// .hasNext();) {
+		// MStack mStack = (MStack) iterator.next();
+		// String policy = mStack.getPolicy();
+		// if (policy == null)
+		// continue;
+		//						if (policy.indexOf("ViewStack") >= 0) { //$NON-NLS-1$
+		// EList<MItemPart<?>> vsKids = mStack.getChildren();
+		// for (Iterator iterator2 = vsKids.iterator(); iterator2
+		// .hasNext();) {
+		// MContributedPart<MPart<?>> view = (MContributedPart<MPart<?>>)
+		// iterator2
+		// .next();
+		// if (view.getObject() instanceof IViewPart) {
+		// Control ctrl = (Control) view.getWidget();
+		// if (ctrl.getMenu() != null)
+		// ctrl.setMenu(null);
+		// IViewPart vp = (IViewPart) view.getObject();
+		// vp.dispose();
+		// }
+		// }
+		// }
+		// }
+		// page.closePerspective(theDesc, true, false);
+		// }
+		// return okToClose;
+		// }
+		// };
+		//		perspContext.set("canCloseFunc", closeFunc); //$NON-NLS-1$
 		perspContext.set(Perspective.class.getName(), this);
 
 		// Always show the progress view since we don't have progress trim yet
@@ -879,23 +879,23 @@ public class Perspective {
 	 * @param e4Window
 	 */
 	private void createLegacyWBModel(MWindow e4Window) {
-		MTrimmedPart<MPart<?>> trim = ApplicationFactory.eINSTANCE
-				.createMTrimmedPart();
+		// MTrimStructure<MUIElement> trim = MApplicationFactory.eINSTANCE
+		// .createTrimStructure();
 
 		// Add a 'stickyRight' stack and populate it
-		MSashForm<MPart<?>> mainSash = ApplicationFactory.eINSTANCE
-				.createMSashForm();
-		mainSash.setPolicy("Horizontal"); //$NON-NLS-1$
+		MViewSashContainer mainSash = MApplicationFactory.eINSTANCE
+				.createViewSashContainer();
+		mainSash.setHorizontal(true);
 
-		MStack perspStack = ApplicationFactory.eINSTANCE.createMStack();
+		MPerspectiveStack perspStack = MApplicationFactory.eINSTANCE
+				.createPerspectiveStack();
 		perspStack.setId("PerspectiveStack"); //$NON-NLS-1$
-		perspStack.setPolicy("EditorStack"); //$NON-NLS-1$
 
 		mainSash.getChildren().add(perspStack);
 
-		MStack stickyRight = ApplicationFactory.eINSTANCE.createMStack();
+		MViewStack stickyRight = MApplicationFactory.eINSTANCE
+				.createViewStack();
 		stickyRight.setId("stickyRight"); //$NON-NLS-1$
-		stickyRight.setPolicy("ViewStack"); //$NON-NLS-1$
 		stickyRight.setVisible(false);
 		IStickyViewDescriptor[] descs = WorkbenchPlugin.getDefault()
 				.getViewRegistry().getStickyViews();
@@ -904,18 +904,17 @@ public class Perspective {
 			String id = stickyViewDescriptor.getId();
 			switch (stickyViewDescriptor.getLocation()) {
 			case IPageLayout.RIGHT:
-				MContributedPart view = ModeledPageLayout.createViewModel(id,
-						false);
+				MView view = ModeledPageLayout.createViewModel(id, false);
 				stickyRight.getChildren().add(view);
 				break;
 			}
 		}
 		mainSash.getChildren().add(stickyRight);
-		trim.getChildren().add(mainSash);
-		e4Window.getChildren().add(trim);
+		// trim.getChildren().add(mainSash);
+		e4Window.getChildren().add(mainSash);
 	}
 
-	private void loadExtensions(MPerspective<?> perspModel,
+	private void loadExtensions(MPerspective perspModel,
 			ModeledPageLayout layout) {
 		String perspId = perspModel.getId();
 		if (perspId == null)
@@ -939,7 +938,7 @@ public class Perspective {
 	}
 
 	private MPart addView(int position, IConfigurationElement[] viewExts,
-			MPerspective<?> perspModel) {
+			MPerspective perspModel) {
 		String id = viewExts[position]
 				.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 		// String relationship =
@@ -951,7 +950,7 @@ public class Perspective {
 		// String closeable = viewExts[j].getAttribute("closeable");
 		// String showTitle = viewExts[j].getAttribute("showTitle");
 
-		MPart<?> relPart = ModeledPageLayout.findPart(perspModel, relative);
+		MPart relPart = ModeledPageLayout.findPart(perspModel, relative);
 		if (relPart == null) { // is it declared later in the extensions?
 			for (int i = position + 1; i < viewExts.length; i++) {
 				if (viewExts[i] == null)
@@ -967,31 +966,29 @@ public class Perspective {
 				}
 			}
 		}
-		MStack sm;
-		if (relPart != null) {
-			MPart<?> stackPart = relPart;
-			while (!(stackPart instanceof MStack))
-				stackPart = stackPart.getParent();
-			sm = (MStack) stackPart;
+		MViewStack sm;
+		if (relPart instanceof MView) {
+			MUIElement rp = relPart.getParent();
+			sm = (MViewStack) rp;
 		} else { // get a default stack
 			sm = getDefaultStack(perspModel);
 		}
 
-		MContributedPart<?> viewModel = ModeledPageLayout.createViewModel(id,
-				Boolean.parseBoolean(visible));
+		MView viewModel = ModeledPageLayout.createViewModel(id, Boolean
+				.parseBoolean(visible));
 		sm.getChildren().add(viewModel);
 		viewExts[position] = null; // only create once
 		return viewModel;
 	}
 
-	private MStack getDefaultStack(MPart<?> part) {
+	private MViewStack getDefaultStack(MElementContainer<?> container) {
 		// TBD is there a better approach in 3.x?
 		// find any stack in the perspective's ascendants
-		for (Object child : part.getChildren()) {
-			if (child instanceof MStack)
-				return (MStack) child;
-			if (child instanceof MPart<?>) {
-				MStack result = getDefaultStack((MPart<?>) child);
+		for (MUIElement child : container.getChildren()) {
+			if (child instanceof MViewStack)
+				return (MViewStack) child;
+			if (child instanceof MElementContainer<?>) {
+				MViewStack result = getDefaultStack((MElementContainer<?>) child);
 				if (result != null)
 					return result;
 			}
@@ -2183,11 +2180,12 @@ public class Perspective {
 		return ref;
 	}
 
-	private MStack findBottomStack(MPerspective persp) {
+	private MElementContainer<MUIElement> findBottomStack(MPerspective persp) {
 		List stacks = new ArrayList();
 		gatherStacks(persp, stacks);
 		if (stacks.size() > 0)
-			return (MStack) stacks.get(stacks.size() - 1);
+			return (MElementContainer<MUIElement>) stacks
+					.get(stacks.size() - 1);
 		return null;
 	}
 
@@ -2195,14 +2193,15 @@ public class Perspective {
 	 * @param persp
 	 * @param stacks
 	 */
-	private void gatherStacks(MPart part, List stacks) {
-		EList kids = part.getChildren();
-		for (Iterator iterator = kids.iterator(); iterator.hasNext();) {
-			MPart child = (MPart) iterator.next();
-			if (child instanceof MStack) {
-				stacks.add(child);
+	private void gatherStacks(MElementContainer<? extends MUIElement> persp,
+			List stacks) {
+		for (MUIElement kid : persp.getChildren()) {
+			if (kid instanceof ViewStack) {
+				stacks.add(kid);
 			}
-			gatherStacks(child, stacks);
+			if (kid instanceof MElementContainer<?>)
+				gatherStacks((MElementContainer<? extends MUIElement>) kid,
+						stacks);
 		}
 	}
 
@@ -2213,25 +2212,28 @@ public class Perspective {
 			throws PartInitException {
 		// Is it already there?
 		MWindow e4Window = page.getModelWindow();
-		MStack perspStack = (MStack) ModeledPageLayout.findPart(e4Window,
-				"PerspectiveStack"); //$NON-NLS-1$
-		final MPerspective perspectiveModel = (MPerspective<?>) perspStack
+		MPerspectiveStack perspStack = (MPerspectiveStack) ModeledPageLayout
+				.findElementById(e4Window, "PerspectiveStack"); //$NON-NLS-1$
+		final MPerspective perspectiveModel = (MPerspective) perspStack
 				.getActiveChild();
-		MPart part = ModeledPageLayout.findPart(perspectiveModel, viewId);
+		MView view = (MView) ModeledPageLayout.findPart(perspectiveModel,
+				viewId);
 
 		// also check 'stickyRight' since it's not in a perspective
-		if (part == null) {
-			MStack stickyRight = (MStack) ModeledPageLayout.findPart(e4Window,
-					"stickyRight"); //$NON-NLS-1$
-			part = ModeledPageLayout.findPart(stickyRight, viewId);
+		if (view == null) {
+			ViewStack stickyRight = (ViewStack) ModeledPageLayout
+					.findElementById(e4Window, "stickyRight"); //$NON-NLS-1$
+			view = (MView) ModeledPageLayout.findElementById(
+					(MUIElement) stickyRight, viewId);
 		}
 		boolean doLayout = false;
 
 		// if not, add it
-		MPart theStack = null;
-		if (part == null) {
+		MElementContainer<MUIElement> theStack = null;
+		if (view == null) {
 			// Place it in the 'bottom' stack
-			theStack = ModeledPageLayout.findPart(perspectiveModel, "bottom"); //$NON-NLS-1$
+			theStack = (MElementContainer<MUIElement>) ModeledPageLayout
+					.findElementById(perspectiveModel, "bottom"); //$NON-NLS-1$
 			if (theStack == null)
 				theStack = findBottomStack(perspectiveModel);
 
@@ -2241,11 +2243,11 @@ public class Perspective {
 				doLayout = true;
 			}
 
-			part = ModeledPageLayout.createViewModel(viewId, true);
-			theStack.getChildren().add(part);
+			view = ModeledPageLayout.createViewModel(viewId, true);
+			theStack.getChildren().add(view);
 		} else {
 			// Its stack is where it already is
-			theStack = part.getParent();
+			theStack = view.getParent();
 
 			// If the stack is hidden, show it
 			if (!theStack.isVisible()) {
@@ -2254,11 +2256,11 @@ public class Perspective {
 			}
 
 			// create it if necessary
-			if (!part.isVisible()) {
+			if (!view.isVisible()) {
 				// Move it to the end of the stack
-				theStack.getChildren().remove(part);
-				theStack.getChildren().add(part);
-				part.setVisible(true);
+				theStack.getChildren().remove(view);
+				theStack.getChildren().add(view);
+				view.setVisible(true);
 			}
 		}
 
@@ -2268,9 +2270,9 @@ public class Perspective {
 		}
 
 		// OK, make it active
-		theStack.setActiveChild(part);
+		theStack.setActiveChild(view);
 
-		LegacyView lView = (LegacyView) ((MContributedPart) part).getObject();
+		LegacyView lView = (LegacyView) view.getObject();
 		return lView != null ? lView.getViewPart() : null;
 	}
 

@@ -10,51 +10,34 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.viewer;
 
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
-import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.Observables;
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.list.ComputedList;
-import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.MultiList;
-import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
-import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MContributedPart;
-import org.eclipse.e4.ui.model.application.MHandledItem;
-import org.eclipse.e4.ui.model.application.MItemContainer;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MSashForm;
-import org.eclipse.e4.ui.model.application.MStack;
-import org.eclipse.e4.ui.model.workbench.MPerspective;
-import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
+import org.eclipse.e4.ui.model.application.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.databinding.EMFObservables;
-import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
-import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -77,6 +60,8 @@ public class ModelExplorer {
 	private IEclipseContext context;
 	private TreeViewer viewer;
 	
+	MApplicationElement rootElement;
+	
 	private ImageManagerHelper imageHelper;
 	
 	private DragSourceListener dragListener = new DragSourceListener() {
@@ -92,7 +77,7 @@ public class ModelExplorer {
 				event.doit = false;
 			}
 			else {
-				event.doit = selection.getFirstElement() instanceof MContributedPart<?>; 
+				event.doit = selection.getFirstElement() instanceof MPart; 
 			}
 		}
 	};
@@ -107,7 +92,7 @@ public class ModelExplorer {
 			Widget curItem = event.item;
 			if (curItem != null) {
 				Object curElement = curItem.getData();
-				if (curElement instanceof MStack) {
+				if (curElement instanceof MPartStack) {
 					event.detail = DND.DROP_MOVE;
 				}
 				else {
@@ -127,9 +112,9 @@ public class ModelExplorer {
 
 		public void drop(DropTargetEvent event) {
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(event.currentDataType)) {
-				MStack sm = (MStack) event.item.getData();
+				MPartStack sm = (MPartStack) event.item.getData();
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-				MContributedPart<?> view = (MContributedPart<?>) selection.getFirstElement();
+				MPart view = (MPart) selection.getFirstElement();
 				sm.getChildren().add(view);
 				ModelUtils.activate(view);
 				viewer.refresh();
@@ -140,40 +125,67 @@ public class ModelExplorer {
 		public void dropAccept(DropTargetEvent event) {
 		}
 	};
+	
+	private ITreeContentProvider contentProvider = new ITreeContentProvider() {	
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+		
+		public void dispose() {
+		}
+
+		public Object[] getChildren(Object parentElement) {
+			return null;
+		}
+
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		public boolean hasChildren(Object element) {
+			return false;
+		}
+
+		public Object[] getElements(Object inputElement) {
+			return null;
+		}
+	};
 	 
-	class ViewLabelProvider extends ObservableMapLabelProvider {
+	class ViewLabelProvider implements ILabelProvider {
 
-		public ViewLabelProvider(IObservableMap[] attributeMaps) {
-			super(attributeMaps);
-		}
-
-		@Override
 		public Image getImage(Object element) {
-			if (element instanceof MContributedPart<?>) {
-				String iconPath = ((MContributedPart<?>) element).getIconURI();
+			if (element instanceof MItem) {
+				String iconPath = ((MItem) element).getIconURI();
 				return imageHelper.getImage(iconPath);
-			} else if (element instanceof MWorkbenchWindow)
-				return imageHelper.getImage(ImageManagerHelper.IMAGE_WORKBENCH_WINDOW);
-			else if (element instanceof MStack)
-				return imageHelper.getImage(ImageManagerHelper.IMAGE_STACK);
-			else if ((element instanceof MPerspective<?>) ||(element instanceof MSashForm<?>))
-				return imageHelper.getImage(ImageManagerHelper.IMAGE_SASH);
-            return null;
+			}
+	
+			return imageHelper.getElementImage(element);
 		}
 
-		@Override
 		public String getText(Object element) {
-			if (element instanceof MContributedPart<?>)
-				return ((MContributedPart<?>)element).getName();
-			if (element instanceof MStack)
-				return "Stack: \"" + ((MStack) element).getId() + "\"";
-			if (element instanceof MSashForm<?>)
-				return "Sash: \"" + ((MSashForm<?>) element).getId() + "\"";
-			if (element instanceof MPerspective<?>)
-				return "Perspective \"" + ((MPerspective<?>) element).getId() + "\""; 
-			if (element instanceof MWorkbenchWindow)
+			if (element instanceof MItem)
+				return ((MItem)element).getName();
+			if (element instanceof MPartStack)
+				return "Stack: \"" + ((MPartStack) element).getId() + "\"";
+			if (element instanceof MPartSashContainer)
+				return "Sash: \"" + ((MPartSashContainer) element).getId() + "\"";
+			if (element instanceof MPerspective)
+				return "Perspective \"" + ((MPerspective) element).getId() + "\""; 
+			if (element instanceof MWindow)
 				return "Workbench Window"; 
 			return element.getClass().getSimpleName();
+		}
+
+		public void addListener(ILabelProviderListener listener) {
+		}
+
+		public void dispose() {
+		}
+
+		public boolean isLabelProperty(Object element, String property) {
+			return false;
+		}
+
+		public void removeListener(ILabelProviderListener listener) {
 		}
 	}
 
@@ -198,96 +210,8 @@ public class ModelExplorer {
 		viewer = new TreeViewer(composite);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		final Realm realm = Realm.getDefault();
-		IObservableFactory listFactory = new IObservableFactory() {
-			public IObservable createObservable(Object element) {
-				if (element instanceof EObject) {
-					EObject e = (EObject) element;
-					if (e instanceof MPart<?>) {
-						IObservableList listChildren = EMFObservables.observeList(e, ApplicationPackage.Literals.MPART__CHILDREN);
-						
-						// There is 0..1 menus. Need a wrapper in case there is no menu:
-						final IObservableValue listMenu = EMFObservables.observeValue(e, ApplicationPackage.Literals.MPART__MENU);
-						IObservableList computedMenu = new ComputedList() {
-							@Override 
-							protected List<?> calculate() {
-								Object value = listMenu.getValue();
-								return value == null ? Collections.EMPTY_LIST
-										: Collections.singletonList(value);
-							}
-						};
-						
-						// There is 0..1 toolbar. Need a wrapper in case there is no toolbar:
-						final IObservableValue listToolbar = EMFObservables.observeValue(e, ApplicationPackage.Literals.MPART__TOOL_BAR);
-						IObservableList computedToolbar = new ComputedList() {
-							@Override 
-							protected List<?> calculate() {
-								Object value = listToolbar.getValue();
-								return value == null ? Collections.EMPTY_LIST
-										: Collections.singletonList(value);
-							}
-						};
-						
-						IObservableList listHandler = EMFObservables.observeList(e, ApplicationPackage.Literals.MPART__HANDLERS);
-						return new MultiList(new IObservableList[] { listChildren, computedMenu, computedToolbar, listHandler }); //, listToolbar, /*listMenu, */listHandler });
-					} else if (e instanceof MHandledItem) {
-						// There is 0..1 commands. Need a wrapper in case there is no command:
-						final IObservableValue listCommands = EMFObservables.observeValue(e, ApplicationPackage.Literals.MHANDLED_ITEM__COMMAND);
-						IObservableList computedCommands = new ComputedList() {
-							@Override 
-							protected List<?> calculate() {
-								Object value = listCommands.getValue();
-								return value == null ? Collections.EMPTY_LIST
-										: Collections.singletonList(value);
-							}
-						};
-						// There is 0..1 menus. Need a wrapper in case there is no menu:
-						final IObservableValue listMenus = EMFObservables.observeValue(e, ApplicationPackage.Literals.MHANDLED_ITEM__MENU);
-						IObservableList computedMenus = new ComputedList() {
-							@Override 
-							protected List<?> calculate() {
-								Object value = listMenus.getValue();
-								return value == null ? Collections.EMPTY_LIST
-										: Collections.singletonList(value);
-							}
-						};
-						return new MultiList(new IObservableList[] { computedCommands, computedMenus });
-					} else if (e instanceof MApplication<?> ) {
-						IObservableList listWindows = EMFObservables.observeList(e, ApplicationPackage.Literals.MAPPLICATION__WINDOWS);
-						IObservableList listCommands = EMFObservables.observeList(e, ApplicationPackage.Literals.MAPPLICATION__COMMAND);
-						return new MultiList(new IObservableList[] { listWindows, listCommands });
-					} else if (e instanceof MItemContainer<?>) { // this includes toolbars
-						IObservableList listItems = EMFObservables.observeList(e, ApplicationPackage.Literals.MITEM_CONTAINER__ITEMS);
-						return listItems;
-					}
-				} else if (element instanceof Object[]) {
-					EObject e = (EObject) ((Object[]) element)[0];
-					IObservableList observableList = new WritableList(realm);
-					observableList.add(e);
-					return observableList;
-				}
-				return Observables.emptyObservableList();
-			}
-		};
-		
-		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(
-				listFactory, new TreeStructureAdvisor() {
-					public Boolean hasChildren(Object element) {
-						if (element instanceof EObject)
-							return !((EObject) element).eContents().isEmpty();
-						return true;
-					}
-				});
 		viewer.setContentProvider(contentProvider);
-		
-		// The label provider calculates labels as a function of IDs and Names.
-		// Here we create observables on those values to tack the model changes.
-		IValueProperty propertyName = EMFProperties.value(ApplicationPackage.Literals.MITEM__NAME);
-		IValueProperty propertyID = EMFProperties.value(ApplicationPackage.Literals.MAPPLICATION_ELEMENT__ID);
-		IObservableSet observableElements = contentProvider.getKnownElements();
-		IObservableMap[] observables = new IObservableMap[] { propertyName.observeDetail(observableElements), 
-				propertyID.observeDetail(observableElements)};
-		viewer.setLabelProvider(new ViewLabelProvider(observables));
+		viewer.setLabelProvider(new ViewLabelProvider());
 		
 		viewer.getControl().setData("viewpart", this);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -305,7 +229,7 @@ public class ModelExplorer {
 		// TBD this really need to be replaced by an API 
 		// static MApplication getApplication() 
 		// on something
-		MPart<?> element = ModelUtils.getElement(parent);
+		MUIElement element = ModelUtils.getElement(parent);
 		EObject topObject = ModelUtils.topObject(element);
 		viewer.setInput(topObject);
 		
@@ -313,7 +237,7 @@ public class ModelExplorer {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				TreeSelection selection = (TreeSelection) event.getSelection();
-				MPart<?> selected = (MPart<?>) selection.getFirstElement();
+				MPart selected = (MPart) selection.getFirstElement();
 				// TBD there should be an API to activate MPart 
 				ModelUtils.activate(selected);
 			}});
@@ -336,7 +260,7 @@ public class ModelExplorer {
 		EList<EStructuralFeature> features = selObj.eClass().getEAllStructuralFeatures();
 		String[] ids = new String[features.size()];
 		int count = 0;
-		for (Iterator<?> iterator = features.iterator(); iterator.hasNext();) {
+		for (Iterator iterator = features.iterator(); iterator.hasNext();) {
 			EStructuralFeature structuralFeature = (EStructuralFeature) iterator
 					.next();
 			String featureName = structuralFeature.getName();

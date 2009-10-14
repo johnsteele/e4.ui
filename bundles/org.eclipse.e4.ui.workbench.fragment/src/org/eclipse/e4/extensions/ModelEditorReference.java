@@ -11,7 +11,8 @@
 
 package org.eclipse.e4.extensions;
 
-import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MPart;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -26,7 +27,7 @@ public class ModelEditorReference extends ModelReference implements
 	 * @param model
 	 * @param page
 	 */
-	public ModelEditorReference(MContributedPart<?> model, WorkbenchPage page) {
+	public ModelEditorReference(MPart model, WorkbenchPage page) {
 		super(model, page);
 		// TODO Auto-generated constructor stub
 	}

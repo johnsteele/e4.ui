@@ -11,7 +11,8 @@
 
 package org.eclipse.e4.extensions;
 
-import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MPart;
+
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.internal.WorkbenchPage;
@@ -27,7 +28,7 @@ public class ModelViewReference extends ModelReference implements
 	 * @param model
 	 * @param page
 	 */
-	public ModelViewReference(MContributedPart<?> model, WorkbenchPage page) {
+	public ModelViewReference(MPart model, WorkbenchPage page) {
 		super(model, page);
 	}
 

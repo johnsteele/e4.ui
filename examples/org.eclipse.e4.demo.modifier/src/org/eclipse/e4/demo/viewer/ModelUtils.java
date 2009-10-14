@@ -13,7 +13,10 @@ package org.eclipse.e4.demo.viewer;
 import java.util.Iterator;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MContext;
+import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.emf.common.util.EList;
@@ -24,22 +27,82 @@ import org.eclipse.swt.widgets.Composite;
  * Pieces of code that really should be available as APIs somewhere.
  */
 public class ModelUtils {
+
+	/**
+	 * Return a parent context for this part.
+	 * 
+	 * @param part
+	 *            the part to start searching from
+	 * @return the parent's closest context, or global context if none in the
+	 *         hierarchy
+	 */
+	public static IEclipseContext getContextForParent(MUIElement part) {
+		MContext pwc = getParentWithContext(part);
+		return pwc != null ? pwc.getContext() : null;
+	}
+
+	/**
+	 * Return a parent context for this part.
+	 * 
+	 * @param part
+	 *            the part to start searching from
+	 * @return the parent's closest context, or global context if none in the
+	 *         hierarchy
+	 */
+	public static MContext getParentWithContext(MUIElement part) {
+		MElementContainer<MUIElement> parent = part.getParent();
+		while (parent != null) {
+			if (parent instanceof MContext) {
+				if (((MContext) parent).getContext() != null)
+					return (MContext) parent;
+			}
+			parent = parent.getParent();
+		}
+		return null;
+	}
+
+	/**
+	 * Return a context for this part.
+	 * 
+	 * @param element
+	 *            the part to start searching from
+	 * @return the closest context, or global context if none in the hierarchy
+	 */
+	public static IEclipseContext getContext(MUIElement element) {
+		if (element instanceof MContext) {
+			IEclipseContext theContext = ((MContext) element).getContext();
+			if (theContext != null)
+				return theContext;
+		}
+		return getContextForParent(element);
+	}
 	
 	/**
-	 * This code is copied from the {@link AbstractPartRenderer#activate(MPart)}
+	 * Activate the part in the hierarchy. This should either still be internal
+	 * or be a public method somewhere else.
+	 * 
+	 * @param element
 	 */
-	static public void activate(MPart<?> part) {
-		MPart<MPart<?>> parent = (MPart<MPart<?>>) part.getParent();
-		IEclipseContext partContext = part.getContext();
-		while (parent != null) {
-			IEclipseContext parentContext = parent.getContext();
-			parent.setActiveChild(part);
+	public static void activate(MUIElement element) {
+		IEclipseContext curContext = getContext(element);
+		MUIElement curElement = element;
+		MContext pwc = getParentWithContext(element);
+		while (pwc != null) {
+			IEclipseContext parentContext = pwc.getContext();
 			if (parentContext != null) {
-				parentContext.set(IServiceConstants.ACTIVE_CHILD, partContext);
-				partContext = parentContext;
+				parentContext.set(IServiceConstants.ACTIVE_CHILD, curContext);
+				curContext = parentContext;
 			}
-			part = parent;
-			parent = (MPart<MPart<?>>) parent.getParent();
+
+			// Ensure that the UI model has the part 'on top'
+			while (curElement != pwc) {
+				MElementContainer<MUIElement> parent = curElement.getParent();
+				if (parent.getActiveChild() != element)
+					parent.setActiveChild(curElement);
+				curElement = parent;
+			}
+
+			pwc = getParentWithContext((MUIElement) pwc);
 		}
 	}
 	
@@ -48,13 +111,13 @@ public class ModelUtils {
 	 * its containers.
 	 * This method may return null.
 	 */
-	static MPart<?> getElement(Composite composite) {
+	static MUIElement getElement(Composite composite) {
 		for (Composite container = composite; container != null; container = container.getParent()) {
 			Object owner = container.getData(AbstractPartRenderer.OWNING_ME);
 			if (owner == null)
 				continue;
-			if (owner instanceof MPart<?>)
-				return (MPart<?>) owner;
+			if (owner instanceof MUIElement)
+				return (MUIElement) owner;
 		}
 		return null;
 	}
@@ -64,52 +127,47 @@ public class ModelUtils {
 	 * This method may return null.
 	 */
 	static IEclipseContext getContext(Composite composite) {
-		MPart<?> part = getElement(composite);
-		while (part != null) {
-			IEclipseContext result = part.getContext();
-			if (result != null)
-				return result;
-			part = part.getParent();
-		};
-		return null;
+		MUIElement element = getElement(composite);
+		return getContext(element);
 	}
 	
 	/**
 	 * Returns a model root for a model tree element.
 	 */
-	static public EObject topObject(MPart<?> part) {
-		MPart<?> lastTop = part;
-		MPart<?> currentTop = part.getParent();
+	static public EObject topObject(MUIElement part) {
+		MUIElement lastTop = part;
+		MUIElement currentTop = part.getParent();
 		while (currentTop != null) {
 			lastTop = currentTop;
 			currentTop = currentTop.getParent();
 		}
-		return lastTop.eContainer(); // MWindow -> MApp 
+		return ((EObject) lastTop).eContainer(); // MWindow -> MApp 
 	}
 
-	private static MPart findElementById(MPart part, String id) {
+	private static MUIElement findElementById(MUIElement element, String id) {
 		if (id == null || id.length() == 0)
 			return null;
 
 		// is it me?
-		if (id.equals(part.getId()))
-			return part;
+		if (id.equals(element.getId()))
+			return element;
 
 		// Recurse
-		EList children = part.getChildren();
-		MPart foundPart = null;
-		for (Iterator iterator = children.iterator(); iterator.hasNext();) {
-			MPart childPart = (MPart) iterator.next();
-			foundPart = findElementById(childPart, id);
-			if (foundPart != null)
-				return foundPart;
+		if (element instanceof MElementContainer<?>) {
+			MUIElement foundPart = null;
+			EList<MUIElement> children = ((MElementContainer<MUIElement>) element).getChildren();
+			for (MUIElement childPart : children) {
+				foundPart = findElementById(childPart, id);
+				if (foundPart != null)
+					return foundPart;
+			}
 		}
 
 		return null;
 	}
 
-	public static MPart findPart(MPart toSearch, String id) {
-		MPart found = findElementById(toSearch, id);
+	public static MPart findPart(MUIElement toSearch, String id) {
+		MPart found = (MPart) findElementById(toSearch, id);
 		if (found instanceof MPart)
 			return (MPart) found;
 

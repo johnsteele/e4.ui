@@ -11,7 +11,7 @@
 package org.eclipse.e4.demo.viewer;
 
 import org.eclipse.core.databinding.Binding;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -25,13 +25,11 @@ import org.eclipse.swt.widgets.Text;
 public class PropertiesStack extends PropertiesElement {
 	
 	private Text policy;
-	private Binding policyBinding;
 	private Button visible;
 	private Binding visibleBinding;
 	
 	public PropertiesStack(final Composite parent) {
 		super(parent);
-		policy = createTextControl(comp, "&Policy:", SWT.READ_ONLY);
 		visible = createButton(comp, "&Visible", SWT.NONE);
 		GridData checkboxData = new GridData(SWT.RIGHT, SWT.TOP, false, false, 2, 1);
 		visible.setLayoutData(checkboxData);
@@ -39,16 +37,11 @@ public class PropertiesStack extends PropertiesElement {
 
 	public void selected(EObject selected) {
 		super.selected(selected);
-		policyBinding = bind(policy, ApplicationPackage.Literals.MPART__POLICY);
-		visibleBinding = bind(visible, ApplicationPackage.Literals.MPART__VISIBLE);
+		visibleBinding = bind(visible, MApplicationPackage.Literals.UI_ELEMENT__VISIBLE);
 	}
 	
 	protected void clearBindings() {
 		super.clearBindings();
-		if (policyBinding != null) {
-			policyBinding.dispose();
-			policyBinding = null;
-		}
 		if (visibleBinding != null) {
 			visibleBinding.dispose();
 			visibleBinding = null;

@@ -1,17 +1,21 @@
 package org.eclipse.e4.workbench.ui.api;
 
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MEditorSashContainer;
+import org.eclipse.e4.ui.model.application.MEditorStack;
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MView;
+import org.eclipse.e4.ui.model.application.MViewSashContainer;
+import org.eclipse.e4.ui.model.application.MViewStack;
+
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.compatibility.LegacyView;
 import org.eclipse.e4.extensions.ExtensionUtils;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
-import org.eclipse.e4.ui.model.application.MContributedPart;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MSashForm;
-import org.eclipse.e4.ui.model.application.MStack;
-import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IFolderLayout;
@@ -35,12 +39,17 @@ public class ModeledPageLayout implements IPageLayout {
 		// Create the editor area stack
 		this.perspModel = perspModel;
 
-		MStack editorArea = ApplicationFactory.eINSTANCE.createMStack();
+		MEditorSashContainer esc = MApplicationFactory.eINSTANCE
+				.createEditorSashContainer();
+		MEditorStack editorArea = MApplicationFactory.eINSTANCE
+				.createEditorStack();
+		esc.getChildren().add(editorArea);
 		editorArea.setId(getEditorArea());
-		editorArea.setPolicy("EditorStack"); //$NON-NLS-1$
+		esc.setId(getEditorArea());
+
 		// editorArea.setName("Editor Area");
 
-		perspModel.getChildren().add(editorArea);
+		perspModel.getChildren().add(esc);
 	}
 
 	public MPerspective getModel() {
@@ -80,8 +89,8 @@ public class ModeledPageLayout implements IPageLayout {
 
 	public void addStandaloneView(String viewId, boolean showTitle,
 			int relationship, float ratio, String refId) {
-		MContributedPart viewModel = insertView(viewId, relationship, ratio,
-				refId, true, false);
+		MView viewModel = insertView(viewId, relationship, ratio, refId, true,
+				false);
 
 		// Set the state
 		if (viewModel != null) {
@@ -91,8 +100,8 @@ public class ModeledPageLayout implements IPageLayout {
 
 	public void addStandaloneViewPlaceholder(String viewId, int relationship,
 			float ratio, String refId, boolean showTitle) {
-		MContributedPart viewModel = insertView(viewId, relationship, ratio,
-				refId, false, false);
+		MView viewModel = insertView(viewId, relationship, ratio, refId, false,
+				false);
 
 		// Set the state
 		if (viewModel != null) {
@@ -107,13 +116,15 @@ public class ModeledPageLayout implements IPageLayout {
 
 	public IFolderLayout createFolder(String folderId, int relationship,
 			float ratio, String refId) {
-		MStack Stack = insertStack(folderId, relationship, ratio, refId, true);
-		return new ModeledFolderLayout(Stack);
+		MViewStack stack = insertStack(folderId, relationship, ratio, refId,
+				true);
+		return new ModeledFolderLayout(stack);
 	}
 
 	public IPlaceholderFolderLayout createPlaceholderFolder(String folderId,
 			int relationship, float ratio, String refId) {
-		MStack Stack = insertStack(folderId, relationship, ratio, refId, false);
+		MViewStack Stack = insertStack(folderId, relationship, ratio, refId,
+				false);
 		return new ModeledPlaceholderFolderLayout(Stack);
 	}
 
@@ -139,22 +150,22 @@ public class ModeledPageLayout implements IPageLayout {
 
 	public IPlaceholderFolderLayout getFolderForView(String id) {
 		MPart view = findPart(perspModel, id);
-		if (view == null || !(view instanceof MContributedPart))
+		if (view == null || !(view instanceof MView))
 			return null;
 
-		MStack stack = (MStack) view.getParent();
-		if (stack == null)
+		MUIElement stack = view.getParent();
+		if (stack == null || !(stack instanceof MViewStack))
 			return null;
 
-		return new ModeledPlaceholderFolderLayout(stack);
+		return new ModeledPlaceholderFolderLayout((MViewStack) stack);
 	}
 
 	public IViewLayout getViewLayout(String id) {
 		MPart view = findPart(perspModel, id);
-		if (view == null || !(view instanceof MContributedPart))
+		if (view == null || !(view instanceof MView))
 			return null;
 
-		return new ModeledViewLayout((MContributedPart) view);
+		return new ModeledViewLayout((MView) view);
 	}
 
 	public boolean isEditorAreaVisible() {
@@ -190,9 +201,8 @@ public class ModeledPageLayout implements IPageLayout {
 		}
 	}
 
-	public static MContributedPart createViewModel(String id, boolean visible) {
-		MContributedPart viewModel = ApplicationFactory.eINSTANCE
-				.createMContributedPart();
+	public static MView createViewModel(String id, boolean visible) {
+		MView viewModel = MApplicationFactory.eINSTANCE.createView();
 
 		// HACK!! allow Contributed parts in a perspective
 		if (id.indexOf("platform:") >= 0) { //$NON-NLS-1$
@@ -232,25 +242,24 @@ public class ModeledPageLayout implements IPageLayout {
 		return viewModel;
 	}
 
-	public static MStack createStack(String id, boolean visible) {
-		MStack newStack = ApplicationFactory.eINSTANCE.createMStack();
+	public static MViewStack createStack(String id, boolean visible) {
+		MViewStack newStack = MApplicationFactory.eINSTANCE.createViewStack();
 		newStack.setId(id);
-		newStack.setPolicy("ViewStack"); //$NON-NLS-1$
 		newStack.setVisible(visible);
 		return newStack;
 	}
 
-	private MContributedPart insertView(String viewId, int relationship,
-			float ratio, String refId, boolean visible, boolean withStack) {
-		MPart refModel = findPart(perspModel, refId);
+	private MView insertView(String viewId, int relationship, float ratio,
+			String refId, boolean visible, boolean withStack) {
+		MUIElement refModel = findPart(perspModel, refId);
 		if (refModel == null || !(refModel instanceof MPart))
 			return null;
 
-		MContributedPart viewModel = createViewModel(viewId, visible);
+		MView viewModel = createViewModel(viewId, visible);
 
 		if (withStack) {
 			String stackId = viewId + "MStack"; // Default id...basically unusable //$NON-NLS-1$
-			MStack stack = insertStack(stackId, relationship, ratio, refId,
+			MViewStack stack = insertStack(stackId, relationship, ratio, refId,
 					visible);
 			stack.getChildren().add(viewModel);
 		} else {
@@ -260,9 +269,9 @@ public class ModeledPageLayout implements IPageLayout {
 		return viewModel;
 	}
 
-	private MStack insertStack(String stackId, int relationship, float ratio,
-			String refId, boolean visible) {
-		MPart refModel = findPart(perspModel, refId);
+	private MViewStack insertStack(String stackId, int relationship,
+			float ratio, String refId, boolean visible) {
+		MUIElement refModel = findPart(perspModel, refId);
 		if (refModel == null || !(refModel instanceof MPart))
 			return null;
 
@@ -270,27 +279,28 @@ public class ModeledPageLayout implements IPageLayout {
 		// This covers cases where the defining layout is adding
 		// Views relative to other views and relying on the stacks
 		// being automatically created.
-		if (!(refModel instanceof MStack)) {
+		if (!(refModel instanceof MViewStack)) {
 			while (refModel.getParent() != null) {
 				refModel = refModel.getParent();
-				if (refModel instanceof MStack)
+				if (refModel instanceof MViewStack)
 					break;
 			}
-			if (!(refModel instanceof MStack))
+			if (!(refModel instanceof MViewStack))
 				return null;
 		}
 
-		MStack Stack = createStack(stackId, visible);
-		insert(Stack, (MPart) refModel, plRelToSwt(relationship), ratio);
+		MViewStack stack = createStack(stackId, visible);
+		insert(stack, (MPart) refModel, plRelToSwt(relationship), ratio);
 
-		return Stack;
+		return stack;
 	}
 
-	public static void replace(MPart relTo, MPart newParent) {
+	public static void replace(MUIElement relTo,
+			MElementContainer<MUIElement> newParent) {
 		if (relTo == null || newParent == null)
 			return;
 
-		MPart parent = (MPart) relTo.getParent();
+		MElementContainer<MUIElement> parent = relTo.getParent();
 		if (parent == null)
 			return;
 
@@ -302,7 +312,8 @@ public class ModeledPageLayout implements IPageLayout {
 		kids.remove(relTo);
 	}
 
-	public static void insertParent(MPart newParent, MPart relTo) {
+	public static void insertParent(MElementContainer<MUIElement> newParent,
+			MUIElement relTo) {
 		if (newParent == null || relTo == null)
 			return;
 
@@ -315,34 +326,36 @@ public class ModeledPageLayout implements IPageLayout {
 		newParent.getChildren().add(relTo);
 	}
 
-	public static void insert(MPart toInsert, MPart relTo, int swtSide,
-			int ratio) {
+	public static void insert(MUIElement toInsert, MUIElement relTo,
+			int swtSide, int ratio) {
 		if (toInsert == null || relTo == null)
 			return;
 
-		MPart relParent = (MPart) relTo.getParent();
+		MElementContainer<MUIElement> relParent = relTo.getParent();
 
-		boolean isStack = relParent instanceof MStack;
+		boolean isStack = true;
 
 		// Create the new sash if we're going to need one
-		MSashForm newSash = null;
+		MViewSashContainer newSash = null;
 		if ((swtSide == SWT.TOP || swtSide == SWT.BOTTOM) && !isStack) {
-			newSash = ApplicationFactory.eINSTANCE.createMSashForm();
+			newSash = MApplicationFactory.eINSTANCE.createViewSashContainer();
 			String label = "Vertical Sash[" + toInsert.getId() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			newSash.setId(label);
-			newSash.setPolicy("Vertical"); //horizontal = false //$NON-NLS-1$
+			newSash.setHorizontal(false);
 		} else if ((swtSide == SWT.LEFT || swtSide == SWT.RIGHT) && !isStack) {
-			newSash = ApplicationFactory.eINSTANCE.createMSashForm();
+			newSash = MApplicationFactory.eINSTANCE.createViewSashContainer();
 			String label = "Horizontal Sash[" + toInsert.getId() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			newSash.setId(label);
-			newSash.setPolicy("Horizontal"); //horizontal = true //$NON-NLS-1$
+			newSash.setHorizontal(true);
 		}
 
 		List parts;
 		if (newSash == null && relParent != null) {
 			parts = relParent.getChildren();
 		} else {
-			insertParent(newSash, relTo);
+			MUIElement vscElement = newSash;
+			MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) vscElement;
+			insertParent(container, relTo);
 			parts = newSash.getChildren();
 
 			List<Integer> weights = newSash.getWeights();
@@ -360,38 +373,40 @@ public class ModeledPageLayout implements IPageLayout {
 		parts.add(index, toInsert);
 	}
 
-	public static void insert(MPart toInsert, MPart relTo, int swtSide,
-			float ratio) {
+	public static void insert(MUIElement toInsert, MUIElement relTo,
+			int swtSide, float ratio) {
 		int pct = (int) (ratio * 100);
 		insert(toInsert, relTo, swtSide, pct);
 	}
 
-	private static MPart findElementById(MPart part, String id) {
+	public static MUIElement findElementById(MUIElement element, String id) {
 		if (id == null || id.length() == 0)
 			return null;
 
 		// is it me?
-		if (id.equals(part.getId()))
-			return part;
+		if (id.equals(element.getId()))
+			return element;
 
-		// Recurse
-		EList children = part.getChildren();
-		MPart foundPart = null;
-		for (Iterator iterator = children.iterator(); iterator.hasNext();) {
-			MPart childPart = (MPart) iterator.next();
-			foundPart = findElementById(childPart, id);
-			if (foundPart != null)
-				return foundPart;
+		// Recurse if this is a container
+		if (element instanceof MElementContainer) {
+			EList<MUIElement> children = ((MElementContainer<MUIElement>) element)
+					.getChildren();
+			MUIElement foundElement = null;
+			for (MUIElement childME : children) {
+				foundElement = findElementById(childME, id);
+				if (foundElement != null)
+					return foundElement;
+			}
 		}
 
 		return null;
 	}
 
-	public static MPart findPart(MPart toSearch, String id) {
+	public static MPart findPart(MUIElement toSearch, String id) {
 		if (toSearch == null)
 			return null;
 
-		MPart found = findElementById(toSearch, id);
+		MUIElement found = findElementById(toSearch, id);
 		if (found instanceof MPart)
 			return (MPart) found;
 

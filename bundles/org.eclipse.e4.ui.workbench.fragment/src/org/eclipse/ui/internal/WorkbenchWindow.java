@@ -42,13 +42,11 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.extensions.ExtensionUtils;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
-import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.api.LegacySelectionService;
@@ -378,38 +376,40 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 		// Fill the action bars
 		fillActionBars(FILL_ALL_ACTION_BARS);
-		MenuHelper.loadMainMenu(e4Window.getContext(), e4Window.getMenu(),
+		MenuHelper.loadMainMenu(e4Window.getContext(), e4Window.getMainMenu(),
 				getMenuBarManager());
 		e4ActionSets = MenuHelper.processActionSets(e4Window.getContext(),
-				e4Window.getMenu());
+				e4Window.getMainMenu());
 	}
 
 	/**
 	 * @param workbench
 	 */
 	private void createE4Model(Workbench workbench) {
-		e4Window = WorkbenchFactory.eINSTANCE.createMWorkbenchWindow();
+		e4Window = MApplicationFactory.eINSTANCE.createWindow();
 		MApplication app = (MApplication) workbench
 				.getService(MApplication.class);
-		app.getWindows().add(e4Window);
+		app.getChildren().add(e4Window);
 		e4Window.setWidth(1024);
 		e4Window.setHeight(768);
 		e4Window.setName("MyWindow"); //$NON-NLS-1$
 		initializeWindowImages(e4Window);
-		final MMenu mainMenu = ApplicationFactory.eINSTANCE.createMMenu();
+		final MMenu mainMenu = MApplicationFactory.eINSTANCE.createMenu();
 		mainMenu.setId(MenuHelper.MAIN_MENU_ID);
-		e4Window.setMenu(mainMenu);
+		e4Window.setMainMenu(mainMenu);
 	}
 
 	/**
 	 * Set the images corresponding to the workbench window
 	 */
-	private void initializeWindowImages(MWorkbenchWindow window) {
+	private void initializeWindowImages(MWindow window) {
 		IProduct product = Platform.getProduct();
-		String images = product.getProperty(IProductConstants.WINDOW_IMAGES);
+		String images = product == null ? null : product
+				.getProperty(IProductConstants.WINDOW_IMAGES);
 		if (images == null) {
 			// backwards compatibility
-			images = product.getProperty(IProductConstants.WINDOW_IMAGE);
+			images = product == null ? null : product
+					.getProperty(IProductConstants.WINDOW_IMAGE);
 		}
 		if (images == null)
 			return;
@@ -929,7 +929,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.1
 	 */
 	private void fireWindowOpening() {
-		// let the application do further configuration
+		// let the org.eclipse.e4.ui.model.application do further configuration
 		getWindowAdvisor().preWindowOpen();
 	}
 
@@ -989,7 +989,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.1
 	 */
 	private void fireWindowClosed() {
-		// let the application do further deconfiguration
+		// let the org.eclipse.e4.ui.model.application do further
+		// deconfiguration
 		getWindowAdvisor().postWindowClose();
 		getWorkbenchImpl().fireWindowClosed(this);
 	}
@@ -1400,7 +1401,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 	/**
 	 * Return whether or not the given id matches the id of the coolitems that
-	 * the application creates.
+	 * the org.eclipse.e4.ui.model.application creates.
 	 */
 	/* package */
 	boolean isWorkbenchCoolItemId(String id) {
@@ -1735,7 +1736,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	private ListenerList backgroundSaveListeners = new ListenerList(
 			ListenerList.IDENTITY);
 
-	private MWorkbenchWindow e4Window;
+	private MWindow e4Window;
 
 	private IEclipseContext e4Context;
 
@@ -1864,7 +1865,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
 	 * hold of the workbench window configurer that would allow them to tamper
 	 * with the workbench window. The workbench window configurer is available
-	 * only to the application.
+	 * only to the org.eclipse.e4.ui.model.application.
 	 * </p>
 	 */
 	/* package - DO NOT CHANGE */
@@ -1883,7 +1884,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * IMPORTANT This method is declared private to prevent regular plug-ins
 	 * from downcasting IWorkbenchWindow to WorkbenchWindow and getting hold of
 	 * the workbench advisor that would allow them to tamper with the workbench.
-	 * The workbench advisor is internal to the application.
+	 * The workbench advisor is internal to the
+	 * org.eclipse.e4.ui.model.application.
 	 * </p>
 	 */
 	private/* private - DO NOT CHANGE */
@@ -1897,7 +1899,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * IMPORTANT This method is declared package private to prevent regular
 	 * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
 	 * hold of the window advisor that would allow them to tamper with the
-	 * window. The window advisor is internal to the application.
+	 * window. The window advisor is internal to the
+	 * org.eclipse.e4.ui.model.application.
 	 * </p>
 	 */
 	/* package private - DO NOT CHANGE */
@@ -1917,7 +1920,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * IMPORTANT This method is declared private to prevent regular plug-ins
 	 * from downcasting IWorkbenchWindow to WorkbenchWindow and getting hold of
 	 * the action bar advisor that would allow them to tamper with the window's
-	 * action bars. The action bar advisor is internal to the application.
+	 * action bars. The action bar advisor is internal to the
+	 * org.eclipse.e4.ui.model.application.
 	 * </p>
 	 */
 	private/* private - DO NOT CHANGE */
@@ -2394,8 +2398,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			@Override
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				Object o = context.get(IServiceConstants.ACTIVE_PART);
-				if (o instanceof MContributedPart<?>) {
-					Object impl = ((MContributedPart) o).getObject();
+				if (o instanceof MPart) {
+					Object impl = ((MPart) o).getObject();
 					if (impl instanceof IWorkbenchPart) {
 						return impl;
 					}
@@ -2407,8 +2411,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			@Override
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				Object o = context.get(IServiceConstants.ACTIVE_PART);
-				if (o instanceof MContributedPart<?>) {
-					Object impl = ((MContributedPart) o).getObject();
+				if (o instanceof MPart) {
+					Object impl = ((MPart) o).getObject();
 					if (impl instanceof IWorkbenchPart) {
 						return ((IWorkbenchPart) impl).getSite();
 					}

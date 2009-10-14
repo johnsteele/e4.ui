@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="e4 Compatibility Platform" uid="org.eclipse.e4.workbench.sdk" id="org.eclipse.e4.ui.examples.legacy.workbench.product" application="org.eclipse.ui.ide.workbench" version="0.9.0.@qualifier@" useFeatures="true" includeLaunchers="true">
+<product name="e4 Compatibility Platform" uid="org.eclipse.e4.workbench.sdk" id="org.eclipse.e4.ui.examples.legacy.workbench.product" org.eclipse.e4.ui.model.application="org.eclipse.ui.ide.workbench" version="0.9.0.@qualifier@" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/org.eclipse.e4.ui.examples.legacy.workbench/eclipse_lg.gif"/>

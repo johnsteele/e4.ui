@@ -18,11 +18,10 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.extensions.ModelViewReference;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
-import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -36,8 +35,8 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.menus.IMenuService;
 
 /**
- * This class is an implementation of an MContributedPart that can be used to
- * host a 3.x ViewPart into an Eclipse 4.0 application.
+ * This class is an implementation of an MPart that can be used to host a 3.x
+ * ViewPart into an Eclipse 4.0 org.eclipse.e4.ui.model.application.
  * 
  * @since 4.0
  * 
@@ -46,8 +45,7 @@ public class LegacyView {
 	public final static String LEGACY_VIEW_URI = "platform:/plugin/org.eclipse.ui.workbench/org.eclipse.e4.compatibility.LegacyView"; //$NON-NLS-1$
 	private IViewPart impl;
 
-	public LegacyView(Composite parent, IEclipseContext context,
-			MContributedPart part) {
+	public LegacyView(Composite parent, IEclipseContext context, MPart part) {
 		// KLUDGE: the progress view assumes a grid layout, we should fix that
 		// in 3.6
 		Set kludge = new HashSet();
@@ -75,11 +73,9 @@ public class LegacyView {
 			return;
 
 		try {
-			IEclipseContext parentContext = part.getParent().getContext();
 			final IEclipseContext localContext = part.getContext();
 			localContext.set(IContextConstants.DEBUG_STRING, "Legacy View(" //$NON-NLS-1$
 					+ part.getName() + ")"); //$NON-NLS-1$
-			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 
 			part.setObject(this);
 			// Assign a 'site' for the newly instantiated part
@@ -103,7 +99,7 @@ public class LegacyView {
 
 			impl.createPartControl(parent);
 
-			localContext.set(MContributedPart.class.getName(), part);
+			localContext.set(MPart.class.getName(), part);
 
 			// Populate and scrape the old-style contributions...
 			IMenuService menuSvc = (IMenuService) localContext
@@ -111,20 +107,21 @@ public class LegacyView {
 
 			String tbURI = "toolbar:" + part.getId(); //$NON-NLS-1$
 			menuSvc.populateContributionManager(tbMgr, tbURI);
-			MToolBar viewTB = ApplicationFactory.eINSTANCE.createMToolBar();
+			MToolBar viewTB = MApplicationFactory.eINSTANCE.createToolBar();
 			MenuHelper.processToolbarManager(localContext, viewTB, tbMgr
 					.getItems());
-			part.setToolBar(viewTB);
+			part.setToolbar(viewTB);
 			tbMgr.getControl().dispose();
 
 			String menuURI = "menu:" + part.getId(); //$NON-NLS-1$
 			MenuManager menuMgr = (MenuManager) site.getActionBars()
 					.getMenuManager();
 			menuSvc.populateContributionManager(menuMgr, menuURI);
-			MMenu viewMenu = ApplicationFactory.eINSTANCE.createMMenu();
+			MMenu viewMenu = MApplicationFactory.eINSTANCE.createMenu();
+			viewMenu.setId(menuURI);
 			MenuHelper.processMenuManager(localContext, viewMenu, menuMgr
 					.getItems());
-			part.setMenu(viewMenu);
+			part.getMenus().add(viewMenu);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

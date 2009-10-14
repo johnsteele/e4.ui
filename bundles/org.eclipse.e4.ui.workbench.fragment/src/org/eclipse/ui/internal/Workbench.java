@@ -68,11 +68,10 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.extensions.ExtensionUtils;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.workbench.MPerspective;
+import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.services.EBindingService;
 import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EContextService;
@@ -87,6 +86,7 @@ import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -517,9 +517,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		return (Location) locationTracker.getService();
 	}
 
-	private MApplication<? extends MWindow> createE4Model() {
-		MApplication<MWindow<?>> app = ApplicationFactory.eINSTANCE
-				.createMApplication();
+	private MApplication createE4Model() {
+		MApplication app = MApplicationFactory.eINSTANCE.createApplication();
 		return app;
 	}
 
@@ -986,7 +985,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 						// because we created the model we need to set the
 						// resource correctly
 						Resource resource = new XMIResourceImpl();
-						resource.getContents().add(e4Workbench.getModel());
+						resource.getContents().add(
+								(EObject) e4Workbench.getModel());
 						String resourceLoc = getXmiLocation();
 						resource.setURI(URI.createFileURI(resourceLoc));
 
@@ -1428,7 +1428,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// Set up the JFace preference store
 		JFaceUtil.initializeJFacePreferences();
 
-		MApplication<? extends MWindow> model = createE4Model();
+		MApplication model = createE4Model();
 		e4Workbench.setWorkbenchModel(model);
 
 		// create workbench window manager
@@ -2214,10 +2214,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	protected void populateCommands() {
 		MakeHandlersGo allHandlers = new MakeHandlersGo();
+		if (allHandlers != null)
+			return;
 		ECommandService cs = (ECommandService) e4Context
 				.get(ECommandService.class.getName());
-		MApplication<MWindow<?>> app = (MApplication<MWindow<?>>) e4Context
-				.get(MApplication.class.getName());
+		MApplication app = (MApplication) e4Context.get(MApplication.class
+				.getName());
 		Command[] cmds = commandManager.getAllCommands();
 		for (int i = 0; i < cmds.length; i++) {
 			Command cmd = cmds[i];
@@ -2230,27 +2232,31 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 			cmd.setHandler(allHandlers);
 			cs.getCommand(cmdId);
-			MCommand mcmd = ApplicationFactory.eINSTANCE.createMCommand();
+			MCommand mcmd = MApplicationFactory.eINSTANCE.createCommand();
 			mcmd.setId(cmdId);
 			try {
-				mcmd.setName(cmd.getName());
+				mcmd.setCommandName(cmd.getName());
 			} catch (NotDefinedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			app.getCommand().add(mcmd);
+			app.getCommands().add(mcmd);
 		}
 	}
 
 	// TBD update to use #addCommand()
 	protected void populateActionSets() {
+		String hack = ""; //$NON-NLS-1$
+		if (hack.length() == 0)
+			return;
+
 		ECommandService cs = (ECommandService) e4Context
 				.get(ECommandService.class.getName());
 		Category category = cs
 				.getCategory(IWorkbenchRegistryConstants.PL_ACTION_SETS);
 		category.define("Action Sets", null); //$NON-NLS-1$
-		MApplication<MWindow<?>> app = (MApplication<MWindow<?>>) e4Context
-				.get(MApplication.class.getName());
+		MApplication app = (MApplication) e4Context.get(MApplication.class
+				.getName());
 		IConfigurationElement[] actionSetElements = ExtensionUtils
 				.getExtensions(IWorkbenchRegistryConstants.PL_ACTION_SETS);
 		for (IConfigurationElement ase : actionSetElements) {
@@ -2261,15 +2267,15 @@ public final class Workbench extends EventManager implements IWorkbench {
 				String id = MenuHelper.getActionSetCommandId(element);
 				if (id != null
 						&& id.startsWith(MenuHelper.ACTION_SET_CMD_PREFIX)) {
-					MCommand mcmd = ApplicationFactory.eINSTANCE
-							.createMCommand();
+					MCommand mcmd = MApplicationFactory.eINSTANCE
+							.createCommand();
 					mcmd.setId(id);
-					mcmd.setName(LegacyActionTools.removeMnemonics(MenuHelper
-							.getLabel(element)));
-					app.getCommand().add(mcmd);
+					mcmd.setCommandName(LegacyActionTools
+							.removeMnemonics(MenuHelper.getLabel(element)));
+					app.getCommands().add(mcmd);
 					Command command = cs.getCommand(id);
 					if (!command.isDefined()) {
-						command.define(mcmd.getName(), null, category);
+						command.define(mcmd.getCommandName(), null, category);
 					}
 				}
 			}
@@ -3924,12 +3930,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	// TBD this seems like an API that should be in the model
 	public void addCommand(String id, String name) {
-		MApplication<MWindow<?>> app = (MApplication<MWindow<?>>) e4Context
-				.get(MApplication.class.getName());
-		MCommand newCommand = ApplicationFactory.eINSTANCE.createMCommand();
+		MApplication app = (MApplication) e4Context.get(MApplication.class
+				.getName());
+		MCommand newCommand = MApplicationFactory.eINSTANCE.createCommand();
 		newCommand.setId(id);
-		newCommand.setName(name);
-		app.getCommand().add(newCommand);
+		newCommand.setCommandName(name);
+		app.getCommands().add(newCommand);
 
 		ECommandService cs = (ECommandService) e4Context
 				.get(ECommandService.class.getName());
@@ -3939,7 +3945,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					.getCategory(IWorkbenchRegistryConstants.PL_ACTION_SETS);
 			if (!category.isDefined())
 				category.define("Action Sets", null); //$NON-NLS-1$
-			command.define(newCommand.getName(), null, category);
+			command.define(newCommand.getCommandName(), null, category);
 		}
 	}
 

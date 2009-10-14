@@ -82,15 +82,15 @@ import org.osgi.framework.SynchronousBundleListener;
 
 /**
  * This class represents the TOP of the workbench UI world A plugin class is
- * effectively an application wrapper for a plugin & its classes. This class
- * should be thought of as the workbench UI's application class.
+ * effectively an org.eclipse.e4.ui.model.application wrapper for a plugin & its classes. This class
+ * should be thought of as the workbench UI's org.eclipse.e4.ui.model.application class.
  * 
  * This class is responsible for tracking various registries font, preference,
  * graphics, dialog store.
  * 
  * This class is explicitly referenced by the workbench plugin's "plugin.xml"
  * and places it into the UI start extension point of the main overall
- * application harness
+ * org.eclipse.e4.ui.model.application harness
  * 
  * When is this class started? When the Application calls
  * createExecutableExtension to create an executable instance of our workbench
@@ -188,7 +188,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Create an instance of the WorkbenchPlugin. The workbench plugin is
-	 * effectively the "application" for the workbench UI. The entire UI
+	 * effectively the "org.eclipse.e4.ui.model.application" for the workbench UI. The entire UI
 	 * operates as a good plugin citizen.
 	 */
 	public WorkbenchPlugin() {
@@ -1034,14 +1034,14 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the application name.
+	 * Returns the org.eclipse.e4.ui.model.application name.
 	 * <p>
 	 * Note this is never shown to the user. It is used to initialize the SWT
 	 * Display. On Motif, for example, this can be used to set the name used for
 	 * resource lookup.
 	 * </p>
 	 * 
-	 * @return the application name, or <code>null</code>
+	 * @return the org.eclipse.e4.ui.model.application name, or <code>null</code>
 	 * @see org.eclipse.swt.widgets.Display#setAppName
 	 * @since 3.0
 	 */

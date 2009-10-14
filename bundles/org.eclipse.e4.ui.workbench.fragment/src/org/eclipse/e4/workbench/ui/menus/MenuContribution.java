@@ -21,16 +21,13 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
-import org.eclipse.e4.ui.model.application.MParameter;
-import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.e4.workbench.ui.internal.Trackable;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.LegacyEvalContext;
@@ -38,7 +35,6 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.menus.MenuLocationURI;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.menus.IWorkbenchContribution;
 
 /**
  * @since 3.3
@@ -122,18 +118,17 @@ public class MenuContribution {
 	}
 
 	private boolean mergeModel(int idx, MMenu menu, MMenu toInsert) {
-		EList<MMenuItem> items = menu.getItems();
-		MMenuItem[] modelItems = toInsert.getItems().toArray(
-				new MMenuItem[toInsert.getItems().size()]);
+		EList<MMenuItem> items = menu.getChildren();
+		MMenuItem[] modelItems = toInsert.getChildren().toArray(
+				new MMenuItem[toInsert.getChildren().size()]);
 		for (int i = 0; i < modelItems.length; i++) {
 			MMenuItem modelItem = modelItems[i];
-			if (modelItem.getMenu() != null) {
+			if (modelItem.getChildren().size() > 0) {
 				int tmpIdx = MenuHelper.indexForId(menu, modelItem.getId());
 				if (tmpIdx == -1) {
 					items.add(idx++, modelItem);
 				} else {
-					mergeModel(0, items.get(tmpIdx).getMenu(), modelItem
-							.getMenu());
+					mergeModel(0, items.get(tmpIdx), modelItem);
 				}
 			} else {
 				items.add(idx++, modelItem);
@@ -149,7 +144,7 @@ public class MenuContribution {
 		if (query.length() == 0 || query.equals("after=additions")) { //$NON-NLS-1$
 			additionsIndex = MenuHelper.indexForId(menu, "additions"); //$NON-NLS-1$
 			if (additionsIndex == -1) {
-				additionsIndex = menu.getItems().size();
+				additionsIndex = menu.getChildren().size();
 			} else {
 				additionsIndex++;
 			}
@@ -165,7 +160,7 @@ public class MenuContribution {
 	}
 
 	private void loadModel() {
-		model = ApplicationFactory.eINSTANCE.createMMenu();
+		model = MApplicationFactory.eINSTANCE.createMenu();
 		loadModel(config, model);
 	}
 
@@ -175,10 +170,10 @@ public class MenuContribution {
 			String elementType = element.getName();
 			if (IWorkbenchRegistryConstants.TAG_COMMAND.equals(elementType)) {
 				MMenuItem item = createCommandElement(element);
-				menu.getItems().add(item);
+				menu.getChildren().add(item);
 			} else if (IWorkbenchRegistryConstants.TAG_MENU.equals(elementType)) {
 				MMenuItem item = createMenuElement(element);
-				menu.getItems().add(item);
+				menu.getChildren().add(item);
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR
 					.equals(elementType)) {
 				MenuHelper.addSeparator(menu, MenuHelper.getId(element), true);
@@ -194,16 +189,17 @@ public class MenuContribution {
 	 * @param element
 	 */
 	private void addRenderer(MMenu menu, IConfigurationElement element) {
-		ContributionItem i = (ContributionItem) Util
-				.safeLoadExecutableExtension(element,
-						IWorkbenchRegistryConstants.ATT_CLASS,
-						ContributionItem.class);
-		if (i instanceof IWorkbenchContribution) {
-			((IWorkbenchContribution) i).initialize(window);
-		}
-		MMenuItemRenderer renderer = MenuHelper.addMenuRenderer(context, menu,
-				i);
-		associateVisibleWhen(element, renderer);
+		// ContributionItem i = (ContributionItem) Util
+		// .safeLoadExecutableExtension(element,
+		// IWorkbenchRegistryConstants.ATT_CLASS,
+		// ContributionItem.class);
+		// if (i instanceof IWorkbenchContribution) {
+		// ((IWorkbenchContribution) i).initialize(window);
+		// }
+		// MMenuItemRenderer renderer = MenuHelper.addMenuRenderer(context,
+		// menu,
+		// i);
+		// associateVisibleWhen(element, renderer);
 	}
 
 	private IWorkbenchWindow window;
@@ -219,10 +215,7 @@ public class MenuContribution {
 		String label = MenuHelper.getLabel(element);
 		MMenuItem item = MenuHelper.createMenuItem(context, label, imagePath,
 				id, null);
-		MMenu m = ApplicationFactory.eINSTANCE.createMMenu();
-		m.setId(id);
-		item.setMenu(m);
-		loadModel(element, m);
+		loadModel(element, item);
 		return item;
 	}
 
@@ -249,13 +242,13 @@ public class MenuContribution {
 				imagePath, id, cmdId);
 		final Map<String, String> parms = MenuHelper.getParameters(element);
 		if (!parms.isEmpty()) {
-			final EList<MParameter> modelParms = item.getParameters();
-			for (Map.Entry<String, String> entry : parms.entrySet()) {
-				MParameter p = ApplicationFactory.eINSTANCE.createMParameter();
-				p.setName(entry.getKey());
-				p.setValue(entry.getValue());
-				modelParms.add(p);
-			}
+			// final EList<MParameter> modelParms = item.getParameters();
+			// for (Map.Entry<String, String> entry : parms.entrySet()) {
+			// MParameter p = ApplicationFactory.eINSTANCE.createMParameter();
+			// p.setName(entry.getKey());
+			// p.setValue(entry.getValue());
+			// modelParms.add(p);
+			// }
 		}
 
 		associateVisibleWhen(element, item);

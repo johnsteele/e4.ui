@@ -11,9 +11,10 @@
 
 package org.eclipse.e4.workbench.ui.api;
 
+import org.eclipse.e4.ui.model.application.MPart;
+
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.INullSelectionListener;
@@ -179,8 +180,7 @@ public class LegacySelectionService implements ISelectionService {
 			currentActive = child;
 		}
 		if (child != null) {
-			MContributedPart p = (MContributedPart) child
-					.get(MContributedPart.class.getName());
+			MPart p = (MPart) child.get(MPart.class.getName());
 			if (p == null)
 				return null;
 			Object object = p.getObject();

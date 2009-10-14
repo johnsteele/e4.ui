@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:MWindow xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/Application" xsi:schemaLocation="http://www.eclipse.org/ui/2008/Application ../../org.eclipse.e4.ui.model.workbench/model/Application.ecore" xmi:id="_0" id="UI Editor" visible="false" name="UI Model Editor" width="600" height="500">
-  <children xsi:type="application:MSashForm" policy="VerticalSash">
-    <children xsi:type="application:MContributedPart" name="Model View" tooltip="" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.viewer.ModelExplorer"/>
-    <children xsi:type="application:MStack">
-      <children xsi:type="application:MContributedPart" name="&amp;Basic" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.viewer.TabBasic"/>
-      <children xsi:type="application:MContributedPart" name="&amp;Advanced" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.viewer.TabAdvanced"/>
-      <children xsi:type="application:MContributedPart" name="&amp;Javascript" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.ElementView"/>
+<org.eclipse.e4.ui.model.application:MWindow xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:org.eclipse.e4.ui.model.application="http://www.eclipse.org/ui/2008/Application" xsi:schemaLocation="http://www.eclipse.org/ui/2008/Application ../../org.eclipse.e4.ui.model.workbench/model/Application.ecore" xmi:id="_0" id="UI Editor" visible="false" name="UI Model Editor" width="600" height="500">
+  <children xsi:type="org.eclipse.e4.ui.model.application:MSashForm" policy="VerticalSash">
+    <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Model View" tooltip="" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.viewer.ModelExplorer"/>
+    <children xsi:type="org.eclipse.e4.ui.model.application:MStack">
+      <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="&amp;Basic" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.viewer.TabBasic"/>
+      <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="&amp;Advanced" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.viewer.TabAdvanced"/>
+      <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="&amp;Javascript" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.ElementView"/>
     </children>
     <variables>selection</variables>
     <weights>50</weights>
     <weights>50</weights>
   </children>
-</application:MWindow>
+</org.eclipse.e4.ui.model.application:MWindow>

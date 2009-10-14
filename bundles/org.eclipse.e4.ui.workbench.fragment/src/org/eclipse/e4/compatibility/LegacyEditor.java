@@ -18,7 +18,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.extensions.ModelEditorReference;
-import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
@@ -48,8 +48,8 @@ import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
- * This class is an implementation of an MContributedPart that can be used to
- * host a 3.x EditorPart into an Eclipse 4.0 application.
+ * This class is an implementation of an MPart that can be used to host a 3.x
+ * EditorPart into an Eclipse 4.0 application.
  * 
  * @since 4.0
  * 
@@ -60,7 +60,7 @@ public class LegacyEditor {
 	private static final String IS_DIRTY = "isDirty"; //$NON-NLS-1$
 	private static final String EDITOR_DISPOSED = "editorDisposed"; //$NON-NLS-1$
 
-	private MContributedPart editorPart;
+	private MPart editorPart;
 	private IEditorPart editorWBPart;
 
 	private Map<IEditorPart, Trackable> trackables = new HashMap<IEditorPart, Trackable>();
@@ -73,10 +73,10 @@ public class LegacyEditor {
 	 * @param context
 	 *            The context under which this part is being created
 	 * @param part
-	 *            The MContributedPart representing the editor
+	 *            The MPart representing the editor
 	 */
 	public LegacyEditor(final Composite parent, IEclipseContext context,
-			final MContributedPart part) {
+			final MPart part) {
 		editorPart = part;
 
 		IConfigurationElement editorElement = findEditorConfig(part.getId());
@@ -110,8 +110,10 @@ public class LegacyEditor {
 			return;
 
 		try {
-			IEclipseContext parentContext = part.getParent().getContext();
 			final IEclipseContext localContext = part.getContext();
+			IEclipseContext parentContext = (IEclipseContext) localContext
+					.get(IContextConstants.PARENT);
+
 			localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor(" //$NON-NLS-1$
 					+ desc.getLabel() + ")"); //$NON-NLS-1$
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
@@ -130,7 +132,7 @@ public class LegacyEditor {
 					.get(IEditorInput.class.getName()));
 
 			editorWBPart.createPartControl(parent);
-			localContext.set(MContributedPart.class.getName(), part);
+			localContext.set(MPart.class.getName(), part);
 
 			// HACK!! presumes it's the -last- child of the parent
 			if (parent.getChildren().length > 0) {
@@ -193,7 +195,7 @@ public class LegacyEditor {
 		}
 	}
 
-	protected void disposeEditor(MContributedPart part) {
+	protected void disposeEditor(MPart part) {
 		Object obj = part.getObject();
 		if (!(obj instanceof IWorkbenchPart))
 			return;

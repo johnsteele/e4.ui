@@ -12,8 +12,6 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
@@ -22,8 +20,8 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MStack;
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
 import org.eclipse.emf.common.util.EList;
@@ -85,14 +83,14 @@ public class ModelExtensionProcessor {
 
 	}
 
-	private MWindow<?> e4Window;
+	private MWindow e4Window;
 
 	/**
 	 * Constructs processor for the model extensions on the MWindow
 	 * 
 	 * @param e4Window
 	 */
-	public ModelExtensionProcessor(MWindow<?> e4Window) {
+	public ModelExtensionProcessor(MWindow e4Window) {
 		this.e4Window = e4Window;
 	}
 
@@ -119,70 +117,45 @@ public class ModelExtensionProcessor {
 			if (contents.isEmpty())
 				continue;
 			Object extensionRoot = contents.get(0);
-			if (!(extensionRoot instanceof MPart<?>)) {
+			if (!(extensionRoot instanceof MUIElement)) {
 				log("Unable to create model extension \"{0}\"", //$NON-NLS-1$
 						extension.contributor.getName());
 				continue;
 			}
 
-			MPart<?> root = (MPart<?>) extensionRoot;
-			MPart parentPart = null;
+			MUIElement root = (MUIElement) extensionRoot;
+			MElementContainer<MUIElement> parentElement = null;
 			if (root instanceof MWindow)
-				parentPart = e4Window;
+				parentElement = (MElementContainer<MUIElement>) ((MUIElement) e4Window);
 			else
-				parentPart = findDefaultParent(extension.getParentID());
-			if (parentPart != null)
-				parentPart.getChildren().add((MPart<?>) extensionRoot);
+				parentElement = findDefaultParent(extension.getParentID());
+			if (parentElement != null)
+				parentElement.getChildren().add(root);
 		}
 	}
 
-	private MPart findDefaultParent(String parentID) {
-		MPart<MPart<?>> defaultStack = null;
+	private MElementContainer<MUIElement> findDefaultParent(String parentID) {
+		MUIElement defaultElement = null;
 		// Try the specified ID
 		if (parentID != null) {
-			defaultStack = ModeledPageLayout.findPart(e4Window, parentID);
-			if (defaultStack != null)
-				return defaultStack;
+			defaultElement = ModeledPageLayout.findElementById(e4Window,
+					parentID);
+			if (defaultElement != null)
+				return (MElementContainer<MUIElement>) defaultElement;
 		}
+
 		// Try first preferred ID
-		defaultStack = ModeledPageLayout.findPart(e4Window, preferredID1);
-		if (defaultStack != null)
-			return defaultStack;
+		defaultElement = ModeledPageLayout.findElementById(e4Window,
+				preferredID1);
+		if (defaultElement != null)
+			return (MElementContainer<MUIElement>) defaultElement;
+
 		// Try second preferred ID - parent of "bottom"
-		defaultStack = ModeledPageLayout.findPart(e4Window, preferredID2);
-		if (defaultStack != null)
-			return defaultStack.getParent();
-		// Find last stack in the model in the first perspective
-		MPart<?> searchUnder;
-		EList<?> children = e4Window.getChildren();
-		if (children == null || children.size() == 0)
-			searchUnder = e4Window;
-		else
-			searchUnder = (MPart<?>) children.get(0);
-		defaultStack = findBottomStack(searchUnder);
-		if (defaultStack != null)
-			return defaultStack.getParent();
-		return null;
-	}
+		defaultElement = ModeledPageLayout.findPart(e4Window, preferredID2);
+		if (defaultElement != null)
+			return defaultElement.getParent();
 
-	// TBD this should be an utility method somewhere
-	private MPart findBottomStack(MPart<?> persp) {
-		List<?> stacks = new ArrayList();
-		gatherStacks(persp, stacks);
-		if (stacks.size() > 0)
-			return (MPart) stacks.get(stacks.size() - 1);
 		return null;
-	}
-
-	private void gatherStacks(MPart<?> part, List stacks) {
-		EList<?> kids = part.getChildren();
-		for (Iterator<?> iterator = kids.iterator(); iterator.hasNext();) {
-			MPart<?> child = (MPart<?>) iterator.next();
-			if (child instanceof MStack) {
-				stacks.add(child);
-			}
-			gatherStacks(child, stacks);
-		}
 	}
 
 	private ModelExtension[] readExtensionRegistry() {

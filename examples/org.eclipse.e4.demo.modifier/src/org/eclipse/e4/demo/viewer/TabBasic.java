@@ -11,9 +11,9 @@
 package org.eclipse.e4.demo.viewer;
 
 import org.eclipse.e4.core.services.annotations.In;
-import org.eclipse.e4.ui.model.application.MContributedPart;
-import org.eclipse.e4.ui.model.application.MSashForm;
-import org.eclipse.e4.ui.model.application.MStack;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -70,13 +70,13 @@ public class TabBasic {
 			return;
 		selectedObject = selected;
 		
-		if (selectedObject instanceof MStack) {
+		if (selectedObject instanceof MPartStack) {
 			stackLayout.topControl = stackProperties;
 			stackProperties.selected(selectedObject);
-		} else if (selectedObject instanceof MSashForm<?>) {
+		} else if (selectedObject instanceof MPartSashContainer) {
 			stackLayout.topControl = sashProperties;
 			sashProperties.selected(selectedObject);
-		} else if (selectedObject instanceof MContributedPart<?>){
+		} else if (selectedObject instanceof MPart){
 			stackLayout.topControl = contribItemProperties;
 	        contribItemProperties.selected(selected);
 		} else {

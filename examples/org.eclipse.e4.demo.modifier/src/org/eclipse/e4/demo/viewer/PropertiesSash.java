@@ -13,7 +13,7 @@ package org.eclipse.e4.demo.viewer;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.databinding.EMFObservables;
@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Text;
 public class PropertiesSash extends PropertiesElement {
 	
 	private Text policy;
-	private Binding policyBinding;
 	private Text weights;
 	private Binding weightsBinding;
 	private Button visible;
@@ -49,9 +48,8 @@ public class PropertiesSash extends PropertiesElement {
 
 	public void selected(EObject selected) {
 		super.selected(selected);
-		policyBinding = bind(policy, ApplicationPackage.Literals.MPART__POLICY);
-		weightsBinding = bindList(weights, ApplicationPackage.Literals.MSASH_FORM__WEIGHTS);
-		visibleBinding = bind(visible, ApplicationPackage.Literals.MPART__VISIBLE);
+		weightsBinding = bindList(weights, MApplicationPackage.Literals.GENERIC_TILE__WEIGHTS);
+		visibleBinding = bind(visible, MApplicationPackage.Literals.UI_ELEMENT__VISIBLE);
 	}
 	
 	protected Binding bindList(Text text, EStructuralFeature feature) {
@@ -97,10 +95,6 @@ public class PropertiesSash extends PropertiesElement {
 	
 	protected void clearBindings() {
 		super.clearBindings();
-		if (policyBinding != null) {
-			policyBinding.dispose();
-			policyBinding = null;
-		}
 		if (weightsBinding != null) {
 			weightsBinding.dispose();
 			weightsBinding = null;

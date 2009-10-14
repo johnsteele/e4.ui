@@ -13,7 +13,7 @@ package org.eclipse.e4.demo.viewer;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.emf.databinding.EMFObservables;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -116,7 +116,7 @@ public class PropertiesElement extends Composite {
 		clearBindings();
 		selectedObject = selected;
 		
-		idBinding = bind(id, ApplicationPackage.Literals.MAPPLICATION_ELEMENT__ID);
+		idBinding = bind(id, MApplicationPackage.Literals.APPLICATION_ELEMENT__ID);
 	}
 	
 	protected void clearBindings() {

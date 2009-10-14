@@ -1,20 +1,20 @@
 package org.eclipse.e4.workbench.ui.api;
 
-import org.eclipse.e4.ui.model.application.MContributedPart;
-import org.eclipse.e4.ui.model.application.MStack;
-import org.eclipse.ui.IPlaceholderFolderLayout;
+import org.eclipse.e4.ui.model.application.MView;
+import org.eclipse.e4.ui.model.application.MViewStack;
 
+import org.eclipse.ui.IPlaceholderFolderLayout;
 
 public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout {
 
-	protected MStack folderModel;
+	protected MViewStack folderModel;
 
-	public ModeledPlaceholderFolderLayout(MStack stackModel) {
+	public ModeledPlaceholderFolderLayout(MViewStack stackModel) {
 		folderModel = stackModel;
 	}
 
 	public void addPlaceholder(String viewId) {
-		MContributedPart viewModel = ModeledPageLayout.createViewModel(viewId, false);
+		MView viewModel = ModeledPageLayout.createViewModel(viewId, false);
 		folderModel.getChildren().add(viewModel);
 	}
 
@@ -24,7 +24,7 @@ public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout 
 	}
 
 	public void setProperty(String id, String value) {
-		//folderModel.setProperty(id, value);
+		// folderModel.setProperty(id, value);
 	}
 
 }

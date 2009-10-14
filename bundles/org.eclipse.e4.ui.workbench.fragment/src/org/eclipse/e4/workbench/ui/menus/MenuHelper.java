@@ -22,21 +22,19 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.e4.ui.model.application.MToolBarItem;
-import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
-import org.eclipse.e4.ui.model.workbench.MToolItemRenderer;
-import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
+import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -73,11 +71,11 @@ public class MenuHelper {
 	 * @param menuModel
 	 */
 	static void traceMenuModel(MMenu menuModel) {
-		menuModel.eAdapters().add(new EContentAdapter() {
+		((EObject) menuModel).eAdapters().add(new EContentAdapter() {
 			public void notifyChanged(
 					org.eclipse.emf.common.notify.Notification notification) {
 				super.notifyChanged(notification);
-				if (ApplicationPackage.Literals.MITEM_CONTAINER__ITEMS
+				if (MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN
 						.equals(notification.getFeature())
 						&& notification.getEventType() == Notification.ADD) {
 					MMenuItem item = (MMenuItem) notification.getNewValue();
@@ -118,13 +116,12 @@ public class MenuHelper {
 		return contributions.toArray(new ActionSet[contributions.size()]);
 	}
 
-	public static int indexForId(MMenu menu, String id) {
+	public static int indexForId(MMenu parentMenu, String id) {
 		if (id == null || id.length() == 0) {
 			return -1;
 		}
 		int i = 0;
-		EList<MMenuItem> items = menu.getItems();
-		for (MMenuItem item : items) {
+		for (MMenuItem item : parentMenu.getChildren()) {
 			if (id.equals(item.getId())) {
 				return i;
 			}
@@ -171,11 +168,10 @@ public class MenuHelper {
 			}
 		}
 		// now, what about sub menus
-		EList<MMenuItem> items = menuBar.getItems();
+		EList<MMenuItem> items = menuBar.getChildren();
 		for (MMenuItem menuItem : items) {
-			if (menuItem.getMenu() != null) {
-				processMenuContributions(context, menuItem.getMenu(),
-						contributions);
+			if (menuItem.getChildren().size() > 0) {
+				processMenuContributions(context, menuItem, contributions);
 			}
 		}
 	}
@@ -282,10 +278,10 @@ public class MenuHelper {
 			public void addModelItem(IEclipseContext context,
 					Object modelParent, String label, String imageURL,
 					String id, String cmdId) {
-				MToolBarItem newItem = createToolbarItem(context, label,
-						imageURL, id, cmdId);
+				MToolItem newItem = createToolbarItem(context, label, imageURL,
+						id, cmdId);
 				MToolBar tbModel = (MToolBar) modelParent;
-				tbModel.getItems().add(newItem);
+				tbModel.getChildren().add(newItem);
 			}
 
 		}
@@ -318,13 +314,13 @@ public class MenuHelper {
 				MenuManager m = (MenuManager) item;
 				MMenuItem menu1 = addMenu(context, menu, m.getMenuText(), null,
 						null, m.getId(), null);
-				processMenuManager(context, menu1.getMenu(), m.getItems());
+				processMenuManager(context, menu1, m.getItems());
 			} else if (item instanceof ActionContributionItem) {
 				ActionContributionItem aci = (ActionContributionItem) item;
 				if ((aci.getAction().getStyle() | IAction.AS_DROP_DOWN_MENU) == 0) {
 					ProcessItem.MENU.process(context, aci, menu);
 				} else {
-					addMenuRenderer(context, menu, item);
+					// addMenuRenderer(context, menu, item);
 				}
 			} else if (item instanceof CommandContributionItem) {
 				CommandContributionItem cci = (CommandContributionItem) item;
@@ -336,7 +332,7 @@ public class MenuHelper {
 			} else {
 				Activator.trace(Policy.DEBUG_MENUS,
 						"ICI: " + item.getClass().getName(), null); //$NON-NLS-1$
-				addMenuRenderer(context, menu, item);
+				// addMenuRenderer(context, menu, item);
 			}
 		}
 	}
@@ -346,25 +342,25 @@ public class MenuHelper {
 	 * @param menu
 	 * @param item
 	 */
-	public static MMenuItemRenderer addMenuRenderer(IEclipseContext context,
-			MMenu menu, IContributionItem item) {
-		MMenuItemRenderer r = WorkbenchFactory.eINSTANCE
-				.createMMenuItemRenderer();
-		r.setId(item.getId() == null ? "item:" + menu.getId() : item.getId()); //$NON-NLS-1$
-		r.setRenderer(item);
-		menu.getItems().add(r);
-		return r;
-	}
-
-	public static MToolItemRenderer addToolRenderer(IEclipseContext context,
-			MToolBar bar, IContributionItem item) {
-		MToolItemRenderer r = WorkbenchFactory.eINSTANCE
-				.createMToolItemRenderer();
-		r.setId(item.getId() == null ? "item:" + bar.getId() : item.getId()); //$NON-NLS-1$
-		r.setRenderer(item);
-		bar.getItems().add(r);
-		return r;
-	}
+	// public static MMenuItemRenderer addMenuRenderer(IEclipseContext context,
+	// MMenu menu, IContributionItem item) {
+	// MMenuItemRenderer r = WorkbenchFactory.eINSTANCE
+	// .createMMenuItemRenderer();
+	//		r.setId(item.getId() == null ? "item:" + menu.getId() : item.getId()); //$NON-NLS-1$
+	// r.setRenderer(item);
+	// menu.getChildren().add(r);
+	// return r;
+	// }
+	//
+	// public static MToolItemRenderer addToolRenderer(IEclipseContext context,
+	// MToolBar bar, IContributionItem item) {
+	// MToolItemRenderer r = WorkbenchFactory.eINSTANCE
+	// .createMToolItemRenderer();
+	//		r.setId(item.getId() == null ? "item:" + bar.getId() : item.getId()); //$NON-NLS-1$
+	// r.setRenderer(item);
+	// bar.getChildren().add(r);
+	// return r;
+	// }
 
 	/**
 	 * @param menu
@@ -386,13 +382,14 @@ public class MenuHelper {
 				// MMenuItem menu1 = addMenu(context, menu, m.getMenuText(),
 				// null,
 				// null, m.getId(), null);
-				// processMenuManager(context, menu1.getMenu(), m.getItems());
+				// processMenuManager(context, menu1.getMenu(),
+				// m.getChildren());
 			} else if (item instanceof ActionContributionItem) {
 				ActionContributionItem aci = (ActionContributionItem) item;
 				if ((aci.getAction().getStyle() | IAction.AS_DROP_DOWN_MENU) == 0) {
 					ProcessItem.TOOLBAR.process(context, aci, tbModel);
 				} else {
-					addToolRenderer(context, tbModel, item);
+					// addToolRenderer(context, tbModel, item);
 				}
 			} else if (item instanceof CommandContributionItem) {
 				CommandContributionItem cci = (CommandContributionItem) item;
@@ -405,7 +402,7 @@ public class MenuHelper {
 				Activator.trace(Policy.DEBUG_MENUS,
 						"unknown tool item: " + item.getClass().getName() //$NON-NLS-1$
 								+ " in " + context, null); //$NON-NLS-1$
-				addToolRenderer(context, tbModel, item);
+				// addToolRenderer(context, tbModel, item);
 			}
 		}
 	}
@@ -454,7 +451,7 @@ public class MenuHelper {
 
 		MApplication app = (MApplication) context.get(MApplication.class
 				.getName());
-		final EList<MCommand> cmds = app.getCommand();
+		final EList<MCommand> cmds = app.getCommands();
 		for (MCommand cmd : cmds) {
 			if (cmdId.equals(cmd.getId())) {
 				return cmd;
@@ -465,14 +462,14 @@ public class MenuHelper {
 
 	public static MMenuItem createMenuItem(IEclipseContext context,
 			String label, String imgPath, String id, String cmdId) {
-		MMenuItem newItem = ApplicationFactory.eINSTANCE.createMMenuItem();
+		MMenuItem newItem = MApplicationFactory.eINSTANCE.createMenuItem();
 		newItem.setId(id);
 		newItem.setName(label);
 		newItem.setIconURI(imgPath);
 		if (cmdId != null) {
 			MCommand mcmd = getCommandById(context, cmdId);
 			if (mcmd != null) {
-				newItem.setCommand(mcmd);
+				// newItem.setCommand(mcmd);
 			} else {
 				//				System.err.println("No MCommand defined for " + cmdId); //$NON-NLS-1$
 			}
@@ -482,10 +479,9 @@ public class MenuHelper {
 		return newItem;
 	}
 
-	public static MToolBarItem createToolbarItem(IEclipseContext context,
+	public static MToolItem createToolbarItem(IEclipseContext context,
 			String label, String imgPath, String id, String cmdId) {
-		MToolBarItem newItem = ApplicationFactory.eINSTANCE
-				.createMToolBarItem();
+		MToolItem newItem = MApplicationFactory.eINSTANCE.createToolItem();
 		newItem.setId(id);
 		newItem.setTooltip(label);
 		newItem.setIconURI(imgPath);
@@ -494,7 +490,7 @@ public class MenuHelper {
 		if (cmdId != null) {
 			MCommand mcmd = getCommandById(context, cmdId);
 			if (mcmd != null) {
-				newItem.setCommand(mcmd);
+				// newItem.setCommand(mcmd);
 			} else {
 				//				System.err.println("No MCommand defined for " + cmdId); //$NON-NLS-1$
 			}
@@ -504,10 +500,9 @@ public class MenuHelper {
 		return newItem;
 	}
 
-	private static MToolBarItem createTBItem(String ttip, String imgPath,
+	private static MToolItem createTBItem(String ttip, String imgPath,
 			String id, String cmdId) {
-		MToolBarItem newItem = ApplicationFactory.eINSTANCE
-				.createMToolBarItem();
+		MToolItem newItem = MApplicationFactory.eINSTANCE.createToolItem();
 		newItem.setId(id);
 		newItem.setTooltip(ttip);
 		newItem.setIconURI(imgPath);
@@ -519,81 +514,73 @@ public class MenuHelper {
 			String label, String plugin, String imgPath, String id, String cmdId) {
 		// Sub-menus are implemented as an item with a menu... ??
 		MMenuItem newItem = createMenuItem(context, label, imgPath, id, cmdId);
-
-		// Create the sub menu
-		MMenu newMenu = ApplicationFactory.eINSTANCE.createMMenu();
-		newMenu.setId(id);
-		newItem.setMenu(newMenu);
-
-		// Add the new item to the parent's menu
-		parentMenu.getItems().add(newItem);
+		parentMenu.getChildren().add(newItem);
 
 		return newItem;
 	}
 
 	public static MMenuItem addMenu(MMenuItem parentMenuItem, String label,
 			String plugin, String imgPath, String id, String cmdId) {
-		MMenu parentMenu = parentMenuItem.getMenu();
+		MMenu parentMenu = parentMenuItem;
 		return addMenu(null, parentMenu, label, plugin, imgPath, id, cmdId);
 	}
 
 	public static void addMenuItem(MMenuItem parentMenuItem, String label,
 			String plugin, String imgPath, String id, String cmdId) {
 		MMenuItem newItem = createMenuItem(null, label, imgPath, id, cmdId);
-		MMenu parentMenu = parentMenuItem.getMenu();
-		parentMenu.getItems().add(newItem);
+		MMenu parentMenu = parentMenuItem;
+		parentMenu.getChildren().add(newItem);
 	}
 
 	public static void addToolbarItem(MToolBar tbModel, String label,
 			String plugin, String imgPath, String id, String cmdId) {
-		MToolBarItem newItem = createToolbarItem(null, label, imgPath, id,
-				cmdId);
-		tbModel.getItems().add(newItem);
+		MToolItem newItem = createToolbarItem(null, label, imgPath, id, cmdId);
+		tbModel.getChildren().add(newItem);
 	}
 
 	public static void addMenuItem(IEclipseContext context, MMenu parentMenu,
 			String label, String plugin, String imgPath, String id, String cmdId) {
 		MMenuItem newItem = createMenuItem(context, label, imgPath, id, cmdId);
-		parentMenu.getItems().add(newItem);
+		parentMenu.getChildren().add(newItem);
 	}
 
 	public static void addSeparator(MMenuItem parentMenuItem, String id) {
 		if (id != null)
 			return;
-		MMenuItem newItem = ApplicationFactory.eINSTANCE.createMMenuItem();
+		MMenuItem newItem = MApplicationFactory.eINSTANCE.createMenuItem();
 		newItem.setId(id);
 		newItem.setSeparator(true);
 		// newItem.setVisible(id == null);
-		parentMenuItem.getMenu().getItems().add(newItem);
+		parentMenuItem.getChildren().add(newItem);
 	}
 
-	public static void addSeparator(MMenu parentMenu, String id, boolean visible) {
-		MMenuItem newItem = ApplicationFactory.eINSTANCE.createMMenuItem();
+	public static void addSeparator(MMenu menu, String id, boolean visible) {
+		MMenuItem newItem = MApplicationFactory.eINSTANCE.createMenuItem();
 		if (id != null) {
 			newItem.setId(id);
 		}
 		newItem.setSeparator(true);
 		newItem.setVisible(visible);
 
-		parentMenu.getItems().add(newItem);
+		menu.getChildren().add(newItem);
 	}
 
 	public static void loadToolbar(MToolBar tbModel) {
-		MToolBarItem tbItem = createTBItem("&New	Alt+Shift+N", null, //$NON-NLS-1$
+		MToolItem tbItem = createTBItem("&New	Alt+Shift+N", null, //$NON-NLS-1$
 				"cmdId.New", "cmdId.New"); //$NON-NLS-1$//$NON-NLS-2$
-		tbModel.getItems().add(tbItem);
+		tbModel.getChildren().add(tbItem);
 
 		tbItem = createTBItem(
 				"&Save", //$NON-NLS-1$
 				"platform:/plugin/org.eclipse.ui/icons/full/etool16/save_edit.gif", //$NON-NLS-1$
 				"cmdId.Save", "cmdId.Save"); //$NON-NLS-1$//$NON-NLS-2$
-		tbModel.getItems().add(tbItem);
+		tbModel.getChildren().add(tbItem);
 
 		tbItem = createTBItem(
 				"&Print", //$NON-NLS-1$
 				"platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.gif", //$NON-NLS-1$
 				"cmdId.Print", "cmdId.Print"); //$NON-NLS-1$//$NON-NLS-2$
-		tbModel.getItems().add(tbItem);
+		tbModel.getChildren().add(tbItem);
 	}
 
 	static boolean getVisibleEnabled(IConfigurationElement element) {

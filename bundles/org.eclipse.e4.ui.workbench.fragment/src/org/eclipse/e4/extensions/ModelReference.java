@@ -11,9 +11,10 @@
 
 package org.eclipse.e4.extensions;
 
+import org.eclipse.e4.ui.model.application.MPart;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -31,11 +32,11 @@ import org.eclipse.ui.internal.WorkbenchPage;
  */
 public class ModelReference implements IWorkbenchPartReference {
 
-	private MContributedPart<?> modelPart;
+	private MPart modelPart;
 	private WorkbenchPage page;
 	private Image titleImage;
 
-	public ModelReference(MContributedPart<?> model, WorkbenchPage page) {
+	public ModelReference(MPart model, WorkbenchPage page) {
 		modelPart = model;
 		this.page = page;
 	}
@@ -199,7 +200,7 @@ public class ModelReference implements IWorkbenchPartReference {
 
 	}
 
-	public MContributedPart<?> getModel() {
+	public MPart getModel() {
 		return modelPart;
 	}
 }

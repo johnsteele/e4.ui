@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
-import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MEditorStack;
+import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MStack;
-import org.eclipse.e4.ui.model.workbench.MPerspective;
+import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.MViewStack;
+
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.util.EContentAdapter;
@@ -61,18 +63,17 @@ public class PartsEventTransformer extends EContentAdapter {
 		 * final step of "part is created" and therefore we use it to create
 		 * partOpened events. When the part is closed the widget is set to null.
 		 */
-		if (ApplicationPackage.Literals.MPART__WIDGET.equals(notification
+		if (MApplicationPackage.Literals.UI_ELEMENT__WIDGET.equals(notification
 				.getFeature())) {
 			if (notification.getEventType() != Notification.SET)
 				return;
 			if (notification.getOldValue() == notification.getNewValue())
 				return; // avoid extra notifications
 			Object part = notification.getNotifier();
-			if (part instanceof MContributedPart<?>) {
-				IWorkbenchPartReference ref = toPartRef((MContributedPart<?>) part);
+			if (part instanceof MPart) {
+				IWorkbenchPartReference ref = toPartRef((MPart) part);
 				if (ref != null) {
-					boolean isVisible = ((MContributedPart<?>) part)
-							.isVisible();
+					boolean isVisible = ((MPart) part).isVisible();
 					if (isVisible) {
 						if (notification.getNewValue() == null) {
 							/*
@@ -95,7 +96,7 @@ public class PartsEventTransformer extends EContentAdapter {
 		}
 
 		// Interpret E4 activation events:
-		if (!ApplicationPackage.Literals.MPART__ACTIVE_CHILD
+		if (!MApplicationPackage.Literals.ELEMENT_CONTAINER__ACTIVE_CHILD
 				.equals(notification.getFeature()))
 			return;
 
@@ -109,19 +110,18 @@ public class PartsEventTransformer extends EContentAdapter {
 		Object newPart = notification.getNewValue();
 
 		// create 3.x visibility events
-		if ((newPart != oldPart) && (oldPart instanceof MContributedPart<?>)
-				&& (newPart instanceof MContributedPart<?>))
-			changeVisibility((MContributedPart<?>) oldPart,
-					(MContributedPart<?>) newPart);
+		if ((newPart != oldPart) && (oldPart instanceof MPart)
+				&& (newPart instanceof MPart))
+			changeVisibility((MPart) oldPart, (MPart) newPart);
 
 		// create 3.x activation events
 		final Object object = e4Context.get(IServiceConstants.ACTIVE_PART);
-		if ((newPart != oldPart) && newPart instanceof MPerspective<?>) {
+		if ((newPart != oldPart) && newPart instanceof MPerspective) {
 			// let legacy Workbench know about perspective activation
 			IWorkbenchPage page = (IWorkbenchPage) e4Context
 					.get(IWorkbenchPage.class.getName());
 			if (page != null) {
-				String id = ((MPerspective<?>) newPart).getId();
+				String id = ((MPerspective) newPart).getId();
 				IPerspectiveDescriptor[] descriptors = page
 						.getOpenPerspectives();
 				for (IPerspectiveDescriptor desc : descriptors) {
@@ -131,8 +131,8 @@ public class PartsEventTransformer extends EContentAdapter {
 				}
 			}
 		}
-		if (object instanceof MContributedPart<?>) {
-			IWorkbenchPartReference ref = toPartRef((MContributedPart<?>) object);
+		if (object instanceof MPart) {
+			IWorkbenchPartReference ref = toPartRef((MPart) object);
 			if (ref != null) {
 				// set the Focus to the newly active part
 				IWorkbenchPart part = ref.getPart(true);
@@ -163,18 +163,18 @@ public class PartsEventTransformer extends EContentAdapter {
 	}
 
 	// TBD default hidden/shown state
-	private void changeVisibility(MContributedPart<?> oldPart,
-			MContributedPart<?> newPart) {
+	private void changeVisibility(MPart oldPart, MPart newPart) {
 		// TBD old parent vs new parent: should we apply the same logic to both?
 		// if parent was a stack: hide the previously active part
-		MPart<?> oldParent = ((MContributedPart<?>) oldPart).getParent();
-		if (oldParent instanceof MStack)
+		MElementContainer oldParent = oldPart.getParent();
+		if (oldParent instanceof MViewStack
+				|| oldParent instanceof MEditorStack)
 			visiblityChange(oldPart, false);
 		// show new part
 		visiblityChange(newPart, true);
 	}
 
-	private void visiblityChange(MContributedPart<?> part, boolean visible) {
+	private void visiblityChange(MPart part, boolean visible) {
 		IWorkbenchPartReference partRef = toPartRef(part);
 		if (visible) {
 			// TBD do we need to make children/parents visible or will there be
@@ -182,11 +182,6 @@ public class PartsEventTransformer extends EContentAdapter {
 			if (partRef != null)
 				partList.firePartVisible(partRef); // make this part visible
 		} else {
-			// hide children
-			for (Object child : part.getChildren()) {
-				if (child instanceof MContributedPart<?>)
-					visiblityChange((MContributedPart<?>) child, visible);
-			}
 			if (partRef != null)
 				partList.firePartHidden(partRef); // hide this part
 		}
@@ -194,7 +189,7 @@ public class PartsEventTransformer extends EContentAdapter {
 
 	// TBD is this the best method?
 	// TBD this should be a general utility method somewhere in the fragment
-	private IWorkbenchPartReference toPartRef(MContributedPart<?> part) {
+	private IWorkbenchPartReference toPartRef(MPart part) {
 		if (part == null)
 			return null;
 		Object impl = part.getObject();

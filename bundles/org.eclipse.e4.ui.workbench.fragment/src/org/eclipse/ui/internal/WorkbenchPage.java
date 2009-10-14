@@ -35,16 +35,22 @@ import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ModelEditorReference;
 import org.eclipse.e4.extensions.ModelReference;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
-import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MContribution;
+import org.eclipse.e4.ui.model.application.MESCElement;
+import org.eclipse.e4.ui.model.application.MEditor;
+import org.eclipse.e4.ui.model.application.MEditorSashContainer;
+import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MStack;
+import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
 import org.eclipse.e4.workbench.ui.internal.IValueFunction;
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
@@ -260,10 +266,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		IWorkbenchPartReference ref = getReference(part);
 		if (ref instanceof ModelReference) {
 			ModelReference modelRef = (ModelReference) ref;
-			MContributedPart<?> modelElement = modelRef.getModel();
+			MPart modelElement = modelRef.getModel();
 			if (modelElement != null) {
 				AbstractPartRenderer renderer = (AbstractPartRenderer) modelElement
-						.getOwner();
+						.getFactory();
 				if (renderer != null)
 					renderer.activate(modelElement);
 
@@ -363,15 +369,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// TBD we have no shared parts so far. Processing below should be
 		// updated once shared parts are implemented
 		if (part instanceof EditorPart) {
-			MPart ea = findPartInCurrentPerspective(ModeledPageLayout
+			MEditorSashContainer ea = (MEditorSashContainer) findPartInCurrentPerspective(ModeledPageLayout
 					.internalGetEditorArea());
 			String editorID = ((EditorPart) part).getEditorSite().getId();
 			IEditorInput editorInput = ((EditorPart) part).getEditorInput();
-			MContributedPart<MPart<?>> editorPart = findEditor(ea, editorID,
-					editorInput);
+			MEditor editorPart = findEditor(ea, editorID, editorInput);
 			if (editorPart != null) {
 				editorPart.setVisible(true);
-				ea.setActiveChild(editorPart);
+				ea.setActiveChild((MESCElement) editorPart);
 			} else {
 				try {
 					openEditor(editorInput, editorID, true, MATCH_NONE);
@@ -593,9 +598,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 			partRemoved(ref);
 			// now that it has disappeared from the model, dispose its context
-			MContributedPart<?> mEditorPart = ((ModelEditorReference) ref)
-					.getModel();
-			mEditorPart.eAdapters().clear();
+			MPart mEditorPart = ((ModelEditorReference) ref).getModel();
+			((EObject) mEditorPart).eAdapters().clear();
 			((IDisposable) mEditorPart.getContext()).dispose();
 			mEditorPart.setContext(null);
 		}
@@ -824,7 +828,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			partList.removePart((WorkbenchPartReference) ref);
 			((WorkbenchPartReference) ref).dispose();
 		} else if (ref instanceof ModelReference) {
-			MContributedPart<?> modelPart = ((ModelReference) ref).getModel();
+			MPart modelPart = ((ModelReference) ref).getModel();
 			partList.firePartClosed(ref);
 			modelPart.setVisible(false);
 		}
@@ -928,8 +932,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	public IViewReference findViewReference(String viewId, String secondaryId) {
 		MPart modelPart = ModeledPageLayout.findPart(e4Window, viewId);
-		if (modelPart instanceof MContributedPart<?>) {
-			Object obj = ((MContributedPart<?>) modelPart).getObject();
+		if (modelPart instanceof MPart) {
+			Object obj = ((MPart) modelPart).getObject();
 			if (!(obj instanceof LegacyView))
 				return null;
 
@@ -1146,20 +1150,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	public void getContainedEditorRefs(ArrayList<IEditorReference> result,
-			MPart<?> part) {
-		EList<?> children = part.getChildren();
-		for (Object child : children) {
-			if (child instanceof MContributedPart<?>) {
+			MElementContainer<?> container) {
+		for (MUIElement child : container.getChildren()) {
+			if (child instanceof MEditor) {
 				// @issue here we are expected to sort views from editors.
 				// However, there is no such distinction for E4 elements.
 				// The code below is only good for legacy views/editors.
-				Object object = ((MContributedPart<?>) child).getObject();
+				Object object = ((MContribution) child).getObject();
 				if (object instanceof EditorPart)
-					result.add(new ModelEditorReference(
-							(MContributedPart<?>) child, this));
+					result.add(new ModelEditorReference((MPart) child, this));
 			}
-			if (child instanceof MPart<?>)
-				getContainedEditorRefs(result, (MPart<?>) child);
+			if (child instanceof MElementContainer<?>)
+				getContainedEditorRefs(result,
+						(MElementContainer<MUIElement>) child);
 		}
 	}
 
@@ -1455,8 +1458,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		navigationHistory = new NavigationHistory(this);
 		e4Context.set(INavigationHistory.class.getName(), navigationHistory);
 
-		e4Window.eAdapters()
-				.add(new PartsEventTransformer(e4Context, partList));
+		((Notifier) e4Window).eAdapters().add(
+				new PartsEventTransformer(e4Context, partList));
 
 		// Create presentation.
 		// Get perspective descriptor.
@@ -1607,14 +1610,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 *            the id of the part, must not be <code>null</code>
 	 * @return a part in the current perspective with the specified id
 	 */
-	private MPart<?> findPartInCurrentPerspective(String partId) {
+	private MPart findPartInCurrentPerspective(String partId) {
 		Assert.isNotNull(partId);
 		// retrieve the perspective stack from our window
-		MStack perspStack = (MStack) ModeledPageLayout.findPart(e4Window,
-				"PerspectiveStack"); //$NON-NLS-1$
+		MPerspectiveStack perspStack = (MPerspectiveStack) ModeledPageLayout
+				.findPart(e4Window, "PerspectiveStack"); //$NON-NLS-1$
 		// get the active/current one
-		MPerspective<?> curPersp = (MPerspective<?>) perspStack
-				.getActiveChild();
+		MPerspective curPersp = (MPerspective) perspStack.getActiveChild();
 		// try to find a child part
 		return ModeledPageLayout.findPart(curPersp, partId);
 	}
@@ -1627,14 +1629,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return false;
 		}
 
-		MPart<?> modelPart = findPartInCurrentPerspective(part.getSite()
-				.getId());
+		MPart modelPart = findPartInCurrentPerspective(part.getSite().getId());
 		// couldn't find the part, return false
 		if (modelPart == null) {
 			return false;
 		}
 
-		MPart<?> parent = modelPart.getParent();
+		MElementContainer<MUIElement> parent = modelPart.getParent();
 		// no parent, probably not visible
 		if (parent == null) {
 			return false;
@@ -1847,14 +1848,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		// retrieve the editor area
-		MPart ea = findPartInCurrentPerspective(ModeledPageLayout
+		MEditorSashContainer ea = (MEditorSashContainer) findPartInCurrentPerspective(ModeledPageLayout
 				.internalGetEditorArea());
 
 		// TBD need to add processing for other flags: MATCH_INPUT, MATCH_ID
 		if (matchFlags != IWorkbenchPage.MATCH_NONE) {
 			// Find a matching editor
-			MContributedPart<MPart<?>> existingEditor = findEditor(ea,
-					editorID, input);
+			MEditor existingEditor = findEditor(ea, editorID, input);
 			if (existingEditor != null && activate) {
 				// Set the initial focus
 				LegacyEditor le = (LegacyEditor) existingEditor.getObject();
@@ -1871,8 +1871,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		// No patching editor found, create one
-		MContributedPart<MPart<?>> editorPart = ApplicationFactory.eINSTANCE
-				.createMContributedPart();
+		MEditor editorPart = MApplicationFactory.eINSTANCE.createEditor();
 		editorPart.setURI(LegacyEditor.LEGACY_VIEW_URI);
 		editorPart.setId(editorID);
 		editorPart.setName(input.getName());
@@ -1884,10 +1883,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		// Manage the 'close' button
 		final IEclipseContext editorContext = editorPart.getContext();
-		final MContributedPart<MPart<?>> theEditor = editorPart;
+		final MEditor theEditor = editorPart;
 		IValueFunction closeFunc = new IValueFunction() {
 			public Object getValue() {
-				Object impl = ((MContributedPart<?>) theEditor).getObject();
+				Object impl = ((MPart) theEditor).getObject();
 				if (impl instanceof EditorPart) {
 					EditorPart edPart = (EditorPart) impl;
 					boolean closed = closeEditor(edPart, true);
@@ -1917,18 +1916,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @param input2
 	 * @return
 	 */
-	private MContributedPart<MPart<?>> findEditor(MPart ea, String editorID,
+	private MEditor findEditor(MEditorSashContainer ea, String editorID,
 			IEditorInput input) {
-		final Iterator i = ea.getChildren().iterator();
-		while (i.hasNext()) {
-			MContributedPart<MPart<?>> part = (MContributedPart<MPart<?>>) i
-					.next();
-			if (editorID.equals(part.getId())) {
-				IEditorInput e = (IEditorInput) part.getContext().get(
-						IEditorInput.class.getName());
-				if (input.equals(e)) {
-					return part;
-				}
+		MUIElement ed = ModeledPageLayout.findElementById(ea, editorID);
+		if (ed instanceof MEditor) {
+			MEditor editor = (MEditor) ed;
+			IEditorInput e = (IEditorInput) editor.getContext().get(
+					IEditorInput.class.getName());
+			if (input.equals(e)) {
+				return editor;
 			}
 		}
 		return null;
@@ -3131,8 +3127,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	public IViewPart[] getViewStack(IViewPart part) {
 		// check to make sure this part is in the current perspective
-		MPart<?> modelPart = findPartInCurrentPerspective(part.getSite()
-				.getId());
+		MPart modelPart = findPartInCurrentPerspective(part.getSite().getId());
 		if (modelPart == null) {
 			// if not, return null
 			return null;
@@ -3140,12 +3135,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		List<IViewPart> stack = new ArrayList<IViewPart>();
 		// retrieve the parent stack
-		MPart<?> viewStack = modelPart.getParent();
+		MElementContainer<MUIElement> viewStack = modelPart.getParent();
 		// get the contents of the stack
-		EList<?> children = viewStack.getChildren();
-		for (Object child : children) {
-			if (child instanceof MContributedPart<?>) {
-				Object object = ((MContributedPart<?>) child).getObject();
+		for (MUIElement child : viewStack.getChildren()) {
+			if (child instanceof MContribution) {
+				Object object = ((MContribution) child).getObject();
 				// queue it up if it's a view
 				if (object instanceof IViewPart) {
 					stack.add((IViewPart) object);
@@ -3296,19 +3290,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	// isVisble, etc.).
 	// This needs to be a generic utility
 	private void getContainedPartRefs(
-			ArrayList<IWorkbenchPartReference> result, MPart<?> part) {
-		EList<?> children = part.getChildren();
-		for (Object child : children) {
-			if (child instanceof MContributedPart<?>) {
-				MContributedPart<?> contributedChild = (MContributedPart<?>) child;
+			ArrayList<IWorkbenchPartReference> result,
+			MElementContainer<?> container) {
+		for (MUIElement child : container.getChildren()) {
+			if (child instanceof MPart) {
+				MPart contributedChild = (MPart) child;
 				if (contributedChild.isVisible()) {
 					Object object = contributedChild.getObject();
 					if (object instanceof IWorkbenchPart)
 						result.add(new ModelReference(contributedChild, this));
 				}
 			}
-			if (child instanceof MPart<?>)
-				getContainedPartRefs(result, (MPart<?>) child);
+			if (child instanceof MElementContainer<?>)
+				getContainedPartRefs(result, (MElementContainer<?>) child);
 		}
 	}
 
@@ -3561,19 +3555,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	// views, get parts). When typically callers filter them some more (isDirty,
 	// isVisble, etc.).
 	// This needs to be a generic utility
-	private MPerspective findPerspectiveE4(MPart<?> part, String id) {
-		EList<?> children = part.getChildren();
-		for (Object child : children) {
-			if (child instanceof MPerspective<?>) {
-				if (id.equals(((MPerspective) child).getId()))
-					return (MPerspective) child;
-			}
-			if (child instanceof MPart<?>) {
-				MPerspective found = findPerspectiveE4((MPart<?>) child, id);
-				if (found != null)
-					return found;
-			}
-		}
+	private MPerspective findPerspectiveE4(MWindow e4Window, String id) {
+		MUIElement pe = ModeledPageLayout.findElementById(e4Window, id);
+		if (pe instanceof MPerspective)
+			return (MPerspective) pe;
 		return null;
 	}
 }

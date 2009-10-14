@@ -13,6 +13,9 @@ package org.eclipse.e4.demo.viewer;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MGenericTile;
+import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -92,6 +95,16 @@ public class ImageManagerHelper {
 
 	public void dispose() {
 		imageRegistry.dispose();
+	}
+
+	public Image getElementImage(Object element) {
+		if (element instanceof MWindow)
+			return getElementImage(ImageManagerHelper.IMAGE_WORKBENCH_WINDOW);
+		else if (element instanceof MGenericTile<?>)
+			return getElementImage(ImageManagerHelper.IMAGE_SASH);
+		else if (element instanceof MElementContainer<?>)
+			return getImage(ImageManagerHelper.IMAGE_STACK);
+        return null;
 	}
 
 }

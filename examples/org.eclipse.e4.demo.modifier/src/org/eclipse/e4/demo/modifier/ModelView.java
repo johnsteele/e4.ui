@@ -8,7 +8,6 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
@@ -25,7 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 public class ModelView {
 	public ModelView(final Composite parent,
 			final IEclipseContext outputContext,
-			final MApplication<MWindow<?>> application) {
+			final MApplication application) {
 		final Realm realm = Realm.getDefault();
 		TreeViewer viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL);

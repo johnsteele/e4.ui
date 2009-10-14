@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
@@ -696,32 +696,14 @@ public class LegacyHandlerService implements IHandlerService {
 	private IEclipseContext getFocusContext(Display display) {
 		// find the first useful part in the model
 		Control control = display.getFocusControl();
-		Object partObj = null;
-		Object localContext = null;
-		while (control != null && localContext == null
-				&& !(partObj instanceof MPart<?>)) {
-			partObj = control.getData(AbstractPartRenderer.OWNING_ME);
-			localContext = control.getData("localContext"); //$NON-NLS-1$
+		Object modelObj = null;
+		while (control != null) {
+			modelObj = control.getData(AbstractPartRenderer.OWNING_ME);
+			if (modelObj instanceof MContext)
+				return ((MContext) modelObj).getContext();
 			control = control.getParent();
 		}
-		if (localContext != null) {
-			return (IEclipseContext) localContext;
-		}
-		if (partObj == null) {
-			return eclipseContext;
-		}
-		// get the applicable context (or parent)
-		MPart<?> part = (MPart<?>) partObj;
-		return getContext(part);
-	}
-
-	private IEclipseContext getContext(MPart<?> part) {
-		IEclipseContext c = null;
-		while (c == null && part != null) {
-			c = part.getContext();
-			part = part.getParent();
-		}
-		return c == null ? eclipseContext : c;
+		return eclipseContext;
 	}
 
 }

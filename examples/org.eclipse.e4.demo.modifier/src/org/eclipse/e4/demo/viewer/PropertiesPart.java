@@ -11,7 +11,7 @@
 package org.eclipse.e4.demo.viewer;
 
 import org.eclipse.core.databinding.Binding;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -48,10 +48,10 @@ public class PropertiesPart extends PropertiesElement {
 	public void selected(EObject selected) {
 		super.selected(selected);
 		
-		nameBinding = bind(name, ApplicationPackage.Literals.MITEM__NAME);
-		tooltipBinding = bind(tooltip, ApplicationPackage.Literals.MITEM__TOOLTIP);
-		iconBinding = bind(icon, ApplicationPackage.Literals.MITEM__ICON_URI);
-		visibleBinding = bind(visible, ApplicationPackage.Literals.MPART__VISIBLE);
+		nameBinding = bind(name, MApplicationPackage.Literals.UI_ITEM__NAME);
+		tooltipBinding = bind(tooltip, MApplicationPackage.Literals.UI_ITEM__TOOLTIP);
+		iconBinding = bind(icon, MApplicationPackage.Literals.UI_ITEM__ICON_URI);
+		visibleBinding = bind(visible, MApplicationPackage.Literals.UI_ELEMENT__VISIBLE);
 	}
 	
 	protected void clearBindings() {
