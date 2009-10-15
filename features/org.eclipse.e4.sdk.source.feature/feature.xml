@@ -34,14 +34,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.e4.resources.platform.patch.source"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.e4.resources.rcp.patch.source"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.e4.languages.source.feature"
          version="0.0.0"/>
 
