@@ -11,10 +11,10 @@
 
 package org.eclipse.e4.workbench.ui.api;
 
-import org.eclipse.e4.ui.model.application.MPart;
-
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.INullSelectionListener;
@@ -175,7 +175,7 @@ public class LegacySelectionService implements ISelectionService {
 		IEclipseContext currentActive = windowContext;
 		IEclipseContext child;
 		while ((child = (IEclipseContext) currentActive
-				.get(IServiceConstants.ACTIVE_CHILD)) != null
+				.get(IContextConstants.ACTIVE_CHILD)) != null
 				&& child != currentActive) {
 			currentActive = child;
 		}

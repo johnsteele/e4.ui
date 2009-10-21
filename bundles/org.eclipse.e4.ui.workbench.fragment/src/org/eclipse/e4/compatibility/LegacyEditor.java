@@ -19,7 +19,6 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.extensions.ModelEditorReference;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
@@ -116,7 +115,7 @@ public class LegacyEditor {
 
 			localContext.set(IContextConstants.DEBUG_STRING, "Legacy Editor(" //$NON-NLS-1$
 					+ desc.getLabel() + ")"); //$NON-NLS-1$
-			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
+			parentContext.set(IContextConstants.ACTIVE_CHILD, localContext);
 
 			part.setObject(editorWBPart);
 			// Assign a 'site' for the newly instantiated part

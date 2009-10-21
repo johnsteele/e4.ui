@@ -63,6 +63,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
@@ -73,9 +74,7 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.services.EBindingService;
-import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EContextService;
-import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.events.EventBrokerFactory;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.Activator;
@@ -1783,7 +1782,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					public Object compute(IEclipseContext context,
 							Object[] arguments) {
 						IEclipseContext childContext = (IEclipseContext) context
-								.getLocal(IServiceConstants.ACTIVE_CHILD);
+								.getLocal(IContextConstants.ACTIVE_CHILD);
 						if (childContext != null) {
 							return childContext
 									.get(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
@@ -1795,7 +1794,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			@Override
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				IEclipseContext childContext = (IEclipseContext) context
-						.getLocal(IServiceConstants.ACTIVE_CHILD);
+						.getLocal(IContextConstants.ACTIVE_CHILD);
 				if (childContext != null) {
 					return childContext.get(ISources.ACTIVE_ACTION_SETS_NAME);
 				}
@@ -1806,7 +1805,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			@Override
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				IEclipseContext childContext = (IEclipseContext) context
-						.getLocal(IServiceConstants.ACTIVE_CHILD);
+						.getLocal(IContextConstants.ACTIVE_CHILD);
 				if (childContext != null) {
 					return childContext.get(ISources.ACTIVE_PART_NAME);
 				}
@@ -1817,7 +1816,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			@Override
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				IEclipseContext childContext = (IEclipseContext) context
-						.getLocal(IServiceConstants.ACTIVE_CHILD);
+						.getLocal(IContextConstants.ACTIVE_CHILD);
 				if (childContext != null) {
 					return childContext.get(ISources.ACTIVE_SITE_NAME);
 				}
@@ -1854,7 +1853,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					public Object compute(IEclipseContext context,
 							Object[] arguments) {
 						IEclipseContext childContext = (IEclipseContext) context
-								.getLocal(IServiceConstants.ACTIVE_CHILD);
+								.getLocal(IContextConstants.ACTIVE_CHILD);
 						if (childContext != null) {
 							return childContext
 									.get(ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME);
@@ -2167,14 +2166,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 			final String localContext = "localContext"; //$NON-NLS-1$
 			Object obj = shell.getData(localContext);
 			if (obj instanceof IEclipseContext) {
-				e4Context.set(IServiceConstants.ACTIVE_CHILD, obj);
+				e4Context.set(IContextConstants.ACTIVE_CHILD, obj);
 			} else {
 				final IEclipseContext shellContext = EclipseContextFactory
 						.create(e4Context, UISchedulerStrategy.getInstance());
 				shellContext.set(IContextConstants.DEBUG_STRING,
 						"Shell Context (" + shell + ")"); //$NON-NLS-1$//$NON-NLS-2$
 				shell.setData(localContext, shellContext);
-				e4Context.set(IServiceConstants.ACTIVE_CHILD, shellContext);
+				e4Context.set(IContextConstants.ACTIVE_CHILD, shellContext);
 				shell.addDisposeListener(new DisposeListener() {
 					public void widgetDisposed(DisposeEvent e) {
 						shell.setData(localContext, null);
@@ -2187,7 +2186,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 		} else {
 			if (shell.getData() instanceof WorkbenchWindow) {
-				e4Context.set(IServiceConstants.ACTIVE_CHILD,
+				e4Context.set(IContextConstants.ACTIVE_CHILD,
 						((WorkbenchWindow) shell.getData()).getModelWindow()
 								.getContext());
 			}

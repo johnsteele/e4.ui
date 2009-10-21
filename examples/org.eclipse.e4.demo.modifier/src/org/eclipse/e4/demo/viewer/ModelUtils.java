@@ -13,6 +13,7 @@ package org.eclipse.e4.demo.viewer;
 import java.util.Iterator;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -90,7 +91,7 @@ public class ModelUtils {
 		while (pwc != null) {
 			IEclipseContext parentContext = pwc.getContext();
 			if (parentContext != null) {
-				parentContext.set(IServiceConstants.ACTIVE_CHILD, curContext);
+				parentContext.set(IContextConstants.ACTIVE_CHILD, curContext);
 				curContext = parentContext;
 			}
 
