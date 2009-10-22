@@ -18,6 +18,10 @@
       %license
    </license>
 
+   <includes
+         id="org.eclipse.e4.ui.web.feature"
+         version="0.0.0"/>
+
    <requires>
       <import feature="org.eclipse.emf.databinding" version="1.0.0.v200808251517" match="compatible"/>
       <import feature="org.eclipse.emf.ecore" version="2.4.1.v200808251517" match="compatible"/>
@@ -102,13 +106,6 @@
 
    <plugin
          id="org.eclipse.e4.pde.webui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.e4.ui.web"
          download-size="0"
          install-size="0"
          version="0.0.0"
