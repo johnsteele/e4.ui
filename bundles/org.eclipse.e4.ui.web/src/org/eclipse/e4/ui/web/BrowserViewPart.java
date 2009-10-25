@@ -47,7 +47,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 public abstract class BrowserViewPart extends ViewPart implements ISaveablePart2 {
 
-	private Browser browser;
+	protected Browser browser;
 	private BrowserRPC browserRPC;
 	private boolean isDirty;
 	private List menuItems = new ArrayList(3);
