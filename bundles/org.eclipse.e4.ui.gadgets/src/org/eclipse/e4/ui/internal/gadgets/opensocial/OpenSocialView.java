@@ -295,12 +295,12 @@ public class OpenSocialView extends BrowserViewPart {
 		}
 		if (html != null) {
 			registerModuleProxyServlet();
-			url = "http://localhost:8089/"
+			localUrl = "http://localhost:8089/"
 					+ getViewSite().getSecondaryId().hashCode();
 		}
 
-		if (url != null)
-			browser.setUrl(url);
+		if (localUrl != null)
+			browser.setUrl(localUrl);
 	}
 
 	private void loadUserPreferences(OSGModule module, IMemento memento) {
