@@ -3,7 +3,7 @@ var gadgets = gadgets || {};
 gadgets.util = function() {
 	return {
 		registerOnLoadHandler : function(callback) {
-			alert("callback: " + callback);
+			// alert("callback: " + callback);
 			callback();
 		},
 	

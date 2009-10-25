@@ -2,8 +2,35 @@ var gadgets = gadgets || {};
 
 gadgets.io = function() {
 	return {
-		makeRequest : function(url, callback, opt_params) {
-			alert("makeRequest: " + url);
+		makeRequest : function(url, callback, params) {
+			// at the moment we only support a very tiny subset of
+			// what is allowed in "params"
+			// alert("makeRequest: " + url);
+			var xhr = null;
+			if (window.XMLHttpRequest) {
+				xhr = new window.XMLHttpRequest();
+			} else if (window.ActiveXObject) {
+				xhr = new ActiveXObject("Msxml2.XMLHTTP");
+				if (!xhr)
+					xhr = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			var method = params[gadgets.io.RequestParameters.METHOD] || "GET";
+			// TODO : this should obviously not be hardcoded...
+			var proxiedUrl = "http://localhost:8089/openSocialProxy?" + url;
+			// alert(proxiedUrl) ;
+			try {
+				xhr.open(method, proxiedUrl, true);
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState == 4 && xhr.status == 200) {
+						callback( {
+							data : eval("(" + xhr.responseText + ")")
+						});
+					}
+				};
+				xhr.send();
+			} catch (e) {
+				alert(e.description);
+			}
 		}
 	}
 }();
@@ -22,4 +49,3 @@ gadgets.io.ContentType = gadgets.util
 
 gadgets.io.AuthorizationType = gadgets.util.makeEnum( [ "NONE", "SIGNED",
 		"OAUTH" ]);
-
