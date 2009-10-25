@@ -12,15 +12,25 @@ package org.eclipse.e4.ui.internal.gadgets.opensocial;
 
 public class OSGUserPref {
 	String name;
+	String value;
 	String defaultValue;
 
 	public OSGUserPref(String name, String defaultValue) {
 		this.name = name;
+		this.value = defaultValue;
 		this.defaultValue = defaultValue;
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 	public String getDefaultValue() {

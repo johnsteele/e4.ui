@@ -19,5 +19,12 @@
             name="Open Gadget">
       </command>
    </extension>
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+      <servlet
+            alias="/openSocialProxy"
+            class="org.eclipse.e4.ui.internal.gadgets.opensocial.servlets.ProxyServlet">
+      </servlet>
+   </extension>
 
 </plugin>

@@ -15,8 +15,7 @@ gadgets.io = function() {
 					xhr = new ActiveXObject("Microsoft.XMLHTTP");
 			}
 			var method = params[gadgets.io.RequestParameters.METHOD] || "GET";
-			// TODO : this should obviously not be hardcoded...
-			var proxiedUrl = "http://localhost:8089/openSocialProxy?" + url;
+			var proxiedUrl = "%%%PROXY_URL%%%/openSocialProxy?" + url;
 			// alert(proxiedUrl) ;
 			try {
 				xhr.open(method, proxiedUrl, true);

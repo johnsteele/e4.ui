@@ -48,4 +48,29 @@ public class OSGModule {
 	public List<OSGUserPref> getUserPrefs() {
 		return userPrefs;
 	}
+
+	public void setUserPrefValue(String key, String value) {
+		for (OSGUserPref pref : getUserPrefs()) {
+			if (pref.getName().equals(key)) {
+				pref.setValue((String) value);
+			}
+		}
+	}
+
+	public String getUserPrefValue(String key) {
+		for (OSGUserPref pref : getUserPrefs()) {
+			if (pref.getName().equals(key))
+				return (pref.getValue() == null) ? "" : pref.getValue();
+		}
+		return null;
+	}
+
+	public String getUserPrefDefaultValue(String key) {
+		for (OSGUserPref pref : getUserPrefs()) {
+			if (pref.getName().equals(key))
+				return (pref.getDefaultValue() == null) ? "" : pref.getValue();
+		}
+		return null;
+	}
+
 }
