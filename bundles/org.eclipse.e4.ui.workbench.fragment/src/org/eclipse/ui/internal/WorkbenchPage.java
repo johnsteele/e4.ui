@@ -50,7 +50,6 @@ import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.workbench.ui.api.ModeledPageLayout;
 import org.eclipse.e4.workbench.ui.internal.IValueFunction;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
@@ -599,7 +598,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			partRemoved(ref);
 			// now that it has disappeared from the model, dispose its context
 			MPart mEditorPart = ((ModelEditorReference) ref).getModel();
-			((EObject) mEditorPart).eAdapters().clear();
 			((IDisposable) mEditorPart.getContext()).dispose();
 			mEditorPart.setContext(null);
 		}

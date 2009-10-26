@@ -24,7 +24,6 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
@@ -32,10 +31,7 @@ import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -65,27 +61,6 @@ public class MenuHelper {
 		MenuContribution[] contributions = loadMenuContributions(context);
 		processMenuContributions(context, menuModel, contributions);
 		// processActionSets(context, menuModel);
-	}
-
-	/**
-	 * @param menuModel
-	 */
-	static void traceMenuModel(MMenu menuModel) {
-		((EObject) menuModel).eAdapters().add(new EContentAdapter() {
-			public void notifyChanged(
-					org.eclipse.emf.common.notify.Notification notification) {
-				super.notifyChanged(notification);
-				if (MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN
-						.equals(notification.getFeature())
-						&& notification.getEventType() == Notification.ADD) {
-					MMenuItem item = (MMenuItem) notification.getNewValue();
-					if ("Refac&tor".equals(item.getName())) { //$NON-NLS-1$
-						Activator.trace(Policy.DEBUG_MENUS, item.getName()
-								+ ':' + item.getId(), new RuntimeException());
-					}
-				}
-			};
-		});
 	}
 
 	/**
