@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.gadgets.opensocial;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,7 +24,6 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -218,32 +219,43 @@ public class OpenSocialView extends BrowserViewPart {
 			if ("url".equalsIgnoreCase(content.getType())) {
 				localUrl = content.getHref();
 			} else if ("html".equalsIgnoreCase(content.getType())) {
-				String igFunctions = "<head></head><script>\r\n"
-						+ "var gadgets = gadgets || {};\r\n"
-						+ "gadgets.Prefs = function() {\r\n";
+				StringBuilder igFunctions = new StringBuilder();
+				igFunctions.append("<head></head><script>\r\n");
+				igFunctions.append("var gadgets = gadgets || {};\r\n");
+				igFunctions.append("gadgets.Prefs = function() {\r\n");
 				for (OSGUserPref userPref : module.getUserPrefs()) {
-					igFunctions += "this." + userPref.getName() + "='"
-							+ userPref.getValue() + "';";
+					igFunctions.append("this." + userPref.getName());
+					igFunctions.append("='");
+					igFunctions.append(userPref.getValue());
+					igFunctions.append("';");
 				}
-				igFunctions += "\r\n}\r\n\r\n";
+				igFunctions.append("\r\n}\r\n\r\n");
 				try {
 					// inject Javascript gadgets.* functions
 					for (String script : scripts) {
-						igFunctions += IOUtils.toString(bundle.getEntry(
-								"js/" + script).openStream());
+						// append the script to igFunctions
+						InputStream scriptInputStream = bundle.getEntry(
+								"js/" + script).openStream();
+						BufferedReader scriptReader = new BufferedReader(
+								new InputStreamReader(scriptInputStream));
+						String line = null;
+						while ((line = scriptReader.readLine()) != null) {
+							igFunctions.append(line + "\r\n");
+						}
+						scriptReader.close();
 					}
-					ServiceReference httpServiceReference = bundle
-							.getBundleContext().getServiceReference(
-									HttpService.class.getName());
-					String proxyPort = httpServiceReference.getProperty(
-							"http.port").toString();
-					igFunctions = igFunctions.replace("%%%PROXY_URL%%%",
-							"http://localhost:" + proxyPort);
 				} catch (IOException e) {
-					// TODO
+					// TODO log
 				}
-				igFunctions += "\r\n</script>\r\n";
-				html = igFunctions + content.getValue();
+				igFunctions.append("\r\n</script>\r\n");
+				html = igFunctions.toString() + content.getValue();
+				ServiceReference httpServiceReference = bundle
+						.getBundleContext().getServiceReference(
+								HttpService.class.getName());
+				String proxyPort = httpServiceReference
+						.getProperty("http.port").toString();
+				html = html.replace("%%%PROXY_URL%%%", "http://localhost:"
+						+ proxyPort);
 			}
 			if (localUrl == null && html == null) {
 				throw new RuntimeException("could not find Gadget URL");
