@@ -26,5 +26,13 @@
             class="org.eclipse.e4.ui.internal.gadgets.opensocial.servlets.ProxyServlet">
       </servlet>
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.eclipse.e4.ui.internal.gadgets.opensocial.OSGModulePrefsPropertyPage"
+            id="org.eclipse.e4.ui.gadgets.OSGModuleUserPreferences"
+            name="User Preferences">
+      </page>
+   </extension>
 
 </plugin>

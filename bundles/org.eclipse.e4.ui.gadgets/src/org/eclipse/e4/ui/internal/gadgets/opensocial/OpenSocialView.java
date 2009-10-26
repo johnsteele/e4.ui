@@ -18,8 +18,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -30,24 +28,21 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.ui.internal.gadgets.opensocial.servlets.StringServlet;
 import org.eclipse.e4.ui.web.BrowserViewPart;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySheetPage;
-import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.IPropertySourceProvider;
-import org.eclipse.ui.views.properties.PropertySheetPage;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -58,109 +53,15 @@ public class OpenSocialView extends BrowserViewPart {
 
 	private static final String USERPREFS = "userprefs";
 
-	private final class ModulePropertySourceProvider implements
-			IPropertySourceProvider {
-		public IPropertySource getPropertySource(final Object object) {
-			return new IPropertySource() {
-
-				private IPropertyDescriptor[] propertyDescriptor;
-
-				public void setPropertyValue(Object id, Object value) {
-					OSGModule module = (OSGModule) object;
-					module.setUserPrefValue((String) id, (String) value);
-					OpenSocialView.this.configureBrowser(browser);
-				}
-
-				public void resetPropertyValue(Object id) {
-					OSGModule module = (OSGModule) object;
-					module.setUserPrefValue((String) id, module
-							.getUserPrefDefaultValue((String) id));
-					OpenSocialView.this.configureBrowser(browser);
-				}
-
-				public boolean isPropertySet(Object id) {
-					OSGModule module = (OSGModule) object;
-					return !(module.getUserPrefValue((String) id).equals(module
-							.getUserPrefDefaultValue((String) id)));
-				}
-
-				public Object getPropertyValue(Object id) {
-					OSGModule module = (OSGModule) object;
-					String value = module.getUserPrefValue((String) id);
-					return (value == null) ? "" : value;
-				}
-
-				public IPropertyDescriptor[] getPropertyDescriptors() {
-					if (propertyDescriptor == null) {
-						List<IPropertyDescriptor> l = new ArrayList<IPropertyDescriptor>();
-
-						for (OSGUserPref pref : module.getUserPrefs()) {
-							TextPropertyDescriptor textPropertyDescriptor = new TextPropertyDescriptor(
-									pref.getName(), pref.getName());
-							l.add(textPropertyDescriptor);
-						}
-
-						propertyDescriptor = l
-								.toArray(new IPropertyDescriptor[0]);
-					}
-
-					return propertyDescriptor;
-
-				}
-
-				public Object getEditableValue() {
-					return object;
-				}
-			};
-		}
-	}
-
-	/*
-	 * Helper class needed to simulate a selection provider to communicate with
-	 * the properties View
-	 */
-	private class SelectionProviderAdapter implements ISelectionProvider {
-
-		List<ISelectionChangedListener> listeners = new ArrayList<ISelectionChangedListener>();
-
-		ISelection theSelection = StructuredSelection.EMPTY;
-
-		public void addSelectionChangedListener(
-				ISelectionChangedListener listener) {
-			listeners.add(listener);
-		}
-
-		public ISelection getSelection() {
-			return theSelection;
-		}
-
-		public void removeSelectionChangedListener(
-				ISelectionChangedListener listener) {
-			listeners.remove(listener);
-		}
-
-		public void setSelection(ISelection selection) {
-			theSelection = selection;
-			final SelectionChangedEvent e = new SelectionChangedEvent(this,
-					selection);
-			Object[] listenersArray = listeners.toArray();
-
-			for (int i = 0; i < listenersArray.length; i++) {
-				final ISelectionChangedListener l = (ISelectionChangedListener) listenersArray[i];
-				l.selectionChanged(e);
-			}
-		}
-	}
-
 	private String url;
 	private String html;
-	private SelectionProviderAdapter ss;
 	private OSGModule module;
 	private IMemento memento;
 	private final String[] scripts = new String[] { "util.js", "io.js",
 			"misc.js", "prefs.js", "window.js" }; // util.js must always be
 	// loaded first
 	private Bundle bundle;
+	private Action editPropertiesAction;
 
 	protected String getNewWindowViewId() {
 		return getSite().getId();
@@ -171,9 +72,46 @@ public class OpenSocialView extends BrowserViewPart {
 		super.init(site, memento);
 		url = site.getSecondaryId();
 		this.memento = memento;
-		ss = new SelectionProviderAdapter();
-		site.setSelectionProvider(ss);
 		bundle = FrameworkUtil.getBundle(this.getClass());
+	}
+
+	@Override
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		makeActions();
+		contributeToActionBars();
+	}
+
+	private void makeActions() {
+		editPropertiesAction = new Action() {
+			public void run() {
+				new PropertyDialogAction(getSite(), new ISelectionProvider() {
+					public void setSelection(ISelection selection) {
+					}
+
+					public void removeSelectionChangedListener(
+							ISelectionChangedListener listener) {
+					}
+
+					public ISelection getSelection() {
+						return new StructuredSelection(module);
+					}
+
+					public void addSelectionChangedListener(
+							ISelectionChangedListener listener) {
+					}
+				}).createDialog().open();
+				configureBrowser(browser);
+			}
+		};
+		editPropertiesAction.setText("Module settings");
+		editPropertiesAction.setToolTipText("Edit Module Settings");
+	}
+
+	private void contributeToActionBars() {
+		IActionBars bars = getViewSite().getActionBars();
+		bars.getMenuManager().add(editPropertiesAction);
+		bars.getMenuManager().update(true);
 	}
 
 	@Override
@@ -299,7 +237,6 @@ public class OpenSocialView extends BrowserViewPart {
 				};
 				job.schedule();
 			}
-			ss.setSelection(new StructuredSelection(module));
 		} else {
 			localUrl = "http://ig.gmodules.com/gadgets/ifr?view=home&url="
 					+ "http://hosting.gmodules.com/ig/gadgets/file/104276582316790234013/test-1.xml"
@@ -371,16 +308,5 @@ public class OpenSocialView extends BrowserViewPart {
 			httpService.unregister("/"
 					+ getViewSite().getSecondaryId().hashCode());
 		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Object getAdapter(Class adapter) {
-		if (adapter == IPropertySheetPage.class) {
-			PropertySheetPage psp = new PropertySheetPage();
-			psp.setPropertySourceProvider(new ModulePropertySourceProvider());
-			return psp;
-		}
-		return super.getAdapter(adapter);
 	}
 }
