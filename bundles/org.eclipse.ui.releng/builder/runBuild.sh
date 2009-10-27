@@ -55,9 +55,9 @@ qfailed=$?
 
 if [ $qfailed = 1 ]; then
 rm -rf ${buildTopDir}/tests/test-eclipse
-sendComplete
+#sendComplete
 else
-sendFailures
+#sendFailures
 fi
 
 cp $optLocal/runBuild.log $buildDir
