@@ -63,6 +63,8 @@ public class OpenSocialView extends BrowserViewPart {
 	private Bundle bundle;
 	private Action editPropertiesAction;
 
+	private String PROXY_PORT;
+
 	protected String getNewWindowViewId() {
 		return getSite().getId();
 	}
@@ -190,10 +192,10 @@ public class OpenSocialView extends BrowserViewPart {
 				ServiceReference httpServiceReference = bundle
 						.getBundleContext().getServiceReference(
 								HttpService.class.getName());
-				String proxyPort = httpServiceReference
-						.getProperty("http.port").toString();
+				PROXY_PORT = httpServiceReference.getProperty("http.port")
+						.toString();
 				html = html.replace("%%%PROXY_URL%%%", "http://localhost:"
-						+ proxyPort);
+						+ PROXY_PORT);
 			}
 			if (localUrl == null && html == null) {
 				throw new RuntimeException("could not find Gadget URL");
@@ -244,7 +246,7 @@ public class OpenSocialView extends BrowserViewPart {
 		}
 		if (html != null) {
 			registerModuleProxyServlet();
-			localUrl = "http://localhost:8089/"
+			localUrl = "http://localhost:" + PROXY_PORT + "/"
 					+ getViewSite().getSecondaryId().hashCode();
 		}
 
