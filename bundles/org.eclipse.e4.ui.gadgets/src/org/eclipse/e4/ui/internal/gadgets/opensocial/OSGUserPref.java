@@ -36,4 +36,12 @@ public class OSGUserPref {
 	public String getDefaultValue() {
 		return defaultValue;
 	}
+
+	@Override
+	public String toString() {
+		return "OSGUserPref [name=" + name + ", value=" + value
+				+ ", defaultValue=" + defaultValue + "]";
+	}
+	
+	
 }
