@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.modifier;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.e4.core.services.annotations.In;
-import org.eclipse.e4.core.services.annotations.Inject;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -124,7 +124,7 @@ public class ElementView {
 	/**
 	 * @param selection
 	 */
-	@In
+	@Inject
 	public void setSelection(final EObject selection) {
 		if (selection==null) {
 			return;

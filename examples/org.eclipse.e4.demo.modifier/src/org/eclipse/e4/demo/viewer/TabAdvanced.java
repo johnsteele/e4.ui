@@ -12,7 +12,8 @@ package org.eclipse.e4.demo.viewer;
 
 import java.util.Iterator;
 
-import org.eclipse.e4.core.services.annotations.In;
+import javax.inject.Inject;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -213,7 +214,7 @@ public class TabAdvanced {
 		return eObj.eGet(eFeature);
 	}
 
-	@In
+	@Inject
 	public void setSelection(final EObject selection) {
 		if (selection == null)
 			return;

@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.viewer;
 
-import org.eclipse.e4.core.services.annotations.In;
+import javax.inject.Inject;
+
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
@@ -62,7 +63,7 @@ public class TabBasic {
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
 	
-	@In
+	@Inject
 	public void setSelection(final EObject selected) {
 		if (selected == null)
 			return;
