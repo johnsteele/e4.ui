@@ -26,9 +26,9 @@ gadgets.io = function() {
 						});
 					}
 				};
-				xhr.send();
+				xhr.send(null);
 			} catch (e) {
-				alert(e.description);
+				alert(e.name + "\r\n" + e.description);
 			}
 		}
 	}
