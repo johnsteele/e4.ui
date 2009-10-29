@@ -58,7 +58,7 @@ mv $buildDir/results/text/mail.txt $buildDir/results/text/fail.txt
 fi 
 
 cp $optLocal/runBuild.log $buildDir
-rm -rf ${buildTopDir}/plugins ${buildTopDir}/tests
+#rm -rf ${buildTopDir}/plugins ${buildTopDir}/tests
 cp -r $buildDir $HOME/builds
 
 if [ ! -e $optLocal/done.txt ]; then
