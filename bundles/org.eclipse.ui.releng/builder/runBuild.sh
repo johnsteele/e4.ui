@@ -50,15 +50,12 @@ mailx -s "[fail] Build ${buildLabel}" \
 }
 
 cat $buildDir/results/text/*.txt >$buildDir/results/text/mail.txt
-size $buildDir/results/text/mail.txt >/dev/null 2>&1
-qfailed=$?
-
-if [ $qfailed = 1 ]; then
-rm -rf ${buildTopDir}/tests/test-eclipse
-echo sendComplete
+bytes=$( cat $buildDir/results/text/mail.txt | wc -c )
+if (( $bytes == 0 )); then
+mv $buildDir/results/text/mail.txt $buildDir/results/text/pass.txt
 else
-echo sendFailures
-fi
+mv $buildDir/results/text/mail.txt $buildDir/results/text/fail.txt
+fi 
 
 cp $optLocal/runBuild.log $buildDir
 cp -r $buildDir $HOME/builds
