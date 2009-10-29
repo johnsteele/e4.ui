@@ -8,11 +8,9 @@
  * Contributors:
  *     Benjamin Cabe, Sierra Wireless - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.ui.internal.gadgets.opensocial;
+package org.eclipse.e4.ui.internal.gadgets.opensocial.propertyPages;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.eclipse.e4.ui.internal.gadgets.opensocial.OSGModule;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -23,12 +21,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-public class OSGModulePrefsPropertyPage extends PropertyPage implements
+public class MainPropertyPage extends PropertyPage implements
 		IWorkbenchPropertyPage {
 
-	private Map<String, Text> preferenceEditors = new HashMap<String, Text>();
-
-	public OSGModulePrefsPropertyPage() {
+	public MainPropertyPage() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -42,44 +38,23 @@ public class OSGModulePrefsPropertyPage extends PropertyPage implements
 		composite.setLayoutData(data);
 
 		OSGModule module = (OSGModule) getElement().getAdapter(OSGModule.class);
-		for (OSGUserPref pref : module.getUserPrefs()) {
-			addProperty(composite, pref.getName(), pref.getValue());
-		}
+		addProperty(composite, "Title:", module.getTitle());
+		addProperty(composite, "Author:", module.getAuthor());
+		addProperty(composite, "Description:", module.getDescription());
 
 		return composite;
 	}
 
-	@Override
-	public boolean performOk() {
-		OSGModule module = (OSGModule) getElement().getAdapter(OSGModule.class);
-		for (Map.Entry<String, Text> entry : preferenceEditors.entrySet()) {
-			module.setUserPrefValue(entry.getKey(), entry.getValue().getText());
-		}
-
-		return true;
-	}
-
-	@Override
-	protected void performDefaults() {
-		OSGModule module = (OSGModule) getElement().getAdapter(OSGModule.class);
-		for (Map.Entry<String, Text> entry : preferenceEditors.entrySet()) {
-			String userPrefDefaultValue = module.getUserPrefDefaultValue(entry
-					.getKey());
-			entry.getValue().setText(userPrefDefaultValue);
-		}
-	}
-
-	private void addProperty(Composite parent, String key, String value) {
+	private void addProperty(Composite parent, String name, String value) {
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(key);
+		label.setText(name);
 
-		Text text = new Text(parent, SWT.BORDER);
+		Text text = new Text(parent, SWT.READ_ONLY);
 		if (value == null)
 			value = "";
 		text.setText(value);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		text.setLayoutData(gd);
-		preferenceEditors.put(key, text);
 	}
 
 }

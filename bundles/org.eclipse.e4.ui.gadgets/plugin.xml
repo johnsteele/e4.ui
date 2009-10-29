@@ -29,7 +29,13 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            class="org.eclipse.e4.ui.internal.gadgets.opensocial.OSGModulePrefsPropertyPage"
+            class="org.eclipse.e4.ui.internal.gadgets.opensocial.propertyPages.MainPropertyPage"
+            id="org.eclipse.e4.ui.gadgets.Main"
+            name="Gadget">
+      </page>
+      <page
+            category="org.eclipse.e4.ui.gadgets.Main"
+            class="org.eclipse.e4.ui.internal.gadgets.opensocial.propertyPages.OSGModulePrefsPropertyPage"
             id="org.eclipse.e4.ui.gadgets.OSGModuleUserPreferences"
             name="User Preferences">
       </page>
