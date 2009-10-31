@@ -32,12 +32,22 @@
             class="org.eclipse.e4.ui.internal.gadgets.opensocial.propertyPages.MainPropertyPage"
             id="org.eclipse.e4.ui.gadgets.Main"
             name="Gadget">
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.e4.ui.internal.gadgets.opensocial.OSGModule">
+            </adapt>
+         </enabledWhen>
       </page>
       <page
             category="org.eclipse.e4.ui.gadgets.Main"
             class="org.eclipse.e4.ui.internal.gadgets.opensocial.propertyPages.OSGModulePrefsPropertyPage"
             id="org.eclipse.e4.ui.gadgets.OSGModuleUserPreferences"
             name="User Preferences">
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.e4.ui.internal.gadgets.opensocial.OSGModule">
+            </adapt>
+         </enabledWhen>
       </page>
    </extension>
 
