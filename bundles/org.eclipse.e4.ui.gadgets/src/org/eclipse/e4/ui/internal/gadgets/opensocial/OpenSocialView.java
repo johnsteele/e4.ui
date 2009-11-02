@@ -22,6 +22,14 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -50,7 +58,8 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 
-public class OpenSocialView extends BrowserViewPart {
+public class OpenSocialView extends BrowserViewPart implements
+		IResourceChangeListener {
 
 	private static final String USERPREFS = "userprefs";
 
@@ -67,6 +76,8 @@ public class OpenSocialView extends BrowserViewPart {
 
 	private String PROXY_PORT;
 
+	private IFile moduleFile;
+
 	protected String getNewWindowViewId() {
 		return getSite().getId();
 	}
@@ -77,6 +88,18 @@ public class OpenSocialView extends BrowserViewPart {
 		url = site.getSecondaryId();
 		this.memento = memento;
 		bundle = FrameworkUtil.getBundle(this.getClass());
+
+		url = url.replace("%3A", ":");
+		URI uri = URI.create(url);
+		if (!uri.isAbsolute())
+			return;
+		IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
+				.findFilesForLocationURI(uri);
+		if (files.length > 0) {
+			moduleFile = files[0];
+			moduleFile.getWorkspace().addResourceChangeListener(this,
+					IResourceChangeEvent.POST_CHANGE);
+		}
 	}
 
 	@Override
@@ -142,6 +165,8 @@ public class OpenSocialView extends BrowserViewPart {
 	@Override
 	public void dispose() {
 		unregisterModuleProxyServlet();
+		if (moduleFile != null)
+			moduleFile.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
 	}
 
@@ -333,5 +358,38 @@ public class OpenSocialView extends BrowserViewPart {
 			httpService.unregister("/"
 					+ getViewSite().getSecondaryId().hashCode());
 		}
+	}
+
+	public void resourceChanged(IResourceChangeEvent event) {
+		IResourceDelta rootDelta = event.getDelta();
+		if (rootDelta.findMember(moduleFile.getFullPath()) == null)
+			return;
+
+		try {
+			event.getDelta().accept(new IResourceDeltaVisitor() {
+				public boolean visit(IResourceDelta delta) throws CoreException {
+					if (delta.getResource() instanceof IContainer)
+						return true;
+
+					if (moduleFile.equals(delta.getResource())) {
+						if (delta.getKind() == IResourceDelta.REMOVED) {
+							Display.getDefault().asyncExec(new Runnable() {
+								public void run() {
+									getViewSite().getPage().hideView(
+											OpenSocialView.this);
+								}
+							});
+						} else {
+							module = null;
+							configureBrowser(browser);
+						}
+					}
+					return false;
+				}
+			});
+		} catch (CoreException e) {
+			// TODO log correctly
+		}
+
 	}
 }
