@@ -52,7 +52,7 @@ public class MainPropertyPage extends PropertyPage implements
 		Text text = new Text(parent, SWT.READ_ONLY);
 		if (value == null)
 			value = "";
-		text.setText(value);
+		text.setText(value.trim());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		text.setLayoutData(gd);
 	}
