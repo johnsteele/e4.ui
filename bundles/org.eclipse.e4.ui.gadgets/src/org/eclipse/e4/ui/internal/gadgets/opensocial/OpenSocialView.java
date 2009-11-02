@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.ui.internal.gadgets.opensocial.servlets.StringServlet;
 import org.eclipse.e4.ui.web.BrowserViewPart;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -62,6 +63,7 @@ public class OpenSocialView extends BrowserViewPart {
 	// loaded first
 	private Bundle bundle;
 	private Action editPropertiesAction;
+	private Action refreshAction;
 
 	private String PROXY_PORT;
 
@@ -82,6 +84,7 @@ public class OpenSocialView extends BrowserViewPart {
 		super.createPartControl(parent);
 		makeActions();
 		contributeToActionBars();
+		contributeToToolBars();
 	}
 
 	private void makeActions() {
@@ -108,12 +111,32 @@ public class OpenSocialView extends BrowserViewPart {
 		};
 		editPropertiesAction.setText("Module settings");
 		editPropertiesAction.setToolTipText("Edit Module Settings");
+
+		refreshAction = new Action() {
+			public void run() {
+				module = null;
+				configureBrowser(browser);
+			}
+		};
+		refreshAction.setText("Refresh");
+		refreshAction.setDisabledImageDescriptor(ImageDescriptor
+				.createFromURL(bundle
+						.getEntry("/icons/full/dlcl16/refresh.gif")));
+		refreshAction.setImageDescriptor(ImageDescriptor.createFromURL(bundle
+				.getEntry("/icons/full/elcl16/refresh.gif")));
+		refreshAction.setToolTipText("Refresh module");
 	}
 
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		bars.getMenuManager().add(editPropertiesAction);
 		bars.getMenuManager().update(true);
+	}
+
+	private void contributeToToolBars() {
+		IActionBars bars = getViewSite().getActionBars();
+		bars.getToolBarManager().add(refreshAction);
+		bars.getToolBarManager().update(true);
 	}
 
 	@Override
