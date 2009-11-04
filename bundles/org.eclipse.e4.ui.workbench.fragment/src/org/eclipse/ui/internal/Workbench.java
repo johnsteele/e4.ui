@@ -37,7 +37,6 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.ContextManager;
@@ -73,7 +72,6 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MPerspective;
-import org.eclipse.e4.ui.services.EBindingService;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.events.EventBrokerFactory;
 import org.eclipse.e4.ui.services.events.IEventBroker;
@@ -99,7 +97,6 @@ import org.eclipse.jface.action.ExternalActionManager.IExecuteApplicable;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
-import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -2069,15 +2066,17 @@ public final class Workbench extends EventManager implements IWorkbench {
 						return workbenchCommandSupport;
 					}
 				});
-		EBindingService e4BindingService = new EBindingService() {
-			public TriggerSequence getBestActiveBindingFor(
-					ParameterizedCommand command) {
-				if (bindingService[0] == null)
-					return null;
-				return bindingService[0].getBestActiveBindingFor(command);
-			}
-		};
-		e4Context.set(EBindingService.class.getName(), e4BindingService);
+
+		// TODO needs a replacement with the updated binding service and bridge
+		// EBindingService e4BindingService = new EBindingService() {
+		// public TriggerSequence getBestActiveBindingFor(
+		// ParameterizedCommand command) {
+		// if (bindingService[0] == null)
+		// return null;
+		// return bindingService[0].getBestActiveBindingFor(command);
+		// }
+		// };
+		// e4Context.set(EBindingService.class.getName(), e4BindingService);
 
 		final ISourceProvider showInProvider = sourceProviderService
 				.getSourceProvider(ISources.SHOW_IN_SELECTION);
