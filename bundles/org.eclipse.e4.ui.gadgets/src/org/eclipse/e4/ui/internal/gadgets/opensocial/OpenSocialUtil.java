@@ -56,22 +56,22 @@ public class OpenSocialUtil {
 		module.description = hangmanExpand(module.description, hangmanMap);
 		module.author = hangmanExpand(module.author, hangmanMap);
 
-//		System.out.println("Gadget: " + module.title);
-//		System.out.println("Author: " + module.author);
-//		System.out.println("Description: " + module.description);
+		// System.out.println("Gadget: " + module.title);
+		// System.out.println("Author: " + module.author);
+		// System.out.println("Description: " + module.description);
 
 		for (OSGContent content : new HashSet<OSGContent>(module.contents
 				.values())) {
 			if ("url".equalsIgnoreCase(content.type)) {
 				content.href = hangmanExpand(content.href, hangmanMap);
-//				System.out.println("URL: " + content.href);
+				// System.out.println("URL: " + content.href);
 			} else if ("html".equalsIgnoreCase(content.type)) {
 				content.value = hangmanExpand(content.value, hangmanMap);
-//				System.out.println("HTML: ...");
+				// System.out.println("HTML: ...");
 			} else {
-//				System.out.println("unhandled type: " + content.type);
+				// System.out.println("unhandled type: " + content.type);
 			}
-//			System.out.println("Views: " + content.view);
+			// System.out.println("Views: " + content.view);
 		}
 		return module;
 	}
@@ -97,21 +97,25 @@ public class OpenSocialUtil {
 				hangmanMap.put("__BIDI_REVERSE_DIR__", "ltr");
 			}
 			String messagesURIString = locale.messagesURI;
-			if (!messagesURIString.startsWith("http")) {
-				if (!messagesURIString.startsWith("/")) {
-					String uriString = uri.toString();
-					messagesURIString = uriString.substring(0, uriString
-							.lastIndexOf('/'))
-							+ "/" + messagesURIString;
-				} else {
-					messagesURIString = "http://" + uri.getHost()
-							+ messagesURIString;
+			if (messagesURIString != null) {
+				if (!messagesURIString.startsWith("http")) {
+					if (!messagesURIString.startsWith("/")) {
+						String uriString = uri.toString();
+						messagesURIString = uriString.substring(0, uriString
+								.lastIndexOf('/'))
+								+ "/" + messagesURIString;
+					} else {
+						messagesURIString = "http://" + uri.getHost()
+								+ messagesURIString;
+					}
 				}
-			}
-			try {
-				addMessagesToMap(hangmanMap, messagesURIString);
-			} catch (Exception e) {
-				throw new RuntimeException("Could not parse messages", e);
+				try {
+					addMessagesToMap(hangmanMap, messagesURIString);
+				} catch (Exception e) {
+					throw new RuntimeException("Could not parse messages", e);
+				}
+			} else {
+				addMessagesToMap(hangmanMap, locale.messages);
 			}
 		}
 	}
@@ -148,13 +152,17 @@ public class OpenSocialUtil {
 			OSGModule module;
 			OSGContent content;
 			StringBuffer contentBuffer;
+			OSGLocale locale;
+			String currentMsgName = null;
+			StringBuffer currentMsgValue = null;
 
 			public void startElement(String uri, String localName,
 					String qName, Attributes attributes) throws SAXException {
 				if (contentBuffer != null) {
 					contentBuffer.append("<" + qName);
-					for(int i=0; i<attributes.getLength(); i++) {
-						contentBuffer.append(" " + attributes.getQName(i) + "=\"" + attributes.getValue(i) + "\"");
+					for (int i = 0; i < attributes.getLength(); i++) {
+						contentBuffer.append(" " + attributes.getQName(i)
+								+ "=\"" + attributes.getValue(i) + "\"");
 					}
 					contentBuffer.append(">");
 				} else if ("ModulePrefs".equalsIgnoreCase(qName)) {
@@ -163,12 +171,15 @@ public class OpenSocialUtil {
 									.getValue("description"));
 					result[0] = module;
 				} else if ("Locale".equalsIgnoreCase(qName)) {
-					OSGLocale locale = new OSGLocale(attributes
-							.getValue("lang"), attributes.getValue("country"),
-							attributes.getValue("language_direction"),
-							attributes.getValue("messages"));
+					locale = new OSGLocale(attributes.getValue("lang"),
+							attributes.getValue("country"), attributes
+									.getValue("language_direction"), attributes
+									.getValue("messages"));
 					module.locales.put(new LocaleKey(locale.lang,
 							locale.country), locale);
+				} else if ("msg".equalsIgnoreCase(qName)) {
+					currentMsgName = attributes.getValue("name");
+					currentMsgValue = new StringBuffer();
 				} else if ("UserPref".equalsIgnoreCase(qName)) {
 					module.userPrefs.add(new OSGUserPref(attributes
 							.getValue("name"), attributes
@@ -186,6 +197,9 @@ public class OpenSocialUtil {
 				if (contentBuffer != null) {
 					contentBuffer.append(ch, start, length);
 				}
+				if (currentMsgName != null) {
+					currentMsgValue.append(ch, start, length);
+				}
 			}
 
 			public void endElement(String uri, String localName, String qName)
@@ -196,10 +210,17 @@ public class OpenSocialUtil {
 					StringTokenizer t = new StringTokenizer(content.view, ",");
 					if (!t.hasMoreTokens()) {
 						module.contents.put("default", content);
-					} else while (t.hasMoreTokens()) {
-						module.contents.put(t.nextToken(), content);
-					}
+					} else
+						while (t.hasMoreTokens()) {
+							module.contents.put(t.nextToken(), content);
+						}
 					contentBuffer = null;
+				} else if ("Locale".equalsIgnoreCase(qName)) {
+					locale = null;
+				} else if ("msg".equalsIgnoreCase(qName)) {
+					locale.messages.put(currentMsgName, currentMsgValue
+							.toString());
+					currentMsgName = null;
 				} else if (contentBuffer != null) {
 					contentBuffer.append("</" + qName);
 					contentBuffer.append(">");
@@ -210,10 +231,10 @@ public class OpenSocialUtil {
 		return result[0];
 	}
 
-
 	private static void addMessagesToMap(final Map<String, String> hangmanMap,
 			String messagesURIString) throws Exception {
-//		System.out.println("Loading message bundle from: " + messagesURIString);
+		// System.out.println("Loading message bundle from: " +
+		// messagesURIString);
 		DefaultHandler handler = new DefaultHandler() {
 			String name;
 			String value;
@@ -237,6 +258,13 @@ public class OpenSocialUtil {
 			}
 		};
 		parseXML(new java.net.URI(messagesURIString), handler);
+	}
+
+	private static void addMessagesToMap(Map<String, String> hangmanMap,
+			Map<String, String> messages) {
+		for (Map.Entry<String, String> entry : messages.entrySet()) {
+			hangmanMap.put("__MSG_" + entry.getKey() + "__", entry.getValue());
+		}
 	}
 
 	private static void parseXML(java.net.URI uri, DefaultHandler handler)

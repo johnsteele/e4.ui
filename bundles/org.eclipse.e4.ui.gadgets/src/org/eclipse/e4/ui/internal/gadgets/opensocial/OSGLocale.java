@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.gadgets.opensocial;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class OSGLocale {
 	String lang;
 	String country;
 	String languageDirection;
 	String messagesURI;
+	Map<String, String> messages = new HashMap<String, String>();
 
 	public OSGLocale(String lang, String country, String languageDirection,
 			String messagesURI) {
