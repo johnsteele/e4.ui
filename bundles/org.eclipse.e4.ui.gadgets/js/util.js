@@ -3,8 +3,8 @@ var gadgets = gadgets || {};
 gadgets.util = function() {
 	return {
 		registerOnLoadHandler : function(callback) {
-			// alert("callback: " + callback);
-			callback();
+			callback() ;
+			//window.onload = callback;
 		},
 	
     	makeEnum : function (values) {

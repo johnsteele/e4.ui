@@ -20,8 +20,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -34,7 +37,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.e4.ui.internal.gadgets.opensocial.servlets.StringServlet;
 import org.eclipse.e4.ui.web.BrowserViewPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -44,6 +46,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.BrowserFunction;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -54,9 +57,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.http.HttpService;
-import org.osgi.service.http.NamespaceException;
 
 public class OpenSocialView extends BrowserViewPart implements
 		IResourceChangeListener {
@@ -74,9 +74,9 @@ public class OpenSocialView extends BrowserViewPart implements
 	private Action editPropertiesAction;
 	private Action refreshAction;
 
-	private String PROXY_PORT;
-
 	private IFile moduleFile;
+
+	private BrowserFunction makeRequestBrowserFunction;
 
 	protected String getNewWindowViewId() {
 		return getSite().getId();
@@ -162,11 +162,50 @@ public class OpenSocialView extends BrowserViewPart implements
 		bars.getToolBarManager().update(true);
 	}
 
+	private void registerBrowserFunctions() {
+		if (makeRequestBrowserFunction != null)
+			makeRequestBrowserFunction.dispose();
+
+		makeRequestBrowserFunction = new BrowserFunction(browser,
+				"e4_makeXmlHttpRequest") {
+			@Override
+			public Object function(Object[] arguments) {
+				/* e4_xhr : function(url, callback) */
+				try {
+					String url = (String) arguments[0];
+					String callback = (String) arguments[1];
+					HttpClient httpClient = new HttpClient();
+					HttpMethod httpMethod = new GetMethod(url);
+					int status = httpClient.executeMethod(httpMethod);
+					if (status == HttpStatus.SC_OK) {
+						final String script = "{var foo = " + callback
+								+ "({ data : eval('("
+								+ httpMethod.getResponseBodyAsString()
+								+ ")')}) ;}";
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								browser.execute(script);
+							}
+						});
+					}
+					return status;
+				} catch (HttpException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				return HttpStatus.SC_INTERNAL_SERVER_ERROR;
+			}
+		};
+	}
+
 	@Override
 	public void dispose() {
-		unregisterModuleProxyServlet();
 		if (moduleFile != null)
 			moduleFile.getWorkspace().removeResourceChangeListener(this);
+		if (makeRequestBrowserFunction != null)
+			makeRequestBrowserFunction.dispose();
 		super.dispose();
 	}
 
@@ -183,6 +222,8 @@ public class OpenSocialView extends BrowserViewPart implements
 	}
 
 	protected void configureBrowser(Browser browser) {
+		registerBrowserFunctions();
+
 		String localUrl = null;
 		if (url != null) {
 			url = url.replace("%3A", ":");
@@ -237,13 +278,6 @@ public class OpenSocialView extends BrowserViewPart implements
 				}
 				igFunctions.append("\r\n</script>\r\n");
 				html = igFunctions.toString() + content.getValue();
-				ServiceReference httpServiceReference = bundle
-						.getBundleContext().getServiceReference(
-								HttpService.class.getName());
-				PROXY_PORT = httpServiceReference.getProperty("http.port")
-						.toString();
-				html = html.replace("%%%PROXY_URL%%%", "http://localhost:"
-						+ PROXY_PORT);
 			}
 			if (localUrl == null && html == null) {
 				throw new RuntimeException("could not find Gadget URL");
@@ -293,13 +327,12 @@ public class OpenSocialView extends BrowserViewPart implements
 					+ "&nocache=0&up_feed=http://picasaweb.google.com/data/feed/base/user/picasateam/albumid/5114659638793351217%3Fkind%3Dphoto%26alt%3Drss%26hl%3Den_US&up_title=My+Picasa+Photos&up_gallery=&up_desc=1&lang=en&country=us&.lang=en&.country=us&synd=ig&mid=110&ifpctok=-6064860744303900509&exp_split_js=1&exp_track_js=1&exp_ids=17259,300668&parent=http://www.google.com&refresh=3600&libs=core:core.io:core.iglegacy&extern_js=/extern_js/f/CgJlbhICdXMrMNIBOAEs/SH2Zv0WBdfQ.js&is_signedin=1";
 		}
 		if (html != null) {
-			registerModuleProxyServlet();
-			localUrl = "http://localhost:" + PROXY_PORT + "/"
-					+ getViewSite().getSecondaryId().hashCode();
+			browser.setText(html);
+		}
+		if (localUrl != null) {
+			browser.setUrl(localUrl);
 		}
 
-		if (localUrl != null)
-			browser.setUrl(localUrl);
 	}
 
 	private void loadUserPreferences(OSGModule module, IMemento memento) {
@@ -315,48 +348,6 @@ public class OpenSocialView extends BrowserViewPart implements
 				if (pref.getName().equals(key))
 					pref.setValue(node.getString(key));
 			}
-		}
-	}
-
-	private HttpService getHttpService() {
-		ServiceReference httpServiceReference = bundle.getBundleContext()
-				.getServiceReference(HttpService.class.getName());
-		HttpService httpService = (HttpService) bundle.getBundleContext()
-				.getService(httpServiceReference);
-		return httpService;
-	};
-
-	private void registerModuleProxyServlet() {
-		HttpService httpService = getHttpService();
-		if (httpService != null) {
-			try {
-				// always unregister any servlet already mapped on the path we
-				// want to use
-				try {
-					httpService.unregister("/"
-							+ getViewSite().getSecondaryId().hashCode());
-				} catch (IllegalArgumentException e) {
-					// this is normal, and happens when we unregister()
-					// non-existing aliases
-				}
-				httpService.registerServlet("/"
-						+ getViewSite().getSecondaryId().hashCode(),
-						new StringServlet(html), null, null);
-			} catch (ServletException e) {
-				// TODO log properly
-				e.printStackTrace();
-			} catch (NamespaceException e) {
-				// TODO log properly
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private void unregisterModuleProxyServlet() {
-		HttpService httpService = getHttpService();
-		if (httpService != null) {
-			httpService.unregister("/"
-					+ getViewSite().getSecondaryId().hashCode());
 		}
 	}
 
