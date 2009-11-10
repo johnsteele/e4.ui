@@ -43,6 +43,7 @@
       <feature id="org.eclipse.rcp.configuration" version="0.0.0"/>
       <feature id="org.eclipse.e4.sdk.runtime.feature" version="0.0.0"/>
       <feature id="org.eclipse.e4.sdk.source.feature" version="0.0.0"/>
+      <feature id="org.eclipse.releng.tools" version="0.0.0"/>
    </features>
 
    <configurations>
