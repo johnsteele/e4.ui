@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Context Selection Provider
+Bundle-SymbolicName: org.eclipse.e4.ui.selection;singleton:=true
+Bundle-Version: 0.9.0.qualifier
+Bundle-Activator: org.eclipse.e4.ui.selection.internal.Activator
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Import-Package: javax.inject;version="1.0.0",
+ org.eclipse.e4.core.services.context,
+ org.eclipse.e4.core.services.context.spi,
+ org.osgi.framework;version="1.5.0"
+Service-Component: OSGI-INF/selectionService.xml, OSGI-INF/selectionLookup.xml
+Export-Package: org.eclipse.e4.ui.selection,
+ org.eclipse.e4.ui.selection.internal
