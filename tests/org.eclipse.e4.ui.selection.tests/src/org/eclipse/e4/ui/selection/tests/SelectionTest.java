@@ -40,6 +40,14 @@ public class SelectionTest extends TestCase {
 		}
 	}
 
+	static class TrackingProviderPart extends ProviderPart {
+		public String otherSelection;
+
+		public void setOtherSelection(String s) {
+			otherSelection = s;
+		}
+	}
+
 	private IEclipseContext workbenchContext;
 
 	public void testOnePartSelection() throws Exception {
@@ -56,11 +64,13 @@ public class SelectionTest extends TestCase {
 
 	static class UseSelectionHandler {
 		public String selection;
-		public void execute(@Optional @Named(ESelectionService.SELECTION) String s) {
+
+		public void execute(
+				@Optional @Named(ESelectionService.SELECTION) String s) {
 			selection = s;
 		}
 	}
-	
+
 	public void testTwoPartHandlerExecute() throws Exception {
 		IEclipseContext window = TestUtil.createContext(workbenchContext,
 				"windowContext");
@@ -74,13 +84,14 @@ public class SelectionTest extends TestCase {
 		IEclipseContext partTwo = TestUtil.createContext(window, "partTwo");
 		ConsumerPart partTwoImpl = new ConsumerPart();
 		ContextInjectionFactory.inject(partTwoImpl, partTwo);
-		
+
 		partOneImpl.setSelection(SEL_ONE);
-		
+
 		UseSelectionHandler handler = new UseSelectionHandler();
 		assertNull(handler.selection);
-		
-		ContextInjectionFactory.invoke(handler, "execute", workbenchContext, null);
+
+		ContextInjectionFactory.invoke(handler, "execute", workbenchContext,
+				null);
 		assertEquals(SEL_ONE, handler.selection);
 		ContextInjectionFactory.invoke(handler, "execute", window, null);
 		assertEquals(SEL_ONE, handler.selection);
@@ -88,10 +99,11 @@ public class SelectionTest extends TestCase {
 		assertEquals(SEL_ONE, handler.selection);
 		ContextInjectionFactory.invoke(handler, "execute", partTwo, null);
 		assertNull(handler.selection);
-		
+
 		window.set(IContextConstants.ACTIVE_CHILD, partTwo);
-		
-		ContextInjectionFactory.invoke(handler, "execute", workbenchContext, null);
+
+		ContextInjectionFactory.invoke(handler, "execute", workbenchContext,
+				null);
 		assertNull(handler.selection);
 		ContextInjectionFactory.invoke(handler, "execute", window, null);
 		assertNull(handler.selection);
@@ -156,6 +168,59 @@ public class SelectionTest extends TestCase {
 		assertEquals(SEL_ONE, partOneImpl.input);
 		assertNull(partTwoImpl.input);
 		assertEquals(SEL_TWO, partThreeImpl.input);
+	}
+
+	public void testPartOneTracksPartThree() throws Exception {
+		IEclipseContext window = TestUtil.createContext(workbenchContext,
+				"windowContext");
+		workbenchContext.set(IContextConstants.ACTIVE_CHILD, window);
+
+		IEclipseContext partOne = TestUtil.createContext(window, "partOne");
+		window.set(IContextConstants.ACTIVE_CHILD, partOne);
+		final TrackingProviderPart partOneImpl = new TrackingProviderPart();
+		ContextInjectionFactory.inject(partOneImpl, partOne);
+
+		IEclipseContext partTwo = TestUtil.createContext(window, "partTwo");
+		ConsumerPart partTwoImpl = new ConsumerPart();
+		ContextInjectionFactory.inject(partTwoImpl, partTwo);
+
+		final IEclipseContext partThree = TestUtil.createContext(window,
+				"partThree");
+		ProviderPart partThreeImpl = new ProviderPart();
+		ContextInjectionFactory.inject(partThreeImpl, partThree);
+
+		partOneImpl.setSelection(SEL_ONE);
+		partThreeImpl.setSelection(SEL_TWO);
+		assertEquals(SEL_ONE, partOneImpl.input);
+		assertNull(partOneImpl.otherSelection);
+		assertNull(partTwoImpl.input);
+		assertEquals(SEL_TWO, partThreeImpl.input);
+
+		// part one tracks down part three. this could just as easily be
+		// fronted by the mediator.addSelectionListener(*)
+		partThree.runAndTrack(new Runnable() {
+			public void run() {
+				ESelectionService s = (ESelectionService) partThree
+						.get(ESelectionService.class.getName());
+				partOneImpl.setOtherSelection((String) s.getSelection());
+			}
+		});
+		assertEquals(SEL_ONE, partOneImpl.input);
+		assertEquals(SEL_TWO, partOneImpl.otherSelection);
+		assertNull(partTwoImpl.input);
+		assertEquals(SEL_TWO, partThreeImpl.input);
+		
+		partThreeImpl.setSelection(SEL_ONE);
+		assertEquals(SEL_ONE, partOneImpl.input);
+		assertEquals(SEL_ONE, partOneImpl.otherSelection);
+		assertNull(partTwoImpl.input);
+		assertEquals(SEL_ONE, partThreeImpl.input);
+		
+		partThreeImpl.setSelection(null);
+		assertEquals(SEL_ONE, partOneImpl.input);
+		assertNull(partOneImpl.otherSelection);
+		assertNull(partTwoImpl.input);
+		assertNull(partThreeImpl.input);
 	}
 
 	@Override
