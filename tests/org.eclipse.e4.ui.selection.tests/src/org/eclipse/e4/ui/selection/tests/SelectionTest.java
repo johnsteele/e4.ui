@@ -54,7 +54,56 @@ public class SelectionTest extends TestCase {
 		assertNull(p.input);
 	}
 
+	static class UseSelectionHandler {
+		public String selection;
+		public void execute(@Optional @Named(ESelectionService.SELECTION) String s) {
+			selection = s;
+		}
+	}
+	
+	public void testTwoPartHandlerExecute() throws Exception {
+		IEclipseContext window = TestUtil.createContext(workbenchContext,
+				"windowContext");
+		workbenchContext.set(IContextConstants.ACTIVE_CHILD, window);
+
+		IEclipseContext partOne = TestUtil.createContext(window, "partOne");
+		window.set(IContextConstants.ACTIVE_CHILD, partOne);
+		ProviderPart partOneImpl = new ProviderPart();
+		ContextInjectionFactory.inject(partOneImpl, partOne);
+
+		IEclipseContext partTwo = TestUtil.createContext(window, "partTwo");
+		ConsumerPart partTwoImpl = new ConsumerPart();
+		ContextInjectionFactory.inject(partTwoImpl, partTwo);
+		
+		partOneImpl.setSelection(SEL_ONE);
+		
+		UseSelectionHandler handler = new UseSelectionHandler();
+		assertNull(handler.selection);
+		
+		ContextInjectionFactory.invoke(handler, "execute", workbenchContext, null);
+		assertEquals(SEL_ONE, handler.selection);
+		ContextInjectionFactory.invoke(handler, "execute", window, null);
+		assertEquals(SEL_ONE, handler.selection);
+		ContextInjectionFactory.invoke(handler, "execute", partOne, null);
+		assertEquals(SEL_ONE, handler.selection);
+		ContextInjectionFactory.invoke(handler, "execute", partTwo, null);
+		assertNull(handler.selection);
+		
+		window.set(IContextConstants.ACTIVE_CHILD, partTwo);
+		
+		ContextInjectionFactory.invoke(handler, "execute", workbenchContext, null);
+		assertNull(handler.selection);
+		ContextInjectionFactory.invoke(handler, "execute", window, null);
+		assertNull(handler.selection);
+		ContextInjectionFactory.invoke(handler, "execute", partOne, null);
+		assertEquals(SEL_ONE, handler.selection);
+		ContextInjectionFactory.invoke(handler, "execute", partTwo, null);
+		assertNull(handler.selection);
+	}
+
 	public void testThreePartSelection() throws Exception {
+		ESelectionService workbenchService = (ESelectionService) workbenchContext
+				.get(ESelectionService.class.getName());
 		IEclipseContext window = TestUtil.createContext(workbenchContext,
 				"windowContext");
 		workbenchContext.set(IContextConstants.ACTIVE_CHILD, window);
@@ -74,30 +123,35 @@ public class SelectionTest extends TestCase {
 		ProviderPart partThreeImpl = new ProviderPart();
 		ContextInjectionFactory.inject(partThreeImpl, partThree);
 
+		assertNull(workbenchService.getSelection());
 		assertNull(windowService.getSelection());
 		assertNull(partOneImpl.input);
 		assertNull(partTwoImpl.input);
 		assertNull(partThreeImpl.input);
 
 		partOneImpl.setSelection(SEL_ONE);
+		assertEquals(SEL_ONE, workbenchService.getSelection());
 		assertEquals(SEL_ONE, windowService.getSelection());
 		assertEquals(SEL_ONE, partOneImpl.input);
 		assertNull(partTwoImpl.input);
 		assertNull(partThreeImpl.input);
 
 		partThreeImpl.setSelection(SEL_TWO);
+		assertEquals(SEL_ONE, workbenchService.getSelection());
 		assertEquals(SEL_ONE, windowService.getSelection());
 		assertEquals(SEL_ONE, partOneImpl.input);
 		assertNull(partTwoImpl.input);
 		assertEquals(SEL_TWO, partThreeImpl.input);
 
 		window.set(IContextConstants.ACTIVE_CHILD, partTwo);
+		assertNull(workbenchService.getSelection());
 		assertNull(windowService.getSelection());
 		assertEquals(SEL_ONE, partOneImpl.input);
 		assertNull(partTwoImpl.input);
 		assertEquals(SEL_TWO, partThreeImpl.input);
 
 		window.set(IContextConstants.ACTIVE_CHILD, partThree);
+		assertEquals(SEL_TWO, workbenchService.getSelection());
 		assertEquals(SEL_TWO, windowService.getSelection());
 		assertEquals(SEL_ONE, partOneImpl.input);
 		assertNull(partTwoImpl.input);
