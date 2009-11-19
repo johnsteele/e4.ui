@@ -101,11 +101,6 @@
                   name="additions"
                   visible="false">
             </separator>
-            <command
-                  commandId="org.eclipse.e4.ui.examples.legacy.workbench.reStyle"
-                  label="Reload Style Sheet"
-                  style="push">
-            </command>
          </menu>
       </menuContribution>
    </extension>
