@@ -1,5 +1,10 @@
 package org.eclipse.e4.workbench.ui.api;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.e4.compatibility.LegacyView;
+import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MEditorSashContainer;
 import org.eclipse.e4.ui.model.application.MEditorStack;
@@ -10,12 +15,6 @@ import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MView;
 import org.eclipse.e4.ui.model.application.MViewSashContainer;
 import org.eclipse.e4.ui.model.application.MViewStack;
-
-import java.util.ArrayList;
-import java.util.List;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.e4.compatibility.LegacyView;
-import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IFolderLayout;
@@ -49,7 +48,7 @@ public class ModeledPageLayout implements IPageLayout {
 
 		// editorArea.setName("Editor Area");
 
-		perspModel.getChildren().add(esc);
+		// perspModel.getChildren().add(esc);
 	}
 
 	public MPerspective getModel() {
