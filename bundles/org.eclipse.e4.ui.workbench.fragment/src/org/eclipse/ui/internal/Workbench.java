@@ -450,7 +450,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		// hook in the e4 workbench
 		IEclipseContext serviceContext = EclipseContextFactory
-				.createServiceContext(Activator.getDefault().getContext());
+				.getServiceContext(Activator.getDefault().getContext());
 		IEclipseContext appContext = EclipseContextFactory.create(
 				serviceContext, null);
 		appContext.set(IContextConstants.DEBUG_STRING, "application"); //$NON-NLS-1$
