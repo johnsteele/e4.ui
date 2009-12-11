@@ -49,11 +49,5 @@
          id="org.eclipse.e4.sdk.source.feature"
          version="0.0.0"/>
 
-   <plugin
-         id="org.eclipse.e4.ui.workbench.fragment"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"/>
 
 </feature>
