@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     Boris Bokowski, IBM Corporation - initial API and implementation
+ *     Benjamin Cabe, Sierra Wireless - ongoing improvements
+ *     Sebastien Moran, Sierra Wireless - bug 298291
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.gadgets.opensocial;
 
@@ -20,11 +22,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -37,6 +34,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.ui.internal.gadgets.opensocial.browserfunctions.MakeXmlHttpRequest;
 import org.eclipse.e4.ui.web.BrowserViewPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -61,7 +59,15 @@ import org.osgi.framework.FrameworkUtil;
 public class OpenSocialView extends BrowserViewPart implements
 		IResourceChangeListener {
 
-	private static final String USERPREFS = "userprefs";
+	public static final String NO_HEADER_VALUE = "undefined";
+
+	public static final String HEADER_NAME_VALUE_SEPARATOR = "#";
+
+	public static final String HEADERS_SEPARATOR = "\n";
+
+	public static final String GET_METHOD = "GET";
+
+	public static final String USERPREFS = "userprefs";
 
 	private String url;
 	private String html;
@@ -166,38 +172,7 @@ public class OpenSocialView extends BrowserViewPart implements
 		if (makeRequestBrowserFunction != null)
 			makeRequestBrowserFunction.dispose();
 
-		makeRequestBrowserFunction = new BrowserFunction(browser,
-				"e4_makeXmlHttpRequest") {
-			@Override
-			public Object function(Object[] arguments) {
-				/* e4_xhr : function(url, callback) */
-				try {
-					String url = (String) arguments[0];
-					String callback = (String) arguments[1];
-					HttpClient httpClient = new HttpClient();
-					HttpMethod httpMethod = new GetMethod(url);
-					int status = httpClient.executeMethod(httpMethod);
-					if (status == HttpStatus.SC_OK) {
-						final String script = "{var foo = " + callback
-								+ "({ data : eval('("
-								+ httpMethod.getResponseBodyAsString()
-								+ ")')}) ;}";
-						Display.getDefault().asyncExec(new Runnable() {
-							public void run() {
-								browser.execute(script);
-							}
-						});
-					}
-					return status;
-				} catch (HttpException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-				return HttpStatus.SC_INTERNAL_SERVER_ERROR;
-			}
-		};
+		makeRequestBrowserFunction = new MakeXmlHttpRequest(browser);
 	}
 
 	@Override

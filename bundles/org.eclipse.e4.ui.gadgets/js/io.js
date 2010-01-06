@@ -4,13 +4,29 @@ gadgets.io = function() {
 	return {
 		makeRequest : function(url, callback, params) {
 			try {
-				e4_makeXmlHttpRequest(url, callback.toString()) ;
+				// Retrieve parameters to forward them to the java part
+				var method = params[gadgets.io.RequestParameters.METHOD];
+				var contentType = params[gadgets.io.RequestParameters.CONTENT_TYPE];
+				
+				// All headers will be converted in a single String. The format will be :
+				// headerName#headerValue>header2Name#header2Value
+				var headers = params[gadgets.io.RequestParameters.HEADERS];
+				var headersStr = "" ;
+				if (headers != null) {
+					headersStr = "Authorization#" + headers["Authorization"];
+					headersStr += "\n" + "ContentType#" + headers["ContentType"];
+				}
+
+				var postData = params[gadgets.io.RequestParameters.POST_DATA];
+
+				e4_makeXmlHttpRequest(url, callback.toString(), method,
+						contentType, headersStr, postData);
 			} catch (err) {
 				// FIXME: this should not happen, but for some reason
 				// e4_makeXmlHttpRequest is not declared at the very beginning
 				// of the execution...
 			}
-			
+
 		}
 	}
 }();
