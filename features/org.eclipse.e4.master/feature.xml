@@ -49,5 +49,8 @@
          id="org.eclipse.e4.sdk.source.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.e4.resources.tests.feature"
+         version="0.0.0"/>
 
 </feature>
