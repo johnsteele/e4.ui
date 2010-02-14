@@ -174,23 +174,6 @@ public class Flickr {
 		new ToolTipSupport(table.getViewer(), ToolTip.NO_RECREATE, false);
 	}
 	
-//	public static void main(String[] args) {
-//		Display display = new Display();
-//		Shell shell = new Shell();
-//		
-//		Flickr flickr = new Flickr(shell);
-//		flickr.flickrService = new RestFlickrService();
-//		shell.open();
-//		
-//		while( ! shell.isDisposed() ) {
-//			if( ! display.readAndDispatch() ) {
-//				display.sleep();
-//			}
-//		}
-//		
-//		display.dispose();
-//	}
-	
 	private class ToolTipSupport extends ColumnViewerToolTipSupport {
 
 		protected ToolTipSupport(ColumnViewer viewer, int style,
