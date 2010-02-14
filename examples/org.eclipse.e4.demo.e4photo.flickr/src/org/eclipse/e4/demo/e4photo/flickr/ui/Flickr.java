@@ -51,6 +51,8 @@ public class Flickr {
 	
 	private Composite comp;
 	
+	private PagedTable<FlickrPhoto> table;
+	
 	@Inject
 	public Flickr(Composite comp) {
 		this.comp = comp;
@@ -88,19 +90,12 @@ public class Flickr {
 		Button button = new Button(comp, SWT.PUSH);
 		button.setText("Search");
 		
-		final PagedTable<FlickrPhoto> table = new PagedTable<FlickrPhoto>(comp, SWT.NONE);
+		table = new PagedTable<FlickrPhoto>(comp, SWT.NONE);
 		
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					FlickrSearch search = flickrService.createTagSearch(apiKey.getText(), tags.getText());
-					table.setInput(new SearchInput(search));
-				} catch (RemoteException e1) {
-					Status s = new Status(IStatus.ERROR, "org.eclipse.e4.demo.e4photo.flickr", e1.getMessage(), e1);
-					ErrorDialog.openError(table.getShell(), "Searchfailure", "Failure while executing search", s);
-				}
-				
+				handleSearch(apiKey.getText(), tags.getText());
 			}
 		});
 		
@@ -172,6 +167,16 @@ public class Flickr {
 		table.setLayoutData(new GridData(GridData.FILL,GridData.FILL,true,true,3,1));
 		
 		new ToolTipSupport(table.getViewer(), ToolTip.NO_RECREATE, false);
+	}
+	
+	private void handleSearch(String apiKey, String tags) {
+		try {
+			FlickrSearch search = flickrService.createTagSearch(apiKey, tags);
+			table.setInput(new SearchInput(search));
+		} catch (RemoteException e1) {
+			Status s = new Status(IStatus.ERROR, "org.eclipse.e4.demo.e4photo.flickr", e1.getMessage(), e1);
+			ErrorDialog.openError(table.getShell(), "Searchfailure", "Failure while executing search", s);
+		}
 	}
 	
 	private class ToolTipSupport extends ColumnViewerToolTipSupport {
