@@ -33,7 +33,7 @@ import org.json.JSONObject;
 public class RestFlickrService implements IFlickrService {
 	
 	public RestFlickrService() {
-//		System.err.println("Service created");
+		System.err.println("Service created");
 	}
 	
 	public InputStream getPhoto(FlickrPhoto photo) throws RemoteException {

@@ -201,9 +201,14 @@ public class Flickr {
 		@Override
 		protected Composite createViewerToolTipContentArea(Event event,
 				ViewerCell cell, final Composite parent) {
-			parent.setBackgroundMode(SWT.INHERIT_DEFAULT);
-			final FlickrPhoto photo = (FlickrPhoto) cell.getElement();
 			Composite comp = new Composite(parent, SWT.NONE);
+			
+			parent.setBackgroundMode(SWT.INHERIT_DEFAULT);
+			if( cell == null || cell.getElement() == null ) {
+				return comp;
+			}
+			final FlickrPhoto photo = (FlickrPhoto) cell.getElement();
+			
 			comp.setLayout(new GridLayout());
 			Label l = new Label(comp, SWT.NONE);
 			l.setText(getText(event));
@@ -216,9 +221,17 @@ public class Flickr {
 			
 			Thread t = new Thread() {
 				public void run() {
+					if( parent.isDisposed() ) {
+						return;
+					}
+					
 					parent.getDisplay().syncExec(new Runnable() {
 						
 						public void run() {
+							if( img.isDisposed() ) {
+								return;
+							}
+							
 							try {
 								img.setImage(new Image(parent.getDisplay(), flickrService.getPhoto(photo)));
 							} catch (RemoteException e) {
