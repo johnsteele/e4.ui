@@ -18,14 +18,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.e4.demo.e4photo.flickr.service.FlickrPhoto;
 import org.eclipse.e4.demo.e4photo.flickr.service.FlickrSearch;
 import org.eclipse.e4.demo.e4photo.flickr.service.IFlickrService;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Custom implementation to access flickr through its rest API
@@ -48,16 +49,17 @@ public class RestFlickrService implements IFlickrService {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public FlickrSearch createTagSearch(String apiKey, String tags) throws RemoteException {
-		JSONObject obj = searchByTagsRequest("flickr.photos.search", apiKey, tags, 1);
+		Map<String,Object> obj = searchByTagsRequest("flickr.photos.search", apiKey, tags, 1);
 		if( obj != null ) {
 			try {
-				JSONObject o = obj.getJSONObject("photos");
-				int pages = Integer.parseInt(o.getString("pages"));
-				int pageSize = Integer.parseInt(o.getString("perpage"));
-				int total = Integer.parseInt(o.getString("total"));
+				Map<String,Object> o = (Map<String, Object>) obj.get("photos");
+				int pages = ((Number) o.get("pages")).intValue();
+				int pageSize = ((Number) o.get("perpage")).intValue();
+				int total = Integer.parseInt((String) o.get("total"));
 				return new RestFlickrTagSearch( apiKey, pages, pageSize, total, tags);
-			} catch (JSONException e) {
+			} catch (Exception e) {
 				throw new RemoteException("Failure while parsing response", e);
 			}	
 		}
@@ -65,31 +67,33 @@ public class RestFlickrService implements IFlickrService {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<FlickrPhoto> getPhotos(FlickrSearch search, int page) throws RemoteException {
 		if( search instanceof RestFlickrTagSearch ) {
 			RestFlickrTagSearch tmp = (RestFlickrTagSearch) search;
-			JSONObject root = searchByTagsRequest("flickr.photos.search", tmp.getApiKey(), tmp.getTags(), page);
+			Map<String,Object> root = searchByTagsRequest("flickr.photos.search", tmp.getApiKey(), tmp.getTags(), page);
 			if( root != null ) {
 				try {
-					JSONArray list = root.getJSONObject("photos").getJSONArray("photo");
+					Collection<Object> list = (Collection<Object>) ((Map<String,Object>)root.get("photos")).get("photo");
 					ArrayList<FlickrPhoto> rv = new ArrayList<FlickrPhoto>();
+					Iterator<Object> it = list.iterator();
 					
-					for( int i = 0; i < list.length(); i++ ) {
-						JSONObject o = list.getJSONObject(i);
+					while( it.hasNext() ) {
+						Map<String,Object> o = (Map<String, Object>) it.next();
 						FlickrPhoto photo = new FlickrPhoto();
-						photo.setFamily(o.getInt("isfamily") != 0);
-						photo.setFarm(o.getInt("farm"));
-						photo.setFriend(o.getInt("isfriend") != 0);
-						photo.setId(o.getString("id"));
-						photo.setOwner(o.getString("owner"));
-						photo.setPublic(o.getInt("ispublic") != 0);
-						photo.setSecret(o.getString("secret"));
-						photo.setServer(o.getString("server"));
-						photo.setTitle(o.getString("title"));
+						photo.setFamily( ((Number)o.get("isfamily")).intValue() != 0);
+						photo.setFarm( ((Number)o.get("farm")).intValue() );
+						photo.setFriend(((Number)o.get("isfriend")).intValue() != 0);
+						photo.setId((String) o.get("id"));
+						photo.setOwner((String) o.get("owner"));
+						photo.setPublic(((Number)o.get("ispublic")).intValue() != 0);
+						photo.setSecret((String) o.get("secret"));
+						photo.setServer((String) o.get("server"));
+						photo.setTitle((String) o.get("title"));
 						rv.add(photo);
 					}
 					return rv;
-				} catch (JSONException e) {
+				} catch (Exception e) {
 					throw new RemoteException("Failure while parsing response", e);
 				}	
 			}
@@ -98,7 +102,8 @@ public class RestFlickrService implements IFlickrService {
 		throw new IllegalArgumentException("The search type '"+search.getClass().getName()+"' is not supported.");
 	}
 
-	private JSONObject searchByTagsRequest(String method, String apiKey, String tags, int page) throws RemoteException {
+	@SuppressWarnings("unchecked")
+	private Map<String,Object> searchByTagsRequest(String method, String apiKey, String tags, int page) throws RemoteException {
 		String request = "http://api.flickr.com/services/rest/";
 		request += "?tags=" + tags;
 		request += "&method=flickr.photos.search";
@@ -117,10 +122,11 @@ public class RestFlickrService implements IFlickrService {
 			}
 			
 			String result = b.toString().substring("jsonFlickrApi(".length(), b.toString().length() - 1);
-//			System.err.println(result);
-			JSONObject o = new JSONObject(result);
-			if( ! "ok".equals(o.getString("stat")) ) {
-				throw new RemoteException(o.getString("message"));
+			System.err.println("RESULT: " + b);
+			Map<String,Object> o = (Map<String, Object>) JSONUtil.read(result);
+			
+			if( ! "ok".equals(o.get("stat")) ) {
+				throw new RemoteException((String)o.get("message"));
 			}
 			return o;
 		} catch (RemoteException e) {
@@ -128,8 +134,6 @@ public class RestFlickrService implements IFlickrService {
 		} catch (MalformedURLException e) {
 			throw new RemoteException("Failure fetching page '"+page+"'",e); 
 		} catch (IOException e) {
-			throw new RemoteException("Failure fetching page '"+page+"'",e);
-		} catch (JSONException e) {
 			throw new RemoteException("Failure fetching page '"+page+"'",e);
 		}
 	}
