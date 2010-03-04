@@ -11,7 +11,6 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -20,9 +19,7 @@ public class ReStyle extends AbstractHandler implements IHandler {
 
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Workbench workbench = (Workbench) HandlerUtil.getVariable(event, Workbench.class.getName());
-		
-		final Shell shell = (Shell) workbench.getWindow();
+		final Shell shell = HandlerUtil.getActiveShellChecked(event);
 		final Display display = shell.getDisplay();
 
 		display.syncExec(new Runnable() {
