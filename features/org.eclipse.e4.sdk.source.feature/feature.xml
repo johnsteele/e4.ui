@@ -69,6 +69,10 @@
          id="org.eclipse.e4.resources.source.feature"
          version="0.0.0"/>
          
+    <includes
+         id="org.eclipse.e4.resources.source.feature"
+         version="0.0.0"/>
+         
    <requires>
       <import feature="org.eclipse.e4.sdk.runtime.feature" version="0.9.0" match="compatible"/>
    </requires>
