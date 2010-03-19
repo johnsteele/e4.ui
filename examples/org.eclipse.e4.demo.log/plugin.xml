@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.e4.ui.workbench.swt.E4Application"
+            description="Based on e4"
+            name="Eclipse 4 IDE">
+         <property
+               name="appName"
+               value="Eclipse 4 IDE">
+         </property>
+         <property
+               name="applicationXMI"
+               value="org.eclipse.e4.ide.application/Application.e4xmi">
+         </property>
+         <property
+               name="applicationCSS"
+               value="platform:/plugin/org.eclipse.e4.demo.log/css/default.css">
+         </property>
+         <property
+               name="applicationCSSResources"
+          value="platform:/plugin/org.eclipse.e4.ide.application/images/">
+         </property>
+      </product>
+   </extension>
+   <extension
+         id="id1"
+         point="org.eclipse.e4.workbench.model">
+      <snippet
+            uri="platform:/plugin/org.eclipse.e4.demo.log/xmi/components.e4xmi">
+      </snippet>
+   </extension>
+
+</plugin>
