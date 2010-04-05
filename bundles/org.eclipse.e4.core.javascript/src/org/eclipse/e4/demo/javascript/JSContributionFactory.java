@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.WeakHashMap;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.IContributionFactorySpi;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.mozilla.javascript.Scriptable;
 import org.osgi.framework.Bundle;
 
