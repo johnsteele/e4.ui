@@ -1,8 +1,8 @@
 package org.eclipse.e4.demo.e4photo.flickr.mock;
 
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.demo.e4photo.flickr.ui.Flickr;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
