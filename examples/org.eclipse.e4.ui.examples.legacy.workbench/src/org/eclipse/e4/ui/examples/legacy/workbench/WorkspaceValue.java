@@ -1,8 +1,8 @@
 package org.eclipse.e4.ui.examples.legacy.workbench;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.e4.core.services.context.IContextFunction;
-import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.contexts.IContextFunction;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 
 public class WorkspaceValue implements IContextFunction {
 
