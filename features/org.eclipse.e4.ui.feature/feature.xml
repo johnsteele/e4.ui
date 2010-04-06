@@ -133,13 +133,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.e4.core.services.annotations"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"/>
-
-   <plugin
          id="javax.inject"
          download-size="0"
          install-size="0"
@@ -162,6 +155,20 @@
 
    <plugin
          id="org.pushingpixels.trident"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.e4.core.contexts"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.e4.core.di"
          download-size="0"
          install-size="0"
          version="0.0.0"
