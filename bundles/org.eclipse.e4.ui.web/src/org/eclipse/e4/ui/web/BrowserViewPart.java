@@ -45,14 +45,15 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-public abstract class BrowserViewPart extends ViewPart implements ISaveablePart2 {
+public abstract class BrowserViewPart extends ViewPart implements
+		ISaveablePart2 {
 
 	protected Browser browser;
 	private BrowserRPC browserRPC;
 	private boolean isDirty;
 	private List menuItems = new ArrayList(3);
 	private SaveableProxy saveable;
-	
+
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 		browser = new Browser(parent, SWT.NONE);
@@ -67,31 +68,33 @@ public abstract class BrowserViewPart extends ViewPart implements ISaveablePart2
 				}
 			}
 		});
-		
+
 		browser.addCloseWindowListener(new CloseWindowListener() {
 			public void close(WindowEvent event) {
 				isDirty = false;
 				getViewSite().getPage().hideView(BrowserViewPart.this);
 			}
 		});
-		
+
 		browserRPC.addRPCHandler("dialogs", new BrowserRPCHandler() {
-			public Object handle(Object[] args) {
+			public Object handle(Browser browser, Object[] args) {
 				if ("confirm".equals(args[1])) {
 					IViewSite site = getViewSite();
-					String title = "Confirmation - " + BrowserViewPart.this.getTitle();
-					return Boolean.valueOf(MessageDialog.openConfirm(site.getShell(), title, (String)args[2]));
+					String title = "Confirmation - "
+							+ BrowserViewPart.this.getTitle();
+					return Boolean.valueOf(MessageDialog.openConfirm(site
+							.getShell(), title, (String) args[2]));
 				}
 				return null;
 			}
 		});
-		
+
 		browserRPC.addRPCHandler("clipboard", new BrowserRPCHandler() {
-			public Object handle(Object[] args) {
+			public Object handle(Browser browser, Object[] args) {
 				if ("getContents".equals(args[1])) {
 					Clipboard cb = new Clipboard(browser.getDisplay());
 					FileTransfer ft = FileTransfer.getInstance();
-					String[] files = (String[])cb.getContents(ft);
+					String[] files = (String[]) cb.getContents(ft);
 					if (files.length > 0) {
 						File file = new File(files[0]);
 						if (file.exists()) {
@@ -109,77 +112,87 @@ public abstract class BrowserViewPart extends ViewPart implements ISaveablePart2
 				return null;
 			}
 		});
-		
+
 		browserRPC.addRPCHandler("log", new BrowserRPCHandler() {
-			public Object handle(Object[] args) {
+			public Object handle(Browser browser, Object[] args) {
+				int statusSeverity = IStatus.INFO;
+				if ("info".equals(args[1]))
+					statusSeverity = IStatus.INFO;
+				else if ("warning".equals(args[1]))
+					statusSeverity = IStatus.WARNING;
+				else if ("error".equals(args[1]))
+					statusSeverity = IStatus.ERROR;
+
 				if ("info".equals(args[1])) {
-					StatusManager.getManager().handle(new Status(IStatus.INFO, "opensocial-demo", (String) args[2]));
+					StatusManager.getManager().handle(
+							new Status(statusSeverity, "opensocial-demo",
+									(String) args[2]));
 				}
 				return null;
 			}
 		});
-		
+
 		browserRPC.addRPCHandler("menus", new BrowserRPCHandler() {
-			public Object handle(Object[] args) {
+			public Object handle(Browser browser, Object[] args) {
 				if ("addContextMenuItem".equals(args[1])) {
-					menuItems.add(new MenuItemProxy((String)args[2], (String)args[3]));
+					menuItems.add(new MenuItemProxy((String) args[2],
+							(String) args[3]));
 				}
 				return null;
 			}
 		});
-		
+
 		browserRPC.addRPCHandler("status", new BrowserRPCHandler() {
-			public Object handle(Object[] args) {
+			public Object handle(Browser browser, Object[] args) {
 				if ("setMessage".equals(args[1])) {
-					IStatusLineManager slm = getViewSite().getActionBars().getStatusLineManager();
-					slm.setMessage((String)args[2]);
-				}
-				else if ("setDirty".equals(args[1])) {
-					isDirty = ((Boolean)args[2]).booleanValue();
+					IStatusLineManager slm = getViewSite().getActionBars()
+							.getStatusLineManager();
+					slm.setMessage((String) args[2]);
+				} else if ("setDirty".equals(args[1])) {
+					isDirty = ((Boolean) args[2]).booleanValue();
 					firePropertyChange(PROP_DIRTY);
 				}
 				return null;
 			}
 		});
-		
+
 		browserRPC.addRPCHandler("saveable", new BrowserRPCHandler() {
-			public Object handle(Object[] args) {
+			public Object handle(Browser browser, Object[] args) {
 				if ("promptToSaveOnClose".equals(args[1])) {
-					saveable.setPromptCallback((String)args[2]);
-				}
-				else if ("doSave".equals(args[1])) {
-					saveable.setDoSaveCallback((String)args[2]);
+					saveable.setPromptCallback((String) args[2]);
+				} else if ("doSave".equals(args[1])) {
+					saveable.setDoSaveCallback((String) args[2]);
 				}
 				return null;
 			}
 		});
-		
+
 		configureBrowser(browser);
 		// context menu
-		hookContextMenu();
+		// hookContextMenu();
 	}
-	
+
 	abstract protected void configureBrowser(Browser browser);
 
 	protected abstract String getNewWindowViewId();
-	
+
 	protected BrowserViewPart openWindow(WindowEvent event) {
 		BrowserViewPart view = null;
 		try {
-			view = (BrowserViewPart)getViewSite().getPage().showView(
-					getNewWindowViewId(), 
-					String.valueOf(System.currentTimeMillis()), 
+			view = (BrowserViewPart) getViewSite().getPage().showView(
+					getNewWindowViewId(),
+					String.valueOf(System.currentTimeMillis()),
 					IWorkbenchPage.VIEW_ACTIVATE);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}
 		return view;
 	}
-	
+
 	public void setUrl(String url) {
 		browser.setUrl(url);
 	}
-	
+
 	public Browser getBrowser() {
 		return browser;
 	}
@@ -187,7 +200,7 @@ public abstract class BrowserViewPart extends ViewPart implements ISaveablePart2
 	public void setFocus() {
 		browser.setFocus();
 	}
-	
+
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
@@ -195,8 +208,8 @@ public abstract class BrowserViewPart extends ViewPart implements ISaveablePart2
 			public void menuAboutToShow(IMenuManager manager) {
 				// fill context menu
 				Iterator itr = menuItems.iterator();
-				while(itr.hasNext()) {
-					final MenuItemProxy mi = (MenuItemProxy)itr.next();
+				while (itr.hasNext()) {
+					final MenuItemProxy mi = (MenuItemProxy) itr.next();
 					Action action = new Action(mi.getLabel()) {
 						public void run() {
 							browser.execute(mi.getCallback());
@@ -208,11 +221,11 @@ public abstract class BrowserViewPart extends ViewPart implements ISaveablePart2
 		});
 		Menu menu = menuMgr.createContextMenu(browser);
 		browser.setMenu(menu);
-		
+
 		// TODO implement a selection provider wrapper for browser
-		//getSite().registerContextMenu(menuMgr, browser);
+		// getSite().registerContextMenu(menuMgr, browser);
 	}
-	
+
 	public int promptToSaveOnClose() {
 		return saveable.promptToSaveOnClose();
 	}
@@ -235,44 +248,52 @@ public abstract class BrowserViewPart extends ViewPart implements ISaveablePart2
 	public boolean isSaveOnCloseNeeded() {
 		return isDirty();
 	}
-	
+
 	private class MenuItemProxy {
 		private String label;
 		private String callback;
+
 		public MenuItemProxy(String label, String callback) {
 			this.label = label;
 			this.callback = callback;
 		}
+
 		public String getLabel() {
 			return label;
 		}
+
 		public String getCallback() {
 			return callback;
 		}
 	}
-	
+
 	private class SaveableProxy {
 		private String promptCallback;
 		private String dosaveCallback;
 		private Browser browser;
+
 		public SaveableProxy(Browser browser) {
 			this.browser = browser;
 		}
+
 		public void setPromptCallback(String promptCallback) {
 			this.promptCallback = promptCallback;
 		}
+
 		public void setDoSaveCallback(String dosaveCallback) {
 			this.dosaveCallback = dosaveCallback;
 		}
+
 		public int promptToSaveOnClose() {
 			if (promptCallback != null) {
-				Double i = (Double)browser.evaluate(promptCallback);
+				Double i = (Double) browser.evaluate(promptCallback);
 				if (i != null) {
 					return i.intValue();
 				}
 			}
 			return ISaveablePart2.DEFAULT;
 		}
+
 		public void doSave(IProgressMonitor monitor) {
 			if (dosaveCallback != null) {
 				browser.execute(dosaveCallback);

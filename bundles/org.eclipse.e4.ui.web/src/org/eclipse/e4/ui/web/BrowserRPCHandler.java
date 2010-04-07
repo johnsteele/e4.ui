@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.web;
 
+import org.eclipse.swt.browser.Browser;
+
 public interface BrowserRPCHandler {
-	
-	public Object handle(Object[] arguments);
+
+	public Object handle(Browser browser, Object[] arguments);
 
 }

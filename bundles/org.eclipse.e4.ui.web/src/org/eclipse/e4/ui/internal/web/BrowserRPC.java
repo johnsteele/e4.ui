@@ -23,21 +23,22 @@ import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
 
 public class BrowserRPC {
-	
+
 	private static final String UNDEFINED = "undefined";
-	
+
 	private BrowserFunction rpcFunction;
-	
-	private Map/*String, BrowserRPCHandler*/ handlers = 
-		new HashMap();
+
+	private Map/* String, BrowserRPCHandler */handlers = new HashMap();
 
 	private Browser browser;
-	
+
 	public BrowserRPC(Browser browser) {
 		this.browser = browser;
 		final String e4Script;
 		try {
-			e4Script = new String(E4BrowserUtil.getBytesFromStream(getClass().getClassLoader().getResourceAsStream("js/e4.js")), "ISO-8859-1");
+			e4Script = new String(E4BrowserUtil.getBytesFromStream(getClass()
+					.getClassLoader().getResourceAsStream("js/e4.js")),
+					"ISO-8859-1");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -47,6 +48,7 @@ public class BrowserRPC {
 			public void changed(LocationEvent event) {
 				registerRPC();
 			}
+
 			public void changing(LocationEvent event) {
 			}
 		});
@@ -54,36 +56,39 @@ public class BrowserRPC {
 		browser.addProgressListener(new ProgressListener() {
 			public void completed(ProgressEvent event) {
 				if (!BrowserRPC.this.browser.execute(e4Script)) {
-					MessageDialog.openError(BrowserRPC.this.browser.getShell(), "Error", "Error executing e4 script");
+					MessageDialog.openError(BrowserRPC.this.browser.getShell(),
+							"Error", "Error executing e4 script");
 				}
 			}
+
 			public void changed(ProgressEvent event) {
 			}
 		});
 	}
-	
+
 	private void registerRPC() {
 		if (rpcFunction != null) {
 			rpcFunction.dispose();
 		}
 		rpcFunction = new BrowserFunction(browser, "e4RPC") {
-			public Object function (Object[] arguments) {
-				BrowserRPCHandler handler = (BrowserRPCHandler) handlers.get(arguments[0]);
+			public Object function(Object[] arguments) {
+				BrowserRPCHandler handler = (BrowserRPCHandler) handlers
+						.get(arguments[0]);
 				if (handler != null) {
-					return handler.handle(arguments);
+					return handler.handle(browser, arguments);
 				}
 				return UNDEFINED;
 			}
 		};
 	}
-	
+
 	public void addRPCHandler(String function, BrowserRPCHandler handler) {
 		if (handlers.get(function) != null) {
 			throw new IllegalArgumentException();
 		}
 		handlers.put(function, handler);
 	}
-	
+
 	public void removeRPCHandler(String function) {
 		handlers.remove(function);
 	}
