@@ -12,7 +12,7 @@ package org.eclipse.e4.demo.viewer;
 
 import java.util.Iterator;
 
-import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MPart;
