@@ -4,7 +4,7 @@ import java.util.Set;
 
 import javax.inject.Named;
 
-import org.eclipse.e4.core.services.annotations.Optional;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.services.IServiceConstants;
 
 public class ViewCurrentContextsHandler {

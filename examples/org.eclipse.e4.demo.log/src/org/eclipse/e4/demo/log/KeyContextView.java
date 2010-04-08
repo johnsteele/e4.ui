@@ -8,10 +8,10 @@ import javax.inject.Named;
 
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
-import org.eclipse.e4.core.services.annotations.Optional;
-import org.eclipse.e4.core.services.annotations.PostConstruct;
-import org.eclipse.e4.core.services.context.ContextChangeEvent;
-import org.eclipse.e4.core.services.context.IRunAndTrack;
+import org.eclipse.e4.core.contexts.ContextChangeEvent;
+import org.eclipse.e4.core.contexts.IRunAndTrack;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.annotations.PostConstruct;
 import org.eclipse.e4.ui.bindings.internal.ContextSet;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.services.IServiceConstants;
