@@ -7,6 +7,13 @@
     <handlers xmi:id="_8DQrEDK-Ed-ltJ9rgXYhSw" id="bindingContexts.display.handler" URI="platform:/plugin/org.eclipse.e4.demo.log/org.eclipse.e4.demo.log.ViewCurrentContextsHandler" command="bindingContexts.display"/>
     <commands xmi:id="bindingContexts.display" id="bindingContexts.display" commandName="Display Current Contexts"/>
   </components>
+  <components xmi:id="_UW9TZfr3Ed6gmo7caOxU9y" id="component.add.bindingContextView.legacy" parentID="org.eclipse.e4.legacy.ide.application">
+    <descriptors xmi:id="_2JqwsDEtEd-VhpFUss_l2g" id="org.eclipse.e4.demo.log.contextView" URI="platform:/plugin/org.eclipse.e4.demo.log/org.eclipse.e4.demo.log.KeyContextView" label="Binding Context View" category="org.eclipse.e4.secondaryDataStack">
+      <bindingContexts>org.eclipse.e4.ui.contexts.views</bindingContexts>
+    </descriptors>
+    <handlers xmi:id="_8DQrEDK-Ed-ltJ9rgXYhSw" id="bindingContexts.display.handler" URI="platform:/plugin/org.eclipse.e4.demo.log/org.eclipse.e4.demo.log.ViewCurrentContextsHandler" command="bindingContexts.display"/>
+    <commands xmi:id="bindingContexts.display" id="bindingContexts.display" commandName="Display Current Contexts"/>
+  </components>
   <components xmi:id="_UW9TZfr3Ed6gmo7caOxU9l" id="component.add.menu.window" parentID="org.eclipse.e4.ide.app.menu.window">
     <children xsi:type="application:HandledMenuItem" xmi:id="_UW9TZfr3Ed6gmo7ca1xU9p" id="_UW9TZfr3Ed6gmo7ca1xU9p" label="Display Current Contexts" command="bindingContexts.display"/>
   </components>
