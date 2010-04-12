@@ -22,6 +22,8 @@ import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.browser.LocationListener;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 
 public class BrowserRPC {
 
@@ -65,6 +67,11 @@ public class BrowserRPC {
 			public void changed(ProgressEvent event) {
 			}
 		});
+		browser.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				removeAllRPCHandlers();
+			}
+		});
 	}
 
 	private void registerRPC() {
@@ -98,7 +105,7 @@ public class BrowserRPC {
 		}
 	}
 
-	public void removeAllRPCHandlers() {
+	private void removeAllRPCHandlers() {
 		String[] handlerFunction = (String[]) handlers.keySet().toArray(
 				new String[0]);
 		for (int i = 0; i < handlerFunction.length; i++) {
