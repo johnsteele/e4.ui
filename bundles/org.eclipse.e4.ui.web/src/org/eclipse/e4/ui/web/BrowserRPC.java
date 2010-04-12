@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     Matthew Hatem, IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <BCabe@sierrawireless.com> - ongoing enhancements
  *******************************************************************************/
-package org.eclipse.e4.ui.internal.web;
+package org.eclipse.e4.ui.web;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.e4.ui.web.BrowserRPCHandler;
+import org.eclipse.e4.ui.internal.web.E4BrowserUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
@@ -90,6 +91,19 @@ public class BrowserRPC {
 	}
 
 	public void removeRPCHandler(String function) {
-		handlers.remove(function);
+		BrowserRPCHandler oldHandler = (BrowserRPCHandler) handlers
+				.remove(function);
+		if (oldHandler != null) {
+			oldHandler.dispose();
+		}
+	}
+
+	public void removeAllRPCHandlers() {
+		String[] handlerFunction = (String[]) handlers.keySet().toArray(
+				new String[0]);
+		for (int i = 0; i < handlerFunction.length; i++) {
+			removeRPCHandler(handlerFunction[i]);
+		}
+
 	}
 }

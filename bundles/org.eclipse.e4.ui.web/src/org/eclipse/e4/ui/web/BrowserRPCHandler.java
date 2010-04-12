@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hatem, IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <BCabe@sierrawireless.com> - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.e4.ui.web;
 
@@ -14,6 +15,8 @@ import org.eclipse.swt.browser.Browser;
 
 public interface BrowserRPCHandler {
 
-	public Object handle(Browser browser, Object[] arguments);
+	public Object handle(final Browser browser, final Object[] arguments);
+
+	public void dispose();
 
 }

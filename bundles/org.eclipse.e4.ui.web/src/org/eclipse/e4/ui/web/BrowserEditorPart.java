@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hatem, IBM Corporation - initial API and implementation
  *     Boris Bokowski, IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <BCabe@sierrawireless.com> - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.e4.ui.web;
 
@@ -19,7 +20,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.ui.internal.web.Base64;
-import org.eclipse.e4.ui.internal.web.BrowserRPC;
 import org.eclipse.e4.ui.internal.web.E4BrowserUtil;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -85,6 +85,10 @@ public abstract class BrowserEditorPart extends EditorPart {
 				}
 				return null;
 			}
+
+			public void dispose() {
+				// Nothing
+			}
 		});
 
 		browserRPC.addRPCHandler("clipboard", new BrowserRPCHandler() {
@@ -109,6 +113,10 @@ public abstract class BrowserEditorPart extends EditorPart {
 				}
 				return null;
 			}
+
+			public void dispose() {
+				// Nothing
+			}
 		});
 
 		browserRPC.addRPCHandler("menus", new BrowserRPCHandler() {
@@ -118,6 +126,10 @@ public abstract class BrowserEditorPart extends EditorPart {
 							(String) args[3]));
 				}
 				return null;
+			}
+
+			public void dispose() {
+				// Nothing
 			}
 		});
 
@@ -133,6 +145,10 @@ public abstract class BrowserEditorPart extends EditorPart {
 				}
 				return null;
 			}
+
+			public void dispose() {
+				// Nothing
+			}
 		});
 
 		browserRPC.addRPCHandler("saveable", new BrowserRPCHandler() {
@@ -143,6 +159,10 @@ public abstract class BrowserEditorPart extends EditorPart {
 					saveable.setDoSaveCallback((String) args[2]);
 				}
 				return null;
+			}
+
+			public void dispose() {
+				// Nothing
 			}
 		});
 		configureBrowser(browser);
