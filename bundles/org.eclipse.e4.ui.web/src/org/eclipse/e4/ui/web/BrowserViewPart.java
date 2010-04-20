@@ -13,40 +13,24 @@ package org.eclipse.e4.ui.web;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.e4.ui.internal.web.Base64;
 import org.eclipse.e4.ui.internal.web.E4BrowserUtil;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.CloseWindowListener;
-import org.eclipse.swt.browser.OpenWindowListener;
-import org.eclipse.swt.browser.WindowEvent;
+import org.eclipse.swt.browser.*;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.ISaveablePart2;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-public abstract class BrowserViewPart extends ViewPart implements
-		ISaveablePart2 {
+public abstract class BrowserViewPart extends ViewPart implements ISaveablePart2 {
 
 	protected Browser browser;
 	private BrowserRPC browserRPC;
@@ -80,10 +64,8 @@ public abstract class BrowserViewPart extends ViewPart implements
 			public Object handle(Browser browser, Object[] args) {
 				if ("confirm".equals(args[1])) {
 					IViewSite site = getViewSite();
-					String title = "Confirmation - "
-							+ BrowserViewPart.this.getTitle();
-					return Boolean.valueOf(MessageDialog.openConfirm(site
-							.getShell(), title, (String) args[2]));
+					String title = "Confirmation - " + BrowserViewPart.this.getTitle();
+					return Boolean.valueOf(MessageDialog.openConfirm(site.getShell(), title, (String) args[2]));
 				}
 				return null;
 			}
@@ -132,9 +114,7 @@ public abstract class BrowserViewPart extends ViewPart implements
 					statusSeverity = IStatus.ERROR;
 
 				if ("info".equals(args[1])) {
-					StatusManager.getManager().handle(
-							new Status(statusSeverity, "opensocial-demo",
-									(String) args[2]));
+					StatusManager.getManager().handle(new Status(statusSeverity, "opensocial-demo", (String) args[2]));
 				}
 				return null;
 			}
@@ -147,8 +127,7 @@ public abstract class BrowserViewPart extends ViewPart implements
 		browserRPC.addRPCHandler("menus", new BrowserRPCHandler() {
 			public Object handle(Browser browser, Object[] args) {
 				if ("addContextMenuItem".equals(args[1])) {
-					menuItems.add(new MenuItemProxy((String) args[2],
-							(String) args[3]));
+					menuItems.add(new MenuItemProxy((String) args[2], (String) args[3]));
 				}
 				return null;
 			}
@@ -161,8 +140,7 @@ public abstract class BrowserViewPart extends ViewPart implements
 		browserRPC.addRPCHandler("status", new BrowserRPCHandler() {
 			public Object handle(Browser browser, Object[] args) {
 				if ("setMessage".equals(args[1])) {
-					IStatusLineManager slm = getViewSite().getActionBars()
-							.getStatusLineManager();
+					IStatusLineManager slm = getViewSite().getActionBars().getStatusLineManager();
 					slm.setMessage((String) args[2]);
 				} else if ("setDirty".equals(args[1])) {
 					isDirty = ((Boolean) args[2]).booleanValue();
@@ -203,10 +181,7 @@ public abstract class BrowserViewPart extends ViewPart implements
 	protected BrowserViewPart openWindow(WindowEvent event) {
 		BrowserViewPart view = null;
 		try {
-			view = (BrowserViewPart) getViewSite().getPage().showView(
-					getNewWindowViewId(),
-					String.valueOf(System.currentTimeMillis()),
-					IWorkbenchPage.VIEW_ACTIVATE);
+			view = (BrowserViewPart) getViewSite().getPage().showView(getNewWindowViewId(), String.valueOf(System.currentTimeMillis()), IWorkbenchPage.VIEW_ACTIVATE);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}
@@ -225,7 +200,7 @@ public abstract class BrowserViewPart extends ViewPart implements
 		browser.setFocus();
 	}
 
-	private void hookContextMenu() {
+	void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
