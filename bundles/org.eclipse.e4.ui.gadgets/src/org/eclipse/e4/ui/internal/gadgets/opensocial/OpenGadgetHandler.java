@@ -42,13 +42,14 @@ public class OpenGadgetHandler extends AbstractHandler {
 			}
 		}
 		InputDialog inputDialog = new InputDialog(wwin.getShell(),
-				"Open Gadget", "Please enter the gadget URL.", selectedText, null);
+				"Open Gadget", "Please enter the gadget URL.", selectedText,
+				null);
 		if (inputDialog.open() == Dialog.OK) {
 			try {
 				String url = inputDialog.getValue();
 				url = url.replace(":", "%3A");
-				wwin.getActivePage().showView("opensocial-demo.view",
-						url, IWorkbenchPage.VIEW_ACTIVATE);
+				wwin.getActivePage().showView("opensocial-demo.view", url,
+						IWorkbenchPage.VIEW_ACTIVATE);
 			} catch (PartInitException e) {
 				StatusManager.getManager().handle(
 						new Status(IStatus.ERROR, "e4.opensocial",
