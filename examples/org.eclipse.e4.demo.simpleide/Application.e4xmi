@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_-vym4F9tEd-n7unQYrVSrw">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_BFM_EF9uEd-n7unQYrVSrw" label="Simple e4 IDE" width="800" height="600">
+    <mainMenu xmi:id="_F_YaEF9uEd-n7unQYrVSrw">
+      <children xsi:type="menu:Menu" xmi:id="_HaqFQF9uEd-n7unQYrVSrw" elementId="simpleide.mainmenu.file" label="File">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_QjBX8F9uEd-n7unQYrVSrw" label="Exit" command="_HU2wgF90Ed-vFcBxxXp7OA"/>
+      </children>
+    </mainMenu>
+  </children>
+  <handlers xmi:id="_Ji_cAF90Ed-vFcBxxXp7OA" elementId="" command="_HU2wgF90Ed-vFcBxxXp7OA"/>
+  <commands xmi:id="_HU2wgF90Ed-vFcBxxXp7OA" elementId="simpleide.handlers.exit" commandName="Exit IDE"/>
+</application:Application>
