@@ -7,6 +7,6 @@
       </children>
     </mainMenu>
   </children>
-  <handlers xmi:id="_Ji_cAF90Ed-vFcBxxXp7OA" elementId="" command="_HU2wgF90Ed-vFcBxxXp7OA"/>
+  <handlers xmi:id="_Ji_cAF90Ed-vFcBxxXp7OA" elementId="" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.ExitHandler" command="_HU2wgF90Ed-vFcBxxXp7OA"/>
   <commands xmi:id="_HU2wgF90Ed-vFcBxxXp7OA" elementId="simpleide.handlers.exit" commandName="Exit IDE"/>
 </application:Application>
