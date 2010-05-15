@@ -5,7 +5,7 @@
  <copyright>
  </copyright>
 
- $Id$
+ $Id: plugin.xml,v 1.1 2010/05/15 09:07:19 tschindl Exp $
 -->
 
 <plugin>
@@ -14,7 +14,7 @@
       <package
             uri="http://www.eclipse.org/e4/demo/simpleide"
             class="org.eclipse.e4.demo.simpleide.editor.model.simpleide.SimpleidePackage"
-            genModel="SimpleIDE.genmodel"/>
+            genModel="model/SimpleIDE.genmodel"/>
    </extension>
 
 </plugin>
