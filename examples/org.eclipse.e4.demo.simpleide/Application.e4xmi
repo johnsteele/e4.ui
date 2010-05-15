@@ -17,10 +17,11 @@
     </children>
     <mainMenu xmi:id="_yobKMGAiEd-E_N65-FXwgA">
       <children xsi:type="menu:Menu" xmi:id="_0BkucGAiEd-E_N65-FXwgA" elementId="simpleide.mainmenu.file" label="File">
+        <children xsi:type="menu:Menu" xmi:id="_sErgoGAzEd-_KuNHePH0xw" elementId="simpleide.mainmenu.file.new" label="New"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_7kftUGAiEd-E_N65-FXwgA" label="Exit" command="_oIK3gGAiEd-E_N65-FXwgA"/>
       </children>
     </mainMenu>
   </children>
   <handlers xmi:id="_jXCDwGAiEd-E_N65-FXwgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.ExitHandler" command="_oIK3gGAiEd-E_N65-FXwgA"/>
-  <commands xmi:id="_oIK3gGAiEd-E_N65-FXwgA" elementId="simpleide.handlers.exit" commandName="Exit IDE"/>
+  <commands xmi:id="_oIK3gGAiEd-E_N65-FXwgA" elementId="simpleide.command.exit" commandName="Exit IDE"/>
 </simpleide:SimpleIDEApplication>

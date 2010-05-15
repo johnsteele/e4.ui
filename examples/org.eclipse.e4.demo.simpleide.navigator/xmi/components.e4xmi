@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmi:id="_6YPb8GAqEd-SpvYPtvmu5g">
+<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_6YPb8GAqEd-SpvYPtvmu5g">
   <components xmi:id="_9DHt0GAqEd-SpvYPtvmu5g" parentID="simpleide.stack.left">
     <children xsi:type="basic:Part" xmi:id="_a79pAGAvEd-ta-xu77XOxw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.navigator.ResourceNavigator" label="Navigator"/>
+  </components>
+  <components xmi:id="_zS2pcGAxEd-JXsO2B6iMKA" parentID="app.simpleide">
+    <handlers xmi:id="_gfD90GAyEd-1R9N_iMptOA" command="_LDvrwGAyEd-1R9N_iMptOA"/>
+    <commands xmi:id="_LDvrwGAyEd-1R9N_iMptOA" elementId="simpleide.command.newproject" commandName="New Project Command"/>
+  </components>
+  <components xmi:id="_sq5okGAyEd-1R9N_iMptOA" parentID="simpleide.mainmenu.file.new">
+    <children xsi:type="menu:HandledMenuItem" xmi:id="_0h5kkGAzEd-_KuNHePH0xw" label="New Project ..." command="_LDvrwGAyEd-1R9N_iMptOA"/>
   </components>
 </application:ModelComponents>
