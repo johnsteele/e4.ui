@@ -16,7 +16,6 @@ import org.eclipse.e4.workbench.ui.IPresentationEngine;
 public class ExitHandler {
 	@Execute
 	public void exitWorkbench(IPresentationEngine engine) {
-		System.err.println("Shut down");
 		engine.stop();
 	}
 }
