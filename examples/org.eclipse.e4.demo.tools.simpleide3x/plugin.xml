@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            canFinishEarly="false"
+            category="org.eclipse.e4"
+            class="org.eclipse.e4.demo.tools.simpleide3x.SimpleIDEModelWizard"
+            hasPages="true"
+            id="org.eclipse.e4.demo.tools.simpleide3x.wizard1"
+            name="New Simple IDE Model">
+      </wizard>
+   </extension>
+
+</plugin>

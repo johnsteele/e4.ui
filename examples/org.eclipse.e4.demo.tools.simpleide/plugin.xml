@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.e4.tools.emf.ui.editors">
+      <editor
+            descriptorClass="org.eclipse.e4.demo.tools.simpleide.SimpleIDEApplicationEditorDesc">
+      </editor>
+      <virtualeditor
+            class="org.eclipse.e4.demo.tools.simpleide.VEditorPartDescriptorEditor"
+            id="org.eclipse.e4.demo.tools.simpleide.SimpleIDEApplicationEditor.EDITOR_DESCRIPTORS">
+      </virtualeditor>
+      <editor
+            descriptorClass="org.eclipse.e4.demo.tools.simpleide.EditorPartDescriptorEditorDesc">
+      </editor>
+   </extension>
+</plugin>
