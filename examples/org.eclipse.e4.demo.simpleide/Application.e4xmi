@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_-vym4F9tEd-n7unQYrVSrw">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_BFM_EF9uEd-n7unQYrVSrw" label="Simple e4 IDE" width="800" height="600">
-    <mainMenu xmi:id="_F_YaEF9uEd-n7unQYrVSrw">
-      <children xsi:type="menu:Menu" xmi:id="_HaqFQF9uEd-n7unQYrVSrw" elementId="simpleide.mainmenu.file" label="File">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_QjBX8F9uEd-n7unQYrVSrw" label="Exit" command="_HU2wgF90Ed-vFcBxxXp7OA"/>
+<simpleide:SimpleIDEApplication xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmlns:simpleide="http://www.eclipse.org/e4/demo/simpleide" xmi:id="_r5eKcGAYEd-Bb9ra7AA28Q">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_tMEPMGAiEd-E_N65-FXwgA" label="Simple e4 IDE" width="800" height="600">
+    <mainMenu xmi:id="_yobKMGAiEd-E_N65-FXwgA">
+      <children xsi:type="menu:Menu" xmi:id="_0BkucGAiEd-E_N65-FXwgA" elementId="simpleide.mainmenu.file" label="File">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_7kftUGAiEd-E_N65-FXwgA" label="Exit" command="_oIK3gGAiEd-E_N65-FXwgA"/>
       </children>
     </mainMenu>
   </children>
-  <handlers xmi:id="_Ji_cAF90Ed-vFcBxxXp7OA" elementId="" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.ExitHandler" command="_HU2wgF90Ed-vFcBxxXp7OA"/>
-  <commands xmi:id="_HU2wgF90Ed-vFcBxxXp7OA" elementId="simpleide.handlers.exit" commandName="Exit IDE"/>
-</application:Application>
+  <handlers xmi:id="_jXCDwGAiEd-E_N65-FXwgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.ExitHandler" command="_oIK3gGAiEd-E_N65-FXwgA"/>
+  <commands xmi:id="_oIK3gGAiEd-E_N65-FXwgA" elementId="simpleide.handlers.exit" commandName="Exit IDE"/>
+</simpleide:SimpleIDEApplication>

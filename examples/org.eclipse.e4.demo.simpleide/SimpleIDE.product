@@ -34,6 +34,7 @@
       <plugin id="org.eclipse.e4.core.services"/>
       <plugin id="org.eclipse.e4.core.services.annotations" fragment="true"/>
       <plugin id="org.eclipse.e4.demo.simpleide"/>
+      <plugin id="org.eclipse.e4.demo.simpleide.model"/>
       <plugin id="org.eclipse.e4.ui.bindings"/>
       <plugin id="org.eclipse.e4.ui.css.core"/>
       <plugin id="org.eclipse.e4.ui.css.nebula"/>
