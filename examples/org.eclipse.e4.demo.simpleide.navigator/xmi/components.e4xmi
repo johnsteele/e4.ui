@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmi:id="_6YPb8GAqEd-SpvYPtvmu5g">
+  <components xmi:id="_9DHt0GAqEd-SpvYPtvmu5g" parentID="simpleide.stack.left">
+    <children xsi:type="basic:Part" xmi:id="_a79pAGAvEd-ta-xu77XOxw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.navigator.ResourceNavigator" label="Navigator"/>
+  </components>
+</application:ModelComponents>
