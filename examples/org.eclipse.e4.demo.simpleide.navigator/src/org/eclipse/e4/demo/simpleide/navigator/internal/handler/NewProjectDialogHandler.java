@@ -9,7 +9,7 @@ import javax.inject.Named;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.demo.simpleide.navigator.IProjectCreator;
+import org.eclipse.e4.demo.simpleide.navigator.IProjectService;
 import org.eclipse.e4.demo.simpleide.navigator.internal.ServiceRegistryComponent;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -33,9 +33,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class NewProjectDialogHandler {
-	private Map<IProjectCreator, Image> images = new HashMap<IProjectCreator, Image>();
+	private Map<IProjectService, Image> images = new HashMap<IProjectService, Image>();
 	private String projectName = "";
-	private IProjectCreator creator;
+	private IProjectService creator;
 	
 	@Execute
 	public void openNewProjectEditor(@Named(IServiceConstants.ACTIVE_SHELL) Shell parentShell, IWorkspace workspace, IProgressMonitor monitor, final ServiceRegistryComponent serviceRegistry) {
@@ -83,13 +83,13 @@ public class NewProjectDialogHandler {
 				projectType.setLabelProvider(new LabelProvider() {
 					@Override
 					public String getText(Object element) {
-						IProjectCreator el = (IProjectCreator) element;
+						IProjectService el = (IProjectService) element;
 						return el.getLabel();
 					}
 					
 					@Override
 					public Image getImage(Object element) {
-						IProjectCreator el = (IProjectCreator) element;
+						IProjectService el = (IProjectService) element;
 						Image img = images.get(el);
 						if( img == null ) {
 							img = el.createIcon(getShell().getDisplay());
@@ -99,7 +99,7 @@ public class NewProjectDialogHandler {
 					}
 				});
 				
-				Vector<IProjectCreator> creators = serviceRegistry.getCreators();
+				Vector<IProjectService> creators = serviceRegistry.getCreators();
 				projectType.setInput(creators);
 				if( creators.size() > 0 ) {
 					projectType.setSelection(new StructuredSelection(creators.get(0)));
@@ -131,7 +131,7 @@ public class NewProjectDialogHandler {
 					return;
 				}
 				
-				NewProjectDialogHandler.this.creator = (IProjectCreator) ((IStructuredSelection)projectType.getSelection()).getFirstElement();
+				NewProjectDialogHandler.this.creator = (IProjectService) ((IStructuredSelection)projectType.getSelection()).getFirstElement();
 				NewProjectDialogHandler.this.projectName = projectName.getText();
 				
 				super.okPressed();

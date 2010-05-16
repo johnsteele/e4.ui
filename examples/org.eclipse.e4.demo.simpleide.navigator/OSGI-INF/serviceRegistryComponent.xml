@@ -4,5 +4,5 @@
    <service>
       <provide interface="org.eclipse.e4.demo.simpleide.navigator.internal.ServiceRegistryComponent"/>
    </service>
-   <reference bind="addCreator" cardinality="0..n" interface="org.eclipse.e4.demo.simpleide.navigator.IProjectService" name="IProjectService" policy="dynamic" unbind="removeCreator"/>
+   <reference bind="addProjectService" cardinality="0..n" interface="org.eclipse.e4.demo.simpleide.navigator.IProjectService" name="IProjectService" policy="dynamic" unbind="removeProjectService"/>
 </scr:component>
