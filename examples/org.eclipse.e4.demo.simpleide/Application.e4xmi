@@ -16,13 +16,31 @@
       </children>
     </children>
     <variables>selection</variables>
+    <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
     <mainMenu xmi:id="_yobKMGAiEd-E_N65-FXwgA">
       <children xsi:type="menu:Menu" xmi:id="_0BkucGAiEd-E_N65-FXwgA" elementId="simpleide.mainmenu.file" label="File">
         <children xsi:type="menu:Menu" xmi:id="_sErgoGAzEd-_KuNHePH0xw" elementId="simpleide.mainmenu.file.new" label="New"/>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_NHvfwGEiEd-A9truh9jvIg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_OxUFoGEiEd-A9truh9jvIg" label="Save All" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide/icons/disk_multiple.png" command="_kpAnIGEhEd-A9truh9jvIg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_mydxgGEiEd-A9truh9jvIg" label="Save" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide/icons/disk.png" command="_tl9UAGEhEd-A9truh9jvIg"/>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_ukxQMGEiEd-A9truh9jvIg"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_7kftUGAiEd-E_N65-FXwgA" label="Exit" command="_oIK3gGAiEd-E_N65-FXwgA"/>
       </children>
     </mainMenu>
   </children>
   <handlers xmi:id="_jXCDwGAiEd-E_N65-FXwgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.ExitHandler" command="_oIK3gGAiEd-E_N65-FXwgA"/>
+  <handlers xmi:id="_pj_6cGEhEd-A9truh9jvIg" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.SaveAllHandler" command="_kpAnIGEhEd-A9truh9jvIg"/>
+  <handlers xmi:id="_w0lzMGEhEd-A9truh9jvIg" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.SaveHandler" command="_tl9UAGEhEd-A9truh9jvIg"/>
+  <bindingTables xmi:id="_bFtE4GEhEd-A9truh9jvIg" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
+    <bindings xmi:id="_fW-s0GEhEd-A9truh9jvIg" keySequence="M1+Q" command="_oIK3gGAiEd-E_N65-FXwgA"/>
+    <bindings xmi:id="_z1SkEGEhEd-A9truh9jvIg" keySequence="M1+M2+S" command="_kpAnIGEhEd-A9truh9jvIg"/>
+    <bindings xmi:id="_AcDQQGEiEd-A9truh9jvIg" keySequence="M1+S" command="_tl9UAGEhEd-A9truh9jvIg"/>
+  </bindingTables>
+  <rootContext xmi:id="_ui554GEgEd-A9truh9jvIg" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialogs And Windows" description="">
+    <children xmi:id="_LB_JoGEhEd-A9truh9jvIg" elementId="org.eclipse.ui.contexts.window" name="In Windows" description=""/>
+    <children xmi:id="_ULwKgGEhEd-A9truh9jvIg" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs" description=""/>
+  </rootContext>
   <commands xmi:id="_oIK3gGAiEd-E_N65-FXwgA" elementId="simpleide.command.exit" commandName="Exit IDE"/>
+  <commands xmi:id="_kpAnIGEhEd-A9truh9jvIg" elementId="simpleide.command.saveall" commandName="Save All"/>
+  <commands xmi:id="_tl9UAGEhEd-A9truh9jvIg" elementId="simpleide.command.save" commandName="Save"/>
 </simpleide:SimpleIDEApplication>

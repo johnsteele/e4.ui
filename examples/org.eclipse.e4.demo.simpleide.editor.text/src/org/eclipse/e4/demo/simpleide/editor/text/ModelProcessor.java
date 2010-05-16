@@ -14,8 +14,14 @@ public class ModelProcessor implements IModelExtension {
 			
 			MEditorPartDescriptor desc = MSimpleideFactory.INSTANCE.createEditorPartDescriptor();
 			desc.setContributionURI("platform:/plugin/org.eclipse.e4.demo.simpleide.editor.text/org.eclipse.e4.demo.simpleide.editor.text.PlainTextEditor");
-			desc.setIconURI("platform:/plugin/org.eclipse.e4.demo.simpleide.editor.text/icons/welcome_editor.gif");
+			desc.setIconURI("platform:/plugin/org.eclipse.e4.demo.simpleide.editor.text/icons/file_obj.gif");
 			desc.getFileextensions().add("txt");
+			app.getEditorPartDescriptors().add(desc);
+			
+			desc = MSimpleideFactory.INSTANCE.createEditorPartDescriptor();
+			desc.setContributionURI("platform:/plugin/org.eclipse.e4.demo.simpleide.editor.text/org.eclipse.e4.demo.simpleide.editor.text.XMLTextEditor");
+			desc.setIconURI("platform:/plugin/org.eclipse.e4.demo.simpleide.editor.text/icons/elements_obj.gif");
+			desc.getFileextensions().add("xml");
 			app.getEditorPartDescriptors().add(desc);
 		}
 	}

@@ -58,6 +58,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
@@ -117,7 +118,7 @@ public class ResourceNavigator {
 	public ResourceNavigator(Composite parent, final IEclipseContext context, IWorkspace workspace, final MApplication application) {
 		final Realm realm = SWTObservables.getRealm(parent.getDisplay());
 		parent.setLayout(new FillLayout());
-		TreeViewer viewer = new TreeViewer(parent);
+		TreeViewer viewer = new TreeViewer(parent,SWT.FULL_SELECTION|SWT.H_SCROLL|SWT.V_SCROLL);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
 			public void selectionChanged(SelectionChangedEvent event) {
 				StructuredSelection selection = (StructuredSelection)event.getSelection();
@@ -172,7 +173,7 @@ public class ResourceNavigator {
 						IFile f = (IFile) o;
 						context.set(IFile.class, f);
 						String fExt = f.getFileExtension();
-						for( MEditorPartDescriptor desc : app.getEditorPartDescriptors() ) {
+						EDITOR: for( MEditorPartDescriptor desc : app.getEditorPartDescriptors() ) {
 							for( String ext: desc.getFileextensions() ) {
 								if( ext.equals(fExt) ) {
 									context.set(MEditorPartDescriptor.class, desc);
@@ -182,7 +183,7 @@ public class ResourceNavigator {
 									ParameterizedCommand pCmd = ParameterizedCommand.generateCommand(cmd, null);
 									handlerService.executeHandler(pCmd);
 									
-									break;
+									break EDITOR;
 								}
 							}
 						}

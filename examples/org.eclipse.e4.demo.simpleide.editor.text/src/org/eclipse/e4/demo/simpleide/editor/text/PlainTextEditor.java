@@ -13,17 +13,25 @@ package org.eclipse.e4.demo.simpleide.editor.text;
 import javax.inject.Inject;
 
 import org.eclipse.e4.demo.simpleide.editor.IDocumentInput;
+import org.eclipse.e4.workbench.ui.Persist;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
 public class PlainTextEditor {
+	private IDocumentInput input;
 	
 	@Inject
 	public PlainTextEditor(Composite parent, IDocumentInput input) {
+		this.input = input;
 		parent.setLayout(new FillLayout());
 		TextViewer viewer = new TextViewer(parent, SWT.NONE);
 		viewer.setDocument(input.getDocument());
+	}
+	
+	@Persist
+	public void save() {
+		input.save();
 	}
 }
