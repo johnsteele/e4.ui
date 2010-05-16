@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id$
+ * $Id: MEditorPartDescriptor.java,v 1.1 2010/05/15 12:59:52 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide;
 
@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.ui.MUILabel;
  * <ul>
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor#getContributionURI <em>Contribution URI</em>}</li>
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor#getFileextensions <em>Fileextensions</em>}</li>
+ *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor#getContenttypes <em>Contenttypes</em>}</li>
  * </ul>
  * </p>
  *
@@ -71,5 +72,20 @@ public interface MEditorPartDescriptor extends MUILabel, MHandlerContainer, MBin
 	 * @generated
 	 */
 	List<String> getFileextensions();
+
+	/**
+	 * Returns the value of the '<em><b>Contenttypes</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Contenttypes</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Contenttypes</em>' attribute list.
+	 * @model
+	 * @generated
+	 */
+	List<String> getContenttypes();
 
 } // MEditorPartDescriptor

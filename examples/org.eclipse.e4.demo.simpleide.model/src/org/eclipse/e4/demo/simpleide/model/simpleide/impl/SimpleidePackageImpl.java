@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id$
+ * $Id: SimpleidePackageImpl.java,v 1.1 2010/05/15 12:59:52 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.impl;
 
@@ -390,13 +390,22 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	public static final int EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 5;
 
 	/**
+	 * The feature id for the '<em><b>Contenttypes</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EDITOR_PART_DESCRIPTOR__CONTENTTYPES = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 6;
+
+	/**
 	 * The number of structural features of the '<em>Editor Part Descriptor</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EDITOR_PART_DESCRIPTOR_FEATURE_COUNT = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 6;
+	public static final int EDITOR_PART_DESCRIPTOR_FEATURE_COUNT = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 7;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -541,6 +550,20 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor#getContenttypes <em>Contenttypes</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Contenttypes</em>'.
+	 * @see org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor#getContenttypes()
+	 * @see #getEditorPartDescriptor()
+	 * @generated
+	 */
+	public EAttribute getEditorPartDescriptor_Contenttypes() {
+		return (EAttribute)editorPartDescriptorEClass.getEStructuralFeatures().get(2);
+	}
+
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -576,6 +599,7 @@ public class SimpleidePackageImpl extends EPackageImpl {
 		editorPartDescriptorEClass = createEClass(EDITOR_PART_DESCRIPTOR);
 		createEAttribute(editorPartDescriptorEClass, EDITOR_PART_DESCRIPTOR__CONTRIBUTION_URI);
 		createEAttribute(editorPartDescriptorEClass, EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS);
+		createEAttribute(editorPartDescriptorEClass, EDITOR_PART_DESCRIPTOR__CONTENTTYPES);
 	}
 
 	/**
@@ -624,6 +648,7 @@ public class SimpleidePackageImpl extends EPackageImpl {
 		initEClass(editorPartDescriptorEClass, MEditorPartDescriptor.class, "EditorPartDescriptor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEditorPartDescriptor_ContributionURI(), ecorePackage.getEString(), "contributionURI", null, 0, 1, MEditorPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEditorPartDescriptor_Fileextensions(), ecorePackage.getEString(), "fileextensions", null, 0, -1, MEditorPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEditorPartDescriptor_Contenttypes(), ecorePackage.getEString(), "contenttypes", null, 0, -1, MEditorPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
@@ -685,6 +710,14 @@ public class SimpleidePackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS = eINSTANCE.getEditorPartDescriptor_Fileextensions();
+
+		/**
+		 * The meta object literal for the '<em><b>Contenttypes</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute EDITOR_PART_DESCRIPTOR__CONTENTTYPES = eINSTANCE.getEditorPartDescriptor_Contenttypes();
 
 	}
 

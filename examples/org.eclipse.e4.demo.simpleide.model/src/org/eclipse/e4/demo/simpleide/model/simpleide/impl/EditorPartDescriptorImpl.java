@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id$
+ * $Id: EditorPartDescriptorImpl.java,v 1.1 2010/05/15 12:59:52 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.impl;
 
@@ -50,6 +50,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getContributionURI <em>Contribution URI</em>}</li>
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getFileextensions <em>Fileextensions</em>}</li>
+ *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getContenttypes <em>Contenttypes</em>}</li>
  * </ul>
  * </p>
  *
@@ -135,6 +136,16 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 	 * @ordered
 	 */
 	protected EList<String> fileextensions;
+
+	/**
+	 * The cached value of the '{@link #getContenttypes() <em>Contenttypes</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContenttypes()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<String> contenttypes;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -250,6 +261,18 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public List<String> getContenttypes() {
+		if (contenttypes == null) {
+			contenttypes = new EDataTypeUniqueEList<String>(String.class, this, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__CONTENTTYPES);
+		}
+		return contenttypes;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -279,6 +302,8 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 				return getContributionURI();
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS:
 				return getFileextensions();
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__CONTENTTYPES:
+				return getContenttypes();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -314,6 +339,10 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 				getFileextensions().clear();
 				getFileextensions().addAll((Collection<? extends String>)newValue);
 				return;
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__CONTENTTYPES:
+				getContenttypes().clear();
+				getContenttypes().addAll((Collection<? extends String>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -344,6 +373,9 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS:
 				getFileextensions().clear();
 				return;
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__CONTENTTYPES:
+				getContenttypes().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -368,6 +400,8 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 				return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null : !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS:
 				return fileextensions != null && !fileextensions.isEmpty();
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__CONTENTTYPES:
+				return contenttypes != null && !contenttypes.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -450,6 +484,8 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 		result.append(contributionURI);
 		result.append(", fileextensions: ");
 		result.append(fileextensions);
+		result.append(", contenttypes: ");
+		result.append(contenttypes);
 		result.append(')');
 		return result.toString();
 	}
