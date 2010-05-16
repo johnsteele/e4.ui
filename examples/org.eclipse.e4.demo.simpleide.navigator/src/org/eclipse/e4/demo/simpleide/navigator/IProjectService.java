@@ -6,7 +6,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public interface IProjectCreator {
+public interface IProjectService {
 	public Image createIcon(Display display);
 	public String getLabel();
 	public void createProject(Shell shell, IWorkspace workspace, IProgressMonitor monitor, String projectName);

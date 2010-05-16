@@ -6,12 +6,12 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.e4.demo.simpleide.navigator.IProjectCreator;
+import org.eclipse.e4.demo.simpleide.navigator.IProjectService;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class DefaultProjectCreator implements IProjectCreator {
+public class DefaultProjectService implements IProjectService {
 
 	public void createProject(Shell shell, IWorkspace workspace, IProgressMonitor monitor, String projectName) {
 		final IProject project = workspace.getRoot().getProject(projectName);

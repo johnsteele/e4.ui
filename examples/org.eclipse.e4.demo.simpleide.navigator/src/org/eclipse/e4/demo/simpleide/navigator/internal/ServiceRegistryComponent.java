@@ -2,20 +2,20 @@ package org.eclipse.e4.demo.simpleide.navigator.internal;
 
 import java.util.Vector;
 
-import org.eclipse.e4.demo.simpleide.navigator.IProjectCreator;
+import org.eclipse.e4.demo.simpleide.navigator.IProjectService;
 
 public class ServiceRegistryComponent {
-	private Vector<IProjectCreator> creators = new Vector<IProjectCreator>();
+	private Vector<IProjectService> creators = new Vector<IProjectService>();
 	
-	public void addCreator( IProjectCreator creator ) {
+	public void addCreator( IProjectService creator ) {
 		creators.add(creator);
 	}
 	
-	public void removeCreator(IProjectCreator creator) {
+	public void removeCreator(IProjectService creator) {
 		creators.remove(creator);
 	}
 	
-	public Vector<IProjectCreator> getCreators() {
+	public Vector<IProjectService> getCreators() {
 		return creators;
 	}
 }
