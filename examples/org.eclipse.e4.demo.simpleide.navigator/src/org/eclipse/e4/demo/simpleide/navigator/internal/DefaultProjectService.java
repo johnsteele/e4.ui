@@ -46,7 +46,7 @@ public class DefaultProjectService implements IProjectService {
 	}
 
 	public Image createIcon(Display display) {
-		return new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/newjprj_wiz.gif"));
+		return new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/newprj_wiz.gif"));
 	}
 
 	public String getLabel() {

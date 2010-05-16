@@ -60,11 +60,11 @@ public class NewProjectDialogHandler {
 				setTitle("New Project");
 				setMessage("Create a new project by entering a name and select a project type");
 				
-				final Image titleImage = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/wizard/newjprj_wiz.png"));
+				final Image titleImage = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/wizard/newprj_wiz.png"));
 				
 				setTitleImage(titleImage);
 				
-				final Image shellImg = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/newjprj_wiz.gif"));
+				final Image shellImg = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/newprj_wiz.gif"));
 				getShell().setImage(shellImg);
 				getShell().addDisposeListener(new DisposeListener() {
 					

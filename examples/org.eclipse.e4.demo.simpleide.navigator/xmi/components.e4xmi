@@ -8,6 +8,6 @@
     <commands xmi:id="_LDvrwGAyEd-1R9N_iMptOA" elementId="simpleide.command.newproject" commandName="New Project Command"/>
   </components>
   <components xmi:id="_sq5okGAyEd-1R9N_iMptOA" parentID="simpleide.mainmenu.file.new">
-    <children xsi:type="menu:HandledMenuItem" xmi:id="_0h5kkGAzEd-_KuNHePH0xw" label="New Project ..." iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/icons/newjprj_wiz.gif" command="_LDvrwGAyEd-1R9N_iMptOA"/>
+    <children xsi:type="menu:HandledMenuItem" xmi:id="_0h5kkGAzEd-_KuNHePH0xw" label="New Project ..." iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/icons/newprj_wiz.gif" command="_LDvrwGAyEd-1R9N_iMptOA"/>
   </components>
 </application:ModelComponents>

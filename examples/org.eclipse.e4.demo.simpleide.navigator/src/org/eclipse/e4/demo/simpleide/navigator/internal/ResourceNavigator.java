@@ -16,6 +16,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
@@ -30,6 +32,13 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
@@ -41,6 +50,12 @@ import org.eclipse.swt.widgets.Composite;
 
 public class ResourceNavigator {
 	private Map<IContainer, IObservableSet> observableSets = new HashMap<IContainer, IObservableSet>();
+	
+	@Inject
+	private ECommandService commandService;
+	
+	@Inject
+	private EHandlerService handlerService;
 
 	private IResourceChangeListener listener = new IResourceChangeListener() {
 		public void resourceChanged(IResourceChangeEvent event) {
@@ -127,6 +142,33 @@ public class ResourceNavigator {
 		});
 		viewer.setSorter(new ViewerSorter());
 		viewer.setInput(workspace.getRoot());
+		setupContextMenu(viewer);
 		workspace.addResourceChangeListener(listener);
+	}
+	
+	private void setupContextMenu(final TreeViewer viewer) {
+		MenuManager mgr = new MenuManager();
+		viewer.getControl().setMenu(mgr.createContextMenu(viewer.getControl()));
+		
+		mgr.setRemoveAllWhenShown(true);
+		mgr.addMenuListener(new IMenuListener() {
+			
+			public void menuAboutToShow(IMenuManager manager) {
+				manager.add(createNewProjectAction());
+				manager.add(new Separator());
+//				manager.add();
+			}
+		});
+	}
+	
+	private Action createNewProjectAction() {
+		return new Action("New Project ...") {
+			@Override
+			public void run() {
+				Command cmd = commandService.getCommand("simpleide.command.newproject");
+				ParameterizedCommand pCmd = ParameterizedCommand.generateCommand(cmd, null);
+				handlerService.executeHandler(pCmd);
+			}
+		};
 	}
 }
