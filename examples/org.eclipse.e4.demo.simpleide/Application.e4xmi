@@ -15,6 +15,7 @@
         </children>
       </children>
     </children>
+    <variables>selection</variables>
     <mainMenu xmi:id="_yobKMGAiEd-E_N65-FXwgA">
       <children xsi:type="menu:Menu" xmi:id="_0BkucGAiEd-E_N65-FXwgA" elementId="simpleide.mainmenu.file" label="File">
         <children xsi:type="menu:Menu" xmi:id="_sErgoGAzEd-_KuNHePH0xw" elementId="simpleide.mainmenu.file.new" label="New"/>
