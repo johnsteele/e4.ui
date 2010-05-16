@@ -1,4 +1,4 @@
-Manifest-Version: 1.0
+Manifest-Version: 1.0reators.exsd"/>
 Bundle-ManifestVersion: 2
 Bundle-Name: Navigator
 Bundle-SymbolicName: org.eclipse.e4.demo.simpleide.navigator;singleton:=true
@@ -10,4 +10,5 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.6.0",
  org.eclipse.e4.ui.workbench;bundle-version="0.9.1",
  org.eclipse.e4.core.di;bundle-version="0.9.0",
  org.eclipse.e4.ui.services;bundle-version="0.9.1",
- org.eclipse.jface;bundle-version="3.6.0"
+ org.eclipse.jface;bundle-version="3.6.0",
+ org.eclipse.equinox.registry;bundle-version="3.5.0"

@@ -1,4 +1,4 @@
-package org.eclipse.e4.demo.simpleide.navigator;
+package org.eclipse.e4.demo.simpleide.navigator.internal;
 
 import javax.inject.Inject;
 

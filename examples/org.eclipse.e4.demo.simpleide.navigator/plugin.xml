@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="org.eclipse.e4.demo.simpleide.navigator.projectcreators" name="Project Creators" schema="schema/org.eclipse.e4.demo.simpleide.navigator.projectcreators.exsd"/>
+   <extension
+         point="org.eclipse.e4.demo.simpleide.navigator.projectcreators">
+      <projectcreator
+            delegateClass="org.eclipse.e4.demo.simpleide.navigator.internal.DefaultProjectCreator"
+            label="Project">
+      </projectcreator>
+   </extension>
    <extension
          id="id1"
          point="org.eclipse.e4.workbench.model">
