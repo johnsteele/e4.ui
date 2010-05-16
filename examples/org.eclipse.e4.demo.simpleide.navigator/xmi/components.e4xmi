@@ -16,5 +16,6 @@
     <children xsi:type="menu:MenuSeparator" xmi:id="_bODRwGDjEd-l5dM-t0RjAA"/>
     <children xsi:type="menu:HandledMenuItem" xmi:id="_cyb1oGDjEd-l5dM-t0RjAA" label="Text File ..." iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/icons/newfile_wiz.gif" command="_5hLHcGDiEd-l5dM-t0RjAA"/>
     <children xsi:type="menu:HandledMenuItem" xmi:id="_e_z1sGDvEd-ZWNjYblYd-g" label="Folder ..." iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/icons/newfolder_wiz.gif" command="_TpNw4GDvEd-ZWNjYblYd-g"/>
+    <children xsi:type="menu:MenuSeparator" xmi:id="_21pxMGE2Ed-CBZE9r1OX5Q"/>
   </components>
 </application:ModelComponents>
