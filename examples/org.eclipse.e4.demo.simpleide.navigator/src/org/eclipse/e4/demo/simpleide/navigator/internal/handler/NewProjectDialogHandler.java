@@ -2,19 +2,23 @@ package org.eclipse.e4.demo.simpleide.navigator.internal.handler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.inject.Named;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.demo.simpleide.navigator.IProjectCreator;
+import org.eclipse.e4.demo.simpleide.navigator.internal.ServiceRegistryComponent;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -29,11 +33,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class NewProjectDialogHandler {
-	private Map<IConfigurationElement, Image> images = new HashMap<IConfigurationElement, Image>();
+	private Map<IProjectCreator, Image> images = new HashMap<IProjectCreator, Image>();
+	private String projectName = "";
+	private IProjectCreator creator;
 	
 	@Execute
-	public void openNewProjectEditor(@Named(IServiceConstants.ACTIVE_SHELL) Shell parentShell) {
+	public void openNewProjectEditor(@Named(IServiceConstants.ACTIVE_SHELL) Shell parentShell, IWorkspace workspace, IProgressMonitor monitor, final ServiceRegistryComponent serviceRegistry) {
 		TitleAreaDialog dialog = new TitleAreaDialog(parentShell) {
+			private Text projectName;
+			private TableViewer projectType;
+
 			@Override
 			protected Control createDialogArea(Composite parent) {
 				Composite comp =  (Composite) super.createDialogArea(parent);
@@ -62,47 +71,75 @@ public class NewProjectDialogHandler {
 				Label l = new Label(container, SWT.NONE);
 				l.setText("Name");
 				
-				Text t = new Text(container, SWT.BORDER);
-				t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				projectName = new Text(container, SWT.BORDER);
+				projectName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				
 				l = new Label(container, SWT.NONE);
 				l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 				l.setText("Type"); 
 				
-				TableViewer viewer = new TableViewer(container);
-				viewer.setContentProvider(new ArrayContentProvider());
-				viewer.setLabelProvider(new LabelProvider() {
+				projectType = new TableViewer(container);
+				projectType.setContentProvider(new ArrayContentProvider());
+				projectType.setLabelProvider(new LabelProvider() {
 					@Override
 					public String getText(Object element) {
-						IConfigurationElement el = (IConfigurationElement) element;
-						return el.getAttribute("label");
+						IProjectCreator el = (IProjectCreator) element;
+						return el.getLabel();
 					}
 					
 					@Override
 					public Image getImage(Object element) {
-						IConfigurationElement el = (IConfigurationElement) element;
+						IProjectCreator el = (IProjectCreator) element;
 						Image img = images.get(el);
 						if( img == null ) {
-							try {
-								img = ((IProjectCreator)el.createExecutableExtension("delegateClass")).createIcon(getShell().getDisplay());
-								images.put(el, img);
-							} catch (CoreException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+							img = el.createIcon(getShell().getDisplay());
+							images.put(el, img);
 						}
 						return img;
 					}
 				});
 				
-				IExtensionRegistry reg = RegistryFactory.getRegistry();
-				viewer.setInput(reg.getConfigurationElementsFor("org.eclipse.e4.demo.simpleide.navigator.projectcreators"));
+				Vector<IProjectCreator> creators = serviceRegistry.getCreators();
+				projectType.setInput(creators);
+				if( creators.size() > 0 ) {
+					projectType.setSelection(new StructuredSelection(creators.get(0)));
+				}
+				projectType.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 				
-				viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+				getShell().addDisposeListener(new DisposeListener() {
+					
+					public void widgetDisposed(DisposeEvent e) {
+						for( Image img : images.values() ) {
+							img.dispose();
+						}
+						images.clear();
+					}
+				});
 				
 				return comp; 
 			}
+			
+			@Override
+			protected void okPressed() {
+				if( projectType.getSelection().isEmpty() ) {
+					setMessage("Please select a project type", IMessageProvider.ERROR);
+					return;
+				}
+				
+				if( projectName.getText().trim().length() == 0 ) {
+					setMessage("Please enter a projectname", IMessageProvider.ERROR);
+					return;
+				}
+				
+				NewProjectDialogHandler.this.creator = (IProjectCreator) ((IStructuredSelection)projectType.getSelection()).getFirstElement();
+				NewProjectDialogHandler.this.projectName = projectName.getText();
+				
+				super.okPressed();
+			}
 		};
-		dialog.open();
-	}
+		
+		if( dialog.open() == IDialogConstants.OK_ID ) {
+			creator.createProject(parentShell, workspace, monitor, projectName);
+		}
+	} 
 }
