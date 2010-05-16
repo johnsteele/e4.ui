@@ -34,6 +34,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -42,7 +44,10 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.layout.FillLayout;
@@ -101,10 +106,17 @@ public class ResourceNavigator {
 	};
 
 	@Inject
-	public ResourceNavigator(Composite parent, IWorkspace workspace) {
+	public ResourceNavigator(Composite parent, final IEclipseContext context, IWorkspace workspace) {
 		final Realm realm = SWTObservables.getRealm(parent.getDisplay());
 		parent.setLayout(new FillLayout());
 		TreeViewer viewer = new TreeViewer(parent);
+		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
+			public void selectionChanged(SelectionChangedEvent event) {
+				StructuredSelection selection = (StructuredSelection)event.getSelection();
+				context.modify(IServiceConstants.SELECTION, selection.size() == 1 ? selection.getFirstElement() : selection.toArray());
+			}
+		});
+		
 		IObservableFactory setFactory = new IObservableFactory() {
 			public IObservable createObservable(Object element) {
 				if (element instanceof IContainer
@@ -142,7 +154,7 @@ public class ResourceNavigator {
 		});
 		viewer.setSorter(new ViewerSorter());
 		viewer.setInput(workspace.getRoot());
-		setupContextMenu(viewer);
+//		setupContextMenu(viewer);
 		workspace.addResourceChangeListener(listener);
 	}
 	

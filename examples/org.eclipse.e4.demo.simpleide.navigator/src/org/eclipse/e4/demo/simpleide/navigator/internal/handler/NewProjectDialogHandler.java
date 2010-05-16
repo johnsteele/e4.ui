@@ -48,7 +48,7 @@ public class NewProjectDialogHandler {
 	private IProjectService creator;
 	
 	@Execute
-	public void openNewProjectEditor(@Named(IServiceConstants.ACTIVE_SHELL) Shell parentShell, IWorkspace workspace, IProgressMonitor monitor, final ServiceRegistryComponent serviceRegistry) {
+	public void openNewProjectDialog(@Named(IServiceConstants.ACTIVE_SHELL) Shell parentShell, IWorkspace workspace, IProgressMonitor monitor, final ServiceRegistryComponent serviceRegistry) {
 		TitleAreaDialog dialog = new TitleAreaDialog(parentShell) {
 			private Text projectName;
 			private TableViewer projectType;
