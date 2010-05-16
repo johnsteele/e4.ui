@@ -25,6 +25,7 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -35,6 +36,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
+import org.eclipse.e4.demo.simpleide.model.simpleide.MSimpleIDEApplication;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -44,8 +49,11 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
+import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -106,7 +114,7 @@ public class ResourceNavigator {
 	};
 
 	@Inject
-	public ResourceNavigator(Composite parent, final IEclipseContext context, IWorkspace workspace) {
+	public ResourceNavigator(Composite parent, final IEclipseContext context, IWorkspace workspace, final MApplication application) {
 		final Realm realm = SWTObservables.getRealm(parent.getDisplay());
 		parent.setLayout(new FillLayout());
 		TreeViewer viewer = new TreeViewer(parent);
@@ -154,6 +162,35 @@ public class ResourceNavigator {
 		});
 		viewer.setSorter(new ViewerSorter());
 		viewer.setInput(workspace.getRoot());
+		viewer.addOpenListener(new IOpenListener() {
+			
+			public void open(OpenEvent event) {
+				MSimpleIDEApplication app = (MSimpleIDEApplication) application;
+				IStructuredSelection s = (IStructuredSelection) event.getSelection();
+				for( Object o : s.toArray() ) {
+					if( o instanceof IFile ) {
+						IFile f = (IFile) o;
+						context.set(IFile.class, f);
+						String fExt = f.getFileExtension();
+						for( MEditorPartDescriptor desc : app.getEditorPartDescriptors() ) {
+							for( String ext: desc.getFileextensions() ) {
+								if( ext.equals(fExt) ) {
+									context.set(MEditorPartDescriptor.class, desc);
+									System.err.println("Opening with: " + desc);
+									
+									Command cmd = commandService.getCommand("simpleide.command.openeditor");
+									ParameterizedCommand pCmd = ParameterizedCommand.generateCommand(cmd, null);
+									handlerService.executeHandler(pCmd);
+									
+									break;
+								}
+							}
+						}
+					}
+				}
+				
+			}
+		});
 //		setupContextMenu(viewer);
 		workspace.addResourceChangeListener(listener);
 	}

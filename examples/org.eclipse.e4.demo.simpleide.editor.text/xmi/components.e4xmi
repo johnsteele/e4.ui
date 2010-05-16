@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmi:id="_CmKLoGEHEd-cjMjlj5nmGw">
+  <components xmi:id="_Fpgn4GEHEd-cjMjlj5nmGw" parentID="app.simpleide" processor="org.eclipse.e4.demo.simpleide.editor.text.ModelProcessor"/>
+</application:ModelComponents>
