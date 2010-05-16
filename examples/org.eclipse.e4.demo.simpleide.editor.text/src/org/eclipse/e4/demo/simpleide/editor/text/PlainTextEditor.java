@@ -26,7 +26,9 @@ public class PlainTextEditor {
 	public PlainTextEditor(Composite parent, IDocumentInput input) {
 		this.input = input;
 		parent.setLayout(new FillLayout());
-		TextViewer viewer = new TextViewer(parent, SWT.NONE);
+		
+		int styles= SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
+		TextViewer viewer = new TextViewer(parent, styles);
 		viewer.setDocument(input.getDocument());
 	}
 	

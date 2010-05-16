@@ -34,5 +34,4 @@ public class IDocumentInputProviderFunction extends ContextFunction {
 		
 		return input;
 	}
-
 }
