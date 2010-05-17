@@ -8,14 +8,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.demo.simpleide.services.IProjectService;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.osgi.framework.FrameworkUtil;
 
 public class JDTProjectService implements IProjectService {
 
-	public Image createIcon(Display display) {
-		return new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/newjprj_wiz.gif"));
+	public String getIconURI() {
+		return "platform:/plugin/" + FrameworkUtil.getBundle(getClass()).getSymbolicName() +"/icons/newjprj_wiz.gif";
 	}
 
 	public String getLabel() {

@@ -10,6 +10,11 @@
  ******************************************************************************/
 package org.eclipse.e4.demo.simpleide.handlers;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -17,6 +22,7 @@ import java.util.Vector;
 import javax.inject.Named;
 
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.demo.simpleide.internal.ServiceRegistryComponent;
@@ -107,8 +113,27 @@ public class NewProjectDialogHandler {
 						IProjectService el = (IProjectService) element;
 						Image img = images.get(el);
 						if( img == null ) {
-							img = el.createIcon(getShell().getDisplay());
-							images.put(el, img);
+							URL url;
+							InputStream in = null;
+							try {
+								url = FileLocator.find(new URL(el.getIconURI()));
+								in = url.openStream();
+								img = new Image(getShell().getDisplay(), in);
+								images.put(el, img);
+							} catch (MalformedURLException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} finally {
+								if( in != null ) {
+									try {
+										in.close();
+									} catch (IOException e) {
+									}
+								}
+							}
 						}
 						return img;
 					}

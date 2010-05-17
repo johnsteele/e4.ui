@@ -1,13 +1,11 @@
 package org.eclipse.e4.demo.simpleide.internal;
 
 import org.eclipse.e4.demo.simpleide.services.IImportService;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class EclipseProjectImport implements IImportService {
+public class EclipseProjectImportService implements IImportService {
 
-	public Image getIcon(Display display) {
+	public String getIconURI() {
 		// TODO Auto-generated method stub
 		return null;
 	}

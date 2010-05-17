@@ -17,9 +17,8 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.demo.simpleide.services.IProjectService;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.osgi.framework.FrameworkUtil;
 
 public class DefaultProjectService implements IProjectService {
 
@@ -45,8 +44,8 @@ public class DefaultProjectService implements IProjectService {
 		}
 	}
 
-	public Image createIcon(Display display) {
-		return new Image(display, getClass().getClassLoader().getResourceAsStream("/icons/newprj_wiz.gif"));
+	public String getIconURI() {
+		return "platform:/plugin/" + FrameworkUtil.getBundle(getClass()).getSymbolicName() + "/icons/newprj_wiz.gif";
 	}
 
 	public String getLabel() {
