@@ -1,4 +1,4 @@
-package org.eclipse.e4.demo.simpleide.navigator.internal;
+package org.eclipse.e4.demo.simpleide.internal;
 
 import org.eclipse.e4.demo.simpleide.services.IImportService;
 import org.eclipse.swt.graphics.Image;

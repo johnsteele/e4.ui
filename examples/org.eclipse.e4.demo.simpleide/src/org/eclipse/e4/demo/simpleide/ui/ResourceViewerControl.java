@@ -1,4 +1,4 @@
-package org.eclipse.e4.demo.simpleide.navigator.internal.handler;
+package org.eclipse.e4.demo.simpleide.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;

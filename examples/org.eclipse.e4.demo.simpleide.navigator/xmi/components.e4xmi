@@ -1,21 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_6YPb8GAqEd-SpvYPtvmu5g">
+<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmi:id="_6YPb8GAqEd-SpvYPtvmu5g">
   <components xmi:id="_9DHt0GAqEd-SpvYPtvmu5g" parentID="simpleide.stack.left">
     <children xsi:type="basic:Part" xmi:id="_a79pAGAvEd-ta-xu77XOxw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.navigator.internal.ResourceNavigator" label="Navigator" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/icons/application_side_tree.png"/>
-  </components>
-  <components xmi:id="_zS2pcGAxEd-JXsO2B6iMKA" parentID="app.simpleide">
-    <handlers xmi:id="_gfD90GAyEd-1R9N_iMptOA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.navigator.internal.handler.NewProjectDialogHandler" command="_LDvrwGAyEd-1R9N_iMptOA"/>
-    <handlers xmi:id="__3cF8GDiEd-l5dM-t0RjAA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.navigator.internal.handler.NewTextFileDialogHandler" command="_5hLHcGDiEd-l5dM-t0RjAA"/>
-    <handlers xmi:id="_YNTnIGDvEd-ZWNjYblYd-g" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.navigator.internal.handler.NewFolderDialogHandler" command="_TpNw4GDvEd-ZWNjYblYd-g"/>
-    <commands xmi:id="_LDvrwGAyEd-1R9N_iMptOA" elementId="simpleide.command.newproject" commandName="New Project Command"/>
-    <commands xmi:id="_5hLHcGDiEd-l5dM-t0RjAA" elementId="simpleide.command.newtxtfile" commandName="New Text File Command"/>
-    <commands xmi:id="_TpNw4GDvEd-ZWNjYblYd-g" elementId="simpleide.command.newfolder" commandName="New Folder Command"/>
-  </components>
-  <components xmi:id="_sq5okGAyEd-1R9N_iMptOA" parentID="simpleide.mainmenu.file.new">
-    <children xsi:type="menu:HandledMenuItem" xmi:id="_0h5kkGAzEd-_KuNHePH0xw" label="Project ..." iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/icons/newprj_wiz.gif" command="_LDvrwGAyEd-1R9N_iMptOA"/>
-    <children xsi:type="menu:MenuSeparator" xmi:id="_bODRwGDjEd-l5dM-t0RjAA"/>
-    <children xsi:type="menu:HandledMenuItem" xmi:id="_cyb1oGDjEd-l5dM-t0RjAA" label="Text File ..." iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/icons/newfile_wiz.gif" command="_5hLHcGDiEd-l5dM-t0RjAA"/>
-    <children xsi:type="menu:HandledMenuItem" xmi:id="_e_z1sGDvEd-ZWNjYblYd-g" label="Folder ..." iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/icons/newfolder_wiz.gif" command="_TpNw4GDvEd-ZWNjYblYd-g"/>
-    <children xsi:type="menu:MenuSeparator" xmi:id="_21pxMGE2Ed-CBZE9r1OX5Q"/>
   </components>
 </application:ModelComponents>

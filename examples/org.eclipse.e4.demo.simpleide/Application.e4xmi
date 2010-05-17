@@ -19,7 +19,13 @@
     <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
     <mainMenu xmi:id="_yobKMGAiEd-E_N65-FXwgA">
       <children xsi:type="menu:Menu" xmi:id="_0BkucGAiEd-E_N65-FXwgA" elementId="simpleide.mainmenu.file" label="File">
-        <children xsi:type="menu:Menu" xmi:id="_sErgoGAzEd-_KuNHePH0xw" elementId="simpleide.mainmenu.file.new" label="New"/>
+        <children xsi:type="menu:Menu" xmi:id="_sErgoGAzEd-_KuNHePH0xw" elementId="simpleide.mainmenu.file.new" label="New">
+          <children xsi:type="menu:HandledMenuItem" xmi:id="_hC0PYGHYEd-_Y6o4fctqsw" label="Project ..." iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide/icons/newprj_wiz.gif" command="_CWMKAGHYEd-_Y6o4fctqsw"/>
+          <children xsi:type="menu:MenuSeparator" xmi:id="_oqi1wGHYEd-_Y6o4fctqsw"/>
+          <children xsi:type="menu:HandledMenuItem" xmi:id="_pbntYGHYEd-_Y6o4fctqsw" label="Text File ..." iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide/icons/newfile_wiz.gif" command="_F3JIQGHYEd-_Y6o4fctqsw"/>
+          <children xsi:type="menu:HandledMenuItem" xmi:id="_wkGzAGHYEd-_Y6o4fctqsw" label="Folder ..." iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide/icons/newfolder_wiz.gif" command="_IERuMGHYEd-_Y6o4fctqsw"/>
+          <children xsi:type="menu:MenuSeparator" xmi:id="_5FzuUGHYEd-_Y6o4fctqsw"/>
+        </children>
         <children xsi:type="menu:MenuSeparator" xmi:id="_NHvfwGEiEd-A9truh9jvIg"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_OxUFoGEiEd-A9truh9jvIg" label="Save All" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide/icons/disk_multiple.png" command="_kpAnIGEhEd-A9truh9jvIg"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_mydxgGEiEd-A9truh9jvIg" label="Save" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide/icons/disk.png" command="_tl9UAGEhEd-A9truh9jvIg"/>
@@ -37,6 +43,9 @@
   <handlers xmi:id="_jXCDwGAiEd-E_N65-FXwgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.ExitHandler" command="_oIK3gGAiEd-E_N65-FXwgA"/>
   <handlers xmi:id="_pj_6cGEhEd-A9truh9jvIg" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.SaveAllHandler" command="_kpAnIGEhEd-A9truh9jvIg"/>
   <handlers xmi:id="_w0lzMGEhEd-A9truh9jvIg" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.SaveHandler" command="_tl9UAGEhEd-A9truh9jvIg"/>
+  <handlers xmi:id="_BTglAGHYEd-_Y6o4fctqsw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.NewProjectDialogHandler" command="_CWMKAGHYEd-_Y6o4fctqsw"/>
+  <handlers xmi:id="_T8XWgGHYEd-_Y6o4fctqsw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.NewTextFileDialogHandler" command="_F3JIQGHYEd-_Y6o4fctqsw"/>
+  <handlers xmi:id="_WjZDIGHYEd-_Y6o4fctqsw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.NewFolderDialogHandler" command="_IERuMGHYEd-_Y6o4fctqsw"/>
   <bindingTables xmi:id="_bFtE4GEhEd-A9truh9jvIg" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
     <bindings xmi:id="_fW-s0GEhEd-A9truh9jvIg" keySequence="M1+Q" command="_oIK3gGAiEd-E_N65-FXwgA"/>
     <bindings xmi:id="_z1SkEGEhEd-A9truh9jvIg" keySequence="M1+M2+S" command="_kpAnIGEhEd-A9truh9jvIg"/>
@@ -49,4 +58,7 @@
   <commands xmi:id="_oIK3gGAiEd-E_N65-FXwgA" elementId="simpleide.command.exit" commandName="Exit IDE"/>
   <commands xmi:id="_kpAnIGEhEd-A9truh9jvIg" elementId="simpleide.command.saveall" commandName="Save All"/>
   <commands xmi:id="_tl9UAGEhEd-A9truh9jvIg" elementId="simpleide.command.save" commandName="Save"/>
+  <commands xmi:id="_CWMKAGHYEd-_Y6o4fctqsw" elementId="simpleide.command.newproject" commandName="New Project Command"/>
+  <commands xmi:id="_F3JIQGHYEd-_Y6o4fctqsw" elementId="simpleide.command.newtxtfile" commandName="New Text File Command"/>
+  <commands xmi:id="_IERuMGHYEd-_Y6o4fctqsw" elementId="simpleide.command.newfolder" commandName="New Folder Command"/>
 </simpleide:SimpleIDEApplication>
