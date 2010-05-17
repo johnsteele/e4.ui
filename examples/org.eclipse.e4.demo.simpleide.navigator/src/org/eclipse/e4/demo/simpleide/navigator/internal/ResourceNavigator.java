@@ -204,21 +204,8 @@ public class ResourceNavigator {
 		mgr.addMenuListener(new IMenuListener() {
 			
 			public void menuAboutToShow(IMenuManager manager) {
-				manager.add(createNewProjectAction());
-				manager.add(new Separator());
-//				manager.add();
+				
 			}
 		});
-	}
-	
-	private Action createNewProjectAction() {
-		return new Action("New Project ...") {
-			@Override
-			public void run() {
-				Command cmd = commandService.getCommand("simpleide.command.newproject");
-				ParameterizedCommand pCmd = ParameterizedCommand.generateCommand(cmd, null);
-				handlerService.executeHandler(pCmd);
-			}
-		};
 	}
 }

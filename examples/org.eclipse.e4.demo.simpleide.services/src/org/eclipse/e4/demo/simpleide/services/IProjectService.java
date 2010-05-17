@@ -8,24 +8,16 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.demo.simpleide.navigator.internal;
+package org.eclipse.e4.demo.simpleide.services;
 
-import java.util.Vector;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.e4.demo.simpleide.services.IProjectService;
-
-public class ServiceRegistryComponent {
-	private Vector<IProjectService> creators = new Vector<IProjectService>();
-	
-	public void addProjectService( IProjectService creator ) {
-		creators.add(creator);
-	}
-	
-	public void removeProjectService(IProjectService creator) {
-		creators.remove(creator);
-	}
-	
-	public Vector<IProjectService> getCreators() {
-		return creators;
-	}
+public interface IProjectService {
+	public Image createIcon(Display display);
+	public String getLabel();
+	public void createProject(Shell shell, IWorkspace workspace, IProgressMonitor monitor, String projectName);
 }
