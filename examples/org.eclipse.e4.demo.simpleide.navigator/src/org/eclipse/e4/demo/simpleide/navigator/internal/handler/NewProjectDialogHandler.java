@@ -52,6 +52,11 @@ public class NewProjectDialogHandler {
 		TitleAreaDialog dialog = new TitleAreaDialog(parentShell) {
 			private Text projectName;
 			private TableViewer projectType;
+			
+			@Override
+			protected int getShellStyle() {
+				return super.getShellStyle() | SWT.SHEET;
+			}
 
 			@Override
 			protected Control createDialogArea(Composite parent) {
