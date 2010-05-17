@@ -27,6 +27,12 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_7kftUGAiEd-E_N65-FXwgA" label="Exit" command="_oIK3gGAiEd-E_N65-FXwgA"/>
       </children>
     </mainMenu>
+    <trimBars xmi:id="_XAea0GGjEd-_qNzu9_D5ug" elementId="">
+      <children xsi:type="menu:ToolBar" xmi:id="_bf9d4GGjEd-_qNzu9_D5ug" elementId="app.simpleide.toolbar">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_dBds4GGjEd-_qNzu9_D5ug" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide/icons/disk.png" command="_tl9UAGEhEd-A9truh9jvIg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_ioN6AGGjEd-_qNzu9_D5ug" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide/icons/disk_multiple.png" command="_kpAnIGEhEd-A9truh9jvIg"/>
+      </children>
+    </trimBars>
   </children>
   <handlers xmi:id="_jXCDwGAiEd-E_N65-FXwgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.ExitHandler" command="_oIK3gGAiEd-E_N65-FXwgA"/>
   <handlers xmi:id="_pj_6cGEhEd-A9truh9jvIg" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.SaveAllHandler" command="_kpAnIGEhEd-A9truh9jvIg"/>

@@ -27,6 +27,10 @@
                name="applicationCSS"
                value="org.eclipse.e4.demo.simpleide.theme">
          </property>
+         <property
+               name="applicationCSSResources"
+               value="platform:/plugin/org.eclipse.e4.demo.simpleide/icons/css/">
+         </property>
       </product>
    </extension>
 
