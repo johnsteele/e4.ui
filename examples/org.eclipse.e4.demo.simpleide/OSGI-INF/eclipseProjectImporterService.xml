@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.e4.demo.simpleide.eclipseProjectImporterService">
    <implementation class="org.eclipse.e4.demo.simpleide.internal.EclipseProjectImportService"/>
+   <service>
+      <provide interface="org.eclipse.e4.demo.simpleide.services.IImportResourceService"/>
+   </service>
 </scr:component>

@@ -1,18 +1,17 @@
 package org.eclipse.e4.demo.simpleide.internal;
 
-import org.eclipse.e4.demo.simpleide.services.IImportService;
+import org.eclipse.e4.demo.simpleide.services.IImportResourceService;
 import org.eclipse.swt.widgets.Shell;
+import org.osgi.framework.FrameworkUtil;
 
-public class EclipseProjectImportService implements IImportService {
+public class EclipseProjectImportService implements IImportResourceService {
 
 	public String getIconURI() {
-		// TODO Auto-generated method stub
-		return null;
+		return "platform:/plugin/" + FrameworkUtil.getBundle(getClass()).getSymbolicName() + "/icons/newprj_wiz.gif";
 	}
 
 	public String getLabel() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Existing Projects Into Workspace";
 	}
 
 	public void importResource(Shell shell) {
