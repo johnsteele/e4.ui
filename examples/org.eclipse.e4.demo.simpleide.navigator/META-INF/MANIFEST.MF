@@ -23,3 +23,4 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.6.0",
 Import-Package: org.eclipse.core.runtime.jobs
 Service-Component: OSGI-INF/serviceRegistryComponent.xml, OSGI-INF/defaultProjectService.xml
 Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.e4.demo.simpleide.navigator

@@ -37,7 +37,11 @@
       <plugin id="org.eclipse.e4.core.services"/>
       <plugin id="org.eclipse.e4.core.services.annotations" fragment="true"/>
       <plugin id="org.eclipse.e4.demo.simpleide"/>
+      <plugin id="org.eclipse.e4.demo.simpleide.e4editor"/>
+      <plugin id="org.eclipse.e4.demo.simpleide.jdt"/>
       <plugin id="org.eclipse.e4.demo.simpleide.model"/>
+      <plugin id="org.eclipse.e4.demo.simpleide.navigator"/>
+      <plugin id="org.eclipse.e4.demo.tools.simpleide"/>
       <plugin id="org.eclipse.e4.tools.emf.ui"/>
       <plugin id="org.eclipse.e4.ui.bindings"/>
       <plugin id="org.eclipse.e4.ui.css.core"/>
@@ -45,6 +49,7 @@
       <plugin id="org.eclipse.e4.ui.css.swt"/>
       <plugin id="org.eclipse.e4.ui.css.swt.theme"/>
       <plugin id="org.eclipse.e4.ui.model.workbench"/>
+      <plugin id="org.eclipse.e4.ui.model.workbench.edit"/>
       <plugin id="org.eclipse.e4.ui.services"/>
       <plugin id="org.eclipse.e4.ui.workbench"/>
       <plugin id="org.eclipse.e4.ui.workbench.renderers.swt"/>
@@ -66,6 +71,9 @@
       <plugin id="org.eclipse.equinox.preferences"/>
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.equinox.util"/>
+      <plugin id="org.eclipse.jdt.compiler.apt" fragment="true"/>
+      <plugin id="org.eclipse.jdt.compiler.tool" fragment="true"/>
+      <plugin id="org.eclipse.jdt.core"/>
       <plugin id="org.eclipse.jface"/>
       <plugin id="org.eclipse.jface.databinding"/>
       <plugin id="org.eclipse.nebula.widgets.gallery"/>
@@ -73,6 +81,7 @@
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.swt"/>
       <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.text"/>
       <plugin id="org.w3c.css.sac"/>
       <plugin id="org.w3c.dom.smil"/>
       <plugin id="org.w3c.dom.svg"/>
