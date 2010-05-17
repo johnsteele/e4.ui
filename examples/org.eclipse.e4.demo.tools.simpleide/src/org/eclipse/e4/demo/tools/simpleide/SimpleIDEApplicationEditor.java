@@ -22,6 +22,11 @@ public class SimpleIDEApplicationEditor extends ApplicationEditor {
 	}
 	
 	@Override
+	public String getLabel(Object element) {
+		return "SimpleIDE Application";
+	}
+	
+	@Override
 	public IObservableList getChildList(Object element) {
 		IObservableList list = super.getChildList(element);
 		VirtualEntry<Object> v = new VirtualEntry<Object>(EDITOR_DESCRIPTORS_ID,EDITOR_DESCRIPTORS,element,"Editor Part Descriptors") {
