@@ -9,7 +9,7 @@ import org.eclipse.emf.common.util.URI;
 
 public class XMIResourceFunction extends ContextFunction {
 	@Override
-	public Object compute(IEclipseContext context, Object[] arguments) {
+	public Object compute(IEclipseContext context) {
 		final MInputPart part = context.get(MInputPart.class);
 		if( part != null ) {
 			final XMIModelResource resource = new XMIModelResource(URI.createPlatformResourceURI(part.getInputURI(),false));

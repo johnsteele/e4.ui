@@ -12,7 +12,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 public class IDocumentInputProviderFunction extends ContextFunction {
 
 	@Override
-	public Object compute(IEclipseContext context, Object[] arguments) {
+	public Object compute(IEclipseContext context) {
 		final MInputPart inputPart = context.get(MInputPart.class);
 		
 		IWorkspace workspace = context.get(IWorkspace.class);
