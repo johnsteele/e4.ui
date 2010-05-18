@@ -12,10 +12,12 @@ package org.eclipse.e4.demo.simpleide.navigator.internal;
 
 import java.util.Vector;
 
+import org.eclipse.e4.demo.simpleide.services.IImportResourceService;
 import org.eclipse.e4.demo.simpleide.services.IProjectService;
 
 public class ServiceRegistryComponent {
 	private Vector<IProjectService> creators = new Vector<IProjectService>();
+	private Vector<IImportResourceService> importServices = new Vector<IImportResourceService>();
 	
 	public void addProjectService( IProjectService creator ) {
 		creators.add(creator);
@@ -27,5 +29,17 @@ public class ServiceRegistryComponent {
 	
 	public Vector<IProjectService> getCreators() {
 		return creators;
+	}
+	
+	public void addImportService(IImportResourceService importService) {
+		importServices.add(importService);
+	}
+	
+	public void removeImportService(IImportResourceService importService) {
+		importServices.remove(importService);
+	}
+	
+	public Vector<IImportResourceService> getImportServices() {
+		return importServices;
 	}
 }

@@ -6,6 +6,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.demo.simpleide.services.IProjectService;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.swt.widgets.Shell;
@@ -21,7 +23,7 @@ public class JDTProjectService implements IProjectService {
 		return "Java Project";
 	}
 
-	public void createProject(Shell shell, IWorkspace workspace,
+	public void createProject(Shell shell, IWorkspace workspace, StatusReporter statusReporter, Logger looger,
 			IProgressMonitor monitor, String projectName) {
 		final IProject project = workspace.getRoot().getProject(projectName);
 		final IProjectDescription pd = workspace

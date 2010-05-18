@@ -16,13 +16,16 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.demo.simpleide.services.IProjectService;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.FrameworkUtil;
 
 public class DefaultProjectService implements IProjectService {
 
-	public void createProject(Shell shell, IWorkspace workspace, IProgressMonitor monitor, String projectName) {
+	public void createProject(Shell shell, IWorkspace workspace, StatusReporter statusReporter, Logger looger,
+			IProgressMonitor monitor, String projectName) {
 		final IProject project = workspace.getRoot().getProject(projectName);
 		final IProjectDescription pd = workspace
 				.newProjectDescription(projectName);

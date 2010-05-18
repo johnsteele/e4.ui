@@ -36,8 +36,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MSimpleIDEApplication;
+import org.eclipse.e4.demo.simpleide.services.IImportResourceService;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -61,6 +64,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 
 public class ResourceNavigator {
 	private Map<IContainer, IObservableSet> observableSets = new HashMap<IContainer, IObservableSet>();
@@ -115,7 +119,7 @@ public class ResourceNavigator {
 	};
 
 	@Inject
-	public ResourceNavigator(Composite parent, final IEclipseContext context, IWorkspace workspace, final MApplication application) {
+	public ResourceNavigator(Composite parent, final IEclipseContext context, IWorkspace workspace, final MApplication application, final ServiceRegistryComponent serviceRegistry, StatusReporter statusReporter, Logger logger) {
 		final Realm realm = SWTObservables.getRealm(parent.getDisplay());
 		parent.setLayout(new FillLayout());
 		TreeViewer viewer = new TreeViewer(parent,SWT.FULL_SELECTION|SWT.H_SCROLL|SWT.V_SCROLL);
@@ -192,11 +196,11 @@ public class ResourceNavigator {
 				
 			}
 		});
-//		setupContextMenu(viewer);
+		setupContextMenu(viewer, serviceRegistry, parent.getShell(), workspace, statusReporter, logger);
 		workspace.addResourceChangeListener(listener);
 	}
 	
-	private void setupContextMenu(final TreeViewer viewer) {
+	private void setupContextMenu(final TreeViewer viewer, final ServiceRegistryComponent serviceRegistry, final Shell shell, final IWorkspace workspace, final StatusReporter statusReporter, final Logger logger) {
 		MenuManager mgr = new MenuManager();
 		viewer.getControl().setMenu(mgr.createContextMenu(viewer.getControl()));
 		
@@ -204,7 +208,18 @@ public class ResourceNavigator {
 		mgr.addMenuListener(new IMenuListener() {
 			
 			public void menuAboutToShow(IMenuManager manager) {
+				MenuManager mgr = new MenuManager("Import");
+				for( IImportResourceService s : serviceRegistry.getImportServices() ) {
+					final IImportResourceService tmp = s;
+					Action a = new Action(s.getLabel()) {
+						public void run() {
+							tmp.importResource(shell, workspace, statusReporter, logger);
+						}
+					};
+					mgr.add(a);
+				}
 				
+				manager.add(mgr);
 			}
 		});
 	}

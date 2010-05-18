@@ -25,6 +25,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.demo.simpleide.internal.ServiceRegistryComponent;
 import org.eclipse.e4.demo.simpleide.services.IProjectService; 
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -54,7 +56,7 @@ public class NewProjectDialogHandler {
 	private IProjectService creator;
 	
 	@Execute
-	public void openNewProjectDialog(@Named(IServiceConstants.ACTIVE_SHELL) Shell parentShell, IWorkspace workspace, IProgressMonitor monitor, final ServiceRegistryComponent serviceRegistry) {
+	public void openNewProjectDialog(@Named(IServiceConstants.ACTIVE_SHELL) Shell parentShell, IWorkspace workspace, IProgressMonitor monitor, final ServiceRegistryComponent serviceRegistry, StatusReporter reporter, Logger logger) {
 		TitleAreaDialog dialog = new TitleAreaDialog(parentShell) {
 			private Text projectName;
 			private TableViewer projectType;
@@ -179,7 +181,7 @@ public class NewProjectDialogHandler {
 		};
 		
 		if( dialog.open() == IDialogConstants.OK_ID ) {
-			creator.createProject(parentShell, workspace, monitor, projectName);
+			creator.createProject(parentShell, workspace, reporter, logger, monitor, projectName);
 		}
 	} 
 }

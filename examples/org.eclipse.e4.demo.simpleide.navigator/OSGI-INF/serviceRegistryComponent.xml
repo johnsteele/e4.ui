@@ -5,4 +5,5 @@
       <provide interface="org.eclipse.e4.demo.simpleide.navigator.internal.ServiceRegistryComponent"/>
    </service>
    <reference bind="addProjectService" cardinality="0..n" interface="org.eclipse.e4.demo.simpleide.services.IProjectService" name="IProjectService" policy="dynamic" unbind="removeProjectService"/>
+   <reference bind="addImportService" cardinality="0..n" interface="org.eclipse.e4.demo.simpleide.services.IImportResourceService" name="IImportResourceService" policy="dynamic" unbind="removeImportService"/>
 </scr:component>

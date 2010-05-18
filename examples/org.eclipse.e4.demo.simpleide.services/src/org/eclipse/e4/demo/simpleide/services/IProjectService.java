@@ -12,10 +12,12 @@ package org.eclipse.e4.demo.simpleide.services;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.swt.widgets.Shell;
 
 public interface IProjectService {
 	public String getIconURI();
 	public String getLabel();
-	public void createProject(Shell shell, IWorkspace workspace, IProgressMonitor monitor, String projectName);
+	public void createProject(Shell shell, IWorkspace workspace, StatusReporter statusReporter, Logger logger, IProgressMonitor monitor, String projectName);
 }
