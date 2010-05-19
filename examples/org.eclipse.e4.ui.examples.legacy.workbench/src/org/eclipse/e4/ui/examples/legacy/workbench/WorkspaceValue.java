@@ -6,7 +6,10 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 
 public class WorkspaceValue implements IContextFunction {
 
-	public Object compute(IEclipseContext context, Object[] arguments) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.e4.core.contexts.IContextFunction#compute(org.eclipse.e4.core.contexts.IEclipseContext)
+	 */
+	public Object compute(IEclipseContext context) {
 		ResourcesPlugin.getPlugin().getPluginPreferences().setValue(ResourcesPlugin.PREF_AUTO_REFRESH, true);
 		return ResourcesPlugin.getWorkspace();
 	}
