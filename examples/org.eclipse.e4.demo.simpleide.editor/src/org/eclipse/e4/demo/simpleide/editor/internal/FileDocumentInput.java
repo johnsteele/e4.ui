@@ -1,6 +1,5 @@
 package org.eclipse.e4.demo.simpleide.editor.internal;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
