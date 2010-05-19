@@ -48,6 +48,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
+import org.eclipse.e4.demo.simpleide.internal.datatransfer.actions.WorkspaceModifyOperation;
 import org.eclipse.e4.demo.simpleide.internal.datatransfer.dialogs.IOverwriteQuery;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -888,7 +889,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 									DataTransferMessages.WizardProjectsImportPage_SearchingMessage,
 									100);
 					selectedProjects = new ProjectRecord[0];
-					Collection files = new ArrayList();
+					Collection<Object> files = new ArrayList<Object>();
 					monitor.worked(10);
 					if (!dirSelected
 							&& ArchiveFileManipulations.isTarFile(path)) {
@@ -905,7 +906,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 								monitor)) {
 							return;
 						}
-						Iterator filesIterator = files.iterator();
+						Iterator<Object> filesIterator = files.iterator();
 						selectedProjects = new ProjectRecord[files.size()];
 						int index = 0;
 						monitor.worked(50);
@@ -929,7 +930,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 								monitor)) {
 							return;
 						}
-						Iterator filesIterator = files.iterator();
+						Iterator<Object> filesIterator = files.iterator();
 						selectedProjects = new ProjectRecord[files.size()];
 						int index = 0;
 						monitor.worked(50);
@@ -947,7 +948,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 								null, monitor)) {
 							return;
 						}
-						Iterator filesIterator = files.iterator();
+						Iterator<Object> filesIterator = files.iterator();
 						selectedProjects = new ProjectRecord[files.size()];
 						int index = 0;
 						monitor.worked(50);
@@ -1070,8 +1071,8 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 	 * 		The monitor to report to
 	 * @return boolean <code>true</code> if the operation was completed.
 	 */
-	private boolean collectProjectFilesFromDirectory(Collection files,
-			File directory, Set directoriesVisited, IProgressMonitor monitor) {
+	private boolean collectProjectFilesFromDirectory(Collection<Object> files,
+			File directory, Set<String> directoriesVisited, IProgressMonitor monitor) {
 
 		if (monitor.isCanceled()) {
 			return false;
@@ -1085,7 +1086,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 
 		// Initialize recursion guard for recursive symbolic links
 		if (directoriesVisited == null) {
-			directoriesVisited = new HashSet();
+			directoriesVisited = new HashSet<String>();
 			try {
 				directoriesVisited.add(directory.getCanonicalPath());
 			} catch (IOException exception) {
@@ -1143,7 +1144,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 	 * 		The monitor to report to
 	 * @return boolean <code>true</code> if the operation was completed.
 	 */
-	private boolean collectProjectFilesFromProvider(Collection files,
+	private boolean collectProjectFilesFromProvider(Collection<Object> files,
 			Object entry, int level, IProgressMonitor monitor) {
 
 		if (monitor.isCanceled()) {
@@ -1152,11 +1153,11 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 		monitor.subTask(NLS.bind(
 				DataTransferMessages.WizardProjectsImportPage_CheckingMessage,
 				structureProvider.getLabel(entry)));
-		List children = structureProvider.getChildren(entry);
+		List<?> children = structureProvider.getChildren(entry);
 		if (children == null) {
-			children = new ArrayList(1);
+			children = new ArrayList<Object>(1);
 		}
-		Iterator childrenEnum = children.iterator();
+		Iterator<?> childrenEnum = children.iterator();
 		while (childrenEnum.hasNext()) {
 			Object child = childrenEnum.next();
 			if (structureProvider.isFolder(child)) {
@@ -1249,14 +1250,9 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 		saveWidgetValues();
 		
 		final Object[] selected = projectsList.getCheckedElements();
-		createdProjects = new ArrayList();
-//TODO SimpleIDE		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			
-			public void run(IProgressMonitor monitor) throws InvocationTargetException,
-					InterruptedException {
-				execute(monitor);
-			}
+		createdProjects = new ArrayList<IProject>();
+		WorkspaceModifyOperation op = new WorkspaceModifyOperation(workspace) {
+		
 			protected void execute(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 				try {
@@ -1300,7 +1296,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 		return true;
 	}
 
-	List createdProjects;
+	List<IProject> createdProjects;
 
 //TODO SimpleIDE
 //	private void addToWorkingSets() {
@@ -1354,7 +1350,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 		}
 		if (record.projectArchiveFile != null) {
 			// import from archive
-			List fileSystemObjects = structureProvider
+			List<?> fileSystemObjects = structureProvider
 					.getChildren(record.parent);
 			structureProvider.setStrip(record.level);
 			ImportOperation operation = new ImportOperation(workspace,project
@@ -1405,7 +1401,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 		// import operation to import project files if copy checkbox is selected
 		if (copyFiles && importSource != null) {
 			FileSystemStructureProvider pv = new FileSystemStructureProvider(logger);
-			List filesToImport = pv.getChildren(importSource);
+			List<File> filesToImport = pv.getChildren(importSource);
 			ImportOperation operation = new ImportOperation(workspace,project
 					.getFullPath(), importSource,
 					pv, this, filesToImport);
@@ -1515,7 +1511,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 	 * 	workspace
 	 */
 	public ProjectRecord[] getProjectRecords() {
-		List projectRecords = new ArrayList();
+		List<ProjectRecord> projectRecords = new ArrayList<ProjectRecord>();
 		for (int i = 0; i < selectedProjects.length; i++) {
 			if (isProjectInWorkspace(selectedProjects[i].getProjectName())) {
 				selectedProjects[i].hasConflicts = true;

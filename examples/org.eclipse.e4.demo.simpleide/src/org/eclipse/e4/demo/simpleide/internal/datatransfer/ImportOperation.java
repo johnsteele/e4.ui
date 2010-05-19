@@ -75,9 +75,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
     private IContainer destinationContainer;
 
-    private List selectedFiles;
+    private List<?> selectedFiles;
 
-    private List rejectedFiles;
+    private List<?> rejectedFiles;
 
     private IImportStructureProvider provider;
 
@@ -87,7 +87,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
     private Shell context;
 
-    private List errorTable = new ArrayList();
+    private List<IStatus> errorTable = new ArrayList<IStatus>();
 
     private boolean createVirtualFolder = false;
 
@@ -187,7 +187,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      */
     public ImportOperation(IWorkspace workspace, IPath containerPath, Object source,
             IImportStructureProvider provider,
-            IOverwriteQuery overwriteImplementor, List filesToImport) {
+            IOverwriteQuery overwriteImplementor, List<?> filesToImport) {
         this(workspace, containerPath, source, provider, overwriteImplementor);
         setFilesToImport(filesToImport);
     }
@@ -219,7 +219,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      */
     public ImportOperation(IWorkspace workspace, IPath containerPath,
             IImportStructureProvider provider,
-            IOverwriteQuery overwriteImplementor, List filesToImport) {
+            IOverwriteQuery overwriteImplementor, List<?> filesToImport) {
         this(workspace, containerPath, null, provider, overwriteImplementor);
         setFilesToImport(filesToImport);
     }
@@ -238,10 +238,10 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @param policy on of the POLICY constants defined in the
      * class.
      */
-    void collectExistingReadonlyFiles(IPath sourceStart, List sources,
-            ArrayList noOverwrite, ArrayList overwriteReadonly, int policy) {
+    void collectExistingReadonlyFiles(IPath sourceStart, List<?> sources,
+            ArrayList<Object> noOverwrite, ArrayList<Object> overwriteReadonly, int policy) {
         IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-        Iterator sourceIter = sources.iterator();
+        Iterator<?> sourceIter = sources.iterator();
         IPath sourceRootPath = null;
 
         if (this.source != null) {
@@ -492,8 +492,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @param files source files
      * @return list of rejected files as absolute paths. Object type IPath.
      */
-    ArrayList getRejectedFiles(IStatus multiStatus, IFile[] files) {
-        ArrayList filteredFiles = new ArrayList();
+    ArrayList<IPath> getRejectedFiles(IStatus multiStatus, IFile[] files) {
+        ArrayList<IPath> filteredFiles = new ArrayList<IPath>();
 
         IStatus[] status = multiStatus.getChildren();
         for (int i = 0; i < status.length; i++) {
@@ -663,8 +663,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	 * @throws CoreException 
      * @exception OperationCanceledException if canceled
      */
-    void importFileSystemObjects(List filesToImport) throws CoreException {
-        Iterator filesEnum = filesToImport.iterator();
+    void importFileSystemObjects(List<?> filesToImport) throws CoreException {
+        Iterator<?> filesEnum = filesToImport.iterator();
         while (filesEnum.hasNext()) {
             Object fileSystemObject = filesEnum.next();
             if (source == null) {
@@ -796,7 +796,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
         int childPolicy = importFolder(fileSystemObject, policy);
         if (childPolicy != POLICY_SKIP_CHILDREN) {
-            Iterator children = provider.getChildren(fileSystemObject)
+            Iterator<?> children = provider.getChildren(fileSystemObject)
                     .iterator();
             while (children.hasNext()) {
 				importRecursivelyFrom(children.next(), childPolicy);
@@ -889,7 +889,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @param filesToImport the list of file system objects to be imported
      *   (element type: <code>Object</code>)
      */
-    public void setFilesToImport(List filesToImport) {
+    public void setFilesToImport(List<?> filesToImport) {
         this.selectedFiles = filesToImport;
     }
 
@@ -913,10 +913,10 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @param existingFiles existing files to validate
      * @return list of rejected files as absolute paths. Object type IPath.
      */
-    ArrayList validateEdit(List existingFiles) {
+    ArrayList<IPath> validateEdit(List<IFile> existingFiles) {
        
         if (existingFiles.size() > 0) {
-            IFile[] files = (IFile[]) existingFiles
+            IFile[] files = existingFiles
                     .toArray(new IFile[existingFiles.size()]);
             IWorkspace workspace = ResourcesPlugin.getWorkspace();
             IStatus status = workspace.validateEdit(files, context);
@@ -929,7 +929,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
            if(!status.isOK()){
            		//If just a single status reject them all
            		errorTable.add(status);
-           		ArrayList filteredFiles = new ArrayList();
+           		ArrayList<IPath> filteredFiles = new ArrayList<IPath>();
 
            		for (int i = 0; i < files.length; i++) {
            			filteredFiles.add(files[i].getFullPath());
@@ -938,7 +938,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
            }
             
         }
-        return new ArrayList();
+        return new ArrayList<IPath>();
     }
 
     /**
@@ -948,7 +948,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * 
      * @param sourceFiles files to validate
      */
-    void validateFiles(List sourceFiles) {
+    @SuppressWarnings("unchecked")
+	void validateFiles(List<?> sourceFiles) {
         ArrayList noOverwrite = new ArrayList();
         ArrayList overwriteReadonly = new ArrayList();
 

@@ -38,7 +38,7 @@ public class TarLeveledStructureProvider implements
 
 	private TarEntry root = new TarEntry("/");//$NON-NLS-1$
 
-	private Map children;
+	private Map<TarEntry,List<TarEntry>> children;
 
 	private Map<IPath,TarEntry> directoryEntryCache = new HashMap<IPath,TarEntry>();
 
@@ -82,10 +82,10 @@ public class TarLeveledStructureProvider implements
 		TarEntry newEntry = new TarEntry(pathname.toString());
 		newEntry.setFileType(TarEntry.DIRECTORY);
 		directoryEntryCache.put(pathname, newEntry);
-		List childList = new ArrayList();
+		List<TarEntry> childList = new ArrayList<TarEntry>();
 		children.put(newEntry, childList);
 
-		List parentChildList = (List) children.get(parent);
+		List<TarEntry> parentChildList = children.get(parent);
 		parentChildList.add(newEntry);
 		return newEntry;
 	}
@@ -103,19 +103,19 @@ public class TarLeveledStructureProvider implements
 					.removeLastSegments(1));
 		}
 
-		List childList = (List) children.get(parent);
+		List<TarEntry> childList = children.get(parent);
 		childList.add(entry);
 	}
 
 	/*
 	 * (non-Javadoc) Method declared on IImportStructureProvider
 	 */
-	public List getChildren(Object element) {
+	public List<TarEntry> getChildren(Object element) {
 		if (children == null) {
 			initialize();
 		}
 
-		return ((List) children.get(element));
+		return children.get(element);
 	}
 
 	/*
@@ -207,10 +207,10 @@ public class TarLeveledStructureProvider implements
 	 * specified source file.
 	 */
 	protected void initialize() {
-		children = new HashMap(1000);
+		children = new HashMap<TarEntry,List<TarEntry>>(1000);
 		
-		children.put(root, new ArrayList());
-		Enumeration entries = tarFile.entries();
+		children.put(root, new ArrayList<TarEntry>());
+		Enumeration<TarEntry> entries = tarFile.entries();
 		while (entries.hasMoreElements()) {
 			TarEntry entry = (TarEntry) entries.nextElement();
 			IPath path = new Path(entry.getName()).addTrailingSeparator();
