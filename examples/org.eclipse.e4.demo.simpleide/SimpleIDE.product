@@ -38,6 +38,8 @@
       <plugin id="org.eclipse.e4.core.services.annotations" fragment="true"/>
       <plugin id="org.eclipse.e4.demo.simpleide"/>
       <plugin id="org.eclipse.e4.demo.simpleide.e4editor"/>
+      <plugin id="org.eclipse.e4.demo.simpleide.editor"/>
+      <plugin id="org.eclipse.e4.demo.simpleide.editor.text"/>
       <plugin id="org.eclipse.e4.demo.simpleide.jdt"/>
       <plugin id="org.eclipse.e4.demo.simpleide.model"/>
       <plugin id="org.eclipse.e4.demo.simpleide.navigator"/>
@@ -77,6 +79,7 @@
       <plugin id="org.eclipse.jdt.core"/>
       <plugin id="org.eclipse.jface"/>
       <plugin id="org.eclipse.jface.databinding"/>
+      <plugin id="org.eclipse.jface.text"/>
       <plugin id="org.eclipse.nebula.widgets.gallery"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
