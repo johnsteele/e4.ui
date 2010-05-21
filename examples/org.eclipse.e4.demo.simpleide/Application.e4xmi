@@ -32,6 +32,9 @@
         <children xsi:type="menu:MenuSeparator" xmi:id="_ukxQMGEiEd-A9truh9jvIg"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_7kftUGAiEd-E_N65-FXwgA" label="Exit" command="_oIK3gGAiEd-E_N65-FXwgA"/>
       </children>
+      <children xsi:type="menu:Menu" xmi:id="_WbMXYEjUEd-v7fhjaiz65w" elementId="_WbMXYEjUEd-v7fhjaiz65w" label="Window">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_UW9TUPr3Ed6gmo7caOx120" elementId="showView" label="Show &amp;View" command="org.eclipse.ui.views.showView"/>
+      </children>
     </mainMenu>
     <trimBars xmi:id="_XAea0GGjEd-_qNzu9_D5ug" elementId="">
       <children xsi:type="menu:ToolBar" xmi:id="_bf9d4GGjEd-_qNzu9_D5ug" elementId="app.simpleide.toolbar">
@@ -46,10 +49,12 @@
   <handlers xmi:id="_BTglAGHYEd-_Y6o4fctqsw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.NewProjectDialogHandler" command="_CWMKAGHYEd-_Y6o4fctqsw"/>
   <handlers xmi:id="_T8XWgGHYEd-_Y6o4fctqsw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.NewTextFileDialogHandler" command="_F3JIQGHYEd-_Y6o4fctqsw"/>
   <handlers xmi:id="_WjZDIGHYEd-_Y6o4fctqsw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.NewFolderDialogHandler" command="_IERuMGHYEd-_Y6o4fctqsw"/>
+  <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYx" elementId="org.eclipse.ui.showViewHandler" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.internal.workbench.swt.handlers.ShowViewHandler" command="org.eclipse.ui.views.showView"/>
   <bindingTables xmi:id="_bFtE4GEhEd-A9truh9jvIg" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
     <bindings xmi:id="_fW-s0GEhEd-A9truh9jvIg" keySequence="M1+Q" command="_oIK3gGAiEd-E_N65-FXwgA"/>
     <bindings xmi:id="_z1SkEGEhEd-A9truh9jvIg" keySequence="M1+M2+S" command="_kpAnIGEhEd-A9truh9jvIg"/>
     <bindings xmi:id="_AcDQQGEiEd-A9truh9jvIg" keySequence="M1+S" command="_tl9UAGEhEd-A9truh9jvIg"/>
+    <bindings xmi:id="_tDFjkEjPEd-XR8_8rlW1bQ" keySequence="CTRL+C" elementId="_tDFjkEjPEd-XR9_8rlW1bQ" command="org.eclipse.ui.edit.copy"/>
   </bindingTables>
   <rootContext xmi:id="_ui554GEgEd-A9truh9jvIg" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialogs And Windows" description="">
     <children xmi:id="_LB_JoGEhEd-A9truh9jvIg" elementId="org.eclipse.ui.contexts.window" name="In Windows" description=""/>
@@ -61,4 +66,8 @@
   <commands xmi:id="_CWMKAGHYEd-_Y6o4fctqsw" elementId="simpleide.command.newproject" commandName="New Project Command"/>
   <commands xmi:id="_F3JIQGHYEd-_Y6o4fctqsw" elementId="simpleide.command.newtxtfile" commandName="New Text File Command"/>
   <commands xmi:id="_IERuMGHYEd-_Y6o4fctqsw" elementId="simpleide.command.newfolder" commandName="New Folder Command"/>
+  <commands xmi:id="org.eclipse.ui.views.showView" elementId="org.eclipse.ui.views.showView" commandName="Show View">
+    <parameters xmi:id="_oRr6EAFSEd-Z8rQksLwRYy" elementId="org.eclipse.ui.views.showView.viewId" name="View"/>
+  </commands>
+  <commands xmi:id="org.eclipse.ui.edit.copy" elementId="org.eclipse.ui.edit.copy" commandName="Copy"/>
 </simpleide:SimpleIDEApplication>
