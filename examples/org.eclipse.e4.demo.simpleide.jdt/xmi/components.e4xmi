@@ -16,4 +16,5 @@
     <children xsi:type="menu:HandledMenuItem" xmi:id="_yKCMEGE1Ed-CBZE9r1OX5Q" label="Enum" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.jdt/icons/enum_obj.gif" command="_0nHkcGEzEd-CBZE9r1OX5Q"/>
     <children xsi:type="menu:HandledMenuItem" xmi:id="_4Ey6UGE1Ed-CBZE9r1OX5Q" label="Annotation" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.jdt/icons/annotation_obj.gif" command="_2W5gAGEzEd-CBZE9r1OX5Q"/>
   </components>
+  <components xmi:id="_HiS0gGTjEd-BVrzPJM2ycg" parentID="app.simpleide" processor="org.eclipse.e4.demo.simpleide.jdt.internal.ModelProcessor"/>
 </application:ModelComponents>
