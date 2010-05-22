@@ -9,14 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - [misc] Allow custom token for WhitespaceRule - https://bugs.eclipse.org/bugs/show_bug.cgi?id=251224
  *******************************************************************************/
-package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
+package org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.e4.demo.simpleide.jdt.internal.editor.rules.CombinedWordRule.WordMatcher;
-import org.eclipse.e4.demo.simpleide.jdt.internal.editor.rules.CombinedWordRule.CharacterBuffer;
+import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.CombinedWordRule.CharacterBuffer;
+import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.CombinedWordRule.WordMatcher;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.BadLocationException;

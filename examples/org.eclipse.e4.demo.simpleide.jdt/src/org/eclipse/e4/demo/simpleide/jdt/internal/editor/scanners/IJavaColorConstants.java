@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
+package org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners;
 
 /**
  * Color keys used for syntax highlighting Java
@@ -20,8 +20,8 @@ package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
  * implemented.
  * </p>
  *
- * @see org.eclipse.jdt.ui.text.IColorManager
- * @see org.eclipse.jdt.ui.text.IColorManagerExtension
+ * @see org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.ui.text.IColorManager
+ * @see org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.ui.text.IColorManagerExtension
  *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.

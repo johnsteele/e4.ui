@@ -3,6 +3,9 @@ package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
 import javax.inject.Inject;
 
 import org.eclipse.e4.demo.simpleide.editor.IDocumentInput;
+import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.IJavaColorConstants;
+import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.JavaSourceViewerConfiguration;
+import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.JavaTextTools;
 import org.eclipse.e4.workbench.ui.Persist;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.text.IDocument;

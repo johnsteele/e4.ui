@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Michel Ishizuka <cqw10305@nifty.com> - Bug 113266 [syntax highlighting] javadoc tag names including period is not highlighting correctly
  *******************************************************************************/
-package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
+package org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,8 +18,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.e4.demo.simpleide.jdt.internal.editor.rules.CombinedWordRule;
-import org.eclipse.e4.demo.simpleide.jdt.internal.editor.rules.CombinedWordRule.WordMatcher;
+import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.CombinedWordRule.WordMatcher;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;

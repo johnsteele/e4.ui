@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.demo.simpleide.jdt.internal.editor.rules;
+package org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners;
 
 import org.eclipse.jface.text.rules.IWordDetector;
 

@@ -1,4 +1,4 @@
-package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
+package org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners;
 
 public class PreferenceConstants {
 	/**

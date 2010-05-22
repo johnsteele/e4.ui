@@ -8,13 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
+package org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners;
 
 import org.eclipse.swt.graphics.RGB;
 
 
 /**
- * Extends {@link org.eclipse.jdt.ui.text.IColorManager} with
+ * Extends {@link org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.ui.text.IColorManager} with
  * the ability to bind and un-bind colors.
  *
  * @since 2.0
