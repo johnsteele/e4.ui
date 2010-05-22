@@ -27,6 +27,38 @@ package org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IJavaColorConstants {
+	/** The color key for Java keywords in Java code
+	 * (value <code>"java_keyword"</code>).
+	 */
+	String JAVA_KEYWORD= "java_keyword"; //$NON-NLS-1$
+	
+	/**
+	 * The color key for everything in Java code for which no other color is specified
+	 * (value <code>"java_default"</code>).
+	 */
+	String JAVA_DEFAULT= "java_default"; //$NON-NLS-1$
+	
+	/** The color key for keyword 'return' in Java code
+	 * (value <code>"java_keyword_return"</code>).
+	 *
+	 * @since 3.0
+	 */
+	String JAVA_KEYWORD_RETURN= "java_keyword_return"; //$NON-NLS-1$
+	
+	/** The color key for operators in Java code
+	 * (value <code>"java_operator"</code>).
+	 *
+	 * @since 3.0
+	 */
+	String JAVA_OPERATOR= "java_operator"; //$NON-NLS-1$
+	
+	/** The color key for brackets in Java code
+	 * (value <code>"java_bracket"</code>).
+	 *
+	 * @since 3.3
+	 */
+	String JAVA_BRACKET= "java_bracket"; //$NON-NLS-1$
+	
 	/**
 	 * The color key for task tags in java comments
 	 * (value <code>"java_comment_task_tag"</code>).

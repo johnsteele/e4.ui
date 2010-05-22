@@ -30,10 +30,9 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 		PresentationReconciler reconciler= new JavaPresentationReconciler();
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 		
-		DefaultDamagerRepairer dr;
-//		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(null/*textTools.getCodeScanner()*/);
-//		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
-//		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
+		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(textTools.getCodeScanner());
+		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
+		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
 		dr= new DefaultDamagerRepairer(textTools.getJavaDocScanner());
 		reconciler.setDamager(dr, IJavaPartitions.JAVA_DOC);

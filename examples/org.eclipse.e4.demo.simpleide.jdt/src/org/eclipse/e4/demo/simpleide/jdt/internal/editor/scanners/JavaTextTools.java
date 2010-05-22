@@ -35,7 +35,7 @@ public class JavaTextTools {
 	/** The color manager. */
 	private JavaColorManager fColorManager;
 	/** The Java source code scanner. */
-//	private JavaCodeScanner fCodeScanner;
+	private JavaCodeScanner fCodeScanner;
 	/** The Java multi-line comment scanner. */
 	private JavaCommentScanner fMultilineCommentScanner;
 	/** The Java single-line comment scanner. */
@@ -59,26 +59,31 @@ public class JavaTextTools {
 		fPreferenceStore.addPropertyChangeListener(fPreferenceListener);
 		
 		fColorManager= new JavaColorManager(autoDisposeOnDisplayDispose);
+		fCodeScanner= new JavaCodeScanner(fColorManager, store);
 		fMultilineCommentScanner= new JavaCommentScanner(fColorManager, store, IJavaColorConstants.JAVA_MULTI_LINE_COMMENT);
 		fSinglelineCommentScanner= new JavaCommentScanner(fColorManager, store, IJavaColorConstants.JAVA_SINGLE_LINE_COMMENT);
 		fStringScanner= new SingleTokenJavaScanner(fColorManager, store, IJavaColorConstants.JAVA_STRING);
 		fJavaDocScanner= new JavaDocScanner(fColorManager, store);
 	}
 	
-	public JavaCommentScanner getMultilineCommentScanner() {
+	public ITokenScanner getMultilineCommentScanner() {
 		return fMultilineCommentScanner;
 	}
 	
-	public JavaCommentScanner getSinglelineCommentScanner() {
+	public ITokenScanner getSinglelineCommentScanner() {
 		return fSinglelineCommentScanner;
 	}
 	
-	public SingleTokenJavaScanner getStringScanner() {
+	public ITokenScanner getStringScanner() {
 		return fStringScanner;
 	}
 	
 	public ITokenScanner getJavaDocScanner() {
 		return fJavaDocScanner;
+	}
+	
+	public ITokenScanner getCodeScanner() {
+		return fCodeScanner;
 	}
 	
 	/**
@@ -140,5 +145,4 @@ public class JavaTextTools {
 		if (fJavaDocScanner.affectsBehavior(event))
 			fJavaDocScanner.adaptToPreferenceChange(event);
 	}
-
 }

@@ -33,7 +33,12 @@ public class JavaEditor {
 		store.setDefault(IJavaColorConstants.JAVADOC_KEYWORD, "0,255,255");
 		store.setDefault(IJavaColorConstants.JAVADOC_LINK, "255,0,255");
 		store.setDefault(IJavaColorConstants.JAVADOC_TAG, "255,255,0");
-		store.setDefault(IJavaColorConstants.TASK_TAG, "255,100,0");		
+		store.setDefault(IJavaColorConstants.TASK_TAG, "255,100,0");
+		store.setDefault(IJavaColorConstants.JAVA_KEYWORD, "255,100,255");
+		store.setDefault(IJavaColorConstants.JAVA_DEFAULT, "0,0,0");
+		store.setDefault(IJavaColorConstants.JAVA_KEYWORD_RETURN, "255,100,255");
+		store.setDefault(IJavaColorConstants.JAVA_OPERATOR, "255,100,255");
+		store.setDefault(IJavaColorConstants.JAVA_BRACKET, "255,100,255");
 	}
 	
 	private static final JavaTextTools textTools = new JavaTextTools(store, true);
