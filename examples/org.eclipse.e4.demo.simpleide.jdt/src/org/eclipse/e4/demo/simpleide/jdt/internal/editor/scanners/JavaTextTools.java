@@ -134,8 +134,8 @@ public class JavaTextTools {
 	 * @since 2.0
 	 */
 	private void adaptToPreferenceChange(PropertyChangeEvent event) {
-//		if (fCodeScanner.affectsBehavior(event))
-//			fCodeScanner.adaptToPreferenceChange(event);
+		if (fCodeScanner.affectsBehavior(event))
+			fCodeScanner.adaptToPreferenceChange(event);
 		if (fMultilineCommentScanner.affectsBehavior(event))
 			fMultilineCommentScanner.adaptToPreferenceChange(event);
 		if (fSinglelineCommentScanner.affectsBehavior(event))
