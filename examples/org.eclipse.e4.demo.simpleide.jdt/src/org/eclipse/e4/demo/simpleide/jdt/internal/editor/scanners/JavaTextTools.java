@@ -1,22 +1,27 @@
 package org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
+import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 public class JavaTextTools {
-//	/**
-//	 * Array with legal content types.
-//	 * @since 3.0
-//	 */
-//	private final static String[] LEGAL_CONTENT_TYPES= new String[] {
-//		IJavaPartitions.JAVA_DOC,
-//		IJavaPartitions.JAVA_MULTI_LINE_COMMENT,
-//		IJavaPartitions.JAVA_SINGLE_LINE_COMMENT,
-//		IJavaPartitions.JAVA_STRING,
-//		IJavaPartitions.JAVA_CHARACTER
-//	};
+	/**
+	 * Array with legal content types.
+	 * @since 3.0
+	 */
+	private final static String[] LEGAL_CONTENT_TYPES= new String[] {
+		IJavaPartitions.JAVA_DOC,
+		IJavaPartitions.JAVA_MULTI_LINE_COMMENT,
+		IJavaPartitions.JAVA_SINGLE_LINE_COMMENT,
+		IJavaPartitions.JAVA_STRING,
+		IJavaPartitions.JAVA_CHARACTER
+	};
 
 	/**
 	 * This tools' preference listener.
@@ -77,6 +82,46 @@ public class JavaTextTools {
 	}
 	
 	/**
+	 * Sets up the Java document partitioner for the given document for the given partitioning.
+	 *
+	 * @param document the document to be set up
+	 * @param partitioning the document partitioning
+	 * @since 3.0
+	 */
+	public void setupJavaDocumentPartitioner(IDocument document, String partitioning) {
+		IDocumentPartitioner partitioner= createDocumentPartitioner();
+		if (document instanceof IDocumentExtension3) {
+			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+			extension3.setDocumentPartitioner(partitioning, partitioner);
+		} else {
+			document.setDocumentPartitioner(partitioner);
+		}
+		partitioner.connect(document);
+	}
+	
+	/**
+	 * Returns a scanner which is configured to scan
+	 * Java-specific partitions, which are multi-line comments,
+	 * Javadoc comments, and regular Java source code.
+	 *
+	 * @return a Java partition scanner
+	 */
+	public IPartitionTokenScanner getPartitionScanner() {
+		return new FastJavaPartitionScanner();
+	}
+
+	/**
+	 * Factory method for creating a Java-specific document partitioner
+	 * using this object's partitions scanner. This method is a
+	 * convenience method.
+	 *
+	 * @return a newly created Java document partitioner
+	 */
+	public IDocumentPartitioner createDocumentPartitioner() {
+		return new FastPartitioner(getPartitionScanner(), LEGAL_CONTENT_TYPES);
+	}
+	
+	/**
 	 * Adapts the behavior of the contained components to the change
 	 * encoded in the given event.
 	 *
@@ -86,14 +131,14 @@ public class JavaTextTools {
 	private void adaptToPreferenceChange(PropertyChangeEvent event) {
 //		if (fCodeScanner.affectsBehavior(event))
 //			fCodeScanner.adaptToPreferenceChange(event);
-//		if (fMultilineCommentScanner.affectsBehavior(event))
-//			fMultilineCommentScanner.adaptToPreferenceChange(event);
-//		if (fSinglelineCommentScanner.affectsBehavior(event))
-//			fSinglelineCommentScanner.adaptToPreferenceChange(event);
-//		if (fStringScanner.affectsBehavior(event))
-//			fStringScanner.adaptToPreferenceChange(event);
-//		if (fJavaDocScanner.affectsBehavior(event))
-//			fJavaDocScanner.adaptToPreferenceChange(event);
+		if (fMultilineCommentScanner.affectsBehavior(event))
+			fMultilineCommentScanner.adaptToPreferenceChange(event);
+		if (fSinglelineCommentScanner.affectsBehavior(event))
+			fSinglelineCommentScanner.adaptToPreferenceChange(event);
+		if (fStringScanner.affectsBehavior(event))
+			fStringScanner.adaptToPreferenceChange(event);
+		if (fJavaDocScanner.affectsBehavior(event))
+			fJavaDocScanner.adaptToPreferenceChange(event);
 	}
 
 }

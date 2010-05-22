@@ -17,6 +17,10 @@ package org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners;
  */
 public interface IJavaPartitions {
 	/**
+	 * The identifier of the Java partitioning.
+	 */
+	String JAVA_PARTITIONING= "___java_partitioning";  //$NON-NLS-1$
+	/**
 	 * The identifier of the single-line (JLS2: EndOfLineComment) end comment partition content type.
 	 */
 	String JAVA_SINGLE_LINE_COMMENT= "__java_singleline_comment"; //$NON-NLS-1$

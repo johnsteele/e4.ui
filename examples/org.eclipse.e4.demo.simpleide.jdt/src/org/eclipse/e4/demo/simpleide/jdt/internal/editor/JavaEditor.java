@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.demo.simpleide.editor.IDocumentInput;
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.IJavaColorConstants;
+import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.IJavaPartitions;
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.JavaSourceViewerConfiguration;
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.JavaTextTools;
 import org.eclipse.e4.workbench.ui.Persist;
@@ -46,14 +47,7 @@ public class JavaEditor {
 		
 		viewer.configure(new JavaSourceViewerConfiguration(textTools));
 		IDocument document = input.getDocument();
-//		IDocumentPartitioner partitioner =
-//			new FastPartitioner(
-//				new XMLPartitionScanner(),
-//				new String[] {
-//					XMLPartitionScanner.XML_TAG,
-//					XMLPartitionScanner.XML_COMMENT });
-//		partitioner.connect(document);
-//		document.setDocumentPartitioner(partitioner);
+		textTools.setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);
 		viewer.setDocument(document);
 	}
 	
