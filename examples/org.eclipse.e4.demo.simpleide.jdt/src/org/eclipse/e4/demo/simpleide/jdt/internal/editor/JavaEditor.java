@@ -31,14 +31,20 @@ public class JavaEditor {
 	
 	static {
 		store.setDefault(IJavaColorConstants.JAVA_MULTI_LINE_COMMENT, "102,153,102"); // 669966
+
 		store.setDefault(IJavaColorConstants.JAVA_SINGLE_LINE_COMMENT, "102,153,102"); // 669966
+		
 		store.setDefault(IJavaColorConstants.JAVA_STRING, "51,0,255"); // 3300FF
 		
 		store.setDefault(IJavaColorConstants.JAVADOC_DEFAULT, "51,102,204"); // 3366CC
+		
 		store.setDefault(IJavaColorConstants.JAVADOC_KEYWORD, "51,102,204");
 		store.setDefault(IJavaColorConstants.JAVADOC_KEYWORD+PreferenceConstants.EDITOR_BOLD_SUFFIX, true);
+		
 		store.setDefault(IJavaColorConstants.JAVADOC_LINK, "255,0,255");
+		
 		store.setDefault(IJavaColorConstants.JAVADOC_TAG, "255,255,0");
+		
 		store.setDefault(IJavaColorConstants.TASK_TAG, "255,100,0");
 		
 		store.setDefault(IJavaColorConstants.JAVA_KEYWORD, "153,51,102"); // 993366
