@@ -26,7 +26,6 @@ public class JavaEditor {
 
 	private IDocumentInput input;
 	
-//	private static JavaColorManager colorManager = new JavaColorManager(true);
 	private static PreferenceStore store = new PreferenceStore();
 	
 	static {

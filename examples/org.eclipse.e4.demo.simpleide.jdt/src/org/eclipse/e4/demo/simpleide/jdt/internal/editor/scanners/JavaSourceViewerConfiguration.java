@@ -26,6 +26,11 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 	}
 	
 	@Override
+	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
+		return IJavaPartitions.JAVA_PARTITIONING;
+	}
+	
+	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler= new JavaPresentationReconciler();
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
