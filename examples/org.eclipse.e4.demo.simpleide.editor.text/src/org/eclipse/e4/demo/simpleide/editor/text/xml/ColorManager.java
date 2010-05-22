@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010 BestSolution.at and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.e4.demo.simpleide.editor.text.xml;
 
 import java.util.HashMap;
@@ -10,13 +20,14 @@ import org.eclipse.swt.widgets.Display;
 
 public class ColorManager {
 
-	protected Map fColorTable = new HashMap(10);
+	protected Map<RGB, Color> fColorTable = new HashMap<RGB, Color>(10);
 
 	public void dispose() {
-		Iterator e = fColorTable.values().iterator();
+		Iterator<Color> e = fColorTable.values().iterator();
 		while (e.hasNext())
-			 ((Color) e.next()).dispose();
+			((Color) e.next()).dispose();
 	}
+
 	public Color getColor(RGB rgb) {
 		Color color = (Color) fColorTable.get(rgb);
 		if (color == null) {
