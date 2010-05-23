@@ -4,4 +4,8 @@ Bundle-Name: Dialogs
 Bundle-SymbolicName: org.eclipse.e4.demo.simpleide.dialogs
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: org.eclipse.jface;bundle-version="3.6.0"
+Require-Bundle: org.eclipse.jface;bundle-version="3.6.0",
+ org.eclipse.core.resources;bundle-version="3.6.0",
+ org.eclipse.core.runtime;bundle-version="3.6.0",
+ org.eclipse.e4.demo.simpleide.services;bundle-version="1.0.0",
+ org.eclipse.e4.demo.simpleide.sharedimages;bundle-version="1.0.0"
