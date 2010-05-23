@@ -1,8 +1,9 @@
 package org.eclipse.e4.demo.simpleide.services;
 
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
 
 public interface IImageProviderService {
-	public List<String> getImageKeys();
-	public String getImageUri(String imageKey);
+	public String[] getImageKeys();
+	public InputStream getImageData(String imageKey) throws IOException, IllegalArgumentException;
 }
