@@ -3,7 +3,6 @@ package org.eclipse.e4.demo.simpleide.services;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 
 public interface IImageService {
 	public interface IImagePool {
@@ -21,13 +20,13 @@ public interface IImageService {
 		public void dipose();
 	}
 
-	public Image getImage(Display display, String imageKey)
+	public Image getImage(String imageKey)
 			throws CoreException;
 
-	public IPooledImage getPooledImage(Display display, String imageKey)
+	public IPooledImage getPooledImage(String imageKey)
 			throws CoreException;
 
-	public IDiposeableImagePool getPool(Display display);
+	public IDiposeableImagePool getPool();
 
 	/**
 	 * Get an image pool which is connected to a control and gets disposed when

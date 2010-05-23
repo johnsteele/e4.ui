@@ -43,6 +43,7 @@
       </children>
     </trimBars>
   </children>
+  <variables>org.eclipse.e4.demo.simpleide.services.IImageService</variables>
   <handlers xmi:id="_jXCDwGAiEd-E_N65-FXwgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.ExitHandler" command="_oIK3gGAiEd-E_N65-FXwgA"/>
   <handlers xmi:id="_pj_6cGEhEd-A9truh9jvIg" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.SaveAllHandler" command="_kpAnIGEhEd-A9truh9jvIg"/>
   <handlers xmi:id="_w0lzMGEhEd-A9truh9jvIg" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.SaveHandler" command="_tl9UAGEhEd-A9truh9jvIg"/>
