@@ -15,8 +15,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Bundle;
 
 public abstract class AbstractBundleImageProvider implements IImageProviderService {
@@ -25,24 +28,29 @@ public abstract class AbstractBundleImageProvider implements IImageProviderServi
 		return getImageMap().values().toArray(new String[0]);
 	}
 
-	public final InputStream getImageData(String imageKey) throws IOException,
-			IllegalArgumentException {
+	public final InputStream getImageData(String imageKey) throws CoreException {
 		Map<String, String> map = getImageMap();
 		
 		if( map.containsKey(imageKey) ) {
 			return getStream(imageKey, map.get(imageKey));
 		}
 		
-		throw new IllegalArgumentException("The image key '"+imageKey+"' is unknown.");
+		throw new CoreException(new Status(IStatus.ERROR, OSGiUtil.getBundleName(getClass()), "The image key '"+imageKey+"' is unknown."));
 	}
 
-	private InputStream getStream(String imageKey, String path) throws IOException {
+	private InputStream getStream(String imageKey, String path) throws CoreException {
 		URL url = FileLocator.find(getBundle(imageKey), new Path(path), null);
 		if( url != null ) {
-			return url.openStream();
+			try {
+				return url.openStream();
+			} catch (IOException e) {
+				throw new CoreException(new Status(IStatus.ERROR, OSGiUtil.getBundleName(getClass()), "Unable to open stream to URL '"+url+"'"));
+			}
 		}
-		throw new IOException("The path '"+path+"' is unknown.");
+		throw new CoreException(new Status(IStatus.ERROR, OSGiUtil.getBundleName(getClass()), "The path '"+path+"' is unknown."));
 	}
+	
+	
 	
 	protected abstract Map<String, String> getImageMap();
 	protected abstract Bundle getBundle(String imageKey);
