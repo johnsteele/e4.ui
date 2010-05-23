@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Display;
 public interface IImageService {
 	public interface IImagePool {
 		public Image getImage(String imageKey) throws CoreException;
+		public Image getImageUnchecked(String imageKey);
 	}
 
 	public interface IDiposeableImagePool extends IImagePool {
