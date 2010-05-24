@@ -10,15 +10,14 @@
  ******************************************************************************/
 package org.eclipse.e4.demo.simpleide.internal;
 
-import org.eclipse.e4.core.contexts.ContextFunction;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IEclipseContext;
+public interface Messages {
+	public String NewFolderDialogHandler_ParentFolder();
 
-public class ImageServiceFunction extends ContextFunction {
+	public String NewFolderDialogHandler_FolderName();
 
-	@Override
-	public Object compute(IEclipseContext context) {
-		return ContextInjectionFactory.make(ImageService.class, context);
-	}
+	public String NewFolderDialogHandler_ShellTitle();
 
+	public String NewFolderDialogHandler_Title();
+
+	public String NewFolderDialogHandler_Message();
 }

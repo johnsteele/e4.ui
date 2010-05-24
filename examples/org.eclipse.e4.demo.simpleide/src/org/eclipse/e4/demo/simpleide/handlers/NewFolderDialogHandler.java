@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.demo.simpleide.internal.Messages;
+import org.eclipse.e4.demo.simpleide.services.INLSLookupFactoryService;
 import org.eclipse.e4.demo.simpleide.ui.ResourceViewerControl;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -45,7 +47,8 @@ public class NewFolderDialogHandler {
 			@Named(IServiceConstants.ACTIVE_SHELL) Shell parentShell,
 			@Optional @Named(IServiceConstants.SELECTION) final IResource resource,
 			final IWorkspace workspace,
-			IProgressMonitor monitor) {
+			IProgressMonitor monitor,
+			final INLSLookupFactoryService nlsFactory) {
 		
 		TitleAreaDialog dialog = new TitleAreaDialog(parentShell) {
 			private ResourceViewerControl viewer;
@@ -53,19 +56,26 @@ public class NewFolderDialogHandler {
 			
 			@Override
 			protected Control createDialogArea(Composite parent) {
+				Messages messages = nlsFactory.createNLSLookup(Messages.class);
+				
+				getShell().setText(messages.NewFolderDialogHandler_ShellTitle());
+				setTitle(messages.NewFolderDialogHandler_Title());
+				setMessage(messages.NewFolderDialogHandler_Message());
+				
 				Composite comp = (Composite) super.createDialogArea(parent);
 				Composite container = new Composite(comp,SWT.NONE);
 				container.setLayoutData(new GridData(GridData.FILL_BOTH));
 				container.setLayout(new GridLayout(2,false));
 				
 				Label label = new Label(container, SWT.NONE);
-				label.setText("Parent Folder");
+				label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+				label.setText(messages.NewFolderDialogHandler_ParentFolder());
 				
 				viewer = new ResourceViewerControl(container, SWT.NONE, workspace, resource);
 				viewer.setLayoutData(new GridData(GridData.FILL_BOTH));
 				
 				label = new Label(container, SWT.NONE);
-				label.setText("Folder name");
+				label.setText(messages.NewFolderDialogHandler_FolderName());
 				
 				text = new Text(container, SWT.BORDER);
 				text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

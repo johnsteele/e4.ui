@@ -191,7 +191,7 @@ public class NLSLookupFactoryServiceImpl implements INLSLookupFactoryService {
 
 				value = properties.getProperty(key);
 				if (value != null) {
-					if (args.length > 0) {
+					if (args != null && args.length > 0) {
 						return MessageFormat.format(value, args);
 					} else {
 						return value;
