@@ -1,9 +1,5 @@
 
-.MWindow {
-    background-color:  #EEF2F7 #DEEBF3 100%;
-}
-
-.MTrimmedWindow {  
+.MTrimmedWindow { 
     margin-top: 12px;
     margin-bottom: 2px;
     margin-left: 10px;

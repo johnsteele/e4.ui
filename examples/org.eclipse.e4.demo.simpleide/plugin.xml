@@ -6,7 +6,32 @@
       <theme
             basestylesheeturi="css/e4_default.css"
             id="org.eclipse.e4.demo.simpleide.theme"
-            label="Simple IDE Theme">
+            label="Default Theme">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_default_gtk.css"
+            id="org.eclipse.e4.demo.simpleide.theme.gtk"
+            label="GTK Theme">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_default_mac.css"
+            id="org.eclipse.e4.demo.simpleide.theme.mac"
+            label="Mac Theme">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_default_win7.css"
+            id="org.eclipse.e4.demo.simpleide.theme.win7"
+            label="Win7 Theme">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_default_winxp_blu.css"
+            id="org.eclipse.e4.demo.simpleide.theme.winxp.blu"
+            label="WinXP Blue Theme">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_default_winxp_olv.css"
+            id="org.eclipse.e4.demo.simpleide.theme.winxp.olv"
+            label="WinXP Olive Theme">
       </theme>
    </extension>
    <extension
