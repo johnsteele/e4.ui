@@ -41,6 +41,7 @@
       <plugin id="org.eclipse.e4.demo.simpleide.e4editor"/>
       <plugin id="org.eclipse.e4.demo.simpleide.editor"/>
       <plugin id="org.eclipse.e4.demo.simpleide.editor.text"/>
+      <plugin id="org.eclipse.e4.demo.simpleide.iconview"/>
       <plugin id="org.eclipse.e4.demo.simpleide.jdt"/>
       <plugin id="org.eclipse.e4.demo.simpleide.model"/>
       <plugin id="org.eclipse.e4.demo.simpleide.navigator"/>
