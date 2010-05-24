@@ -27,7 +27,8 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.demo.simpleide.internal.ServiceRegistryComponent;
-import org.eclipse.e4.demo.simpleide.services.IProjectService; 
+import org.eclipse.e4.demo.simpleide.services.INLSLookupFactoryService;
+import org.eclipse.e4.demo.simpleide.services.IProjectService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -51,15 +52,23 @@ import org.eclipse.swt.widgets.Text;
 
 public class NewProjectDialogHandler {
 	private Map<IProjectService, Image> images = new HashMap<IProjectService, Image>();
-	private String projectName = "";
+	private String projectName = ""; //$NON-NLS-1$
 	private IProjectService creator;
-	
+
 	@Execute
-	public void openNewProjectDialog(@Named(IServiceConstants.ACTIVE_SHELL) Shell parentShell, IWorkspace workspace, IProgressMonitor monitor, final ServiceRegistryComponent serviceRegistry, StatusReporter reporter, Logger logger) {
+	public void openNewProjectDialog(
+			@Named(IServiceConstants.ACTIVE_SHELL) Shell parentShell,
+			IWorkspace workspace, IProgressMonitor monitor,
+			final ServiceRegistryComponent serviceRegistry,
+			StatusReporter reporter, Logger logger,
+			final INLSLookupFactoryService nlsFactory) {
+		
 		TitleAreaDialog dialog = new TitleAreaDialog(parentShell) {
 			private Text projectName;
 			private TableViewer projectType;
-			
+			private Messages messages = nlsFactory
+					.createNLSLookup(Messages.class);
+
 			@Override
 			protected int getShellStyle() {
 				return super.getShellStyle() | SWT.SHEET;
@@ -67,39 +76,44 @@ public class NewProjectDialogHandler {
 
 			@Override
 			protected Control createDialogArea(Composite parent) {
-				Composite comp =  (Composite) super.createDialogArea(parent);
-				getShell().setText("New Project");
-				setTitle("New Project");
-				setMessage("Create a new project by entering a name and select a project type");
-				
-				final Image titleImage = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/wizard/newprj_wiz.png"));
-				
+				Composite comp = (Composite) super.createDialogArea(parent);
+				getShell().setText(messages.NewProjectDialogHandler_ShellTitle());
+				setTitle(messages.NewProjectDialogHandler_Title());
+				setMessage(messages.NewProjectDialogHandler_Message());
+
+				final Image titleImage = new Image(parent.getDisplay(),
+						getClass().getClassLoader().getResourceAsStream(
+								"/icons/wizard/newprj_wiz.png"));
+
 				setTitleImage(titleImage);
-				
-				final Image shellImg = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/newprj_wiz.gif"));
+
+				final Image shellImg = new Image(parent.getDisplay(),
+						getClass().getClassLoader().getResourceAsStream(
+								"/icons/newprj_wiz.gif"));
 				getShell().setImage(shellImg);
 				getShell().addDisposeListener(new DisposeListener() {
-					
+
 					public void widgetDisposed(DisposeEvent e) {
 						shellImg.dispose();
 						titleImage.dispose();
 					}
 				});
-				
+
 				Composite container = new Composite(comp, SWT.NONE);
 				container.setLayoutData(new GridData(GridData.FILL_BOTH));
-				container.setLayout(new GridLayout(2,false));
-				
+				container.setLayout(new GridLayout(2, false));
+
 				Label l = new Label(container, SWT.NONE);
-				l.setText("Name");
-				
+				l.setText(messages.NewProjectDialogHandler_Name());
+
 				projectName = new Text(container, SWT.BORDER);
-				projectName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				
+				projectName
+						.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 				l = new Label(container, SWT.NONE);
 				l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-				l.setText("Type"); 
-				
+				l.setText(messages.NewProjectDialogHandler_Type());
+
 				projectType = new TableViewer(container);
 				projectType.setContentProvider(new ArrayContentProvider());
 				projectType.setLabelProvider(new LabelProvider() {
@@ -108,12 +122,12 @@ public class NewProjectDialogHandler {
 						IProjectService el = (IProjectService) element;
 						return el.getLabel();
 					}
-					
+
 					@Override
 					public Image getImage(Object element) {
 						IProjectService el = (IProjectService) element;
 						Image img = images.get(el);
-						if( img == null ) {
+						if (img == null) {
 							URL url;
 							InputStream in = null;
 							try {
@@ -128,7 +142,7 @@ public class NewProjectDialogHandler {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							} finally {
-								if( in != null ) {
+								if (in != null) {
 									try {
 										in.close();
 									} catch (IOException e) {
@@ -139,48 +153,56 @@ public class NewProjectDialogHandler {
 						return img;
 					}
 				});
-				
-				Vector<IProjectService> creators = serviceRegistry.getCreators();
+
+				Vector<IProjectService> creators = serviceRegistry
+						.getCreators();
 				projectType.setInput(creators);
-				if( creators.size() > 0 ) {
-					projectType.setSelection(new StructuredSelection(creators.get(0)));
+				if (creators.size() > 0) {
+					projectType.setSelection(new StructuredSelection(creators
+							.get(0)));
 				}
-				projectType.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-				
+				projectType.getControl().setLayoutData(
+						new GridData(GridData.FILL_BOTH));
+
 				getShell().addDisposeListener(new DisposeListener() {
-					
+
 					public void widgetDisposed(DisposeEvent e) {
-						for( Image img : images.values() ) {
+						for (Image img : images.values()) {
 							img.dispose();
 						}
 						images.clear();
 					}
 				});
-				
-				return comp; 
+
+				return comp;
 			}
-			
+
 			@Override
 			protected void okPressed() {
-				if( projectType.getSelection().isEmpty() ) {
-					setMessage("Please select a project type", IMessageProvider.ERROR);
+				if (projectType.getSelection().isEmpty()) {
+					setMessage("Please select a project type",
+							IMessageProvider.ERROR);
 					return;
 				}
-				
-				if( projectName.getText().trim().length() == 0 ) {
-					setMessage("Please enter a projectname", IMessageProvider.ERROR);
+
+				if (projectName.getText().trim().length() == 0) {
+					setMessage("Please enter a projectname",
+							IMessageProvider.ERROR);
 					return;
 				}
-				
-				NewProjectDialogHandler.this.creator = (IProjectService) ((IStructuredSelection)projectType.getSelection()).getFirstElement();
-				NewProjectDialogHandler.this.projectName = projectName.getText();
-				
+
+				NewProjectDialogHandler.this.creator = (IProjectService) ((IStructuredSelection) projectType
+						.getSelection()).getFirstElement();
+				NewProjectDialogHandler.this.projectName = projectName
+						.getText();
+
 				super.okPressed();
 			}
 		};
-		
-		if( dialog.open() == IDialogConstants.OK_ID ) {
-			creator.createProject(parentShell, workspace, reporter, logger, monitor, projectName);
+
+		if (dialog.open() == IDialogConstants.OK_ID) {
+			creator.createProject(parentShell, workspace, reporter, logger,
+					monitor, projectName);
 		}
-	} 
+	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.demo.simpleide.internal;
+package org.eclipse.e4.demo.simpleide.handlers;
 
 public interface Messages {
 	public String NewFolderDialogHandler_ParentFolder();
@@ -20,4 +20,18 @@ public interface Messages {
 	public String NewFolderDialogHandler_Title();
 
 	public String NewFolderDialogHandler_Message();
+
+	public String NewFolderDialogHandler_ErrorSelectAParentFolder();
+
+	public String NewFolderDialogHandler_ErrorEnterFolderName();
+
+	public String NewProjectDialogHandler_ShellTitle();
+
+	public String NewProjectDialogHandler_Title();
+
+	public String NewProjectDialogHandler_Message();
+
+	public String NewProjectDialogHandler_Name();
+
+	public String NewProjectDialogHandler_Type();
 }

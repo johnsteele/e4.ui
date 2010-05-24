@@ -20,9 +20,10 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.demo.simpleide.internal.Messages;
+import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.demo.simpleide.services.INLSLookupFactoryService;
 import org.eclipse.e4.demo.simpleide.ui.ResourceViewerControl;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -48,15 +49,16 @@ public class NewFolderDialogHandler {
 			@Optional @Named(IServiceConstants.SELECTION) final IResource resource,
 			final IWorkspace workspace,
 			IProgressMonitor monitor,
+			StatusReporter statusReporter,
 			final INLSLookupFactoryService nlsFactory) {
 		
 		TitleAreaDialog dialog = new TitleAreaDialog(parentShell) {
 			private ResourceViewerControl viewer;
 			private Text text;
+			private Messages messages = nlsFactory.createNLSLookup(Messages.class);
 			
 			@Override
 			protected Control createDialogArea(Composite parent) {
-				Messages messages = nlsFactory.createNLSLookup(Messages.class);
 				
 				getShell().setText(messages.NewFolderDialogHandler_ShellTitle());
 				setTitle(messages.NewFolderDialogHandler_Title());
@@ -87,12 +89,12 @@ public class NewFolderDialogHandler {
 			protected void okPressed() {
 				IResource resource = viewer.getResource();
 				if( resource == null ) {
-					setMessage("Select a parent folder", IMessageProvider.ERROR);
+					setMessage(messages.NewFolderDialogHandler_ErrorSelectAParentFolder(), IMessageProvider.ERROR);
 					return;
 				}
 				
 				if( text.getText().trim().length() == 0 ) {
-					setMessage("Enter a folder name", IMessageProvider.ERROR);
+					setMessage(messages.NewFolderDialogHandler_ErrorEnterFolderName(), IMessageProvider.ERROR);
 					return;
 				}
 				
@@ -108,8 +110,7 @@ public class NewFolderDialogHandler {
 			try {
 				folder.create(false, true, monitor);
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				statusReporter.show(IStatus.ERROR, "Failed to create folder", e);
 			}
 		}
 	}
