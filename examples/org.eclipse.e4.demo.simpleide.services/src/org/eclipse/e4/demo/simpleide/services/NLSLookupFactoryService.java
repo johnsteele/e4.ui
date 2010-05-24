@@ -12,7 +12,7 @@ package org.eclipse.e4.demo.simpleide.services;
 
 import java.util.Locale;
 
-public interface NLSLookFactoryService {
+public interface NLSLookupFactoryService {
 	public <L> L createNLSLookup(Class<L> clazz);
 	public <L> L createNLSLookup(Class<L> clazz, Locale locale);
 	
