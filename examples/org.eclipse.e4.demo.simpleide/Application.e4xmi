@@ -10,7 +10,9 @@
               <children xsi:type="basic:PartStack" xmi:id="_8XqS0GAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.editor"/>
               <children xsi:type="basic:PartStack" xmi:id="_9JVAUGAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.right"/>
             </children>
-            <children xsi:type="basic:PartStack" xmi:id="_64QVkGAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.bottom"/>
+            <children xsi:type="basic:PartStack" xmi:id="_64QVkGAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.bottom">
+              <tags>simpleide.stack.bottom</tags>
+            </children>
           </children>
         </children>
       </children>
