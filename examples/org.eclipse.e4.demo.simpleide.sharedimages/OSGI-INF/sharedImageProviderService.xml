@@ -4,4 +4,9 @@
    <service>
       <provide interface="org.eclipse.e4.demo.simpleide.services.IImageProviderService"/>
    </service>
+   <property name="imageKey" type="String" value="org.eclipse.e4.demo.simpleide.sharedimages.IMG_ETOOL_HOME_NAV"/>
+   <property name="imageKey" type="String" value="org.eclipse.e4.demo.simpleide.sharedimages.IMG_TOOL_BACK"/>
+   <property name="imageKey" type="String" value="org.eclipse.e4.demo.simpleide.sharedimages.IMG_TOOL_BACK_DISABLED"/>
+   <property name="imageKey" type="String" value="org.eclipse.e4.demo.simpleide.sharedimages.IMG_TOOL_FORWARD"/>
+   <property name="imageKey" type="String" value="org.eclipse.e4.demo.simpleide.sharedimages.IMG_TOOL_FORWARD_DISABLED"/>
 </scr:component>

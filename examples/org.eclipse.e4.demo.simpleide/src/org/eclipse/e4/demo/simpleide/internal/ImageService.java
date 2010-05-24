@@ -12,6 +12,7 @@ package org.eclipse.e4.demo.simpleide.internal;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -109,9 +110,9 @@ public class ImageService implements IImageService {
 		this.display = display;
 	}
 	
-	public void addImageProvider(IImageProviderService imageProvider) {
+	public void addImageProvider(IImageProviderService imageProvider, Collection<String> imageKeys) {
 		synchronized (key2providers) {
-			for( String s : imageProvider.getImageKeys() ) {
+			for( String s : imageKeys ) {
 				if( ! key2providers.containsKey(s) ) {
 					key2providers.put(s, imageProvider);
 				} else {
