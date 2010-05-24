@@ -16,8 +16,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -69,7 +67,7 @@ public class NLSLookupFactoryServiceImpl implements INLSLookupFactoryService {
 	}
 
 	private Map<Entry, Object> CACHE = new ConcurrentHashMap<Entry, Object>();
-	private Map<String,List<ITranslationService>> translationServices = new ConcurrentHashMap<String, List<ITranslationService>>();
+//	private Map<String,List<ITranslationService>> translationServices = new ConcurrentHashMap<String, List<ITranslationService>>();
 
 	public void addTranslationService(ITranslationService translationService, Map<String, Object> properties) {
 		System.err.println("Added Service: " + translationService);
@@ -82,6 +80,10 @@ public class NLSLookupFactoryServiceImpl implements INLSLookupFactoryService {
 	}
 	
 	public String translate(String category, String key, Object... args) {
+		return translate(category, key, Locale.getDefault(), args);
+	}
+	
+	public String translate(String category, String key, Locale locale, Object... args) {
 		throw new UnsupportedOperationException("OSGi Service based translation is not implemented yet!");
 	}
 	

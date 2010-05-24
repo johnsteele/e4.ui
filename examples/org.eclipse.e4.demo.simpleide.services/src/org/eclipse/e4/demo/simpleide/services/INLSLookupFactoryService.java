@@ -66,9 +66,25 @@ public interface INLSLookupFactoryService {
 	 *            the key
 	 * @param args
 	 *            the arguments for substitution
-	 * @return
+	 * @return the string in the current default locale
 	 */
 	public String translate(String category, String key, Object... args);
+
+	/**
+	 * Translate a value using one of the registered translation services
+	 * 
+	 * @param category
+	 *            the category to identify the service
+	 * @param key
+	 *            the key
+	 * @param locale
+	 *            the locale to use
+	 * @param args
+	 *            the arguments for substitution
+	 * @return the translated string
+	 */
+	public String translate(String category, String key, Locale locale,
+			Object... args);
 
 	/**
 	 * Configures the cacheing of the Lookup class
