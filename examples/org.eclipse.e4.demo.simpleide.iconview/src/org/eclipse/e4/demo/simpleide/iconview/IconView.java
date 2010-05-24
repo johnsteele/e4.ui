@@ -31,12 +31,16 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.modeling.IPartListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.nebula.jface.galleryviewer.GalleryTreeViewer;
 import org.eclipse.nebula.widgets.gallery.NoGroupRenderer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
@@ -45,7 +49,7 @@ import org.eclipse.swt.widgets.Composite;
 
 public class IconView {
 
-	private IResourceChangeListener listener = new IResourceChangeListener() {
+	private IResourceChangeListener resourceListener = new IResourceChangeListener() {
 		public void resourceChanged(IResourceChangeEvent event) {
 			if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
 				try {
@@ -65,15 +69,19 @@ public class IconView {
 						private void handleChange(final IResource resource,
 								final IContainer parent, final boolean added) {
 							if (parent == container) {
-								if (added) {
-									isImageFile(resource);
-									viewer.add(null, resource);
+								if( visible ) {
+									if (added) {
+										isImageFile(resource);
+										viewer.add(null, resource);
+									} else {
+										viewer.remove(resource);
+										Image image = imageMap.remove(resource);
+										if (image != null) {
+											image.dispose();
+										}
+									}									
 								} else {
-									viewer.remove(resource);
-									Image image = imageMap.remove(resource);
-									if (image != null) {
-										image.dispose();
-									}
+									needsupdate = true;
 								}
 							}
 						}
@@ -86,50 +94,94 @@ public class IconView {
 		}
 	};
 
+	private ITreeContentProvider contentProvider = new ITreeContentProvider() {
+		private List<IResource> input = new ArrayList<IResource>();
+		private String root = "Elements";
+		
+		@SuppressWarnings("unchecked")
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			this.input = (List<IResource>) newInput;
+		}
+		
+		public void dispose() {
+			
+		}
+		
+		public boolean hasChildren(Object element) {
+			return root == element;
+		}
+		
+		public Object getParent(Object element) {
+			return root;
+		}
+		
+		public Object[] getElements(Object inputElement) {
+			return new Object [] {root};
+		}
+		
+		public Object[] getChildren(Object parentElement) {
+			return input.toArray();
+		}
+	};
+	
+	private IPartListener partListener = new IPartListener() {
+		
+		public void partVisible(MPart part) {
+			if( ! visible && part == IconView.this.part ) {
+				visible = true;
+				if( needsupdate ) {
+					refreshViewer();	
+				}
+			}
+		}
+		
+		public void partHidden(MPart part) {
+			visible = false;
+		}
+		
+		public void partDeactivated(MPart part) {
+			
+		}
+		
+		public void partBroughtToTop(MPart part) {
+			if( ! visible && part == IconView.this.part ) {
+				visible = true;
+				if( needsupdate ) {
+					refreshViewer();	
+				}
+			}
+		}
+		
+		public void partActivated(MPart part) {
+		}
+	};
+	
 	private GalleryTreeViewer viewer;
 	private IContainer container;
 	private IWorkspace workspace;
-
+	private boolean visible = true;
+	private boolean needsupdate = false;
+	
 	private Map<IResource, Image> imageMap = new HashMap<IResource, Image>();
-
+	
+	private MPart part;
+	private EPartService partService;
+	
 	@Inject
-	public IconView(Composite composite, IWorkspace workspace) {
+	public IconView(Composite composite, EPartService partService, MPart part, IWorkspace workspace) {
 		composite.setLayout(new FillLayout());
-		viewer = new GalleryTreeViewer(composite);
+		this.partService = partService;
+		this.part = part;
+		viewer = new GalleryTreeViewer(composite, SWT.MULTI | SWT.V_SCROLL);
 		viewer.getGallery().setItemRenderer(new CustomGalleryItemRenderer());
+		
+		partService.addPartListener(partListener);
 		
 		NoGroupRenderer renderer = new NoGroupRenderer();
 		renderer.setItemHeight(50);
 		
 		viewer.getGallery().setGroupRenderer(renderer);
-		viewer.setContentProvider(new ITreeContentProvider() {
-			private List<IResource> input = new ArrayList<IResource>();
-			private String root = "Elements";
-			
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-				this.input = (List<IResource>) newInput;
-			}
-			
-			public void dispose() {
-				
-			}
-			
-			public boolean hasChildren(Object element) {
-				return root == element;
-			}
-			
-			public Object getParent(Object element) {
-				return root;
-			}
-			
-			public Object[] getElements(Object inputElement) {
-				return new Object [] {root};
-			}
-			
-			public Object[] getChildren(Object parentElement) {
-				return input.toArray();
-			}
-		});
+		viewer.setContentProvider(contentProvider);
 		
 		viewer.setLabelProvider(new LabelProvider() {
 			@Override
@@ -157,7 +209,7 @@ public class IconView {
 			}
 		});
 		this.workspace = workspace;
-		this.workspace.addResourceChangeListener(listener);
+		this.workspace.addResourceChangeListener(resourceListener);
 	}
 
 	private Image loadImage(final IFile file) {
@@ -196,20 +248,13 @@ public class IconView {
 
 	@PreDestroy
 	void dispose() {
-		this.workspace.removeResourceChangeListener(listener);
+		this.workspace.removeResourceChangeListener(resourceListener);
+		this.partService.removePartListener(partListener);
 	}
 
 	private boolean isImageFile(IResource resource) {
 		if (resource.getType() == IResource.FILE) {
 			IFile file = (IFile) resource;
-//			try {
-//				System.err.println("Description: "
-//						+ file.getContentDescription().getContentType());
-//			} catch (CoreException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-
 			String extension = file.getFileExtension();
 			if (extension != null
 					&& ("png".equalsIgnoreCase(extension)
@@ -225,10 +270,18 @@ public class IconView {
 	@Inject
 	void setFolder(
 			@Named(IServiceConstants.SELECTION) @Optional IContainer container) {
+		this.container = container;
+		if( visible ) {
+			refreshViewer();	
+		} else {
+			needsupdate = true;
+		}
+	}
+
+	private void refreshViewer() {
 		Map<IResource, Image> imageMap = this.imageMap;
 		this.imageMap = new HashMap<IResource, Image>();
-		this.container = container;
-
+		
 		if (container != null) {
 			final List<IResource> input = new ArrayList<IResource>();
 			try {
@@ -250,11 +303,12 @@ public class IconView {
 				e.printStackTrace();
 			}
 
-			System.err.println(input);
 			viewer.setInput(input);
 		}
+		
 		for (Image img : imageMap.values()) {
 			img.dispose();
 		}
+		needsupdate = false;
 	}
 }

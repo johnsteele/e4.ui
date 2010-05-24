@@ -1,14 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 Nicolas Richeton.
+ * Copyright (c) 2010 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors :
- *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
- *    Richard Michalsky - bugs 195415,  195443
- *******************************************************************************/
+ * Contributors:
+ *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.e4.demo.simpleide.iconview;
 
 import org.eclipse.nebula.widgets.gallery.AbstractGalleryItemRenderer;
@@ -20,18 +19,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
-/**
- * 
- * <p>
- * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
- * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
- * VERSIONS.
- * </p>
- * 
- * @author Nicolas Richeton (nicolas.richeton@gmail.com)
- * @contributor Richard Michalsky (bugs 195415, 195443)
- * @contributor Peter Centgraf (bugs 212071, 212073)
- */
+
 public class CustomGalleryItemRenderer extends
 		AbstractGalleryItemRenderer {
 	@Override
