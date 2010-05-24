@@ -174,7 +174,6 @@ public class IconView {
 		this.part = part;
 		viewer = new GalleryTreeViewer(composite, SWT.MULTI | SWT.V_SCROLL);
 		viewer.getGallery().setItemRenderer(new CustomGalleryItemRenderer());
-		
 		partService.addPartListener(partListener);
 		
 		NoGroupRenderer renderer = new NoGroupRenderer();
@@ -282,8 +281,8 @@ public class IconView {
 		Map<IResource, Image> imageMap = this.imageMap;
 		this.imageMap = new HashMap<IResource, Image>();
 		
+		final List<IResource> input = new ArrayList<IResource>();
 		if (container != null) {
-			final List<IResource> input = new ArrayList<IResource>();
 			try {
 				container.accept(new IResourceVisitor() {
 
@@ -301,10 +300,10 @@ public class IconView {
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-
-			viewer.setInput(input);
+			}			
 		}
+		
+		viewer.setInput(input);
 		
 		for (Image img : imageMap.values()) {
 			img.dispose();
