@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <simpleide:SimpleIDEApplication xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmlns:simpleide="http://www.eclipse.org/e4/demo/simpleide" xmi:id="_r5eKcGAYEd-Bb9ra7AA28Q" elementId="app.simpleide">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_tMEPMGAiEd-E_N65-FXwgA" label="Simple e4 IDE" width="800" height="600">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_tMEPMGAiEd-E_N65-FXwgA" elementId="simpleide.mainwindow" label="Simple e4 IDE" width="800" height="600">
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_NpAUQGAmEd-c1dfOhrP7Ww" elementId="">
       <children xsi:type="advanced:Perspective" xmi:id="_TrpzMGAmEd-c1dfOhrP7Ww" elementId="simpleide.perspective.default" label="Default Perspective" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide/icons/application_split.png">
         <children xsi:type="basic:PartSashContainer" xmi:id="_o38KwGAmEd-c1dfOhrP7Ww" horizontal="true">
@@ -17,7 +17,7 @@
     </children>
     <variables>selection</variables>
     <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
-    <mainMenu xmi:id="_yobKMGAiEd-E_N65-FXwgA">
+    <mainMenu xmi:id="_yobKMGAiEd-E_N65-FXwgA" elementId="simpleide.mainmenu">
       <children xsi:type="menu:Menu" xmi:id="_0BkucGAiEd-E_N65-FXwgA" elementId="simpleide.mainmenu.file" label="File">
         <children xsi:type="menu:Menu" xmi:id="_sErgoGAzEd-_KuNHePH0xw" elementId="simpleide.mainmenu.file.new" label="New">
           <children xsi:type="menu:HandledMenuItem" xmi:id="_hC0PYGHYEd-_Y6o4fctqsw" label="Project ..." iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide/icons/newprj_wiz.gif" command="_CWMKAGHYEd-_Y6o4fctqsw"/>
@@ -51,6 +51,7 @@
   <handlers xmi:id="_T8XWgGHYEd-_Y6o4fctqsw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.NewTextFileDialogHandler" command="_F3JIQGHYEd-_Y6o4fctqsw"/>
   <handlers xmi:id="_WjZDIGHYEd-_Y6o4fctqsw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.NewFolderDialogHandler" command="_IERuMGHYEd-_Y6o4fctqsw"/>
   <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYx" elementId="org.eclipse.ui.showViewHandler" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.internal.workbench.swt.handlers.ShowViewHandler" command="org.eclipse.ui.views.showView"/>
+  <handlers xmi:id="_GuF_8GceEd-UeOvBc5sIBQ" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.SwitchThemeHandler" command="_VAYokGcYEd-XPd4cWNb-1Q"/>
   <bindingTables xmi:id="_bFtE4GEhEd-A9truh9jvIg" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
     <bindings xmi:id="_fW-s0GEhEd-A9truh9jvIg" keySequence="M1+Q" command="_oIK3gGAiEd-E_N65-FXwgA"/>
     <bindings xmi:id="_z1SkEGEhEd-A9truh9jvIg" keySequence="M1+M2+S" command="_kpAnIGEhEd-A9truh9jvIg"/>
@@ -71,4 +72,7 @@
     <parameters xmi:id="_oRr6EAFSEd-Z8rQksLwRYy" elementId="org.eclipse.ui.views.showView.viewId" name="View"/>
   </commands>
   <commands xmi:id="org.eclipse.ui.edit.copy" elementId="org.eclipse.ui.edit.copy" commandName="Copy"/>
+  <commands xmi:id="_VAYokGcYEd-XPd4cWNb-1Q" elementId="simpleide.command.switchtheme" commandName="Switch Theme">
+    <parameters xmi:id="_jQ1PYGcYEd-XPd4cWNb-1Q" elementId="simpleide.command.switchtheme.themeid" name="Theme Id" typeId="" optional="false"/>
+  </commands>
 </simpleide:SimpleIDEApplication>

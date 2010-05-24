@@ -58,5 +58,12 @@
          </property>
       </product>
    </extension>
+   <extension
+         id="id1"
+         point="org.eclipse.e4.workbench.model">
+      <snippet
+            uri="xmi/components.e4xmi">
+      </snippet>
+   </extension>
 
 </plugin>
