@@ -10,27 +10,90 @@
  ******************************************************************************/
 package org.eclipse.e4.demo.simpleide.services;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
 import java.util.Locale;
 
 public interface INLSLookupFactoryService {
-	public <L> L createNLSLookup(Class<L> clazz);
+	/**
+	 * Creates a lookup which adapts dynamically to the current language stored
+	 * in {@link Locale#getDefault()}
+	 * 
+	 * @param <L>
+	 *            the interface type
+	 * @param clazz
+	 *            the interface type
+	 * @return the lookup instance
+	 */
+	public <L> L createDynamicNLSLookup(Class<L> clazz);
+
+	/**
+	 * Create a lookup which uses the give locale for lookups in dependently
+	 * from the current default locale
+	 * 
+	 * @param <L>
+	 *            the interface type
+	 * @param clazz
+	 *            the interface type
+	 * @param locale
+	 *            the locale
+	 * @return the lookup instance
+	 */
 	public <L> L createNLSLookup(Class<L> clazz, Locale locale);
-	
+
+	/**
+	 * Create a lookup which uses the give locale for lookups in dependently
+	 * from the current default locale.
+	 * <p>
+	 * This method has the same results as
+	 * <code>createNLSLookup(My.class, Locale.getDefault())</code>
+	 * </p>
+	 * 
+	 * @param <L>
+	 *            the interface type
+	 * @param clazz
+	 *            the interface type
+	 * @return the lookup instance
+	 */
+	public <L> L createNLSLookup(Class<L> clazz);
+
+	/**
+	 * Translate a value using one of the registered translation services
+	 * 
+	 * @param category
+	 *            the category to identify the service
+	 * @param key
+	 *            the key
+	 * @param args
+	 *            the arguments for substitution
+	 * @return
+	 */
+	public String translate(String category, String key, Object... args);
+
 	/**
 	 * Configures the cacheing of the Lookup class
 	 */
+	@Target(ElementType.TYPE)
 	public @interface Cache {
 
 	}
-	
+
 	/**
 	 * Marks the value to be looked up through the given service class
 	 */
+	@Target(ElementType.TYPE)
 	public @interface OSGiService {
-		String serviceId = null;
+		String serviceId();
 	}
-	
+
+	@Target(ElementType.METHOD)
+	public @interface Key {
+		String category() default "N/A";
+
+		String key();
+	}
+
 	public interface ITranslationService {
-		public String translate(String key, Locale locale);
+		public String translate(String category, String key, Locale locale);
 	}
 }

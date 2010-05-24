@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.e4.demo.simpleide.nlsLookupFactoryService">
+   <implementation class="org.eclipse.e4.demo.simpleide.internal.NLSLookupFactoryServiceImpl"/>
+   <service>
+      <provide interface="org.eclipse.e4.demo.simpleide.services.INLSLookupFactoryService"/>
+   </service>
+   <reference bind="addTranslationService" cardinality="0..n" interface="org.eclipse.e4.demo.simpleide.services.INLSLookupFactoryService$ITranslationService" name="INLSLookupFactoryService$ITranslationService" policy="dynamic" unbind="removeTranslationService"/>
+</scr:component>
