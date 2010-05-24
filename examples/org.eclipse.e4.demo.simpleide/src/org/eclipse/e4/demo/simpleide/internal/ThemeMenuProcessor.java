@@ -51,7 +51,7 @@ public class ThemeMenuProcessor implements IModelExtension {
 					.eContainer();
 			MCommand switchThemeCommand = null;
 			for (MCommand cmd : application.getCommands()) {
-				if ("simpleide.command.switchtheme".equals(cmd.getElementId())) {
+				if ("simpleide.command.switchtheme".equals(cmd.getElementId())) { //$NON-NLS-1$
 					switchThemeCommand = cmd;
 					break;
 				}
@@ -68,7 +68,7 @@ public class ThemeMenuProcessor implements IModelExtension {
 					item.setCommand(switchThemeCommand);
 					MParameter parameter = MCommandsFactory.INSTANCE
 							.createParameter();
-					parameter.setName("simpleide.command.switchtheme.themeid");
+					parameter.setName("simpleide.command.switchtheme.themeid"); //$NON-NLS-1$
 					parameter.setValue(theme.getId());
 					item.getParameters().add(parameter);
 					themesMenu.getChildren().add(item);

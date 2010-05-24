@@ -24,6 +24,8 @@ public interface Messages {
 	public String NewFolderDialogHandler_ErrorSelectAParentFolder();
 
 	public String NewFolderDialogHandler_ErrorEnterFolderName();
+	
+	public String NewFolderDialogHandler_ErrorFolderCreation();
 
 	public String NewProjectDialogHandler_ShellTitle();
 

@@ -16,7 +16,6 @@ import org.eclipse.e4.workbench.modeling.EPartService;
 public class SaveAllHandler {
 	@Execute
 	public void saveAll(EPartService partService) {
-		System.err.println("Saving all!");
 		partService.saveAll(false);
 	}
 }
