@@ -25,8 +25,7 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.1
  */
 public class ArchiveFileManipulations {
-
-
+	
 	/**
 	 * Determine whether the file with the given filename is in .tar.gz or .tar
 	 * format.
@@ -35,14 +34,14 @@ public class ArchiveFileManipulations {
 	 *            file to test
 	 * @return true if the file is in tar format
 	 */
-	public static boolean isTarFile(String fileName) {
+	public static boolean isTarFile(String fileName, Messages messages) {
 		if (fileName.length() == 0) {
 			return false;
 		}
 
 		TarFile tarFile = null;
 		try {
-			tarFile = new TarFile(fileName);
+			tarFile = new TarFile(fileName,messages);
 		} catch (TarException tarException) {
 			return false;
 		} catch (IOException ioException) {
@@ -99,12 +98,12 @@ public class ArchiveFileManipulations {
 	 * @param shell
 	 *            The shell to display any possible Dialogs in
 	 */
-	public static void closeStructureProvider(ILeveledImportStructureProvider structureProvider, Shell shell) {
+	public static void closeStructureProvider(Messages messages, ILeveledImportStructureProvider structureProvider, Shell shell) {
 		if (structureProvider instanceof ZipLeveledStructureProvider) {
-			closeZipFile(((ZipLeveledStructureProvider) structureProvider).getZipFile(), shell);
+			closeZipFile(messages, ((ZipLeveledStructureProvider) structureProvider).getZipFile(), shell);
 		}
 		if (structureProvider instanceof TarLeveledStructureProvider) {
-			closeTarFile(((TarLeveledStructureProvider) structureProvider).getTarFile(), shell);
+			closeTarFile(messages, ((TarLeveledStructureProvider) structureProvider).getTarFile(), shell);
 		}
 	}
 
@@ -118,12 +117,12 @@ public class ArchiveFileManipulations {
 	 *            The shell to display error dialogs in
 	 * @return Returns true if the operation was successful
 	 */
-	public static boolean closeZipFile(ZipFile file, Shell shell) {
+	public static boolean closeZipFile(Messages messages, ZipFile file, Shell shell) {
 		try {
 			file.close();
 		} catch (IOException e) {
 			displayErrorDialog(
-					NLS.bind(DataTransferMessages.ZipImport_couldNotClose, file.getName()),
+					NLS.bind(messages.ZipImport_couldNotClose(), file.getName()),
 					shell);
 			return false;
 		}
@@ -142,12 +141,12 @@ public class ArchiveFileManipulations {
 	 * @return Returns true if the operation was successful
 	 * @since 3.4
 	 */
-	public static boolean closeTarFile(TarFile file, Shell shell) {
+	public static boolean closeTarFile(Messages messages, TarFile file, Shell shell) {
 		try {
 			file.close();
 		} catch (IOException e) {
 			displayErrorDialog(
-					NLS.bind(DataTransferMessages.ZipImport_couldNotClose, file.getName()),
+					NLS.bind(messages.ZipImport_couldNotClose(), file.getName()),
 					shell);
 			return false;
 		}
