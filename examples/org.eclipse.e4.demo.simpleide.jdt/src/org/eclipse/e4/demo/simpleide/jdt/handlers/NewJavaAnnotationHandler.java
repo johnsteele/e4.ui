@@ -10,6 +10,11 @@
  ******************************************************************************/
 package org.eclipse.e4.demo.simpleide.jdt.handlers;
 
-public class NewJavaAnnotationHandler {
+import org.eclipse.e4.core.di.annotations.Execute;
 
+public class NewJavaAnnotationHandler {
+	@Execute
+	public void createFile() {
+		
+	}
 }

@@ -10,9 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.demo.simpleide.internal;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.e4.core.services.statusreporter.StatusReporter;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.demo.simpleide.internal.datatransfer.ExternalProjectImportWizard;
 import org.eclipse.e4.demo.simpleide.services.IImportResourceService;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -29,8 +28,8 @@ public class EclipseProjectImportService implements IImportResourceService {
 		return "Existing Projects Into Workspace";
 	}
 
-	public void importResource(Shell shell, IWorkspace workspace, StatusReporter reporter, Logger logger) {
-		ExternalProjectImportWizard wz = new ExternalProjectImportWizard(workspace, reporter, logger);
+	public void importResource(Shell shell, IEclipseContext context) {
+		ExternalProjectImportWizard wz = ContextInjectionFactory.make(ExternalProjectImportWizard.class, context);
 		WizardDialog dialog = new WizardDialog(shell, wz);
 		dialog.open();
 	}

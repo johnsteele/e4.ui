@@ -10,14 +10,12 @@
  ******************************************************************************/
 package org.eclipse.e4.demo.simpleide.services;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.e4.core.services.statusreporter.StatusReporter;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.swt.widgets.Shell;
 
 public interface IImportResourceService {
 	public String getCategoryName();
 	public String getIconURI();
 	public String getLabel();
-	public void importResource(Shell shell, IWorkspace workspace, StatusReporter statusReporter, Logger logger);
+	public void importResource(Shell shell, IEclipseContext context);
 }

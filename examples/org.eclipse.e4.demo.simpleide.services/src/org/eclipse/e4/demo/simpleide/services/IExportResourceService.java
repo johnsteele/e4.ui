@@ -1,6 +1,6 @@
 package org.eclipse.e4.demo.simpleide.services;
 
-import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.swt.widgets.Shell;
 
 public interface IExportResourceService {
@@ -10,5 +10,5 @@ public interface IExportResourceService {
 	
 	public String getLabel();
 	
-	public void exportResource(Shell shell, Logger logger);
+	public void exportResource(Shell shell, IEclipseContext context);
 }

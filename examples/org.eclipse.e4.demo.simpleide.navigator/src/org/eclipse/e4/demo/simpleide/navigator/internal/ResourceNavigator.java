@@ -36,8 +36,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MSimpleIDEApplication;
 import org.eclipse.e4.demo.simpleide.services.IImportResourceService;
@@ -116,9 +114,18 @@ public class ResourceNavigator {
 		}
 	};
 
+	private IEclipseContext context;
+
 	@Inject
-	public ResourceNavigator(Composite parent, final IEclipseContext context, IWorkspace workspace, final MApplication application, final ServiceRegistryComponent serviceRegistry, StatusReporter statusReporter, Logger logger) {
+	private ServiceRegistryComponent serviceRegistry;
+
+	@Inject
+	private MApplication application;
+	
+	@Inject
+	public ResourceNavigator(Composite parent, final IEclipseContext context, IWorkspace workspace) {
 		final Realm realm = SWTObservables.getRealm(parent.getDisplay());
+		this.context = context;
 		parent.setLayout(new FillLayout());
 		TreeViewer viewer = new TreeViewer(parent,SWT.FULL_SELECTION|SWT.H_SCROLL|SWT.V_SCROLL);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
@@ -194,11 +201,11 @@ public class ResourceNavigator {
 				
 			}
 		});
-		setupContextMenu(viewer, serviceRegistry, parent.getShell(), workspace, statusReporter, logger);
+		setupContextMenu(viewer, parent.getShell());
 		workspace.addResourceChangeListener(listener);
 	}
 	
-	private void setupContextMenu(final TreeViewer viewer, final ServiceRegistryComponent serviceRegistry, final Shell shell, final IWorkspace workspace, final StatusReporter statusReporter, final Logger logger) {
+	private void setupContextMenu(final TreeViewer viewer, final Shell shell) {
 		MenuManager mgr = new MenuManager();
 		viewer.getControl().setMenu(mgr.createContextMenu(viewer.getControl()));
 		
@@ -211,7 +218,7 @@ public class ResourceNavigator {
 					final IImportResourceService tmp = s;
 					Action a = new Action(s.getLabel()) {
 						public void run() {
-							tmp.importResource(shell, workspace, statusReporter, logger);
+							tmp.importResource(shell, context.createChild());
 						}
 					};
 					mgr.add(a);

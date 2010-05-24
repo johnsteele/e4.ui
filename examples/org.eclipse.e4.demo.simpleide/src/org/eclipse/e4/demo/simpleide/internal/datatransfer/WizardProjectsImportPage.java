@@ -84,16 +84,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.FrameworkUtil;
-//import org.eclipse.ui.PlatformUI;
-//import org.eclipse.ui.actions.WorkspaceModifyOperation;
-//import org.eclipse.ui.dialogs.IOverwriteQuery;
-//import org.eclipse.ui.dialogs.WorkingSetGroup;
-//import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-//import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-//import org.eclipse.ui.internal.ide.StatusUtil;
-//import org.eclipse.ui.statushandlers.StatusManager;
-//import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-//import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 /**
  * The WizardProjectsImportPage is the page that allows the user to import
@@ -270,7 +260,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 					.getParent();
 
 			return NLS.bind(
-					DataTransferMessages.WizardProjectsImportPage_projectLabel,
+					messsagesLookup.WizardProjectsImportPage_ProjectLabel(),
 					projectName, path);
 		}
 		
@@ -341,12 +331,14 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 	
 	private StatusReporter statusReporter;
 	
+	private Messages messsagesLookup;
+	
 	/**
 	 * Creates a new project creation wizard page.
 	 * 
 	 */
-	public WizardProjectsImportPage(IWorkspace workspace, StatusReporter statusReporter, Logger logger) {
-		this("wizardExternalProjectsPage", null, null, workspace, statusReporter, logger); //$NON-NLS-1$
+	public WizardProjectsImportPage(IWorkspace workspace, StatusReporter statusReporter, Logger logger, Messages messsagesLookup) {
+		this("wizardExternalProjectsPage", null, null, workspace, statusReporter, logger, messsagesLookup); //$NON-NLS-1$
 	}
 
 	/**
@@ -354,8 +346,8 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 	 * 
 	 * @param pageName
 	 */
-	public WizardProjectsImportPage(String pageName, IWorkspace workspace, StatusReporter statusReporter, Logger logger) {
-		this(pageName,null, null, workspace, statusReporter, logger);
+	public WizardProjectsImportPage(String pageName, IWorkspace workspace, StatusReporter statusReporter, Logger logger, Messages messsagesLookup) {
+		this(pageName,null, null, workspace, statusReporter, logger, messsagesLookup);
 	}
 			
 	/**
@@ -367,16 +359,17 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 	 * @since 3.5
 	 */
 	public WizardProjectsImportPage(String pageName,String initialPath,
-			IStructuredSelection currentSelection, IWorkspace workspace, StatusReporter statusReporter, Logger logger) {
+			IStructuredSelection currentSelection, IWorkspace workspace, StatusReporter statusReporter, Logger logger, Messages messsagesLookup) {
  		super(pageName);
+ 		this.messsagesLookup = messsagesLookup;
  		this.logger = logger;
  		this.statusReporter = statusReporter;
  		this.workspace = workspace;
 		this.initialPath = initialPath;
 //		this.currentSelection = currentSelection;
 		setPageComplete(false);
-		setTitle(DataTransferMessages.WizardProjectsImportPage_ImportProjectsTitle);
-		setDescription(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
+		setTitle(messsagesLookup.WizardProjectsImportPage_ImportProjectsTitle());
+		setDescription(messsagesLookup.WizardProjectsImportPage_ImportProjectsDescription());
 	}
 
 	/*
@@ -428,7 +421,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 
 		copyCheckbox = new Button(optionsGroup, SWT.CHECK);
 		copyCheckbox
-				.setText(DataTransferMessages.WizardProjectsImportPage_CopyProjectsIntoWorkspace);
+				.setText(messsagesLookup.WizardProjectsImportPage_CopyProjectsIntoWorkspace());
 		copyCheckbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		copyCheckbox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -446,7 +439,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 
 		Label title = new Label(workArea, SWT.NONE);
 		title
-				.setText(DataTransferMessages.WizardProjectsImportPage_ProjectsListTitle);
+				.setText(messsagesLookup.WizardProjectsImportPage_ProjectsListTitle());
 
 		Composite listComposite = new Composite(workArea, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -647,7 +640,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 		// new project from directory radio button
 		projectFromDirectoryRadio = new Button(projectGroup, SWT.RADIO);
 		projectFromDirectoryRadio
-				.setText(DataTransferMessages.WizardProjectsImportPage_RootSelectTitle);
+				.setText(messsagesLookup.WizardProjectsImportPage_RootSelectTitle());
 
 		// project location entry field
 		this.directoryPathField = new Text(projectGroup, SWT.BORDER);
@@ -665,7 +658,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 		// new project from archive radio button
 		projectFromArchiveRadio = new Button(projectGroup, SWT.RADIO);
 		projectFromArchiveRadio
-				.setText(DataTransferMessages.WizardProjectsImportPage_ArchiveSelectTitle);
+				.setText(messsagesLookup.WizardProjectsImportPage_ArchiveSelectTitle());
 
 		// project location entry field
 		archivePathField = new Text(projectGroup, SWT.BORDER);
@@ -848,7 +841,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 	public void updateProjectsList(final String path) {
 		// on an empty path empty selectedProjects
 		if (path == null || path.length() == 0) {
-			setMessage(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
+			setMessage(messsagesLookup.WizardProjectsImportPage_ImportProjectsDescription());
 			selectedProjects = new ProjectRecord[0];
 			projectsList.refresh(true);
 			projectsList.setCheckedElements(selectedProjects);
@@ -886,7 +879,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 
 					monitor
 							.beginTask(
-									DataTransferMessages.WizardProjectsImportPage_SearchingMessage,
+									messsagesLookup.WizardProjectsImportPage_SearchingMessage(),
 									100);
 					selectedProjects = new ProjectRecord[0];
 					Collection<Object> files = new ArrayList<Object>();
@@ -911,7 +904,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 						int index = 0;
 						monitor.worked(50);
 						monitor
-								.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
+								.subTask(messsagesLookup.WizardProjectsImportPage_ProcessingMessage());
 						while (filesIterator.hasNext()) {
 							selectedProjects[index++] = (ProjectRecord) filesIterator
 									.next();
@@ -935,7 +928,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 						int index = 0;
 						monitor.worked(50);
 						monitor
-								.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
+								.subTask(messsagesLookup.WizardProjectsImportPage_ProcessingMessage());
 						while (filesIterator.hasNext()) {
 							selectedProjects[index++] = (ProjectRecord) filesIterator
 									.next();
@@ -953,7 +946,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 						int index = 0;
 						monitor.worked(50);
 						monitor
-								.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
+								.subTask(messsagesLookup.WizardProjectsImportPage_ProcessingMessage());
 						while (filesIterator.hasNext()) {
 							File file = (File) filesIterator.next();
 							selectedProjects[index] = new ProjectRecord(file);
@@ -987,15 +980,15 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 		
 		if (displayWarning) {
 			setMessage(
-					DataTransferMessages.WizardProjectsImportPage_projectsInWorkspace,
+					messsagesLookup.WizardProjectsImportPage_ProjectsInWorkspace(),
 					WARNING);
 		} else {
-			setMessage(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
+			setMessage(messsagesLookup.WizardProjectsImportPage_ImportProjectsDescription());
 		}
 		setPageComplete(projectsList.getCheckedElements().length > 0);
 		if(selectedProjects.length == 0) {
 			setMessage(
-					DataTransferMessages.WizardProjectsImportPage_noProjectsToImport,
+					messsagesLookup.WizardProjectsImportPage_NoProjectsToImport(),
 					WARNING);
 		}
 	}
@@ -1078,7 +1071,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 			return false;
 		}
 		monitor.subTask(NLS.bind(
-				DataTransferMessages.WizardProjectsImportPage_CheckingMessage,
+				messsagesLookup.WizardProjectsImportPage_CheckingMessage(),
 				directory.getPath()));
 		File[] contents = directory.listFiles();
 		if (contents == null)
@@ -1151,7 +1144,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 			return false;
 		}
 		monitor.subTask(NLS.bind(
-				DataTransferMessages.WizardProjectsImportPage_CheckingMessage,
+				messsagesLookup.WizardProjectsImportPage_CheckingMessage(),
 				structureProvider.getLabel(entry)));
 		List<?> children = structureProvider.getChildren(entry);
 		if (children == null) {
@@ -1180,7 +1173,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 		DirectoryDialog dialog = new DirectoryDialog(directoryPathField
 				.getShell(), SWT.SHEET);
 		dialog
-				.setMessage(DataTransferMessages.WizardProjectsImportPage_SelectDialogTitle);
+				.setMessage(messsagesLookup.WizardProjectsImportPage_SelectDialogTitle());
 
 		String dirName = directoryPathField.getText().trim();
 		if (dirName.length() == 0) {
@@ -1214,7 +1207,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 		FileDialog dialog = new FileDialog(archivePathField.getShell(), SWT.SHEET);
 		dialog.setFilterExtensions(FILE_IMPORT_MASK);
 		dialog
-				.setText(DataTransferMessages.WizardProjectsImportPage_SelectArchiveDialogTitle);
+				.setText(messsagesLookup.WizardProjectsImportPage_SelectArchiveDialogTitle());
 
 		String fileName = archivePathField.getText().trim();
 		if (fileName.length() == 0) {
@@ -1277,7 +1270,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 		} catch (InvocationTargetException e) {
 			// one of the steps resulted in a core exception
 			Throwable t = e.getTargetException();
-			String message = DataTransferMessages.WizardExternalProjectImportPage_errorMessage;
+			String message = messsagesLookup.WizardExternalProjectImportPage_ErrorMessage();
 			IStatus status;
 			if (t instanceof CoreException) {
 				status = ((CoreException) t).getStatus();
@@ -1386,7 +1379,7 @@ public class WizardProjectsImportPage extends WizardPage implements IOverwriteQu
 		try {
 			monitor
 					.beginTask(
-							DataTransferMessages.WizardProjectsImportPage_CreateProjectsTask,
+							messsagesLookup.WizardProjectsImportPage_CreateProjectsTask(),
 							100);
 			project.create(record.description, new SubProgressMonitor(monitor,
 					30));
