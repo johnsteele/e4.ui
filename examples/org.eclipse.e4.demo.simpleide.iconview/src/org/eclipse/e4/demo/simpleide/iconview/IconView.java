@@ -270,11 +270,11 @@ public class IconView {
 	void setFolder(
 			@Named(IServiceConstants.SELECTION) @Optional IContainer container) {
 		this.container = container;
-		if( visible ) {
+//FIXME Need to investigate		if( visible ) {
 			refreshViewer();	
-		} else {
-			needsupdate = true;
-		}
+//		} else {
+//			needsupdate = true;
+//		}
 	}
 
 	private void refreshViewer() {
