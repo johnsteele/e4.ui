@@ -45,6 +45,8 @@ public class TarLeveledStructureProvider implements
 	private int stripLevel;
 	
 	private Logger logger;
+	
+	private Messages messages;
 
 	/**
 	 * Creates a <code>TarFileStructureProvider</code>, which will operate on
@@ -53,8 +55,9 @@ public class TarLeveledStructureProvider implements
 	 * @param sourceFile
 	 *            the source TarFile
 	 */
-	public TarLeveledStructureProvider(TarFile sourceFile, Logger logger) {
+	public TarLeveledStructureProvider(TarFile sourceFile, Logger logger, Messages messages) {
 		super();
+		this.messages = messages;
 		this.logger = logger;
 		tarFile = sourceFile;
 		root.setFileType(TarEntry.DIRECTORY);
@@ -193,7 +196,7 @@ public class TarLeveledStructureProvider implements
 		try {
 			getTarFile().close();
 		} catch (IOException e) {
-			logger.error(e, DataTransferMessages.ZipImport_couldNotClose
+			logger.error(e, messages.ZipImport_couldNotClose()
 					+ getTarFile().getName());
 //			IDEWorkbenchPlugin.log(DataTransferMessages.ZipImport_couldNotClose
 //					+ getTarFile().getName(), e);

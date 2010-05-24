@@ -29,6 +29,7 @@ public class TarInputStream extends FilterInputStream
 	private int bytesread = 0;
 	private TarEntry firstEntry = null;
 	private String longLinkName = null;
+	private Messages messages;
 
 	/**
 	 * Creates a new tar input stream on the given input stream.
@@ -37,9 +38,9 @@ public class TarInputStream extends FilterInputStream
 	 * @throws TarException
 	 * @throws IOException
 	 */
-	public TarInputStream(InputStream in) throws TarException, IOException {
+	public TarInputStream(InputStream in, Messages messages) throws TarException, IOException {
 		super(in);
-
+		this.messages = messages;
 		// Read in the first TarEntry to make sure
 		// the input is a valid tar file stream.
 		firstEntry = getNextEntry();
@@ -54,8 +55,9 @@ public class TarInputStream extends FilterInputStream
 	 * @throws TarException
 	 * @throws IOException
 	 */
-	TarInputStream(InputStream in, TarEntry entry) throws TarException, IOException {
+	TarInputStream(InputStream in, TarEntry entry, Messages messages) throws TarException, IOException {
 		super(in);
+		this.messages = messages;
 		skipToEntry(entry);
 	}
 
@@ -243,7 +245,7 @@ public class TarInputStream extends FilterInputStream
 			long fileMode = Long.decode(mode.toString()).longValue();
 			entry.setMode(fileMode);
 		} catch(NumberFormatException nfe) {
-			throw new TarException(DataTransferMessages.TarImport_invalid_tar_format, nfe);
+			throw new TarException(messages.TarImport_invalid_tar_format(), nfe);
 		}
 		
 		pos = 100 + 24;
@@ -264,7 +266,7 @@ public class TarInputStream extends FilterInputStream
 		try {
 			fileSize = Integer.decode(size.toString()).intValue();
 		} catch(NumberFormatException nfe) {
-			throw new TarException(DataTransferMessages.TarImport_invalid_tar_format, nfe);
+			throw new TarException(messages.TarImport_invalid_tar_format(), nfe);
 		}
 
 		entry.setSize(fileSize);

@@ -25,6 +25,30 @@ public interface Messages {
 	public String WizardProjectsImportPage_CheckingMessage();
 	public String WizardProjectsImportPage_SelectDialogTitle();
 	public String WizardProjectsImportPage_SelectArchiveDialogTitle();
-	public String WizardExternalProjectImportPage_ErrorMessage();
 	public String WizardProjectsImportPage_CreateProjectsTask();
+	
+	public String WizardProjectsImportPage_SelectAll();
+	public String WizardProjectsImportPage_DeselectAll();
+	public String WizardProjectsImportPage_Refresh();
+	public String WizardProjectsImportPage_browse();
+	
+	public String WizardExternalProjectImportPage_ErrorMessage();
+	
+	
+	public String ImportOperation_ImportTask();
+	public String ImportOperation_EmptyString();
+	public String ImportOperation_importProblems();
+	public String ImportOperation_coreImportError();
+	public String ImportOperation_targetSameAsSourceError();
+	public String ImportOperation_openStreamError();
+	public String ImportOperation_closeStreamError();
+	public String ImportOperation_cannotCopy();
+	
+	public String ZipImport_badFormat();
+	public String ZipImport_couldNotRead();
+	public String ZipImport_couldNotClose();
+	
+	public String TarImport_invalid_tar_format();
+	public String TarImport_badFormat();
+
 }

@@ -33,6 +33,7 @@ public class TarFile {
 	private TarInputStream entryStream;
 
 	private InputStream internalEntryStream;
+	private Messages messages;
 	
 	/**
 	 * Create a new TarFile for the given file.
@@ -41,8 +42,9 @@ public class TarFile {
 	 * @throws TarException
 	 * @throws IOException
 	 */
-	public TarFile(File file) throws TarException, IOException {
+	public TarFile(File file, Messages messages) throws TarException, IOException {
 		this.file = file;
+		this.messages = messages;
 
 		InputStream in = new FileInputStream(file);
 		// First, check if it's a GZIPInputStream.
@@ -55,7 +57,7 @@ public class TarFile {
 			in = new FileInputStream(file);
 		}
 		try {
-			entryEnumerationStream = new TarInputStream(in);
+			entryEnumerationStream = new TarInputStream(in, messages);
 		} catch (TarException ex) {
 			in.close();
 			throw ex;
@@ -82,8 +84,8 @@ public class TarFile {
 	 * @throws TarException
 	 * @throws IOException
 	 */
-	public TarFile(String filename) throws TarException, IOException {
-		this(new File(filename));
+	public TarFile(String filename, Messages messages) throws TarException, IOException {
+		this(new File(filename),messages);
 	}
 
 	/**
@@ -134,7 +136,7 @@ public class TarFile {
 				internalEntryStream.close();
 				internalEntryStream = new FileInputStream(file);
 			}
-			entryStream = new TarInputStream(internalEntryStream, entry) {
+			entryStream = new TarInputStream(internalEntryStream, entry, messages) {
 				public void close() {
 					// Ignore close() since we want to reuse the stream.
 				}

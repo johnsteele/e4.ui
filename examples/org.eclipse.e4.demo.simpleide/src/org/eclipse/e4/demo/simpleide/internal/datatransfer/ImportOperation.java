@@ -111,6 +111,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	private static final String ABSOLUTE_PATH = "<Absolute Path>"; //$NON-NLS-1$
 	
 	private IWorkspace workspace;
+	
+	private Messages messages;
 
 	/**
      * Creates a new operation that recursively imports the entire contents of the
@@ -140,8 +142,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
      */
     public ImportOperation(IWorkspace workspace, IPath containerPath, Object source,
             IImportStructureProvider provider,
-            IOverwriteQuery overwriteImplementor) {
+            IOverwriteQuery overwriteImplementor, Messages messages) {
         super(workspace);
+        this.messages = messages;
         this.workspace = workspace;
         this.destinationPath = containerPath;
         this.source = source;
@@ -187,8 +190,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
      */
     public ImportOperation(IWorkspace workspace, IPath containerPath, Object source,
             IImportStructureProvider provider,
-            IOverwriteQuery overwriteImplementor, List<?> filesToImport) {
-        this(workspace, containerPath, source, provider, overwriteImplementor);
+            IOverwriteQuery overwriteImplementor, List<?> filesToImport, Messages messages) {
+        this(workspace, containerPath, source, provider, overwriteImplementor, messages);
         setFilesToImport(filesToImport);
     }
 
@@ -219,8 +222,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
      */
     public ImportOperation(IWorkspace workspace, IPath containerPath,
             IImportStructureProvider provider,
-            IOverwriteQuery overwriteImplementor, List<?> filesToImport) {
-        this(workspace, containerPath, null, provider, overwriteImplementor);
+            IOverwriteQuery overwriteImplementor, List<?> filesToImport, Messages messages) {
+        this(workspace, containerPath, null, provider, overwriteImplementor,messages);
         setFilesToImport(filesToImport);
     }
 
@@ -389,7 +392,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
         try {
             if (selectedFiles == null) {
                 //Set the amount to 1000 as we have no idea of how long this will take
-                monitor.beginTask(DataTransferMessages.DataTransfer_importTask, 1000);
+                monitor.beginTask(messages.ImportOperation_ImportTask(), 1000);
                 ContainerGenerator generator = new ContainerGenerator(workspace,
                         destinationPath);
                 monitor.worked(30);
@@ -403,7 +406,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
             } else {
                 // Choose twice the selected files size to take folders into account
                 int creationCount = selectedFiles.size();
-                monitor.beginTask(DataTransferMessages.DataTransfer_importTask, creationCount + 100);
+                monitor.beginTask(messages.ImportOperation_ImportTask(), creationCount + 100);
                 ContainerGenerator generator = new ContainerGenerator(workspace,
                         destinationPath);
                 monitor.worked(30);
@@ -517,7 +520,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
         IStatus[] errors = new IStatus[errorTable.size()];
         errorTable.toArray(errors);
         return new MultiStatus(getBundleName(), IStatus.OK, errors,
-                DataTransferMessages.ImportOperation_importProblems,
+                messages.ImportOperation_importProblems(),
                 null);
     }
 
@@ -535,7 +538,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
             containerResource = getDestinationContainerFor(fileObject);
         } catch (CoreException e) {
             IStatus coreStatus = e.getStatus();
-            String newMessage = NLS.bind(DataTransferMessages.ImportOperation_coreImportError, fileObject, coreStatus.getMessage());
+            String newMessage = NLS.bind(messages.ImportOperation_coreImportError(), fileObject, coreStatus.getMessage());
             IStatus status = new Status(coreStatus.getSeverity(), coreStatus
                     .getPlugin(), coreStatus.getCode(), newMessage, null);
             errorTable.add(status);
@@ -558,7 +561,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
         if (targetPath != null
                 && (targetPath.toFile().equals(new File(fileObjectPath)))) {
             errorTable.add(new Status(IStatus.ERROR, getBundleName(), 0,
-                    NLS.bind(DataTransferMessages.ImportOperation_targetSameAsSourceError, fileObjectPath), null));
+                    NLS.bind(messages.ImportOperation_targetSameAsSourceError(), fileObjectPath), null));
             return;
         }
 
@@ -569,7 +572,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
                             IStatus.ERROR,
                             getBundleName(),
                             0,
-                            NLS.bind(DataTransferMessages.ImportOperation_openStreamError, fileObjectPath),
+                            NLS.bind(messages.ImportOperation_openStreamError(), fileObjectPath),
                             null));
             return;
         }
@@ -606,7 +609,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
                                 IStatus.ERROR,
                                 getBundleName(),
                                 0,
-                                NLS.bind(DataTransferMessages.ImportOperation_closeStreamError, fileObjectPath),
+                                NLS.bind(messages.ImportOperation_closeStreamError(), fileObjectPath),
                                 e));
             }
         }
@@ -676,7 +679,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
                     // file systems root. Roots can't copied (at least not
                     // under windows).
                     errorTable.add(new Status(IStatus.INFO,
-                    		getBundleName(), 0, DataTransferMessages.ImportOperation_cannotCopy,
+                    		getBundleName(), 0, messages.ImportOperation_cannotCopy(),
                             null));
                     continue;
                 }
@@ -818,7 +821,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
                 .makeRelative().toString());
 
         if (overwriteAnswer.equals(IOverwriteQuery.CANCEL)) {
-			throw new OperationCanceledException(DataTransferMessages.DataTransfer_emptyString);
+			throw new OperationCanceledException(messages.ImportOperation_EmptyString());
 		}
 
         if (overwriteAnswer.equals(IOverwriteQuery.NO)) {
