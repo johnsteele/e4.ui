@@ -41,10 +41,11 @@
       <plugin id="org.eclipse.e4.demo.simpleide.e4editor"/>
       <plugin id="org.eclipse.e4.demo.simpleide.editor"/>
       <plugin id="org.eclipse.e4.demo.simpleide.editor.text"/>
-      <plugin id="org.eclipse.e4.demo.simpleide.iconview" fragment=""/>
+      <plugin id="org.eclipse.e4.demo.simpleide.iconview"/>
       <plugin id="org.eclipse.e4.demo.simpleide.jdt"/>
       <plugin id="org.eclipse.e4.demo.simpleide.model"/>
       <plugin id="org.eclipse.e4.demo.simpleide.navigator"/>
+      <plugin id="org.eclipse.e4.demo.simpleide.outline"/>
       <plugin id="org.eclipse.e4.demo.simpleide.services"/>
       <plugin id="org.eclipse.e4.demo.tools.simpleide"/>
       <plugin id="org.eclipse.e4.tools.emf.ui"/>

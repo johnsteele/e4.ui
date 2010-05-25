@@ -43,7 +43,6 @@ public class OutlineView {
 	@Inject
 	public void setActivePart(
 			@Optional @Named(IServiceConstants.ACTIVE_PART) MPart activePart) {
-		
 		IEclipseContext oldPageContext = pageContext;
 		Control oldPageControl = pageControl;
 
@@ -72,12 +71,9 @@ public class OutlineView {
 		}
 
 		if (oldPageControl != null) {
-			System.err.println("Disposing: " + oldPageControl);
 			oldPageControl.dispose();
 		}
 		
-		System.err.println("children: " + parent.getChildren().length);
-
 		parent.layout(true, true);
 	}
 }

@@ -4,11 +4,17 @@
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_NpAUQGAmEd-c1dfOhrP7Ww" elementId="">
       <children xsi:type="advanced:Perspective" xmi:id="_TrpzMGAmEd-c1dfOhrP7Ww" elementId="simpleide.perspective.default" label="Default Perspective" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide/icons/application_split.png">
         <children xsi:type="basic:PartSashContainer" xmi:id="_o38KwGAmEd-c1dfOhrP7Ww" horizontal="true">
-          <children xsi:type="basic:PartStack" xmi:id="_y6yIsGAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.left"/>
+          <children xsi:type="basic:PartStack" xmi:id="_y6yIsGAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.left">
+            <tags>simpleide.stack.left</tags>
+          </children>
           <children xsi:type="basic:PartSashContainer" xmi:id="_2Cm1QGAmEd-c1dfOhrP7Ww">
             <children xsi:type="basic:PartSashContainer" xmi:id="_3ddpsGAmEd-c1dfOhrP7Ww" horizontal="true">
-              <children xsi:type="basic:PartStack" xmi:id="_8XqS0GAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.editor"/>
-              <children xsi:type="basic:PartStack" xmi:id="_9JVAUGAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.right"/>
+              <children xsi:type="basic:PartStack" xmi:id="_8XqS0GAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.editor">
+                <tags>simpleide.stack.editor</tags>
+              </children>
+              <children xsi:type="basic:PartStack" xmi:id="_9JVAUGAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.right">
+                <tags>simpleide.stack.right</tags>
+              </children>
             </children>
             <children xsi:type="basic:PartStack" xmi:id="_64QVkGAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.bottom">
               <tags>simpleide.stack.bottom</tags>
@@ -18,6 +24,7 @@
       </children>
     </children>
     <variables>selection</variables>
+    <variables>outlinepage</variables>
     <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
     <mainMenu xmi:id="_yobKMGAiEd-E_N65-FXwgA" elementId="simpleide.mainmenu">
       <children xsi:type="menu:Menu" xmi:id="_0BkucGAiEd-E_N65-FXwgA" elementId="simpleide.mainmenu.file" label="File">

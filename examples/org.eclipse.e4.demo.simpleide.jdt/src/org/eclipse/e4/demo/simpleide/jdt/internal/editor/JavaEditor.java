@@ -18,6 +18,7 @@ import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.IJavaPartition
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.JavaSourceViewerConfiguration;
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.JavaTextTools;
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.PreferenceConstants;
+import org.eclipse.e4.demo.simpleide.outline.IOutlinePageProvider;
 import org.eclipse.e4.workbench.ui.Persist;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
@@ -31,7 +32,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 
-public class JavaEditor {
+public class JavaEditor implements IOutlinePageProvider {
 	private static final int VERTICAL_RULER_WIDTH = 12;
 
 	private IDocumentInput input;
@@ -99,5 +100,9 @@ public class JavaEditor {
 	public void save() {
 		System.err.println("Saving ...");
 		input.save();
+	}
+
+	public Class<?> getOutlineClass() {
+		return JDTOutlinePage.class;
 	}
 }
