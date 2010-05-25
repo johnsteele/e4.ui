@@ -7,6 +7,28 @@
       <snippet
             uri="xmi/components.e4xmi">
       </snippet>
+      <snippet
+            uri="xmi/contextViewMenu.e4xmi">
+      </snippet>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.e4.demo.simpleide.menu.selection.Entry">
+         <with
+               variable="output.selection">
+            <count
+                  value="1">
+            </count>
+            <iterate
+                  ifEmpty="true"
+                  operator="and">
+               <adapt
+                     type="org.eclipse.e4.demo.simpleide.menu.ContextMenuView$Entry">
+               </adapt>
+            </iterate>
+         </with>
+      </definition>
    </extension>
 
 </plugin>
