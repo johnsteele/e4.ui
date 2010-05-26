@@ -265,6 +265,11 @@ public class JavaElementLabels {
 	 */
 	public final static long COLORIZE= 1L << 55;
 
+	/**
+	 * Show category for all elements.
+	 * @since 3.2
+	 */
+	public final static long ALL_CATEGORY= new Long(F_CATEGORY | M_CATEGORY | T_CATEGORY).longValue();
 
 	
 	/**
