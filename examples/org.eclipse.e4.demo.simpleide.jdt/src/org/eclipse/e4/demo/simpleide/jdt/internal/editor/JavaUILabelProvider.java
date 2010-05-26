@@ -12,9 +12,11 @@ package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
 
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.demo.simpleide.jdt.internal.JavaUIMessages;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 
-public class JavaUILabelProvider extends ColumnLabelProvider {
+public class JavaUILabelProvider extends LabelProvider implements IStyledLabelProvider {
 	private long fTextFlags;
 	private Logger logger;
 	private JavaUIMessages messages;
@@ -54,5 +56,12 @@ public class JavaUILabelProvider extends ColumnLabelProvider {
 	 */
 	public final long getTextFlags() {
 		return fTextFlags;
+	}
+
+	public StyledString getStyledText(Object element) {
+		StyledString string= JavaElementLabels.getStyledTextLabel(element, (evaluateTextFlags(element) | JavaElementLabels.COLORIZE), logger, messages);
+		System.err.println("Styled string: " + string);
+		System.err.println(string.getStyleRanges().length);
+		return string;
 	}
 }

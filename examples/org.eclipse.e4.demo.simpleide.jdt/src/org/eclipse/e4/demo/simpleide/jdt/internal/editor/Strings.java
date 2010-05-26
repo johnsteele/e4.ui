@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
 
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.osgi.util.TextProcessor;
 
 /**
@@ -44,5 +45,50 @@ public class Strings {
 			return string;
 
 		return TextProcessor.process(string, JAVA_ELEMENT_DELIMITERS);
+	}
+	
+	/**
+	 * Adds special marks so that that the given styled Java element label is readable in a BiDi
+	 * environment.
+	 * 
+	 * @param styledString the styled string
+	 * @return the processed styled string
+	 * @since 3.6
+	 */
+	public static StyledString markJavaElementLabelLTR(StyledString styledString) {
+		if (!USE_TEXT_PROCESSOR)
+			return styledString;
+
+		String inputString= styledString.getString();
+		String string= TextProcessor.process(inputString, JAVA_ELEMENT_DELIMITERS);
+		if (string != inputString)
+			insertMarks(styledString, inputString, string);
+		return styledString;
+	}
+
+	/**
+	 * Inserts the marks into the given styled string.
+	 * 
+	 * @param styledString the styled string
+	 * @param originalString the original string
+	 * @param processedString the processed string
+	 * @since 3.5
+	 */
+	private static void insertMarks(StyledString styledString, String originalString, String processedString) {
+		int originalLength= originalString.length();
+		int processedStringLength= processedString.length();
+		char orig= originalLength > 0 ? originalString.charAt(0) : '\0';
+		for (int o= 0, p= 0; p < processedStringLength; p++) {
+			char processed= processedString.charAt(p);
+			if (o < originalLength) {
+				if (orig == processed) {
+					o++;
+					if (o < originalLength)
+						orig= originalString.charAt(o);
+					continue;
+				}
+			}
+			styledString.insert(processed, p);
+		}
 	}
 }

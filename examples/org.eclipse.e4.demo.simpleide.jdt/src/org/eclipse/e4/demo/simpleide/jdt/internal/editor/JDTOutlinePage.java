@@ -225,6 +225,7 @@ public class JDTOutlinePage {
 		viewer.setContentProvider(new ContentProvider());
 		viewer.setLabelProvider(new DelegatingStyledCellLabelProvider(lprovider));
 		viewer.setInput(editor.getCompilationUnit());
+		viewer.expandAll();
 	}
 
 	// private void initImages(Composite parent) {

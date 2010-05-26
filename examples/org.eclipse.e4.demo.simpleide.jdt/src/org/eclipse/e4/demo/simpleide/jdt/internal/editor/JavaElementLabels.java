@@ -15,6 +15,7 @@ import org.eclipse.e4.demo.simpleide.jdt.internal.JavaUIMessages;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.osgi.util.TextProcessor;
 
 public class JavaElementLabels {
 	/**
@@ -338,5 +339,52 @@ public class JavaElementLabels {
 	 */
 	public static void getElementLabel(IJavaElement element, long flags, StringBuffer buf, Logger logger, JavaUIMessages messages) {
 		new JavaElementLabelComposer(buf,logger,messages).appendElementLabel(element, flags);
+	}
+	
+	/**
+	 * Returns the styled label of the given object. The object must be of type {@link IJavaElement} or adapt to {@link IWorkbenchAdapter}.
+	 * If the element type is not known, the empty string is returned.
+	 * The returned label is BiDi-processed with {@link TextProcessor#process(String, String)}.
+	 *
+	 * @param obj object to get the label for
+	 * @param flags the rendering flags
+	 * @return the label or the empty string if the object type is not supported
+	 *
+	 * @since 3.4
+	 */
+	public static StyledString getStyledTextLabel(Object obj, long flags, Logger logger, JavaUIMessages messages) {
+		if (obj instanceof IJavaElement) {
+			return getStyledElementLabel((IJavaElement) obj, flags, logger, messages);
+		}
+		
+		return new StyledString();
+	}
+	
+	/**
+	 * Returns the styled label for a Java element with the flags as defined by this class.
+	 *
+	 * @param element the element to render
+	 * @param flags the rendering flags
+	 * @return the label of the Java element
+	 *
+	 * @since 3.4
+	 */
+	public static StyledString getStyledElementLabel(IJavaElement element, long flags, Logger logger, JavaUIMessages messages) {
+		StyledString result= new StyledString();
+		getElementLabel(element, flags, result, logger, messages);
+		return Strings.markJavaElementLabelLTR(result);
+	}
+	
+	/**
+	 * Returns the styled label for a Java element with the flags as defined by this class.
+	 *
+	 * @param element the element to render
+	 * @param flags the rendering flags
+	 * @param result the buffer to append the resulting label to
+	 *
+	 * @since 3.4
+	 */
+	public static void getElementLabel(IJavaElement element, long flags, StyledString result, Logger logger, JavaUIMessages messages) {
+		new JavaElementLabelComposer(result, logger, messages).appendElementLabel(element, flags);
 	}
 }
