@@ -26,9 +26,13 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IParent;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -212,14 +216,14 @@ public class JDTOutlinePage {
 		JavaUIMessages messages = nlsFactory
 				.createNLSLookup(JavaUIMessages.class);
 
-		AppearanceAwareLabelProvider lprovider = new AppearanceAwareLabelProvider(
+		final AppearanceAwareLabelProvider lprovider = new AppearanceAwareLabelProvider(
 				AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS
 						| JavaElementLabels.F_APP_TYPE_SIGNATURE
 						| JavaElementLabels.ALL_CATEGORY, logger, messages);
 
 		TreeViewer viewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ContentProvider());
-		viewer.setLabelProvider(lprovider);
+		viewer.setLabelProvider(new DelegatingStyledCellLabelProvider(lprovider));
 		viewer.setInput(editor.getCompilationUnit());
 	}
 
