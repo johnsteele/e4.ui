@@ -4,20 +4,20 @@
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_NpAUQGAmEd-c1dfOhrP7Ww" elementId="">
       <children xsi:type="advanced:Perspective" xmi:id="_TrpzMGAmEd-c1dfOhrP7Ww" elementId="simpleide.perspective.default" label="Default Perspective" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide/icons/application_split.png">
         <children xsi:type="basic:PartSashContainer" xmi:id="_o38KwGAmEd-c1dfOhrP7Ww" horizontal="true">
-          <children xsi:type="basic:PartStack" xmi:id="_y6yIsGAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.left">
-            <tags>simpleide.stack.left</tags>
+          <children xsi:type="basic:PartStack" xmi:id="_y6yIsGAmEd-c1dfOhrP7Ww" elementId="org.eclipse.e4.primaryNavigationStack">
+            <tags>org.eclipse.e4.primaryNavigationStack</tags>
           </children>
           <children xsi:type="basic:PartSashContainer" xmi:id="_2Cm1QGAmEd-c1dfOhrP7Ww">
             <children xsi:type="basic:PartSashContainer" xmi:id="_3ddpsGAmEd-c1dfOhrP7Ww" horizontal="true">
-              <children xsi:type="basic:PartStack" xmi:id="_8XqS0GAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.editor">
-                <tags>simpleide.stack.editor</tags>
+              <children xsi:type="basic:PartStack" xmi:id="_8XqS0GAmEd-c1dfOhrP7Ww" elementId="org.eclipse.e4.primaryDataStack">
+                <tags>org.eclipse.e4.primaryDataStack</tags>
               </children>
-              <children xsi:type="basic:PartStack" xmi:id="_9JVAUGAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.right">
-                <tags>simpleide.stack.right</tags>
+              <children xsi:type="basic:PartStack" xmi:id="_9JVAUGAmEd-c1dfOhrP7Ww" elementId="org.eclipse.e4.secondaryNavigationStack">
+                <tags>org.eclipse.e4.secondaryNavigationStack</tags>
               </children>
             </children>
-            <children xsi:type="basic:PartStack" xmi:id="_64QVkGAmEd-c1dfOhrP7Ww" elementId="simpleide.stack.bottom">
-              <tags>simpleide.stack.bottom</tags>
+            <children xsi:type="basic:PartStack" xmi:id="_64QVkGAmEd-c1dfOhrP7Ww" elementId="org.eclipse.e4.secondaryDataStack">
+              <tags>org.eclipse.e4.secondaryDataStack</tags>
             </children>
           </children>
         </children>

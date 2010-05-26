@@ -20,7 +20,7 @@ public class OpenEditor {
 			MEditorPartDescriptor model, 
 			EModelService modelService, 
 			EPartService partService) {
-		MPartStack stack = (MPartStack) modelService.find("simpleide.stack.editor", application);
+		MPartStack stack = (MPartStack) modelService.find("org.eclipse.e4.primaryDataStack", application);
 		
 		MInputPart part = MBasicFactory.INSTANCE.createInputPart();
 		part.setContributionURI(model.getContributionURI());
