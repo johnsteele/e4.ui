@@ -13,6 +13,7 @@ package org.eclipse.e4.demo.simpleide.internal;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.demo.simpleide.services.ImageService;
 
 public class ImageServiceFunction extends ContextFunction {
 

@@ -12,6 +12,9 @@ package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.demo.simpleide.editor.IDocumentInput;
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.IJavaColorConstants;
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.IJavaPartitions;
@@ -19,12 +22,14 @@ import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.JavaSourceView
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.JavaTextTools;
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.PreferenceConstants;
 import org.eclipse.e4.demo.simpleide.outline.IOutlinePageProvider;
+import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.workbench.ui.Persist;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
-//import org.eclipse.jface.text.IDocumentPartitioner;
-//import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.VerticalRuler;
 import org.eclipse.swt.SWT;
@@ -71,9 +76,17 @@ public class JavaEditor implements IOutlinePageProvider {
 	
 	private static final JavaTextTools textTools = new JavaTextTools(store, true);
 
+	private ICompilationUnit compilationUnit;
+	
+	//TODO We should try to get access to the file through injection
+	private MPart part;
+	private IWorkspace workspace;
+	
 	@Inject
-	public JavaEditor(Composite parent, IDocumentInput input) {
+	public JavaEditor(Composite parent, IDocumentInput input, IWorkspace workspace, MPart part) {
 		this.input = input;
+		this.part = part;
+		this.workspace = workspace;
 		VerticalRuler verticalRuler = new VerticalRuler(VERTICAL_RULER_WIDTH);
 		
 		int styles= SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
@@ -96,12 +109,24 @@ public class JavaEditor implements IOutlinePageProvider {
 		viewer.setDocument(document);
 	}
 	
+	ICompilationUnit getCompilationUnit() {
+		if( compilationUnit == null ) {
+			String uri = ((MInputPart)part).getInputURI();
+			Path p = new Path(uri);
+			IFile file = workspace.getRoot().getFile(p);
+			
+			compilationUnit = (ICompilationUnit) JavaCore.create(file);
+		}
+		
+		return compilationUnit;
+	}
+	
 	@Persist
 	public void save() {
 		System.err.println("Saving ...");
 		input.save();
 	}
-
+	
 	public Class<?> getOutlineClass() {
 		return JDTOutlinePage.class;
 	}

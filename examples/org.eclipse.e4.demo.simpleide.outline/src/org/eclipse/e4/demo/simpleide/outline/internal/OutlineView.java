@@ -30,9 +30,6 @@ public class OutlineView {
 
 	private Control pageControl;
 
-	@Inject
-	private IEclipseContext context;
-
 	private IEclipseContext pageContext;
 
 	@Inject
@@ -48,7 +45,7 @@ public class OutlineView {
 
 		if (activePart != null) {
 			if (activePart.getObject() instanceof IOutlinePageProvider) {
-				pageContext = context.createChild();
+				pageContext = activePart.getContext().createChild();
 				Composite comp = new Composite(parent, SWT.NONE);
 				comp.setLayout(new FillLayout());
 				pageControl = comp;

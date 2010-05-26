@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.demo.simpleide.internal;
+package org.eclipse.e4.demo.simpleide.services;
 
 import java.io.InputStream;
 import java.util.ArrayList;
