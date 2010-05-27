@@ -38,6 +38,7 @@ import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.widgets.Display;
 
@@ -171,7 +172,7 @@ public class JavaElementLabelComposer {
 		}
 	};
 	private static final Styler DECORATIONS_STYLE = new Styler() {
-		private Color COLOR = Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY);
+		private Color COLOR = new Color(Display.getCurrent(), new RGB(149, 125, 71));
 		
 		@Override
 		public void applyStyles(TextStyle textStyle) {
