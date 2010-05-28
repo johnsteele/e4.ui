@@ -10,16 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.javascript;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-
-import org.mozilla.javascript.BaseFunction;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.IdScriptableObject;
-import org.mozilla.javascript.ImporterTopLevel;
-import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.*;
 
 public class JSUtil {
 
