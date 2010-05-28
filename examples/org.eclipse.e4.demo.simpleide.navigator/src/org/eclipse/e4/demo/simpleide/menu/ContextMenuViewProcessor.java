@@ -78,8 +78,7 @@ public class ContextMenuViewProcessor implements IModelExtension {
 	}
 
 	private MMenu createPopupMenu(MApplication app, String id, String name) {
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
-		menu.getTags().add("popup");
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createPopupMenu();
 		menu.setElementId(id);
 
 		MHandledMenuItem item = MenuFactoryImpl.eINSTANCE

@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 import org.eclipse.e4.ui.workbench.swt.modeling.EMenuService;
 import org.eclipse.e4.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -251,7 +252,14 @@ public class ContextMenuView {
 		});
 		menu = new Menu(tagList.getControl());
 		tagList.getControl().setMenu(menu);
-		menuService.registerContextMenu(menu, TAGS_MENU);
+		final MPopupMenu tagPopupMenu = menuService.registerContextMenu(menu, TAGS_MENU);
+		tagList.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				ISelection selection = event.getSelection();
+				ESelectionService srv = tagPopupMenu.getContext().get(ESelectionService.class);
+				srv.setSelection(selection);
+			}
+		});
 
 		tagCopyHandler = new CopyHandler(tagList.getControl().getDisplay(),
 				tagList);
