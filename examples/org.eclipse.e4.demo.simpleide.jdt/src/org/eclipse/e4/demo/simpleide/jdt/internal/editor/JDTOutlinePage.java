@@ -20,6 +20,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.demo.simpleide.jdt.internal.JavaUIMessages;
+import org.eclipse.e4.demo.simpleide.jdt.internal.editor.viewer.AppearanceAwareLabelProvider;
+import org.eclipse.e4.demo.simpleide.jdt.internal.editor.viewer.JavaElementLabels;
 import org.eclipse.e4.demo.simpleide.services.INLSLookupFactoryService;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -28,11 +30,8 @@ import org.eclipse.jdt.core.IParent;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StyledCellLabelProvider;
-import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -219,7 +218,7 @@ public class JDTOutlinePage {
 		final AppearanceAwareLabelProvider lprovider = new AppearanceAwareLabelProvider(
 				AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS
 						| JavaElementLabels.F_APP_TYPE_SIGNATURE
-						| JavaElementLabels.ALL_CATEGORY, logger, messages);
+						| JavaElementLabels.ALL_CATEGORY, AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS, logger, messages);
 
 		TreeViewer viewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ContentProvider());

@@ -9,14 +9,25 @@
  *     IBM Corporation - initial API and implementation
  *     Matt Chapman, mpchapman@gmail.com - 89977 Make JDT .java agnostic
  *******************************************************************************/
-package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
+package org.eclipse.e4.demo.simpleide.jdt.internal.editor.viewer;
 
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
 public class JavaModelUtil {
+	/**
+	 * @param type the type to test
+	 * @return <code>true</code> iff the type is an interface or an annotation
+	 * @throws JavaModelException thrown when the field can not be accessed
+	 */
+	public static boolean isInterfaceOrAnnotation(IType type) throws JavaModelException {
+		return type.isInterface();
+	}
+	
 	/**
 	 * Returns the package fragment root of <code>IJavaElement</code>. If the given
 	 * element is already a package fragment root, the element itself is returned.
@@ -53,4 +64,21 @@ public class JavaModelUtil {
 		}
 		return rawEntry;
 	}
+	
+	/**
+	 * Checks whether the given type has a valid main method or not.
+	 * @param type the type to test
+	 * @return returns <code>true</code> if the type has a main method
+	 * @throws JavaModelException thrown when the type can not be accessed
+	 */
+	public static boolean hasMainMethod(IType type) throws JavaModelException {
+		IMethod[] methods= type.getMethods();
+		for (int i= 0; i < methods.length; i++) {
+			if (methods[i].isMainMethod()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
+package org.eclipse.e4.demo.simpleide.jdt.internal.editor.viewer;
 
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.osgi.util.TextProcessor;

@@ -9,11 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *     Guven Demir <guven.internet+eclipse@gmail.com> - [package explorer] Alternative package name shortening: abbreviation - https://bugs.eclipse.org/bugs/show_bug.cgi?id=299514
  *******************************************************************************/
-package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
+package org.eclipse.e4.demo.simpleide.jdt.internal.editor.viewer;
 
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.demo.simpleide.jdt.internal.JavaUIMessages;
-//import org.eclipse.jface.preference.IPreferenceStore;
 
 public class AppearanceAwareLabelProvider extends JavaUILabelProvider {
 	public final static long DEFAULT_TEXTFLAGS = JavaElementLabels.ROOT_VARIABLE
@@ -22,11 +21,13 @@ public class AppearanceAwareLabelProvider extends JavaUILabelProvider {
 			| JavaElementLabels.M_APP_TYPE_PARAMETERS
 			| JavaElementLabels.M_APP_RETURNTYPE
 			| JavaElementLabels.REFERENCED_ROOT_POST_QUALIFIED;
+	public final static int DEFAULT_IMAGEFLAGS= JavaElementImageProvider.OVERLAY_ICONS;
+	
 //	private long fTextFlagMask;
 	
-	public AppearanceAwareLabelProvider(long textFlags, Logger logger,
+	public AppearanceAwareLabelProvider(long textFlags, int imageFlags, Logger logger,
 			JavaUIMessages messages) {
-		super(textFlags, logger, messages);
+		super(textFlags, imageFlags, logger, messages);
 //		initMasks();
 	}
 
@@ -34,7 +35,7 @@ public class AppearanceAwareLabelProvider extends JavaUILabelProvider {
 	 * Creates a labelProvider with DEFAULT_TEXTFLAGS and DEFAULT_IMAGEFLAGS
 	 */
 	public AppearanceAwareLabelProvider(Logger logger, JavaUIMessages messages) {
-		this(DEFAULT_TEXTFLAGS, logger, messages);
+		this(DEFAULT_TEXTFLAGS, DEFAULT_IMAGEFLAGS, logger, messages);
 	}
 	
 //	private void initMasks() {

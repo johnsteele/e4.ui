@@ -8,7 +8,7 @@
  *     IBM Corporation - initial API and implementation
  *     Guven Demir <guven.internet+eclipse@gmail.com> - [package explorer] Alternative package name shortening: abbreviation - https://bugs.eclipse.org/bugs/show_bug.cgi?id=299514
  *******************************************************************************/
-package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
+package org.eclipse.e4.demo.simpleide.jdt.internal.editor.viewer;
 
 import java.util.jar.Attributes.Name;
 
