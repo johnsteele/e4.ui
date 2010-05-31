@@ -2,6 +2,15 @@
 <application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:ui="http://www.eclipse.org/ui/2010/UIModel/application/ui" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_rd8OoUlnEd-SOJlNeoxGXA">
   <!-- components xmi:id="__Z8qEElnEd-SOJlNeoxGXA" elementId="__Z8qEElnEd-SOJlNeoxGXA" parentID="app.simpleide" processor="org.eclipse.e4.demo.simpleide.menu.ContextMenuViewProcessor"-->
   <components xmi:id="__Z8qEElnEd-SOJlNeoxGXA" elementId="__Z8qEElnEd-SOJlNeoxGXA" parentID="app.simpleide">
+	<menuContributions xmi:id="simpleide.info.popup1" elementId="simpleide.info.popup1">
+		<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Popup Open 1"   elementId="e4.open.dialog" command="open.dialog.on.selection"/>
+		<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Popup Open 2"   elementId="e4.open.dialog" command="open.dialog.on.selection"/>
+        <children xsi:type="menu:Menu" xmi:id="simpleide.submenu" elementId="simpleide.submenu" label="Popup Sub">
+			<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Popup Open 3"   elementId="e4.open.dialog" command="open.dialog.on.selection"/>
+			<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Popup Open 4"   elementId="e4.open.dialog" command="open.dialog.on.selection"/>
+        </children>
+		<visibleWhen xsi:type="ui:CoreExpression" coreExpressionId="org.eclipse.e4.demo.simpleide.menu.selection.Entry" />
+	</menuContributions>
     <descriptors xmi:id="_igXaMEloEd-SOJlNeoxGX0" label="Context Menu View" elementId="org.eclipse.e4.demo.simpleide.menu.ContextMenuView" category="org.eclipse.e4.secondaryDataStack" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.menu.ContextMenuView">
       <menus xmi:id="_JWJ4wV6WEd-kocunFhpHRA" elementId="org.eclipse.e4.demo.simpleide.menu.ContextMenuView">
         <tags>ViewMenu</tags>
