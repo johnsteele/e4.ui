@@ -20,6 +20,7 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" elementId="e4.open.dialog" command="open.dialog.on.selection">
           <visibleWhen xsi:type="ui:CoreExpression" coreExpressionId="org.eclipse.e4.demo.simpleide.menu.selection.Entry" />
         </children>
+        <tags>popup:ContextMenuView.treeMenu</tags>
       </menus>
       <menus xsi:type="menu:PopupMenu" xmi:id="ContextMenuView.tags" elementId="ContextMenuView.tags">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kocunFhpH" elementId="e4.showView" >
@@ -32,6 +33,7 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" elementId="e4.open.dialog" command="open.dialog.on.selection">
           <visibleWhen xsi:type="ui:CoreExpression" coreExpressionId="org.eclipse.e4.demo.simpleide.menu.selection.Entry" />
         </children>
+        <tags>popup:ContextMenuView.tags</tags>
       </menus>
       <menus xsi:type="menu:PopupMenu" xmi:id="ContextMenuView.info" elementId="ContextMenuView.info">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kocunFhpH" elementId="e4.showView" >
@@ -44,6 +46,7 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" elementId="e4.open.dialog" command="open.dialog.on.selection">
           <visibleWhen xsi:type="ui:CoreExpression" coreExpressionId="org.eclipse.e4.demo.simpleide.menu.selection.Entry" />
         </children>
+        <tags>popup:ContextMenuView.tags</tags>
       </menus>
     </descriptors>
     <handlers xmi:id="open.dialog.handler" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.menu.OpenDialogHandler" command="open.dialog.on.selection"/>
