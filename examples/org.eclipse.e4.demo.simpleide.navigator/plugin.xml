@@ -21,7 +21,7 @@
                   value="1">
             </count>
             <iterate
-                  ifEmpty="true"
+                  ifEmpty="false"
                   operator="and">
                <adapt
                      type="org.eclipse.e4.demo.simpleide.menu.ContextMenuView$Entry">

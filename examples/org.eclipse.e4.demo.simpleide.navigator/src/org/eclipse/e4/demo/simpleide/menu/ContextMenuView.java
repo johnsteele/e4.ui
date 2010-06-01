@@ -36,6 +36,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
@@ -118,6 +119,7 @@ public class ContextMenuView {
 	HashMap<Entry, ArrayList<Tag>> tagMap = new HashMap<Entry, ArrayList<Tag>>();
 	private CopyHandler itemCopyHandler;
 	private CopyHandler tagCopyHandler;
+	private Object infoCopyHandler;
 
 	class ViewContentProvider implements IStructuredContentProvider,
 			ITreeContentProvider {
@@ -252,11 +254,13 @@ public class ContextMenuView {
 		});
 		menu = new Menu(tagList.getControl());
 		tagList.getControl().setMenu(menu);
-		final MPopupMenu tagPopupMenu = menuService.registerContextMenu(menu, TAGS_MENU);
+		final MPopupMenu tagPopupMenu = menuService.registerContextMenu(menu,
+				TAGS_MENU);
 		tagList.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
-				ESelectionService srv = tagPopupMenu.getContext().get(ESelectionService.class);
+				ESelectionService srv = tagPopupMenu.getContext().get(
+						ESelectionService.class);
 				srv.setSelection(selection);
 			}
 		});
@@ -270,6 +274,22 @@ public class ContextMenuView {
 			}
 		});
 
+		// with no handler, CTRL+C works because it delegates
+		// to the native widget.  But the menu item copy
+		// doesn't, since it will not be handled.
+		// This will work as a real handler for both situations.
+		infoCopyHandler = new Object() {
+			@CanExecute
+			public boolean canExecute() {
+				return info.getSelectionCount() > 0;
+			}
+
+			@Execute
+			public void execute() {
+				info.copy();
+			}
+		};
+
 		info.addListener(SWT.Activate, new Listener() {
 			public void handleEvent(Event event) {
 				// just remove 'em both for simplicity
@@ -277,12 +297,20 @@ public class ContextMenuView {
 						itemCopyHandler);
 				handlerService.deactivateHandler("org.eclipse.ui.edit.copy",
 						tagCopyHandler);
+				handlerService.activateHandler("org.eclipse.ui.edit.copy",
+						infoCopyHandler);
 			}
 		});
 		menu = new Menu(info);
 		info.setMenu(menu);
-		menuService.registerContextMenu(menu, INFO_MENU);
-
+		final MPopupMenu infoPopupMenu = menuService.registerContextMenu(menu,
+				INFO_MENU);
+		// we can either publish the Text selection as a
+		// org.eclipse.jface.text.TextSelection or set it to an empty selection.
+		// I picked empty.
+		ESelectionService srv = infoPopupMenu.getContext().get(
+				ESelectionService.class);
+		srv.setSelection(StructuredSelection.EMPTY);
 	}
 
 	private static class EntryLabelProvider extends LabelProvider implements
