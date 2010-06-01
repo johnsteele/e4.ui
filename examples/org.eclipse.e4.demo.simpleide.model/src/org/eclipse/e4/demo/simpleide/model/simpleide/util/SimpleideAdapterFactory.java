@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id$
+ * $Id: SimpleideAdapterFactory.java,v 1.1 2010/05/15 12:59:52 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.util;
 
@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 
@@ -126,6 +127,10 @@ public class SimpleideAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseBindings(MBindings object) {
 				return createBindingsAdapter();
+			}
+			@Override
+			public Adapter caseMenuContributions(MMenuContributions object) {
+				return createMenuContributionsAdapter();
 			}
 			@Override
 			public Adapter caseApplication(MApplication object) {
@@ -292,6 +297,20 @@ public class SimpleideAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createBindingsAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions <em>Contributions</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions
+	 * @generated
+	 */
+	public Adapter createMenuContributionsAdapter() {
 		return null;
 	}
 

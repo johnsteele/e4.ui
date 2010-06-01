@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: SimpleidePackageImpl.java,v 1.1 2010/05/15 12:59:52 tschindl Exp $
+ * $Id: SimpleidePackageImpl.java,v 1.2 2010/05/16 20:57:35 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.impl;
 
@@ -173,6 +173,15 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	public static final int SIMPLE_IDE_APPLICATION__CUR_SHARED_REF = ApplicationPackageImpl.APPLICATION__CUR_SHARED_REF;
 
 	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int SIMPLE_IDE_APPLICATION__VISIBLE_WHEN = ApplicationPackageImpl.APPLICATION__VISIBLE_WHEN;
+
+	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -261,6 +270,15 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int SIMPLE_IDE_APPLICATION__BINDING_CONTEXTS = ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS;
+
+	/**
+	 * The feature id for the '<em><b>Menu Contributions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int SIMPLE_IDE_APPLICATION__MENU_CONTRIBUTIONS = ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS;
 
 	/**
 	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.

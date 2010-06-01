@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id$
+ * $Id: SimpleideSwitch.java,v 1.1 2010/05/15 12:59:52 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.util;
 
@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -113,6 +114,7 @@ public class SimpleideSwitch<T1> {
 				if (result == null) result = caseBindingTableContainer(simpleIDEApplication);
 				if (result == null) result = casePartDescriptorContainer(simpleIDEApplication);
 				if (result == null) result = caseBindings(simpleIDEApplication);
+				if (result == null) result = caseMenuContributions(simpleIDEApplication);
 				if (result == null) result = caseUIElement(simpleIDEApplication);
 				if (result == null) result = caseApplicationElement(simpleIDEApplication);
 				if (result == null) result = defaultCase(theEObject);
@@ -279,6 +281,21 @@ public class SimpleideSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseBindings(MBindings object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Contributions</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Contributions</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseMenuContributions(MMenuContributions object) {
 		return null;
 	}
 
