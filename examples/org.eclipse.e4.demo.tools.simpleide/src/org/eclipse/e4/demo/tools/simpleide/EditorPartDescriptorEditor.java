@@ -1,7 +1,6 @@
 package org.eclipse.e4.demo.tools.simpleide;
 
 import javax.inject.Inject;
-
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.resources.IProject;
@@ -12,8 +11,6 @@ import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
-import org.eclipse.e4.ui.model.application.MContribution;
-import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -34,7 +31,6 @@ import org.eclipse.swt.widgets.Text;
 
 public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 	private Composite composite;
-	private Image image;
 	private EMFDataBindingContext context;
 	private IProject project;
 
