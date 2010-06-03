@@ -22,9 +22,9 @@ import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.JavaSourceView
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.JavaTextTools;
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.PreferenceConstants;
 import org.eclipse.e4.demo.simpleide.outline.IOutlinePageProvider;
+import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.workbench.ui.Persist;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.preference.PreferenceStore;

@@ -13,7 +13,7 @@ package org.eclipse.e4.demo.simpleide.editor.text;
 import javax.inject.Inject;
 
 import org.eclipse.e4.demo.simpleide.editor.IDocumentInput;
-import org.eclipse.e4.workbench.ui.Persist;
+import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;

@@ -16,7 +16,7 @@ import org.eclipse.e4.demo.simpleide.editor.IDocumentInput;
 import org.eclipse.e4.demo.simpleide.editor.text.xml.ColorManager;
 import org.eclipse.e4.demo.simpleide.editor.text.xml.XMLConfiguration;
 import org.eclipse.e4.demo.simpleide.editor.text.xml.XMLPartitionScanner;
-import org.eclipse.e4.workbench.ui.Persist;
+import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.FastPartitioner;
