@@ -11,7 +11,6 @@
 package org.eclipse.e4.demo.simpleide.navigator.internal;
 
 import java.util.Vector;
-
 import org.eclipse.e4.demo.simpleide.services.IImportResourceService;
 import org.eclipse.e4.demo.simpleide.services.IProjectService;
 

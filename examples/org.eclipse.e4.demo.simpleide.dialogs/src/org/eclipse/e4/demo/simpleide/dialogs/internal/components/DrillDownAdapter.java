@@ -12,7 +12,6 @@ package org.eclipse.e4.demo.simpleide.dialogs.internal.components;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.eclipse.e4.demo.simpleide.dialogs.internal.Messages;
 import org.eclipse.e4.demo.simpleide.services.IImageService;
 import org.eclipse.e4.demo.simpleide.services.IImageService.IImagePool;

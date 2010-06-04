@@ -2,7 +2,6 @@ package org.eclipse.e4.demo.simpleide.jdt.internal.editor.viewer;
 
 import java.net.URL;
 import java.util.HashMap;
-
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;

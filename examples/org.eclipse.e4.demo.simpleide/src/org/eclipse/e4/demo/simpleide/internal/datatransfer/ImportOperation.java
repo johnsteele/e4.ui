@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
-
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -45,13 +44,6 @@ import org.eclipse.e4.demo.simpleide.internal.datatransfer.dialogs.ContainerGene
 import org.eclipse.e4.demo.simpleide.internal.datatransfer.dialogs.IOverwriteQuery;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
-//import org.eclipse.ui.PlatformUI;
-//import org.eclipse.ui.actions.WorkspaceModifyOperation;
-//import org.eclipse.ui.dialogs.ContainerGenerator;
-//import org.eclipse.ui.dialogs.IOverwriteQuery;
-//import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
-//import org.eclipse.ui.internal.wizards.datatransfer.TarEntry;
-//import org.eclipse.ui.internal.wizards.datatransfer.TarLeveledStructureProvider;
 import org.osgi.framework.FrameworkUtil;
 
 /**

@@ -2,17 +2,14 @@
  * <copyright>
  * </copyright>
  *
- * $Id: MEditorPartDescriptor.java,v 1.1 2010/05/15 12:59:52 tschindl Exp $
+ * $Id: MEditorPartDescriptor.java,v 1.2 2010/05/16 20:57:35 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide;
 
 import java.util.List;
-
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
-
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
 /**

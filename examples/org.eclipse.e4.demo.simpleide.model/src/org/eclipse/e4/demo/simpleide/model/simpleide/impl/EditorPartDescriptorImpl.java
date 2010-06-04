@@ -2,37 +2,26 @@
  * <copyright>
  * </copyright>
  *
- * $Id: EditorPartDescriptorImpl.java,v 1.1 2010/05/15 12:59:52 tschindl Exp $
+ * $Id: EditorPartDescriptorImpl.java,v 1.2 2010/05/16 20:57:35 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.impl;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
-
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
-
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
-
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-
 import org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;

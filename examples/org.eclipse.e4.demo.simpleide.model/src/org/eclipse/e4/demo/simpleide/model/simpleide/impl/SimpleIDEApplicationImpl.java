@@ -2,25 +2,19 @@
  * <copyright>
  * </copyright>
  *
- * $Id$
+ * $Id: SimpleIDEApplicationImpl.java,v 1.1 2010/05/15 12:59:52 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.impl;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MSimpleIDEApplication;
-
 import org.eclipse.e4.ui.model.application.impl.ApplicationImpl;
-
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 

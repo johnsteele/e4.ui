@@ -11,12 +11,10 @@
 package org.eclipse.e4.demo.simpleide.internal.datatransfer;
 
 import javax.inject.Inject;
-
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.demo.simpleide.services.INLSLookupFactoryService;
-//import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 

@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.e4.core.services.log.Logger;
 
 //import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;

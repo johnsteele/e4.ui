@@ -11,7 +11,6 @@
 package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
 
 import javax.inject.Inject;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.Path;

@@ -14,12 +14,10 @@ package org.eclipse.e4.demo.simpleide.internal.datatransfer;
 
 import java.io.IOException;
 import java.util.zip.ZipFile;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
-//import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * @since 3.1

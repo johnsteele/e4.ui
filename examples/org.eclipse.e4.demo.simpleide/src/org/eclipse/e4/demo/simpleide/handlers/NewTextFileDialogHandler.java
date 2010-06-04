@@ -12,9 +12,7 @@ package org.eclipse.e4.demo.simpleide.handlers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
 import javax.inject.Named;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;

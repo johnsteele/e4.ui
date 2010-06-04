@@ -17,9 +17,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-
 import javax.inject.Named;
-
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;

@@ -2,30 +2,24 @@
  * <copyright>
  * </copyright>
  *
- * $Id: SimpleideSwitch.java,v 1.1 2010/05/15 12:59:52 tschindl Exp $
+ * $Id: SimpleideSwitch.java,v 1.2 2010/06/01 21:54:08 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.util;
 
 import java.util.List;
-
-import org.eclipse.e4.demo.simpleide.model.simpleide.*;
-
+import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
+import org.eclipse.e4.demo.simpleide.model.simpleide.MSimpleIDEApplication;
 import org.eclipse.e4.demo.simpleide.model.simpleide.impl.SimpleidePackageImpl;
-
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-
 import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
-
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
-
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
-
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;

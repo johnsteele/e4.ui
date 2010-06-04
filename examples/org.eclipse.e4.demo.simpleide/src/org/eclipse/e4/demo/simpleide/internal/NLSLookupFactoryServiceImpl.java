@@ -20,7 +20,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.eclipse.e4.demo.simpleide.services.INLSLookupFactoryService;
 
 public class NLSLookupFactoryServiceImpl implements INLSLookupFactoryService {

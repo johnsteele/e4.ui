@@ -21,11 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.services.log.Logger;
-//import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * This class provides information regarding the context structure and content

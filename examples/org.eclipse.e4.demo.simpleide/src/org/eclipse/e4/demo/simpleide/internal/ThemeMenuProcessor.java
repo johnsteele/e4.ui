@@ -11,7 +11,6 @@
 package org.eclipse.e4.demo.simpleide.internal;
 
 import java.util.List;
-
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
@@ -23,7 +22,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
-import org.eclipse.e4.workbench.modeling.IModelExtension;
+import org.eclipse.e4.ui.workbench.modeling.IModelExtension;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;

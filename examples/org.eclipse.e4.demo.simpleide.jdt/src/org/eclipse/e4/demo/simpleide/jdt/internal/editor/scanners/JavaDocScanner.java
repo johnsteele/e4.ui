@@ -14,11 +14,9 @@ package org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.CombinedWordRule.CharacterBuffer;
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.CombinedWordRule.WordMatcher;
 import org.eclipse.jface.preference.IPreferenceStore;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.ICharacterScanner;

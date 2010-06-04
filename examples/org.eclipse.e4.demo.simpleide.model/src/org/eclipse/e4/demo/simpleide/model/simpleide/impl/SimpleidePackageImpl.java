@@ -2,26 +2,21 @@
  * <copyright>
  * </copyright>
  *
- * $Id: SimpleidePackageImpl.java,v 1.2 2010/05/16 20:57:35 tschindl Exp $
+ * $Id: SimpleidePackageImpl.java,v 1.3 2010/06/01 21:54:08 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.impl;
 
 import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MSimpleIDEApplication;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MSimpleideFactory;
-
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
-
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
-
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**

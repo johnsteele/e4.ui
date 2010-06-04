@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners;
 
-import org.eclipse.swt.graphics.Color;
-
 import org.eclipse.jface.text.source.ISharedTextColors;
+import org.eclipse.swt.graphics.Color;
 
 
 /**

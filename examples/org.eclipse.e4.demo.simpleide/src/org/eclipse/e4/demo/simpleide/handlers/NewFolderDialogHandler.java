@@ -11,7 +11,6 @@
 package org.eclipse.e4.demo.simpleide.handlers;
 
 import javax.inject.Named;
-
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;

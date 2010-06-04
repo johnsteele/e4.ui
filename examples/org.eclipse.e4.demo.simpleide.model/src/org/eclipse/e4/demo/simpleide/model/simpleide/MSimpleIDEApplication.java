@@ -2,12 +2,11 @@
  * <copyright>
  * </copyright>
  *
- * $Id$
+ * $Id: MSimpleIDEApplication.java,v 1.1 2010/05/15 12:59:52 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide;
 
 import java.util.List;
-
 import org.eclipse.e4.ui.model.application.MApplication;
 
 /**

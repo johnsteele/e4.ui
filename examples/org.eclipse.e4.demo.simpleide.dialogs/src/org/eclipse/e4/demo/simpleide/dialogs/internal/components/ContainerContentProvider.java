@@ -12,7 +12,6 @@ package org.eclipse.e4.demo.simpleide.dialogs.internal.components;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

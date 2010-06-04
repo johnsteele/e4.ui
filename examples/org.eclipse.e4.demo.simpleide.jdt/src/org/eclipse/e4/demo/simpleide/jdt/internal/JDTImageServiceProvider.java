@@ -3,7 +3,6 @@ package org.eclipse.e4.demo.simpleide.jdt.internal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.e4.demo.simpleide.services.AbstractBundleImageProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;

@@ -13,7 +13,7 @@ package org.eclipse.e4.demo.simpleide.jdt.internal;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MSimpleIDEApplication;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MSimpleideFactory;
-import org.eclipse.e4.workbench.modeling.IModelExtension;
+import org.eclipse.e4.ui.workbench.modeling.IModelExtension;
 import org.eclipse.emf.ecore.EObject;
 
 public class ModelProcessor implements IModelExtension {

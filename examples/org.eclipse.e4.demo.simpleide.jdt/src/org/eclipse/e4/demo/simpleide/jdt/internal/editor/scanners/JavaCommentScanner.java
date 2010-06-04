@@ -16,20 +16,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.demo.simpleide.jdt.internal.editor.scanners.CombinedWordRule.WordMatcher;
-
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.Token;
-
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 
 /**

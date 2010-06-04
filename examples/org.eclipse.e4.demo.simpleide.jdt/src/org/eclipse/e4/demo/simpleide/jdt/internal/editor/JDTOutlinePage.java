@@ -11,11 +11,9 @@
 package org.eclipse.e4.demo.simpleide.jdt.internal.editor;
 
 import java.util.Vector;
-
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;

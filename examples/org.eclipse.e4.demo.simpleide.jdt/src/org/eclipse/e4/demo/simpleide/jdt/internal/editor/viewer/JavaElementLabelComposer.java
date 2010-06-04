@@ -11,7 +11,6 @@
 package org.eclipse.e4.demo.simpleide.jdt.internal.editor.viewer;
 
 import java.util.jar.Attributes.Name;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;

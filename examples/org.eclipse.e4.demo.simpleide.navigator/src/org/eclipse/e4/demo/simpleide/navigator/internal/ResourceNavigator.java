@@ -13,9 +13,7 @@ package org.eclipse.e4.demo.simpleide.navigator.internal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.inject.Inject;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.databinding.observable.IObservable;

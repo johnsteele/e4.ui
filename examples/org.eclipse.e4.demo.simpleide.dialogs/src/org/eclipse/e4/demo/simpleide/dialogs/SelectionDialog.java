@@ -13,7 +13,6 @@ package org.eclipse.e4.demo.simpleide.dialogs;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.eclipse.e4.demo.simpleide.dialogs.internal.Messages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;

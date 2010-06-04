@@ -2,18 +2,17 @@
  * <copyright>
  * </copyright>
  *
- * $Id$
+ * $Id: SimpleideFactoryImpl.java,v 1.1 2010/05/15 12:59:52 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.impl;
 
-import org.eclipse.e4.demo.simpleide.model.simpleide.*;
-
+import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
+import org.eclipse.e4.demo.simpleide.model.simpleide.MSimpleIDEApplication;
+import org.eclipse.e4.demo.simpleide.model.simpleide.MSimpleideFactory;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 /**

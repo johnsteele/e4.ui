@@ -15,7 +15,6 @@ package org.eclipse.e4.demo.simpleide.dialogs;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.demo.simpleide.dialogs.internal.Messages;
