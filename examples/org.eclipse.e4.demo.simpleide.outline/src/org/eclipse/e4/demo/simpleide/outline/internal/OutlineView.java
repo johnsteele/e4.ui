@@ -40,6 +40,9 @@ public class OutlineView {
 	@Inject
 	public void setActivePart(
 			@Optional @Named(IServiceConstants.ACTIVE_PART) MPart activePart) {
+		if (parent.isDisposed()) {
+			return;
+		}
 		IEclipseContext oldPageContext = pageContext;
 		Control oldPageControl = pageControl;
 
