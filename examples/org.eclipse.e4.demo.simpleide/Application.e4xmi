@@ -25,6 +25,7 @@
     </children>
     <variables>selection</variables>
     <variables>outlinepage</variables>
+    <variables>resourceselection</variables>
     <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
     <mainMenu xmi:id="_yobKMGAiEd-E_N65-FXwgA" elementId="simpleide.mainmenu">
       <children xsi:type="menu:Menu" xmi:id="_0BkucGAiEd-E_N65-FXwgA" elementId="simpleide.mainmenu.file" label="File">
