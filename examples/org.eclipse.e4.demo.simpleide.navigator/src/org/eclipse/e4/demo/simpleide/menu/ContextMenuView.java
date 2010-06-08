@@ -50,7 +50,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeColumn;
 
@@ -228,9 +227,7 @@ public class ContextMenuView {
 		items.getTree().setLinesVisible(true);
 		items.getTree().setHeaderVisible(true);
 		items.getTree().layout(true);
-		Menu menu = new Menu(items.getControl());
-		items.getControl().setMenu(menu);
-		menuService.registerContextMenu(menu, ITEMS_MENU);
+		menuService.registerContextMenu(items.getControl(), ITEMS_MENU);
 
 		itemCopyHandler = new CopyHandler(items.getTree().getDisplay(), items);
 		items.getTree().addListener(SWT.Activate, new Listener() {
@@ -250,9 +247,7 @@ public class ContextMenuView {
 				return null;
 			}
 		});
-		menu = new Menu(tagList.getControl());
-		tagList.getControl().setMenu(menu);
-		final MPopupMenu tagPopupMenu = menuService.registerContextMenu(menu,
+		final MPopupMenu tagPopupMenu = menuService.registerContextMenu(tagList.getControl(),
 				TAGS_MENU);
 		tagList.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -299,9 +294,7 @@ public class ContextMenuView {
 						infoCopyHandler);
 			}
 		});
-		menu = new Menu(info);
-		info.setMenu(menu);
-		final MPopupMenu infoPopupMenu = menuService.registerContextMenu(menu,
+		final MPopupMenu infoPopupMenu = menuService.registerContextMenu(info,
 				INFO_MENU);
 		// we can either publish the Text selection as a
 		// org.eclipse.jface.text.TextSelection or set it to an empty selection.
