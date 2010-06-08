@@ -52,7 +52,7 @@ public class OutlineView {
 				Composite comp = new Composite(parent, SWT.NONE);
 				comp.setLayout(new FillLayout());
 				pageControl = comp;
-				pageContext.set(Composite.class, pageControl);
+				pageContext.set(Composite.class, comp);
 				ContextInjectionFactory.make(((IOutlinePageProvider) activePart
 						.getObject()).getOutlineClass(), pageContext);
 			} else {
