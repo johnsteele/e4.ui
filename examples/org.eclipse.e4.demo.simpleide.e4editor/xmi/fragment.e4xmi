@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:simpleide="http://www.eclipse.org/e4/demo/simpleide" xmi:id="_Y_hlIHZiEd-iDrIYpK0HDA">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_s3LFAHZiEd-84etnte_XqQ" featurename="editorPartDescriptors" parentElementId="app.simpleide">
+    <elements xsi:type="simpleide:EditorPartDescriptor" xmi:id="_Vg-BUHZnEd-hBfer1g14pA" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.e4editor/icons/application_view_tile.png" contributionURI="platform:/plugin/org.eclipse.e4.tools.emf.ui/org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor">
+      <fileextensions>e4xmi</fileextensions>
+    </elements>
+  </fragments>
+</fragment:ModelFragments>
