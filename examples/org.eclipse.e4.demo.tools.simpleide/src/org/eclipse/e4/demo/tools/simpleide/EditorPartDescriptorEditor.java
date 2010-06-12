@@ -1,5 +1,7 @@
 package org.eclipse.e4.demo.tools.simpleide;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
+
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -9,8 +11,6 @@ import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
 import org.eclipse.e4.demo.simpleide.model.simpleide.impl.SimpleidePackageImpl;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
-import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -18,8 +18,6 @@ import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -33,7 +31,7 @@ public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private IProject project;
-
+	
 	@Inject
 	public EditorPartDescriptorEditor(IModelResource resource, @Optional IProject project) {
 		super(resource.getEditingDomain());
@@ -105,7 +103,7 @@ public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartDescriptorEditor_Tooltip);
+			l.setText("Tooltip");
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -117,7 +115,7 @@ public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartDescriptorEditor_IconURI);
+			l.setText("Icon URI");
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -125,28 +123,12 @@ public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 
 			Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
 			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
-			b.setText(Messages.PartDescriptorEditor_Find);			
+			b.setText("Find");			
 		}
 
 		// ------------------------------------------------------------
 		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartDescriptorEditor_ClassURI);
-
-			Text t = new Text(parent, SWT.BORDER);
-			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), SimpleidePackageImpl.Literals.EDITOR_PART_DESCRIPTOR__CONTRIBUTION_URI).observeDetail(master));
-
-			final Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
-			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
-			b.setText(Messages.PartDescriptorEditor_Find);
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(),project,getEditingDomain(),(MEditorPartDescriptor) getMaster().getValue(), SimpleidePackageImpl.Literals.EDITOR_PART_DESCRIPTOR__CONTRIBUTION_URI);
-					dialog.open();
-				}
-			});
+			ControlFactory.createStringListWidget(parent, this, "File extensions", SimpleidePackageImpl.Literals.EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS);
 		}
 		
 		return parent;

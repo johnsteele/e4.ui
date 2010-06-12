@@ -13,5 +13,8 @@
       <editor
             descriptorClass="org.eclipse.e4.demo.tools.simpleide.EditorPartDescriptorEditorDesc">
       </editor>
+      <editorfeature
+            class="org.eclipse.e4.demo.tools.simpleide.EditorFeature">
+      </editorfeature>
    </extension>
 </plugin>
