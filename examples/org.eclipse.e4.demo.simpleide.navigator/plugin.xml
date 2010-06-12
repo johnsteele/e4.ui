@@ -4,11 +4,11 @@
    <extension
          id="id1"
          point="org.eclipse.e4.workbench.model">
-      <snippet
-            uri="xmi/contextViewMenu.e4xmi">
-      </snippet>
       <fragment
             uri="xmi/fragment.e4xmi">
+      </fragment>
+      <fragment
+            uri="xmi/contextViewMenuFragment.e4xmi">
       </fragment>
    </extension>
    <extension

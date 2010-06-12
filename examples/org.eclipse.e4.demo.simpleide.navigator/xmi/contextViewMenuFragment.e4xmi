@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmlns:ui="http://www.eclipse.org/ui/2010/UIModel/application/ui" xmi:id="_uj3fEHZcEd-RApwktjxCFQ">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_5w9CkHZcEd-RApwktjxCFQ" featurename="commands" parentElementId="app.simpleide">
+    <elements xsi:type="commands:Command" xmi:id="_NtAhUHZdEd-izNVw4-awdw" elementId="open.dialog.on.selection" commandName="Show Info"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_TaVQgHZdEd-izNVw4-awdw" featurename="handlers" parentElementId="app.simpleide">
+    <elements xsi:type="commands:Handler" xmi:id="_W8wOYHZdEd-izNVw4-awdw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.menu.OpenDialogHandler" command="_NtAhUHZdEd-izNVw4-awdw"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_lAjq4HZeEd-R6aDhnXWjVw" featurename="descriptors" parentElementId="app.simpleide">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_wtS-0HZeEd-R6aDhnXWjVw" label="Context Menu View" elementId="org.eclipse.e4.demo.simpleide.menu.ContextMenuView" category="org.eclipse.e4.secondaryDataStack" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.menu.ContextMenuView">
+      <tags>View</tags>
+      <tags>categoryTag:Utilities</tags>
+      <menus xmi:id="_JWJ4wV6WEd-kocunFhpHRA" elementId="org.eclipse.e4.demo.simpleide.menu.ContextMenuView">
+        <tags>ViewMenu</tags>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kocunFhpHRA" elementId="e4.showView" label="Show View" >
+          <command href="platform:/plugin/org.eclipse.e4.demo.simpleide/Application.e4xmi#org.eclipse.ui.views.showView"/>
+        </children>
+      </menus>
+      <menus xsi:type="menu:PopupMenu" xmi:id="ContextMenuView.treeMenu" elementId="ContextMenuView.treeMenu">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kocunFhpH" elementId="e4.showView" >
+          <command href="platform:/plugin/org.eclipse.e4.demo.simpleide/Application.e4xmi#org.eclipse.ui.views.showView"/>
+        </children>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_O5FV0F6WEd-kocunFhpHY" elementId="additions"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kocuFhpH" elementId="e4.copy">
+          <command href="platform:/plugin/org.eclipse.e4.demo.simpleide/Application.e4xmi#org.eclipse.ui.edit.copy"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" elementId="e4.open.dialog" command="_NtAhUHZdEd-izNVw4-awdw">
+          <visibleWhen xsi:type="ui:CoreExpression" coreExpressionId="org.eclipse.e4.demo.simpleide.menu.selection.Entry" />
+        </children>
+      </menus>
+      <menus xsi:type="menu:PopupMenu" xmi:id="ContextMenuView.tags" elementId="ContextMenuView.tags">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kocunFhpH" elementId="e4.showView" >
+          <command href="platform:/plugin/org.eclipse.e4.demo.simpleide/Application.e4xmi#org.eclipse.ui.views.showView"/>
+        </children>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_O5FV0F6WEd-kocunFhpHY" elementId="additions"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kocuFhpH" elementId="e4.copy" >
+          <command href="platform:/plugin/org.eclipse.e4.demo.simpleide/Application.e4xmi#org.eclipse.ui.edit.copy"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" elementId="e4.open.dialog" command="_NtAhUHZdEd-izNVw4-awdw">
+          <visibleWhen xsi:type="ui:CoreExpression" coreExpressionId="org.eclipse.e4.demo.simpleide.menu.selection.Entry" />
+        </children>
+      </menus>
+      <menus xsi:type="menu:PopupMenu" xmi:id="ContextMenuView.info" elementId="ContextMenuView.info">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kocunFhpH" elementId="e4.showView" >
+          <command href="platform:/plugin/org.eclipse.e4.demo.simpleide/Application.e4xmi#org.eclipse.ui.views.showView"/>
+        </children>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_O5FV0F6WEd-kocunFhpHY" elementId="additions"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kocuFhpH" elementId="e4.copy">
+          <command href="platform:/plugin/org.eclipse.e4.demo.simpleide/Application.e4xmi#org.eclipse.ui.edit.copy"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" elementId="e4.open.dialog" command="_NtAhUHZdEd-izNVw4-awdw">
+          <visibleWhen xsi:type="ui:CoreExpression" coreExpressionId="org.eclipse.e4.demo.simpleide.menu.selection.Entry" />
+        </children>
+      </menus>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_6lwRsHZeEd-R6aDhnXWjVw" featurename="menuContributions" parentElementId="app.simpleide">
+    <elements xsi:type="menu:MenuContribution" xmi:id="_Cwp2kHZfEd-R6aDhnXWjVw" elementId="simpleide.info.popup1" parentID="popup">
+      <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_O9PSwHZgEd-o_pkn-4-GGQ" coreExpressionId="org.eclipse.e4.demo.simpleide.menu.selection.Entry"/>
+      <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" elementId="e4.open.dialog.1" label="Popup Open 1" command="_NtAhUHZdEd-izNVw4-awdw"/>
+      <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" elementId="e4.open.dialog.2" label="Popup Open 2" command="_NtAhUHZdEd-izNVw4-awdw"/>
+      <children xsi:type="menu:Menu" xmi:id="simpleide.submenu" elementId="simpleide.submenu" label="Popup Sub">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" elementId="e4.open.dialog.3" label="Popup Open 3" command="_NtAhUHZdEd-izNVw4-awdw"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" elementId="e4.open.dialog.4" label="Popup Open 4" command="_NtAhUHZdEd-izNVw4-awdw"/>
+      </children>
+    </elements>
+    <elements xsi:type="menu:MenuContribution" xmi:id="_GrRSAHZfEd-R6aDhnXWjVw" elementId="simpleide.info.contrib" parentID="_WbMXYEjUEd-v7fhjaiz65w">
+    	<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Window Open 1"   elementId="e4.open.dialog.5" command="_NtAhUHZdEd-izNVw4-awdw"/>
+		<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Window Open 2"   elementId="e4.open.dialog.6" command="_NtAhUHZdEd-izNVw4-awdw"/>
+        <children xsi:type="menu:Menu" xmi:id="simpleide.window.submenu" elementId="simpleide.window.submenu" label="Window Sub">
+			<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Window Open 3"   elementId="e4.open.dialog.7" command="_NtAhUHZdEd-izNVw4-awdw"/>
+			<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Window Open 4"   elementId="e4.open.dialog.8" command="_NtAhUHZdEd-izNVw4-awdw"/>
+        </children>
+    </elements>
+    <elements xsi:type="menu:MenuContribution" xmi:id="_Vf3uwHZfEd-R6aDhnXWjVw" elementId="simpleide.info.contrib2" parentID="simpleide.window.submenu">
+		<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Window Open 5"   elementId="e4.open.dialog.9" command="_NtAhUHZdEd-izNVw4-awdw"/>
+		<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Window Open 6"   elementId="e4.open.dialog.10" command="_NtAhUHZdEd-izNVw4-awdw"/>
+        <children xsi:type="menu:Menu" xmi:id="simpleide.window.submenu2" elementId="simpleide.window.submenu2" label="Window Sub2">
+			<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Window Open 7"   elementId="e4.open.dialog.11" command="_NtAhUHZdEd-izNVw4-awdw"/>
+			<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Window Open 8"   elementId="e4.open.dialog.12" command="_NtAhUHZdEd-izNVw4-awdw"/>
+        </children>
+    </elements>
+  </fragments>
+</fragment:ModelFragments>
