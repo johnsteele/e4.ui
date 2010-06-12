@@ -5,11 +5,11 @@
          id="id1"
          point="org.eclipse.e4.workbench.model">
       <snippet
-            uri="xmi/components.e4xmi">
-      </snippet>
-      <snippet
             uri="xmi/contextViewMenu.e4xmi">
       </snippet>
+      <fragment
+            uri="xmi/fragment.e4xmi">
+      </fragment>
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
