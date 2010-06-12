@@ -49,7 +49,7 @@
                value="org.eclipse.e4.demo.simpleide/Application.e4xmi">
          </property>
          <property
-               name="applicationCSS"
+               name="cssTheme"
                value="org.eclipse.e4.demo.simpleide.theme">
          </property>
          <property

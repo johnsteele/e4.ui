@@ -15,9 +15,12 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 
 public class SwitchThemeHandler {
+	private static final String THEME_BUNDLE = "org.eclipse.e4.ui.workbench.swt";
+	private static final String THEMEID_KEY = "themeid";
+
 	
 	@Execute
-	public void switchTheme(@Named("simpleide.command.switchtheme.themeid") String themeId, IThemeEngine engine) {
-		engine.setTheme(themeId);
+	public void switchTheme(@Named("simpleide.command.switchtheme.themeid") String themeId, IThemeEngine engine) {		
+		engine.setTheme(themeId,true);
 	}
 }
