@@ -1,7 +1,5 @@
 package org.eclipse.e4.demo.tools.simpleide;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
-
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -11,6 +9,7 @@ import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
 import org.eclipse.e4.demo.simpleide.model.simpleide.impl.SimpleidePackageImpl;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -30,12 +29,10 @@ import org.eclipse.swt.widgets.Text;
 public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
-	private IProject project;
 	
 	@Inject
 	public EditorPartDescriptorEditor(IModelResource resource, @Optional IProject project) {
 		super(resource.getEditingDomain());
-		this.project = project;
 	}
 
 	@Override
