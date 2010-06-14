@@ -50,7 +50,7 @@ public class JSUtil {
 				(Scriptable) jsThis, args);
 	}
 
-	private static class Foo {
+	static class Foo {
 		public int incremented(int i) {
 			return i + 1;
 		}
