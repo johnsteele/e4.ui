@@ -10,6 +10,12 @@
  ******************************************************************************/
 package org.eclipse.e4.demo.simpleide.internal;
 
+import javax.inject.Named;
+
+import org.eclipse.e4.core.di.annotations.Execute;
+
+import javax.inject.Inject;
+
 import java.util.List;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
@@ -22,7 +28,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
-import org.eclipse.e4.ui.workbench.modeling.IModelExtension;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
@@ -30,10 +35,14 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
-public class ThemeMenuProcessor implements IModelExtension {
+public class ThemeMenuProcessor {
 
-	public void processElement(EObject parent) {
-		MMenu menu = (MMenu) parent;
+	@Inject
+	@Named("simpleide.mainmenu")
+	private MMenu menu;
+	
+	@Execute
+	public void process() {
 		MTrimmedWindow window = (MTrimmedWindow) ((EObject) menu).eContainer();
 		
 		//FIXME Remove once bug 314091 is resolved
@@ -58,7 +67,7 @@ public class ThemeMenuProcessor implements IModelExtension {
 
 			if (switchThemeCommand != null) {
 				MMenu themesMenu = MMenuFactory.INSTANCE.createMenu();
-				themesMenu.setLabel("Themes");
+				themesMenu.setLabel("Themes"); //$NON-NLS-1$
 
 				for (ITheme theme : themes) {
 					MHandledMenuItem item = MMenuFactory.INSTANCE

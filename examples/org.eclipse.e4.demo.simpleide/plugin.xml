@@ -61,9 +61,13 @@
    <extension
          id="id1"
          point="org.eclipse.e4.workbench.model">
-      <snippet
-            uri="xmi/components.e4xmi">
-      </snippet>
+      <processor
+            beforefragment="true"
+            class="org.eclipse.e4.demo.simpleide.internal.ThemeMenuProcessor">
+         <element
+               id="simpleide.mainmenu">
+         </element>
+      </processor>
    </extension>
 
 </plugin>
