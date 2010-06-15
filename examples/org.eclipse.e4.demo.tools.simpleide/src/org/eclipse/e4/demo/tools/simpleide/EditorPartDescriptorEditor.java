@@ -1,5 +1,11 @@
 package org.eclipse.e4.demo.tools.simpleide;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -29,10 +35,12 @@ import org.eclipse.swt.widgets.Text;
 public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
+	private IProject project;
 	
 	@Inject
 	public EditorPartDescriptorEditor(IModelResource resource, @Optional IProject project) {
 		super(resource.getEditingDomain());
+		this.project = project;
 	}
 
 	@Override
@@ -122,6 +130,28 @@ public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
 			b.setText("Find");			
 		}
+		
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Class URI");
+
+			Text t = new Text(parent, SWT.BORDER);
+			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), SimpleidePackageImpl.Literals.EDITOR_PART_DESCRIPTOR__CONTRIBUTION_URI).observeDetail(master));
+
+			final Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
+			b.setText("Find");
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(),project,getEditingDomain(),(MPartDescriptor) getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR__CONTRIBUTION_URI);
+					dialog.open();
+				}
+			});
+		}
+
 
 		// ------------------------------------------------------------
 		{
