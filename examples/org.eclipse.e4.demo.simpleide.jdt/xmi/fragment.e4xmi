@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmlns:simpleide="http://www.eclipse.org/e4/demo/simpleide" xmi:id="_37L3wHihEd-1hY0DgxUB9A">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_J1oEEHiiEd-QLpUkCzu7EA" featurename="commands" parentElementId="app.simpleide">
+    <elements xsi:type="commands:Command" xmi:id="_Ov-eMHiiEd-QLpUkCzu7EA" elementId="simpleide.command.jdt.newclass" commandName="New Java Class"/>
+    <elements xsi:type="commands:Command" xmi:id="_SUdRkHiiEd-QLpUkCzu7EA" elementId="simpleide.command.jdt.newinterface" commandName="New Java Interface"/>
+    <elements xsi:type="commands:Command" xmi:id="_Uncn4HiiEd-QLpUkCzu7EA" elementId="simpleide.command.jdt.enum" commandName="New Java Enum"/>
+    <elements xsi:type="commands:Command" xmi:id="_WCXtwHiiEd-QLpUkCzu7EA" elementId="simpleide.command.jdt.newannotion" commandName="New Java Annotation"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_aBkHMHiiEd-QLpUkCzu7EA" featurename="handlers" parentElementId="app.simpleide">
+    <elements xsi:type="commands:Handler" xmi:id="_eKIfEHiiEd-QLpUkCzu7EA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.jdt/org.eclipse.e4.demo.simpleide.jdt.handlers.NewJavaClassHandler" command="_Ov-eMHiiEd-QLpUkCzu7EA"/>
+    <elements xsi:type="commands:Handler" xmi:id="_hb7nAHiiEd-QLpUkCzu7EA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.jdt/org.eclipse.e4.demo.simpleide.jdt.handlers.NewJavaInterfaceHandler" command="_SUdRkHiiEd-QLpUkCzu7EA"/>
+    <elements xsi:type="commands:Handler" xmi:id="_jfZTkHiiEd-QLpUkCzu7EA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.jdt/org.eclipse.e4.demo.simpleide.jdt.handlers.NewJavaEnumHandler" command="_Uncn4HiiEd-QLpUkCzu7EA"/>
+    <elements xsi:type="commands:Handler" xmi:id="_l6VE8HiiEd-QLpUkCzu7EA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.jdt/org.eclipse.e4.demo.simpleide.jdt.handlers.NewJavaAnnotationHandler" command="_WCXtwHiiEd-QLpUkCzu7EA"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ppKHIHiiEd-QLpUkCzu7EA" featurename="children" parentElementId="simpleide.mainmenu.file.new">
+    <elements xsi:type="menu:HandledMenuItem" xmi:id="_wvvvUHiiEd-QLpUkCzu7EA" label="Class" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.jdt/icons/class_obj.gif" command="_Ov-eMHiiEd-QLpUkCzu7EA"/>
+    <elements xsi:type="menu:HandledMenuItem" xmi:id="_0eFCQHiiEd-QLpUkCzu7EA" label="Interface" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.jdt/icons/int_obj.gif" command="_SUdRkHiiEd-QLpUkCzu7EA"/>
+    <elements xsi:type="menu:HandledMenuItem" xmi:id="_4phH8HiiEd-QLpUkCzu7EA" label="Enum" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.jdt/icons/enum_obj.gif" command="_Uncn4HiiEd-QLpUkCzu7EA"/>
+    <elements xsi:type="menu:HandledMenuItem" xmi:id="_7TroIHiiEd-QLpUkCzu7EA" label="Annotation" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.jdt/icons/annotation_obj.gif" command="_WCXtwHiiEd-QLpUkCzu7EA"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="__FnosHiiEd-QLpUkCzu7EA" featurename="editorPartDescriptors" parentElementId="app.simpleide">
+    <elements xsi:type="simpleide:EditorPartDescriptor" xmi:id="_EpikQHijEd-QLpUkCzu7EA" label="Java Source Editor" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.jdt/icons/jcu_obj.gif" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.jdt/org.eclipse.e4.demo.simpleide.jdt.internal.editor.JavaEditor">
+      <fileextensions>java</fileextensions>
+    </elements>
+  </fragments>
+</fragment:ModelFragments>

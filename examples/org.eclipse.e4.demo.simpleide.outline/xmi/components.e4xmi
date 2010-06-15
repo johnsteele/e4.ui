@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmi:id="_b0k1gGhSEd-NA43FOlMdgA">
-  <components xmi:id="_eJ0OkGhSEd-NA43FOlMdgA" parentID="org.eclipse.e4.secondaryNavigationStack">
-    <children xsi:type="basic:Part" xmi:id="_AitKUGhTEd-NA43FOlMdgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.outline/org.eclipse.e4.demo.simpleide.outline.internal.OutlineView" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.outline/icons/outline_co.gif" label="Outline"/>
-  </components>
-</application:ModelComponents>
