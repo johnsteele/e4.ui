@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:simpleide="http://www.eclipse.org/e4/demo/simpleide" xmi:id="_jwyiYHieEd-X-LLzc-gFOA">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_phxCgHieEd-X-LLzc-gFOA" featurename="editorPartDescriptors" parentElementId="app.simpleide">
+    <elements xsi:type="simpleide:EditorPartDescriptor" xmi:id="_7qZb0HieEd-ivry1rGVmOg" label="Text Editor" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.editor.text/icons/file_obj.gif" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.editor.text/org.eclipse.e4.demo.simpleide.editor.text.PlainTextEditor">
+      <fileextensions>txt</fileextensions>
+    </elements>
+    <elements xsi:type="simpleide:EditorPartDescriptor" xmi:id="_ILaFUHifEd-ivry1rGVmOg" label="XML Editor" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.editor.text/icons/elements_obj.gif" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.editor.text/org.eclipse.e4.demo.simpleide.editor.text.XMLTextEditor">
+      <fileextensions>xml</fileextensions>
+    </elements>
+  </fragments>
+</fragment:ModelFragments>
