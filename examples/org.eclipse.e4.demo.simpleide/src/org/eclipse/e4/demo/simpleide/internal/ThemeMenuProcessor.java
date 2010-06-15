@@ -43,6 +43,10 @@ public class ThemeMenuProcessor {
 	
 	@Execute
 	public void process() {
+		if( menu == null ) {
+			return;
+		}
+		
 		MTrimmedWindow window = (MTrimmedWindow) ((EObject) menu).eContainer();
 		
 		//FIXME Remove once bug 314091 is resolved
