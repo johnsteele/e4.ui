@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmi:id="_3XqZ8GdIEd-_PNAcxGosZA">
-  <components xmi:id="_DL9ucGdJEd-_PNAcxGosZA" parentID="app.simpleide">
-    <descriptors xmi:id="_RqDIoGdJEd-_PNAcxGosZA" label="Icon Folder View" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.iconview/icons/folder_picture.png" elementId="simpleide.descriptors.iconview" category="org.eclipse.e4.secondaryDataStack" closeable="true" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.iconview/org.eclipse.e4.demo.simpleide.iconview.IconView">
-      <tags>View</tags>
-      <tags>categoryTag:Utilities</tags>
-    </descriptors>
-  </components>
-</application:ModelComponents>

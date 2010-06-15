@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_DxU0wHihEd-WTYrypQ0Yjg">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_GGkN0HihEd-WTYrypQ0Yjg" featurename="descriptors" parentElementId="app.simpleide">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_W-aUsHihEd-1hY0DgxUB9A" label="Icon Folder View" iconURI="platform:/plugin/org.eclipse.e4.demo.simpleide.iconview/icons/folder_picture.png" elementId="simpleide.descriptors.iconview" category="org.eclipse.e4.secondaryDataStack" closeable="true" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.iconview/org.eclipse.e4.demo.simpleide.iconview.IconView">
+      <tags>View</tags>
+      <tags>categoryTag:Utilities</tags>
+    </elements>
+  </fragments>
+</fragment:ModelFragments>
