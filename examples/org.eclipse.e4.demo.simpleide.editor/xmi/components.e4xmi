@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmi:id="_etmQEGEKEd-cjMjlj5nmGw">
-  <components xmi:id="_lLrt0GEKEd-cjMjlj5nmGw" parentID="app.simpleide">
-    <handlers xmi:id="_u49rcGEKEd-cjMjlj5nmGw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.editor/org.eclipse.e4.demo.simpleide.editor.handler.OpenEditor" command="_qEjhQGEKEd-cjMjlj5nmGw"/>
-    <commands xmi:id="_qEjhQGEKEd-cjMjlj5nmGw" elementId="simpleide.command.openeditor" commandName="Open Editor"/>
-  </components>
-</application:ModelComponents>
