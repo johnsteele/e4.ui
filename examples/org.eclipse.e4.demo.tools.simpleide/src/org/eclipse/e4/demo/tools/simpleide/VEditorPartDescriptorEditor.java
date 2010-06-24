@@ -1,5 +1,7 @@
 package org.eclipse.e4.demo.tools.simpleide;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
 import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -43,8 +45,8 @@ public class VEditorPartDescriptorEditor extends AbstractComponentEditor {
 	private TableViewer viewer;
 	
 	@Inject
-	public VEditorPartDescriptorEditor(IModelResource resource) {
-		super(resource.getEditingDomain());
+	public VEditorPartDescriptorEditor(IModelResource resource, ModelEditor editor) {
+		super(resource.getEditingDomain(), editor);
 	}
 
 	@Override

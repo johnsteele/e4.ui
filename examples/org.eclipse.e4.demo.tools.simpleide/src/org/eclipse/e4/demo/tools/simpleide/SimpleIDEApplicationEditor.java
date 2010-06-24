@@ -1,5 +1,7 @@
 package org.eclipse.e4.demo.tools.simpleide;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
@@ -16,8 +18,8 @@ public class SimpleIDEApplicationEditor extends ApplicationEditor {
 	
 	
 	@Inject
-	public SimpleIDEApplicationEditor(IModelResource modelResource) {
-		super(modelResource.getEditingDomain());
+	public SimpleIDEApplicationEditor(IModelResource modelResource, ModelEditor editor) {
+		super(modelResource.getEditingDomain(),editor);
 	}
 	
 	@Override

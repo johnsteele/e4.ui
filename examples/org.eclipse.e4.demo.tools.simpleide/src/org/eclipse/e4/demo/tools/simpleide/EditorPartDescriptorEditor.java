@@ -1,5 +1,7 @@
 package org.eclipse.e4.demo.tools.simpleide;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
@@ -38,8 +40,8 @@ public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 	private IProject project;
 	
 	@Inject
-	public EditorPartDescriptorEditor(IModelResource resource, @Optional IProject project) {
-		super(resource.getEditingDomain());
+	public EditorPartDescriptorEditor(IModelResource resource, ModelEditor editor, @Optional IProject project) {
+		super(resource.getEditingDomain(),editor);
 		this.project = project;
 	}
 
