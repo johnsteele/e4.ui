@@ -12,10 +12,9 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
-import org.eclipse.e4.ui.workbench.modeling.IModelExtension;
 import org.eclipse.emf.ecore.EObject;
 
-public class ContextMenuViewProcessor implements IModelExtension {
+public class ContextMenuViewProcessor  {
 
 	public static final String OPEN_DIALOG_COMMAND = "org.eclipse.e4.demo.simpleide.menu.contextDialog";
 
