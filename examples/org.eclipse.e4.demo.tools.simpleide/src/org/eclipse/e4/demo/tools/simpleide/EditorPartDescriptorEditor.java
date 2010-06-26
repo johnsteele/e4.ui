@@ -157,7 +157,7 @@ public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 
 		// ------------------------------------------------------------
 		{
-			ControlFactory.createStringListWidget(parent, this, "File extensions", SimpleidePackageImpl.Literals.EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS);
+			ControlFactory.createStringListWidget(parent, this, "File extensions", SimpleidePackageImpl.Literals.EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS, 10);
 		}
 		
 		return parent;
