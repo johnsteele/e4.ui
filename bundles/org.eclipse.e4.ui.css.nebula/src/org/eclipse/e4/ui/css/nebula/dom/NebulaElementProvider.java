@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.css.nebula.dom;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.nebula.helpers.NebulaElementHelpers;
-import org.eclipse.e4.ui.css.swt.dom.SWTElement;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.Element;
 

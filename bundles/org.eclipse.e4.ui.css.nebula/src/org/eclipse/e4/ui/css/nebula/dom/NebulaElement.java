@@ -11,7 +11,7 @@
 package org.eclipse.e4.ui.css.nebula.dom;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.swt.dom.SWTElement;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.nebula.widgets.gallery.Gallery;
 import org.eclipse.nebula.widgets.gallery.GalleryItem;
 import org.eclipse.swt.widgets.Widget;
@@ -19,7 +19,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class NebulaElement extends SWTElement {
+public class NebulaElement extends WidgetElement {
 
 	public NebulaElement(Widget widget, CSSEngine engine) {
 		super(widget, engine);
