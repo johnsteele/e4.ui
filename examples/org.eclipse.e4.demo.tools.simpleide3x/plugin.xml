@@ -5,7 +5,7 @@
          point="org.eclipse.ui.newWizards">
       <wizard
             canFinishEarly="false"
-            category="org.eclipse.e4"
+            category="org.eclipse.e4.tools/org.eclipse.e4.tools.model"
             class="org.eclipse.e4.demo.tools.simpleide3x.SimpleIDEModelWizard"
             hasPages="true"
             id="org.eclipse.e4.demo.tools.simpleide3x.wizard1"
