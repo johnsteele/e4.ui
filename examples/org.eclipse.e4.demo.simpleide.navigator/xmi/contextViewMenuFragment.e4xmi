@@ -55,7 +55,7 @@
     </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_6lwRsHZeEd-R6aDhnXWjVw" featurename="menuContributions" parentElementId="app.simpleide">
-    <elements xsi:type="menu:MenuContribution" xmi:id="_Cwp2kHZfEd-R6aDhnXWjVw" elementId="simpleide.info.popup1" parentID="popup">
+    <elements xsi:type="menu:MenuContribution" xmi:id="_Cwp2kHZfEd-R6aDhnXWjVw" elementId="simpleide.info.popup1" parentId="popup">
       <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_O9PSwHZgEd-o_pkn-4-GGQ" coreExpressionId="org.eclipse.e4.demo.simpleide.menu.selection.Entry"/>
       <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" elementId="e4.open.dialog.1" label="Popup Open 1" command="_NtAhUHZdEd-izNVw4-awdw"/>
       <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" elementId="e4.open.dialog.2" label="Popup Open 2" command="_NtAhUHZdEd-izNVw4-awdw"/>
@@ -64,7 +64,7 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" elementId="e4.open.dialog.4" label="Popup Open 4" command="_NtAhUHZdEd-izNVw4-awdw"/>
       </children>
     </elements>
-    <elements xsi:type="menu:MenuContribution" xmi:id="_GrRSAHZfEd-R6aDhnXWjVw" elementId="simpleide.info.contrib" parentID="_WbMXYEjUEd-v7fhjaiz65w">
+    <elements xsi:type="menu:MenuContribution" xmi:id="_GrRSAHZfEd-R6aDhnXWjVw" elementId="simpleide.info.contrib" parentId="_WbMXYEjUEd-v7fhjaiz65w">
     	<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Window Open 1"   elementId="e4.open.dialog.5" command="_NtAhUHZdEd-izNVw4-awdw"/>
 		<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Window Open 2"   elementId="e4.open.dialog.6" command="_NtAhUHZdEd-izNVw4-awdw"/>
         <children xsi:type="menu:Menu" xmi:id="simpleide.window.submenu" elementId="simpleide.window.submenu" label="Window Sub">
@@ -72,7 +72,7 @@
 			<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Window Open 4"   elementId="e4.open.dialog.8" command="_NtAhUHZdEd-izNVw4-awdw"/>
         </children>
     </elements>
-    <elements xsi:type="menu:MenuContribution" xmi:id="_Vf3uwHZfEd-R6aDhnXWjVw" elementId="simpleide.info.contrib2" parentID="simpleide.window.submenu">
+    <elements xsi:type="menu:MenuContribution" xmi:id="_Vf3uwHZfEd-R6aDhnXWjVw" elementId="simpleide.info.contrib2" parentId="simpleide.window.submenu">
 		<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Window Open 5"   elementId="e4.open.dialog.9" command="_NtAhUHZdEd-izNVw4-awdw"/>
 		<children xsi:type="menu:HandledMenuItem" xmi:id="_O5FV0F6WEd-kcuFhpH" label="Window Open 6"   elementId="e4.open.dialog.10" command="_NtAhUHZdEd-izNVw4-awdw"/>
         <children xsi:type="menu:Menu" xmi:id="simpleide.window.submenu2" elementId="simpleide.window.submenu2" label="Window Sub2">
