@@ -257,7 +257,7 @@ public class JDTOutlinePage {
 
 	@Inject
 	public void setSelection(
-			@Optional @Named(IServiceConstants.SELECTION) IJDTSelection selection) {
+			@Optional @Named(IServiceConstants.ACTIVE_SELECTION) IJDTSelection selection) {
 		if (selection != null) {
 			System.err.println("Updating to JavaSelection '" + selection + "'");
 		}

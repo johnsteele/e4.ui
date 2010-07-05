@@ -23,7 +23,6 @@
         </children>
       </children>
     </children>
-    <variables>selection</variables>
     <variables>outlinepage</variables>
     <variables>resourceselection</variables>
     <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>

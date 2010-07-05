@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.demo.simpleide.navigator.internal;
 
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +40,6 @@ import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MSimpleIDEApplication;
 import org.eclipse.e4.demo.simpleide.services.IImportResourceService;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -121,6 +122,9 @@ public class ResourceNavigator {
 	private MApplication application;
 	
 	@Inject
+	private ESelectionService selectionService;
+	
+	@Inject
 	public ResourceNavigator(Composite parent, final IEclipseContext context, IWorkspace workspace) {
 		final Realm realm = SWTObservables.getRealm(parent.getDisplay());
 		this.context = context;
@@ -129,7 +133,8 @@ public class ResourceNavigator {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
 			public void selectionChanged(SelectionChangedEvent event) {
 				StructuredSelection selection = (StructuredSelection)event.getSelection();
-				context.modify(IServiceConstants.SELECTION, selection.size() == 1 ? selection.getFirstElement() : selection.toArray());
+				selectionService.setSelection(selection.size() == 1 ? selection.getFirstElement() : selection.toArray());
+//				context.modify(IServiceConstants.ACTIVE_SELECTION, selection.size() == 1 ? selection.getFirstElement() : selection.toArray());
 			}
 		});
 		
