@@ -12,4 +12,5 @@
       </children>
     </mainMenu>
   </children>
+  <bindingTables xmi:id="_vfuJUI6EEd-cHokURl356g" elementId="org.eclipse.ui.context.dialogAndWindow" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow"/>
 </application:Application>
