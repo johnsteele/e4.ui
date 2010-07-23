@@ -34,10 +34,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.e4.languages.source.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.e4.ui.compatibility.source.feature"
          version="0.0.0"/>
 
@@ -61,18 +57,18 @@
          id="org.eclipse.e4.xwt.workbench.source.feature"
          version="0.0.0"/>
 
-    <includes
+   <includes
          id="org.eclipse.e4.ui.web.source.feature"
          version="0.0.0"/>
-         
-    <includes
+
+   <includes
          id="org.eclipse.e4.resources.source.feature"
          version="0.0.0"/>
-         
-    <includes
+
+   <includes
          id="org.eclipse.e4.core.tools.source.feature"
          version="0.0.0"/>
-         
+
    <requires>
       <import feature="org.eclipse.e4.sdk.runtime.feature" version="0.9.0" match="compatible"/>
    </requires>
