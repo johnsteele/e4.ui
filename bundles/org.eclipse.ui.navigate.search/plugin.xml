@@ -7,13 +7,13 @@
             categoryId="org.eclipse.ui.category.navigate"
             defaultHandler="org.eclipse.ui.navigate.search.NextPrevSearchEntryHandler:next"
             id="org.eclipse.ui.navigate.search.nextSearchEntry"
-            name="Next Search Entry">
+            name="%command.name">
       </command>
       <command
             categoryId="org.eclipse.ui.category.navigate"
             defaultHandler="org.eclipse.ui.navigate.search.NextPrevSearchEntryHandler:previous"
             id="org.eclipse.ui.navigate.search.prevSearchEntry"
-            name="Previous Search Entry">
+            name="%command.name.0">
       </command>
    </extension>
    <extension
