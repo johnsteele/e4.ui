@@ -54,7 +54,7 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.platform.discovery"
+         id="org.eclipse.platform.discovery.master"
          version="0.0.0"/>
          
 </feature>
