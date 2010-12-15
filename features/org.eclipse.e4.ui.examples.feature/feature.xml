@@ -50,14 +50,14 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
+ <!-- Temporarily remove for bug 332576
    <plugin
          id="org.eclipse.e4.ui.css.legacy"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
+-->
    <plugin
          id="org.eclipse.e4.demo.contacts"
          download-size="0"
