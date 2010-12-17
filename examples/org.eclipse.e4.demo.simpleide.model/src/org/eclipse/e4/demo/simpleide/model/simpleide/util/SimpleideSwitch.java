@@ -2,11 +2,12 @@
  * <copyright>
  * </copyright>
  *
- * $Id: SimpleideSwitch.java,v 1.2 2010/06/01 21:54:08 tschindl Exp $
+ * $Id: SimpleideSwitch.java,v 1.3 2010/06/04 20:22:14 johna Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.util;
 
 import java.util.List;
+import org.eclipse.e4.demo.simpleide.model.simpleide.*;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MSimpleIDEApplication;
 import org.eclipse.e4.demo.simpleide.model.simpleide.impl.SimpleidePackageImpl;
@@ -21,6 +22,8 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -109,6 +112,8 @@ public class SimpleideSwitch<T1> {
 				if (result == null) result = casePartDescriptorContainer(simpleIDEApplication);
 				if (result == null) result = caseBindings(simpleIDEApplication);
 				if (result == null) result = caseMenuContributions(simpleIDEApplication);
+				if (result == null) result = caseToolBarContributions(simpleIDEApplication);
+				if (result == null) result = caseTrimContributions(simpleIDEApplication);
 				if (result == null) result = caseUIElement(simpleIDEApplication);
 				if (result == null) result = caseApplicationElement(simpleIDEApplication);
 				if (result == null) result = defaultCase(theEObject);
@@ -117,10 +122,10 @@ public class SimpleideSwitch<T1> {
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR: {
 				MEditorPartDescriptor editorPartDescriptor = (MEditorPartDescriptor)theEObject;
 				T1 result = caseEditorPartDescriptor(editorPartDescriptor);
+				if (result == null) result = caseApplicationElement(editorPartDescriptor);
 				if (result == null) result = caseUILabel(editorPartDescriptor);
 				if (result == null) result = caseHandlerContainer(editorPartDescriptor);
 				if (result == null) result = caseBindings(editorPartDescriptor);
-				if (result == null) result = caseApplicationElement(editorPartDescriptor);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -290,6 +295,36 @@ public class SimpleideSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseMenuContributions(MMenuContributions object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Tool Bar Contributions</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Tool Bar Contributions</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseToolBarContributions(MToolBarContributions object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Trim Contributions</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Trim Contributions</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseTrimContributions(MTrimContributions object) {
 		return null;
 	}
 

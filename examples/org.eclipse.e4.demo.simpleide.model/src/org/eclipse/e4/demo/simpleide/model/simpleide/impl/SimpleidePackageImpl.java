@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: SimpleidePackageImpl.java,v 1.3 2010/06/01 21:54:08 tschindl Exp $
+ * $Id: SimpleidePackageImpl.java,v 1.4 2010/06/04 20:22:14 johna Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.impl;
 
@@ -177,6 +177,15 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	public static final int SIMPLE_IDE_APPLICATION__VISIBLE_WHEN = ApplicationPackageImpl.APPLICATION__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int SIMPLE_IDE_APPLICATION__ACCESSIBILITY_PHRASE = ApplicationPackageImpl.APPLICATION__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -240,7 +249,7 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	public static final int SIMPLE_IDE_APPLICATION__BINDING_TABLES = ApplicationPackageImpl.APPLICATION__BINDING_TABLES;
 
 	/**
-	 * The feature id for the '<em><b>Root Context</b></em>' containment reference.
+	 * The feature id for the '<em><b>Root Context</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -276,6 +285,24 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	public static final int SIMPLE_IDE_APPLICATION__MENU_CONTRIBUTIONS = ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS;
 
 	/**
+	 * The feature id for the '<em><b>Tool Bar Contributions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int SIMPLE_IDE_APPLICATION__TOOL_BAR_CONTRIBUTIONS = ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS;
+
+	/**
+	 * The feature id for the '<em><b>Trim Contributions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int SIMPLE_IDE_APPLICATION__TRIM_CONTRIBUTIONS = ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS;
+
+	/**
 	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -292,6 +319,15 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int SIMPLE_IDE_APPLICATION__ADDONS = ApplicationPackageImpl.APPLICATION__ADDONS;
+
+	/**
+	 * The feature id for the '<em><b>Categories</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int SIMPLE_IDE_APPLICATION__CATEGORIES = ApplicationPackageImpl.APPLICATION__CATEGORIES;
 
 	/**
 	 * The feature id for the '<em><b>Editor Part Descriptors</b></em>' containment reference list.
@@ -322,58 +358,13 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	public static final int EDITOR_PART_DESCRIPTOR = 1;
 
 	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int EDITOR_PART_DESCRIPTOR__LABEL = UiPackageImpl.UI_LABEL__LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int EDITOR_PART_DESCRIPTOR__ICON_URI = UiPackageImpl.UI_LABEL__ICON_URI;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int EDITOR_PART_DESCRIPTOR__TOOLTIP = UiPackageImpl.UI_LABEL__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int EDITOR_PART_DESCRIPTOR__HANDLERS = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 1;
-
-	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EDITOR_PART_DESCRIPTOR__ELEMENT_ID = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 2;
+	public static final int EDITOR_PART_DESCRIPTOR__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -382,7 +373,79 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EDITOR_PART_DESCRIPTOR__TAGS = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 3;
+	public static final int EDITOR_PART_DESCRIPTOR__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EDITOR_PART_DESCRIPTOR__LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EDITOR_PART_DESCRIPTOR__ICON_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EDITOR_PART_DESCRIPTOR__TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EDITOR_PART_DESCRIPTOR__LOCAL_LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EDITOR_PART_DESCRIPTOR__HANDLERS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
@@ -391,7 +454,7 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EDITOR_PART_DESCRIPTOR__CONTRIBUTION_URI = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 4;
+	public static final int EDITOR_PART_DESCRIPTOR__CONTRIBUTION_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Fileextensions</b></em>' attribute list.
@@ -400,7 +463,7 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 5;
+	public static final int EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Contenttypes</b></em>' attribute list.
@@ -409,7 +472,7 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EDITOR_PART_DESCRIPTOR__CONTENTTYPES = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 6;
+	public static final int EDITOR_PART_DESCRIPTOR__CONTENTTYPES = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
 	 * The number of structural features of the '<em>Editor Part Descriptor</em>' class.
@@ -418,7 +481,7 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EDITOR_PART_DESCRIPTOR_FEATURE_COUNT = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 7;
+	public static final int EDITOR_PART_DESCRIPTOR_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 11;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -649,10 +712,10 @@ public class SimpleidePackageImpl extends EPackageImpl {
 
 		// Add supertypes to classes
 		simpleIDEApplicationEClass.getESuperTypes().add(theApplicationPackage.getApplication());
+		editorPartDescriptorEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 		editorPartDescriptorEClass.getESuperTypes().add(theUiPackage.getUILabel());
 		editorPartDescriptorEClass.getESuperTypes().add(theCommandsPackage.getHandlerContainer());
 		editorPartDescriptorEClass.getESuperTypes().add(theCommandsPackage.getBindings());
-		editorPartDescriptorEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(simpleIDEApplicationEClass, MSimpleIDEApplication.class, "SimpleIDEApplication", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

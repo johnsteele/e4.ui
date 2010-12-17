@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: MEditorPartDescriptor.java,v 1.2 2010/05/16 20:57:35 tschindl Exp $
+ * $Id: MEditorPartDescriptor.java,v 1.3 2010/06/04 20:22:14 johna Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide;
 
@@ -29,7 +29,7 @@ import org.eclipse.e4.ui.model.application.ui.MUILabel;
  * @model
  * @generated
  */
-public interface MEditorPartDescriptor extends MUILabel, MHandlerContainer, MBindings, MApplicationElement {
+public interface MEditorPartDescriptor extends MApplicationElement, MUILabel, MHandlerContainer, MBindings {
 	/**
 	 * Returns the value of the '<em><b>Contribution URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->

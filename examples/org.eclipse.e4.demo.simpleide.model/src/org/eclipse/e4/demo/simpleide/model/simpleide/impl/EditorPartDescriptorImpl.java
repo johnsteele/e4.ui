@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: EditorPartDescriptorImpl.java,v 1.2 2010/05/16 20:57:35 tschindl Exp $
+ * $Id: EditorPartDescriptorImpl.java,v 1.3 2010/06/04 20:22:14 johna Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.impl;
 
@@ -14,14 +14,17 @@ import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -33,10 +36,14 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getIconURI <em>Icon URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getLocalLabel <em>Local Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getLocalTooltip <em>Local Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getLocalImage <em>Local Image</em>}</li>
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getBindingContexts <em>Binding Contexts</em>}</li>
- *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getElementId <em>Element Id</em>}</li>
- *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getContributionURI <em>Contribution URI</em>}</li>
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getFileextensions <em>Fileextensions</em>}</li>
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getContenttypes <em>Contenttypes</em>}</li>
@@ -45,7 +52,127 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPartDescriptor {
+public class EditorPartDescriptorImpl extends ApplicationElementImpl implements MEditorPartDescriptor {
+	/**
+	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LABEL_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected String label = LABEL_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getIconURI() <em>Icon URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getIconURI()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ICON_URI_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getIconURI() <em>Icon URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getIconURI()
+	 * @generated
+	 * @ordered
+	 */
+	protected String iconURI = ICON_URI_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getTooltip() <em>Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String TOOLTIP_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getTooltip() <em>Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected String tooltip = TOOLTIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCAL_LABEL_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected String localLabel = LOCAL_LABEL_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCAL_TOOLTIP_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected String localTooltip = LOCAL_TOOLTIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalImage()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Object LOCAL_IMAGE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalImage()
+	 * @generated
+	 * @ordered
+	 */
+	protected Object localImage = LOCAL_IMAGE_EDEFAULT;
+
 	/**
 	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -65,36 +192,6 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 	 * @ordered
 	 */
 	protected EList<String> bindingContexts;
-
-	/**
-	 * The default value of the '{@link #getElementId() <em>Element Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getElementId()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String ELEMENT_ID_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getElementId() <em>Element Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getElementId()
-	 * @generated
-	 * @ordered
-	 */
-	protected String elementId = ELEMENT_ID_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTags()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<String> tags;
 
 	/**
 	 * The default value of the '{@link #getContributionURI() <em>Contribution URI</em>}' attribute.
@@ -160,6 +257,132 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getLabel() {
+		return label;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLabel(String newLabel) {
+		String oldLabel = label;
+		label = newLabel;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LABEL, oldLabel, label));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getIconURI() {
+		return iconURI;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setIconURI(String newIconURI) {
+		String oldIconURI = iconURI;
+		iconURI = newIconURI;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ICON_URI, oldIconURI, iconURI));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getTooltip() {
+		return tooltip;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setTooltip(String newTooltip) {
+		String oldTooltip = tooltip;
+		tooltip = newTooltip;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TOOLTIP, oldTooltip, tooltip));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getLocalLabel() {
+		return localLabel;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLocalLabel(String newLocalLabel) {
+		String oldLocalLabel = localLabel;
+		localLabel = newLocalLabel;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_LABEL, oldLocalLabel, localLabel));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getLocalTooltip() {
+		return localTooltip;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLocalTooltip(String newLocalTooltip) {
+		String oldLocalTooltip = localTooltip;
+		localTooltip = newLocalTooltip;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP, oldLocalTooltip, localTooltip));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Object getLocalImage() {
+		return localImage;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLocalImage(Object newLocalImage) {
+		Object oldLocalImage = localImage;
+		localImage = newLocalImage;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE, oldLocalImage, localImage));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
 			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__HANDLERS);
@@ -177,39 +400,6 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 			bindingContexts = new EDataTypeUniqueEList<String>(String.class, this, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getElementId() {
-		return elementId;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setElementId(String newElementId) {
-		String oldElementId = elementId;
-		elementId = newElementId;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ELEMENT_ID, oldElementId, elementId));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public List<String> getTags() {
-		if (tags == null) {
-			tags = new EDataTypeUniqueEList<String>(String.class, this, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TAGS);
-		}
-		return tags;
 	}
 
 	/**
@@ -279,14 +469,22 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LABEL:
+				return getLabel();
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ICON_URI:
+				return getIconURI();
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TOOLTIP:
+				return getTooltip();
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_LABEL:
+				return getLocalLabel();
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP:
+				return getLocalTooltip();
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE:
+				return getLocalImage();
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__HANDLERS:
 				return getHandlers();
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS:
 				return getBindingContexts();
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ELEMENT_ID:
-				return getElementId();
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TAGS:
-				return getTags();
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__CONTRIBUTION_URI:
 				return getContributionURI();
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS:
@@ -306,6 +504,24 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LABEL:
+				setLabel((String)newValue);
+				return;
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ICON_URI:
+				setIconURI((String)newValue);
+				return;
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TOOLTIP:
+				setTooltip((String)newValue);
+				return;
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_LABEL:
+				setLocalLabel((String)newValue);
+				return;
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP:
+				setLocalTooltip((String)newValue);
+				return;
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE:
+				setLocalImage(newValue);
+				return;
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__HANDLERS:
 				getHandlers().clear();
 				getHandlers().addAll((Collection<? extends MHandler>)newValue);
@@ -313,13 +529,6 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS:
 				getBindingContexts().clear();
 				getBindingContexts().addAll((Collection<? extends String>)newValue);
-				return;
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ELEMENT_ID:
-				setElementId((String)newValue);
-				return;
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TAGS:
-				getTags().clear();
-				getTags().addAll((Collection<? extends String>)newValue);
 				return;
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__CONTRIBUTION_URI:
 				setContributionURI((String)newValue);
@@ -344,17 +553,29 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LABEL:
+				setLabel(LABEL_EDEFAULT);
+				return;
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ICON_URI:
+				setIconURI(ICON_URI_EDEFAULT);
+				return;
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TOOLTIP:
+				setTooltip(TOOLTIP_EDEFAULT);
+				return;
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_LABEL:
+				setLocalLabel(LOCAL_LABEL_EDEFAULT);
+				return;
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP:
+				setLocalTooltip(LOCAL_TOOLTIP_EDEFAULT);
+				return;
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE:
+				setLocalImage(LOCAL_IMAGE_EDEFAULT);
+				return;
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__HANDLERS:
 				getHandlers().clear();
 				return;
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS:
 				getBindingContexts().clear();
-				return;
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ELEMENT_ID:
-				setElementId(ELEMENT_ID_EDEFAULT);
-				return;
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TAGS:
-				getTags().clear();
 				return;
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__CONTRIBUTION_URI:
 				setContributionURI(CONTRIBUTION_URI_EDEFAULT);
@@ -377,14 +598,22 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LABEL:
+				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ICON_URI:
+				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TOOLTIP:
+				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_LABEL:
+				return LOCAL_LABEL_EDEFAULT == null ? localLabel != null : !LOCAL_LABEL_EDEFAULT.equals(localLabel);
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP:
+				return LOCAL_TOOLTIP_EDEFAULT == null ? localTooltip != null : !LOCAL_TOOLTIP_EDEFAULT.equals(localTooltip);
+			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE:
+				return LOCAL_IMAGE_EDEFAULT == null ? localImage != null : !LOCAL_IMAGE_EDEFAULT.equals(localImage);
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS:
 				return bindingContexts != null && !bindingContexts.isEmpty();
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ELEMENT_ID:
-				return ELEMENT_ID_EDEFAULT == null ? elementId != null : !ELEMENT_ID_EDEFAULT.equals(elementId);
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TAGS:
-				return tags != null && !tags.isEmpty();
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__CONTRIBUTION_URI:
 				return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null : !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS:
@@ -402,6 +631,17 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 	 */
 	@Override
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
+		if (baseClass == MUILabel.class) {
+			switch (derivedFeatureID) {
+				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
+				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
+				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
+				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_LABEL: return UiPackageImpl.UI_LABEL__LOCAL_LABEL;
+				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP;
+				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE: return UiPackageImpl.UI_LABEL__LOCAL_IMAGE;
+				default: return -1;
+			}
+		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (derivedFeatureID) {
 				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__HANDLERS: return CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS;
@@ -411,13 +651,6 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 		if (baseClass == MBindings.class) {
 			switch (derivedFeatureID) {
 				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS: return CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS;
-				default: return -1;
-			}
-		}
-		if (baseClass == MApplicationElement.class) {
-			switch (derivedFeatureID) {
-				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ELEMENT_ID: return ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
-				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TAGS: return ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
 				default: return -1;
 			}
 		}
@@ -431,6 +664,17 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 	 */
 	@Override
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
+		if (baseClass == MUILabel.class) {
+			switch (baseFeatureID) {
+				case UiPackageImpl.UI_LABEL__LABEL: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LABEL;
+				case UiPackageImpl.UI_LABEL__ICON_URI: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ICON_URI;
+				case UiPackageImpl.UI_LABEL__TOOLTIP: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TOOLTIP;
+				case UiPackageImpl.UI_LABEL__LOCAL_LABEL: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_LABEL;
+				case UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP;
+				case UiPackageImpl.UI_LABEL__LOCAL_IMAGE: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE;
+				default: return -1;
+			}
+		}
 		if (baseClass == MHandlerContainer.class) {
 			switch (baseFeatureID) {
 				case CommandsPackageImpl.HANDLER_CONTAINER__HANDLERS: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__HANDLERS;
@@ -440,13 +684,6 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 		if (baseClass == MBindings.class) {
 			switch (baseFeatureID) {
 				case CommandsPackageImpl.BINDINGS__BINDING_CONTEXTS: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS;
-				default: return -1;
-			}
-		}
-		if (baseClass == MApplicationElement.class) {
-			switch (baseFeatureID) {
-				case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ELEMENT_ID;
-				case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TAGS;
 				default: return -1;
 			}
 		}
@@ -463,12 +700,20 @@ public class EditorPartDescriptorImpl extends UILabelImpl implements MEditorPart
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (bindingContexts: ");
+		result.append(" (label: ");
+		result.append(label);
+		result.append(", iconURI: ");
+		result.append(iconURI);
+		result.append(", tooltip: ");
+		result.append(tooltip);
+		result.append(", localLabel: ");
+		result.append(localLabel);
+		result.append(", localTooltip: ");
+		result.append(localTooltip);
+		result.append(", localImage: ");
+		result.append(localImage);
+		result.append(", bindingContexts: ");
 		result.append(bindingContexts);
-		result.append(", elementId: ");
-		result.append(elementId);
-		result.append(", tags: ");
-		result.append(tags);
 		result.append(", contributionURI: ");
 		result.append(contributionURI);
 		result.append(", fileextensions: ");

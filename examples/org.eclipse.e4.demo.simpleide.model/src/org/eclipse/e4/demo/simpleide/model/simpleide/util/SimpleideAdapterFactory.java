@@ -2,10 +2,11 @@
  * <copyright>
  * </copyright>
  *
- * $Id: SimpleideAdapterFactory.java,v 1.2 2010/06/01 21:54:08 tschindl Exp $
+ * $Id: SimpleideAdapterFactory.java,v 1.3 2010/06/04 20:22:14 johna Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.util;
 
+import org.eclipse.e4.demo.simpleide.model.simpleide.*;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MSimpleIDEApplication;
 import org.eclipse.e4.demo.simpleide.model.simpleide.impl.SimpleidePackageImpl;
@@ -20,6 +21,8 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
@@ -124,6 +127,14 @@ public class SimpleideAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseMenuContributions(MMenuContributions object) {
 				return createMenuContributionsAdapter();
+			}
+			@Override
+			public Adapter caseToolBarContributions(MToolBarContributions object) {
+				return createToolBarContributionsAdapter();
+			}
+			@Override
+			public Adapter caseTrimContributions(MTrimContributions object) {
+				return createTrimContributionsAdapter();
 			}
 			@Override
 			public Adapter caseApplication(MApplication object) {
@@ -304,6 +315,34 @@ public class SimpleideAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createMenuContributionsAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions <em>Tool Bar Contributions</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions
+	 * @generated
+	 */
+	public Adapter createToolBarContributionsAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions <em>Trim Contributions</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions
+	 * @generated
+	 */
+	public Adapter createTrimContributionsAdapter() {
 		return null;
 	}
 
