@@ -1,5 +1,9 @@
 package org.eclipse.e4.demo.tools.simpleide;
 
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+
+import org.eclipse.e4.tools.services.IResourcePool;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
@@ -40,8 +44,8 @@ public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 	private IProject project;
 	
 	@Inject
-	public EditorPartDescriptorEditor(IModelResource resource, ModelEditor editor, @Optional IProject project) {
-		super(resource.getEditingDomain(),editor);
+	public EditorPartDescriptorEditor(IModelResource resource, ModelEditor editor, @Optional IProject project, IResourcePool resourcePool) {
+		super(resource.getEditingDomain(),editor, resourcePool);
 		this.project = project;
 	}
 
@@ -129,7 +133,7 @@ public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(master));
 
 			Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
-			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
 			b.setText("Find");			
 		}
 		
@@ -143,7 +147,7 @@ public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), SimpleidePackageImpl.Literals.EDITOR_PART_DESCRIPTOR__CONTRIBUTION_URI).observeDetail(master));
 
 			final Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
-			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
 			b.setText("Find");
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override

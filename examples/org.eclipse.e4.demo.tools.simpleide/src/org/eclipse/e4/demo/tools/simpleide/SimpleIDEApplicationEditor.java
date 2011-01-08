@@ -1,5 +1,7 @@
 package org.eclipse.e4.demo.tools.simpleide;
 
+import org.eclipse.e4.tools.services.IResourcePool;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 
 import javax.inject.Inject;
@@ -18,8 +20,8 @@ public class SimpleIDEApplicationEditor extends ApplicationEditor {
 	
 	
 	@Inject
-	public SimpleIDEApplicationEditor(IModelResource modelResource, ModelEditor editor) {
-		super(modelResource.getEditingDomain(),editor);
+	public SimpleIDEApplicationEditor(IModelResource modelResource, ModelEditor editor, IResourcePool resourcePool) {
+		super(modelResource.getEditingDomain(),editor, resourcePool);
 	}
 	
 	@Override

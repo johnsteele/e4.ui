@@ -1,5 +1,9 @@
 package org.eclipse.e4.demo.tools.simpleide;
 
+import org.eclipse.e4.tools.services.IResourcePool;
+
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 
 import java.util.List;
@@ -45,8 +49,8 @@ public class VEditorPartDescriptorEditor extends AbstractComponentEditor {
 	private TableViewer viewer;
 	
 	@Inject
-	public VEditorPartDescriptorEditor(IModelResource resource, ModelEditor editor) {
-		super(resource.getEditingDomain(), editor);
+	public VEditorPartDescriptorEditor(IModelResource resource, ModelEditor editor, IResourcePool resourcePool) {
+		super(resource.getEditingDomain(), editor, resourcePool);
 	}
 
 	@Override
@@ -120,7 +124,7 @@ public class VEditorPartDescriptorEditor extends AbstractComponentEditor {
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Up");
-			b.setImage(getImage(b.getDisplay(), ARROW_UP));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -147,7 +151,7 @@ public class VEditorPartDescriptorEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Down");
-			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -174,7 +178,7 @@ public class VEditorPartDescriptorEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Add ...");
-			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -191,7 +195,7 @@ public class VEditorPartDescriptorEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Remove");
-			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
