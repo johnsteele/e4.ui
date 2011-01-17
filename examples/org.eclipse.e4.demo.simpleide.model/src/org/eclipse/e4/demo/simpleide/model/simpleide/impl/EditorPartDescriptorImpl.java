@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: EditorPartDescriptorImpl.java,v 1.3 2010/06/04 20:22:14 johna Exp $
+ * $Id: EditorPartDescriptorImpl.java,v 1.4 2010/12/17 20:40:50 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.impl;
 
@@ -39,9 +39,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getTooltip <em>Tooltip</em>}</li>
- *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getLocalLabel <em>Local Label</em>}</li>
- *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getLocalTooltip <em>Local Tooltip</em>}</li>
- *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getLocalImage <em>Local Image</em>}</li>
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getBindingContexts <em>Binding Contexts</em>}</li>
  *   <li>{@link org.eclipse.e4.demo.simpleide.model.simpleide.impl.EditorPartDescriptorImpl#getContributionURI <em>Contribution URI</em>}</li>
@@ -112,66 +109,6 @@ public class EditorPartDescriptorImpl extends ApplicationElementImpl implements 
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalLabel()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String LOCAL_LABEL_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalLabel()
-	 * @generated
-	 * @ordered
-	 */
-	protected String localLabel = LOCAL_LABEL_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalTooltip()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String LOCAL_TOOLTIP_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalTooltip()
-	 * @generated
-	 * @ordered
-	 */
-	protected String localTooltip = LOCAL_TOOLTIP_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalImage()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Object LOCAL_IMAGE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalImage()
-	 * @generated
-	 * @ordered
-	 */
-	protected Object localImage = LOCAL_IMAGE_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
@@ -320,69 +257,6 @@ public class EditorPartDescriptorImpl extends ApplicationElementImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getLocalLabel() {
-		return localLabel;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setLocalLabel(String newLocalLabel) {
-		String oldLocalLabel = localLabel;
-		localLabel = newLocalLabel;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_LABEL, oldLocalLabel, localLabel));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getLocalTooltip() {
-		return localTooltip;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setLocalTooltip(String newLocalTooltip) {
-		String oldLocalTooltip = localTooltip;
-		localTooltip = newLocalTooltip;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP, oldLocalTooltip, localTooltip));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Object getLocalImage() {
-		return localImage;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setLocalImage(Object newLocalImage) {
-		Object oldLocalImage = localImage;
-		localImage = newLocalImage;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE, oldLocalImage, localImage));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
 			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__HANDLERS);
@@ -452,6 +326,28 @@ public class EditorPartDescriptorImpl extends ApplicationElementImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getLocalizedLabel() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getLocalizedTooltip() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -475,12 +371,6 @@ public class EditorPartDescriptorImpl extends ApplicationElementImpl implements 
 				return getIconURI();
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TOOLTIP:
 				return getTooltip();
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_LABEL:
-				return getLocalLabel();
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP:
-				return getLocalTooltip();
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE:
-				return getLocalImage();
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__HANDLERS:
 				return getHandlers();
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS:
@@ -512,15 +402,6 @@ public class EditorPartDescriptorImpl extends ApplicationElementImpl implements 
 				return;
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TOOLTIP:
 				setTooltip((String)newValue);
-				return;
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_LABEL:
-				setLocalLabel((String)newValue);
-				return;
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP:
-				setLocalTooltip((String)newValue);
-				return;
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE:
-				setLocalImage(newValue);
 				return;
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__HANDLERS:
 				getHandlers().clear();
@@ -562,15 +443,6 @@ public class EditorPartDescriptorImpl extends ApplicationElementImpl implements 
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TOOLTIP:
 				setTooltip(TOOLTIP_EDEFAULT);
 				return;
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_LABEL:
-				setLocalLabel(LOCAL_LABEL_EDEFAULT);
-				return;
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP:
-				setLocalTooltip(LOCAL_TOOLTIP_EDEFAULT);
-				return;
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE:
-				setLocalImage(LOCAL_IMAGE_EDEFAULT);
-				return;
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__HANDLERS:
 				getHandlers().clear();
 				return;
@@ -604,12 +476,6 @@ public class EditorPartDescriptorImpl extends ApplicationElementImpl implements 
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_LABEL:
-				return LOCAL_LABEL_EDEFAULT == null ? localLabel != null : !LOCAL_LABEL_EDEFAULT.equals(localLabel);
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP:
-				return LOCAL_TOOLTIP_EDEFAULT == null ? localTooltip != null : !LOCAL_TOOLTIP_EDEFAULT.equals(localTooltip);
-			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE:
-				return LOCAL_IMAGE_EDEFAULT == null ? localImage != null : !LOCAL_IMAGE_EDEFAULT.equals(localImage);
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS:
@@ -636,9 +502,6 @@ public class EditorPartDescriptorImpl extends ApplicationElementImpl implements 
 				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
 				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
 				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
-				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_LABEL: return UiPackageImpl.UI_LABEL__LOCAL_LABEL;
-				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP;
-				case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE: return UiPackageImpl.UI_LABEL__LOCAL_IMAGE;
 				default: return -1;
 			}
 		}
@@ -669,9 +532,6 @@ public class EditorPartDescriptorImpl extends ApplicationElementImpl implements 
 				case UiPackageImpl.UI_LABEL__LABEL: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LABEL;
 				case UiPackageImpl.UI_LABEL__ICON_URI: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__ICON_URI;
 				case UiPackageImpl.UI_LABEL__TOOLTIP: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__TOOLTIP;
-				case UiPackageImpl.UI_LABEL__LOCAL_LABEL: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_LABEL;
-				case UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP;
-				case UiPackageImpl.UI_LABEL__LOCAL_IMAGE: return SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE;
 				default: return -1;
 			}
 		}
@@ -706,12 +566,6 @@ public class EditorPartDescriptorImpl extends ApplicationElementImpl implements 
 		result.append(iconURI);
 		result.append(", tooltip: ");
 		result.append(tooltip);
-		result.append(", localLabel: ");
-		result.append(localLabel);
-		result.append(", localTooltip: ");
-		result.append(localTooltip);
-		result.append(", localImage: ");
-		result.append(localImage);
 		result.append(", bindingContexts: ");
 		result.append(bindingContexts);
 		result.append(", contributionURI: ");

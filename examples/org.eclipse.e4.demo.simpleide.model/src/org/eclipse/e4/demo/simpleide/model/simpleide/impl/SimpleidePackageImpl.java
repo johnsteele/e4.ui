@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: SimpleidePackageImpl.java,v 1.4 2010/06/04 20:22:14 johna Exp $
+ * $Id: SimpleidePackageImpl.java,v 1.5 2010/12/17 20:40:50 tschindl Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.impl;
 
@@ -94,6 +94,15 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int SIMPLE_IDE_APPLICATION__TAGS = ApplicationPackageImpl.APPLICATION__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int SIMPLE_IDE_APPLICATION__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -376,6 +385,15 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	public static final int EDITOR_PART_DESCRIPTOR__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EDITOR_PART_DESCRIPTOR__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -403,40 +421,13 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	public static final int EDITOR_PART_DESCRIPTOR__TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int EDITOR_PART_DESCRIPTOR__LOCAL_LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int EDITOR_PART_DESCRIPTOR__LOCAL_TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int EDITOR_PART_DESCRIPTOR__LOCAL_IMAGE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 5;
-
-	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EDITOR_PART_DESCRIPTOR__HANDLERS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 6;
+	public static final int EDITOR_PART_DESCRIPTOR__HANDLERS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
@@ -445,7 +436,7 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 7;
+	public static final int EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
@@ -454,7 +445,7 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EDITOR_PART_DESCRIPTOR__CONTRIBUTION_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 8;
+	public static final int EDITOR_PART_DESCRIPTOR__CONTRIBUTION_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Fileextensions</b></em>' attribute list.
@@ -463,7 +454,7 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 9;
+	public static final int EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Contenttypes</b></em>' attribute list.
@@ -472,7 +463,7 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EDITOR_PART_DESCRIPTOR__CONTENTTYPES = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 10;
+	public static final int EDITOR_PART_DESCRIPTOR__CONTENTTYPES = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The number of structural features of the '<em>Editor Part Descriptor</em>' class.
@@ -481,7 +472,7 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EDITOR_PART_DESCRIPTOR_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 11;
+	public static final int EDITOR_PART_DESCRIPTOR_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
 	 * <!-- begin-user-doc -->
