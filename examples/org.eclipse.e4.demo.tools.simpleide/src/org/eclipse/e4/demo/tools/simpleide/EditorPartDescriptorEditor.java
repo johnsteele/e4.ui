@@ -1,5 +1,7 @@
 package org.eclipse.e4.demo.tools.simpleide;
 
+import org.eclipse.e4.core.di.annotations.Optional;
+
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 
 import javax.inject.Inject;
@@ -37,6 +39,7 @@ public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 	
 	@Inject
+	@Optional
 	private IProject project;
 	
 	@Inject
