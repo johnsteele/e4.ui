@@ -20,8 +20,8 @@ public class SimpleIDEApplicationEditor extends ApplicationEditor {
 	
 	
 	@Inject
-	public SimpleIDEApplicationEditor(IModelResource modelResource, ModelEditor editor, IResourcePool resourcePool) {
-		super(modelResource.getEditingDomain(),editor, resourcePool);
+	public SimpleIDEApplicationEditor() {
+		super();
 	}
 	
 	@Override

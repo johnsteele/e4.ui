@@ -49,8 +49,8 @@ public class VEditorPartDescriptorEditor extends AbstractComponentEditor {
 	private TableViewer viewer;
 	
 	@Inject
-	public VEditorPartDescriptorEditor(IModelResource resource, ModelEditor editor, IResourcePool resourcePool) {
-		super(resource.getEditingDomain(), editor, resourcePool);
+	public VEditorPartDescriptorEditor() {
+		super();
 	}
 
 	@Override

@@ -1,27 +1,19 @@
 package org.eclipse.e4.demo.tools.simpleide;
 
-import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
-
-import org.eclipse.e4.tools.services.IResourcePool;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
-import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
 import org.eclipse.e4.demo.simpleide.model.simpleide.impl.SimpleidePackageImpl;
-import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -29,6 +21,8 @@ import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -41,12 +35,13 @@ import org.eclipse.swt.widgets.Text;
 public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
+	
+	@Inject
 	private IProject project;
 	
 	@Inject
-	public EditorPartDescriptorEditor(IModelResource resource, ModelEditor editor, @Optional IProject project, IResourcePool resourcePool) {
-		super(resource.getEditingDomain(),editor, resourcePool);
-		this.project = project;
+	public EditorPartDescriptorEditor() {
+		super();
 	}
 
 	@Override
@@ -152,7 +147,7 @@ public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(),project,getEditingDomain(),(MPartDescriptor) getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR__CONTRIBUTION_URI);
+					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(),project,getEditingDomain(),(MPartDescriptor) getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR__CONTRIBUTION_URI, Messages);
 					dialog.open();
 				}
 			});
@@ -161,7 +156,7 @@ public class EditorPartDescriptorEditor extends AbstractComponentEditor {
 
 		// ------------------------------------------------------------
 		{
-			ControlFactory.createStringListWidget(parent, this, "File extensions", SimpleidePackageImpl.Literals.EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS, 10);
+			ControlFactory.createStringListWidget(parent, Messages, this, "File extensions", SimpleidePackageImpl.Literals.EDITOR_PART_DESCRIPTOR__FILEEXTENSIONS, 10);
 		}
 		
 		return parent;
