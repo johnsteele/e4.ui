@@ -2,13 +2,14 @@
  * <copyright>
  * </copyright>
  *
- * $Id: EditorPartDescriptorImpl.java,v 1.4 2010/12/17 20:40:50 tschindl Exp $
+ * $Id: EditorPartDescriptorImpl.java,v 1.5 2011/01/17 12:18:07 pwebster Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.impl;
 
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.e4.demo.simpleide.model.simpleide.MEditorPartDescriptor;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
@@ -27,6 +28,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -121,14 +123,14 @@ public class EditorPartDescriptorImpl extends ApplicationElementImpl implements 
 	protected EList<MHandler> handlers;
 
 	/**
-	 * The cached value of the '{@link #getBindingContexts() <em>Binding Contexts</em>}' attribute list.
+	 * The cached value of the '{@link #getBindingContexts() <em>Binding Contexts</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getBindingContexts()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<String> bindingContexts;
+	protected EList<MBindingContext> bindingContexts;
 
 	/**
 	 * The default value of the '{@link #getContributionURI() <em>Contribution URI</em>}' attribute.
@@ -269,9 +271,9 @@ public class EditorPartDescriptorImpl extends ApplicationElementImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<String> getBindingContexts() {
+	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EDataTypeUniqueEList<String>(String.class, this, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS);
+			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this, SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
 	}
@@ -409,7 +411,7 @@ public class EditorPartDescriptorImpl extends ApplicationElementImpl implements 
 				return;
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__BINDING_CONTEXTS:
 				getBindingContexts().clear();
-				getBindingContexts().addAll((Collection<? extends String>)newValue);
+				getBindingContexts().addAll((Collection<? extends MBindingContext>)newValue);
 				return;
 			case SimpleidePackageImpl.EDITOR_PART_DESCRIPTOR__CONTRIBUTION_URI:
 				setContributionURI((String)newValue);
@@ -566,8 +568,6 @@ public class EditorPartDescriptorImpl extends ApplicationElementImpl implements 
 		result.append(iconURI);
 		result.append(", tooltip: ");
 		result.append(tooltip);
-		result.append(", bindingContexts: ");
-		result.append(bindingContexts);
 		result.append(", contributionURI: ");
 		result.append(contributionURI);
 		result.append(", fileextensions: ");

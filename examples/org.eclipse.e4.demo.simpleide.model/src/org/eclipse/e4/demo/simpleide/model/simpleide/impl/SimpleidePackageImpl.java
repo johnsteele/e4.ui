@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: SimpleidePackageImpl.java,v 1.5 2010/12/17 20:40:50 tschindl Exp $
+ * $Id: SimpleidePackageImpl.java,v 1.6 2011/01/17 12:18:07 pwebster Exp $
  */
 package org.eclipse.e4.demo.simpleide.model.simpleide.impl;
 
@@ -276,7 +276,7 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	public static final int SIMPLE_IDE_APPLICATION__DESCRIPTORS = ApplicationPackageImpl.APPLICATION__DESCRIPTORS;
 
 	/**
-	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -430,7 +430,7 @@ public class SimpleidePackageImpl extends EPackageImpl {
 	public static final int EDITOR_PART_DESCRIPTOR__HANDLERS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
-	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
