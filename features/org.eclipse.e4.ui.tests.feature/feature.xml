@@ -72,4 +72,36 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="org.eclipse.e4.ui.menu.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
+    <plugin
+         id="org.eclipse.e4.ui.menu.tests.p1"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+    <plugin
+         id="org.eclipse.e4.ui.menu.tests.p2"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+    <plugin
+         id="org.eclipse.e4.ui.menu.tests.p3"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+    <plugin
+         id="org.eclipse.e4.ui.menu.tests.p4"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
 </feature>
