@@ -4,11 +4,11 @@ Bundle-Name: Outline
 Bundle-SymbolicName: org.eclipse.e4.demo.simpleide.outline;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: javax.inject;bundle-version="1.0.0",
- org.eclipse.swt;bundle-version="3.6.0",
+Require-Bundle: org.eclipse.swt;bundle-version="3.6.0",
  org.eclipse.e4.ui.services;bundle-version="0.9.1",
  org.eclipse.e4.ui.model.workbench;bundle-version="0.9.1",
  org.eclipse.e4.core.di;bundle-version="0.9.0",
  org.eclipse.e4.core.contexts;bundle-version="0.9.0",
  org.eclipse.e4.ui.workbench;bundle-version="0.9.1"
 Export-Package: org.eclipse.e4.demo.simpleide.outline
+Import-Package: javax.inject;version="1.0.0"
