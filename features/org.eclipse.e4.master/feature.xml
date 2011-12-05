@@ -65,4 +65,8 @@
          id="org.eclipse.e4.tools.css.editor.feature"
          version="0.0.0"/>
          
+   <includes
+         id="org.eclipse.e4.tools.css.spy.feature"
+         version="0.0.0"/>
+         
 </feature>
