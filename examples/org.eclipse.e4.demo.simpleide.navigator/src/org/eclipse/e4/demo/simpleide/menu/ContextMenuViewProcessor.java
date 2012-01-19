@@ -30,7 +30,7 @@ public class ContextMenuViewProcessor  {
 		desc.setLabel("Context Menu View");
 		desc.setElementId("org.eclipse.e4.demo.simpleide.menu.ContextMenuView");
 		desc.setCategory("org.eclipse.e4.secondaryDataStack");
-		desc.setContributionURI("platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.menu.ContextMenuView");
+		desc.setContributionURI("bundleclass://org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.menu.ContextMenuView");
 
 		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
 		menu.getTags().add("ViewMenu");
@@ -71,7 +71,7 @@ public class ContextMenuViewProcessor  {
 		MHandler handler = CommandsFactoryImpl.eINSTANCE.createHandler();
 		handler.setCommand(cmd);
 		handler.setElementId("open.dialog.on.selection");
-		handler.setContributionURI("platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.menu.OpenDialogHandler");
+		handler.setContributionURI("bundleclass://org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.menu.OpenDialogHandler");
 		app.getCommands().add(cmd);
 		app.getHandlers().add(handler);
 	}

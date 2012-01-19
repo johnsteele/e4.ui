@@ -63,22 +63,16 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.commands.ECommandService;
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextFunction;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
+import org.eclipse.e4.ui.internal.workbench.swt.ResourceUtility;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.services.EContextService;
-import org.eclipse.e4.ui.workbench.swt.Activator;
-import org.eclipse.e4.ui.workbench.swt.internal.CSSStylingSupport;
-import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
-import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchWindowHandler;
-import org.eclipse.e4.workbench.ui.IResourceUtiltities;
-import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -86,12 +80,12 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.LegacyActionTools;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ExternalActionManager.CommandCallback;
 import org.eclipse.jface.action.ExternalActionManager.IActiveChecker;
 import org.eclipse.jface.action.ExternalActionManager.IExecuteApplicable;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.LegacyActionTools;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
@@ -208,7 +202,6 @@ import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.tweaklets.GrabFocus;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
-import org.eclipse.ui.internal.tweaklets.WorkbenchImplementation;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.intro.IIntroManager;
@@ -457,7 +450,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Location instanceLocation = getInstanceLocation();
 		PackageAdmin packageAdmin = (PackageAdmin) appContext
 				.get(PackageAdmin.class.getName());
-		String engineURI = "platform:/plugin/org.eclipse.e4.ui.workbench.swt/"; //$NON-NLS-1$
+		String engineURI = "bundleclass://org.eclipse.e4.ui.workbench.swt/"; //$NON-NLS-1$
 		engineURI += "org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine"; //$NON-NLS-1$
 
 		e4Workbench = new org.eclipse.e4.workbench.ui.internal.Workbench(
@@ -664,8 +657,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 						// for this to be relevant
 					}
 				};
-				registration[0] = context.registerService(StartupMonitor.class
-						.getName(), startupMonitor, properties);
+				registration[0] = context.registerService(
+						StartupMonitor.class.getName(), startupMonitor,
+						properties);
 
 				splash.init(splashShell);
 			}
@@ -970,8 +964,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				public void run() {
 
 					org.eclipse.e4.workbench.ui.internal.Activator
-							.trace(
-									org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_WORKBENCH,
+							.trace(org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_WORKBENCH,
 									"saveing model to " + getXmiLocation(), null); //$NON-NLS-1$
 					try {
 						// because we created the model we need to set the
@@ -999,8 +992,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 						message = WorkbenchMessages.ErrorClosingNoArg;
 					} else {
 						message = NLS.bind(
-								WorkbenchMessages.ErrorClosingOneArg, e
-										.getMessage());
+								WorkbenchMessages.ErrorClosingOneArg,
+								e.getMessage());
 					}
 
 					if (!MessageDialog.openQuestion(null,
@@ -1033,8 +1026,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	}
 
 	private String getXmiLocation() {
-		return WorkbenchPlugin.getDefault().getDataLocation().append(
-				"workbench.xmi").toOSString(); //$NON-NLS-1$
+		return WorkbenchPlugin.getDefault().getDataLocation()
+				.append("workbench.xmi").toOSString(); //$NON-NLS-1$
 	}
 
 	/*
@@ -1587,8 +1580,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 						new IActiveChecker() {
 							public final boolean isActive(final String commandId) {
 								return getActivitySupport()
-										.getActivityManager().getIdentifier(
-												commandId).isEnabled();
+										.getActivityManager()
+										.getIdentifier(commandId).isEnabled();
 							}
 						}, new IExecuteApplicable() {
 							public boolean isApplicable(IAction action) {
@@ -1609,9 +1602,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 			public void runWithException() {
 				ColorDefinition[] colorDefinitions = WorkbenchPlugin
 						.getDefault().getThemeRegistry().getColors();
-				ThemeElementHelper.populateRegistry(getThemeManager().getTheme(
-						IThemeManager.DEFAULT_THEME), colorDefinitions,
-						PrefUtil.getInternalPreferenceStore());
+				ThemeElementHelper
+						.populateRegistry(
+								getThemeManager().getTheme(
+										IThemeManager.DEFAULT_THEME),
+								colorDefinitions,
+								PrefUtil.getInternalPreferenceStore());
 			}
 		});
 	}
@@ -1828,8 +1824,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					}
 				});
 		e4Context
-				.set(
-						ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME,
+				.set(ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME,
 						new ContextFunction() {
 							@Override
 							public Object compute(IEclipseContext context,
@@ -1856,8 +1851,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 						final String perspId = persp == null ? null : persp
 								.getId();
 						org.eclipse.e4.workbench.ui.internal.Activator
-								.trace(
-										org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_CMDS,
+								.trace(org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_CMDS,
 										"asked for perspective " + perspId, //$NON-NLS-1$
 										null);
 						return perspId;
@@ -2104,8 +2098,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 					final Iterator i = sourceValuesByName.entrySet().iterator();
 					while (i.hasNext()) {
 						Map.Entry entry = (Map.Entry) i.next();
-						sourceChanged(0, (String) entry.getKey(), entry
-								.getValue());
+						sourceChanged(0, (String) entry.getKey(),
+								entry.getValue());
 					}
 				}
 			};
@@ -2133,8 +2127,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					sourceValue);
 			if (updated) {
 				org.eclipse.e4.workbench.ui.internal.Activator
-						.trace(
-								org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_WORKBENCH,
+						.trace(org.eclipse.e4.workbench.ui.internal.Policy.DEBUG_WORKBENCH,
 								"activated shell: " + sourceValue, null); //$NON-NLS-1$
 				if (sourceValue instanceof Shell) {
 					activateShell((Shell) sourceValue);
@@ -2424,8 +2417,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 				public void runWithException() throws Throwable {
 					ErrorDialog.openError(null,
-							WorkbenchMessages.Problems_Opening_Page, e
-									.getMessage(), e.getStatus());
+							WorkbenchMessages.Problems_Opening_Page,
+							e.getMessage(), e.getStatus());
 				}
 			});
 		}
@@ -2596,8 +2589,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		}
 		Job job = new Job("Workbench early startup") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
-				HashSet disabledPlugins = new HashSet(Arrays
-						.asList(getDisabledEarlyActivatedPlugins()));
+				HashSet disabledPlugins = new HashSet(
+						Arrays.asList(getDisabledEarlyActivatedPlugins()));
 				monitor.beginTask(WorkbenchMessages.Workbench_startingPlugins,
 						extensions.length);
 				for (int i = 0; i < extensions.length; ++i) {
@@ -2679,12 +2672,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 			display.asyncExec(new Runnable() {
 				public void run() {
 					if (isStarting()) {
-						WorkbenchPlugin
-								.log(StatusUtil
-										.newStatus(
-												IStatus.WARNING,
-												"Event loop should not be run while the Workbench is starting.", //$NON-NLS-1$
-												new RuntimeException()));
+						WorkbenchPlugin.log(StatusUtil
+								.newStatus(
+										IStatus.WARNING,
+										"Event loop should not be run while the Workbench is starting.", //$NON-NLS-1$
+										new RuntimeException()));
 					}
 				}
 			});
@@ -2988,10 +2980,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 					.findPerspectiveWithId(perspectiveId);
 			if (desc == null) {
 				throw new WorkbenchException(
-						NLS
-								.bind(
-										WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,
-										perspectiveId));
+						NLS.bind(
+								WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,
+								perspectiveId));
 			}
 			win.getShell().open();
 			if (page == null) {
@@ -3003,8 +2994,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		}
 
 		// Just throw an exception....
-		throw new WorkbenchException(NLS
-				.bind(WorkbenchMessages.Workbench_showPerspectiveError,
+		throw new WorkbenchException(
+				NLS.bind(WorkbenchMessages.Workbench_showPerspectiveError,
 						perspectiveId));
 	}
 
@@ -3094,10 +3085,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 						.findPerspectiveWithId(perspectiveId);
 				if (desc == null) {
 					throw new WorkbenchException(
-							NLS
-									.bind(
-											WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,
-											perspectiveId));
+							NLS.bind(
+									WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,
+									perspectiveId));
 				}
 				win.getShell().open();
 				if (page == null) {
@@ -3122,10 +3112,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 						.findPerspectiveWithId(perspectiveId);
 				if (desc == null) {
 					throw new WorkbenchException(
-							NLS
-									.bind(
-											WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,
-											perspectiveId));
+							NLS.bind(
+									WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,
+									perspectiveId));
 				}
 				win.getShell().open();
 				if (page == null) {

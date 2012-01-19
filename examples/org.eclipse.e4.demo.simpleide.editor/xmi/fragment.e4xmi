@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_tkhKcHiXEd-pEoU9D4-ITQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_xOhvUHidEd-X-LLzc-gFOA" featurename="handlers" parentElementId="app.simpleide">
-    <elements xsi:type="commands:Handler" xmi:id="_CDBAMHieEd-X-LLzc-gFOA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.editor/org.eclipse.e4.demo.simpleide.editor.handler.OpenEditor" command="_9a6zsHidEd-X-LLzc-gFOA"/>
+    <elements xsi:type="commands:Handler" xmi:id="_CDBAMHieEd-X-LLzc-gFOA" contributionURI="bundleclass://org.eclipse.e4.demo.simpleide.editor/org.eclipse.e4.demo.simpleide.editor.handler.OpenEditor" command="_9a6zsHidEd-X-LLzc-gFOA"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_2pDeUHidEd-X-LLzc-gFOA" featurename="commands" parentElementId="app.simpleide">
     <elements xsi:type="commands:Command" xmi:id="_9a6zsHidEd-X-LLzc-gFOA" elementId="simpleide.command.openeditor" commandName="Open Editor"/>

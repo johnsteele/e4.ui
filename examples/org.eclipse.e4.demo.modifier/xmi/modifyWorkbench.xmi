@@ -27,14 +27,14 @@
       <children xsi:type="org.eclipse.e4.ui.model.application:MSashForm" policy="HorizontalSash">
         <children xsi:type="org.eclipse.e4.ui.model.application:MSashForm" policy="VerticalSash">
           <children xsi:type="org.eclipse.e4.ui.model.application:MStack">
-            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Model View" tooltip="" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.ModelView"/>
+            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Model View" tooltip="" URI="bundleclass://org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.ModelView"/>
           </children>
         </children>
         <children xsi:type="org.eclipse.e4.ui.model.application:MSashForm" policy="VerticalSash">
-          <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Preview" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.ElementView"/>
+          <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Preview" URI="bundleclass://org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.ElementView"/>
           <children xsi:type="org.eclipse.e4.ui.model.application:MStack">
-            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Thumbnails" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.SampleView"/>
-            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Exif" tooltip="" URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.SampleView"/>
+            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Thumbnails" URI="bundleclass://org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.SampleView"/>
+            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Exif" tooltip="" URI="bundleclass://org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.SampleView"/>
           </children>
           <weights>70</weights>
           <weights>30</weights>
@@ -43,7 +43,7 @@
         <weights>70</weights>
       </children>
     </children>
-    <handlers URI="platform:/plugin/org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.ExitHandler" command="//@command.0"/>
+    <handlers URI="bundleclass://org.eclipse.e4.demo.modifier/org.eclipse.e4.demo.modifier.ExitHandler" command="//@command.0"/>
   </windows>
   <command id="org.eclipse.e4.demo.modifier.exit" name="Exit"/>
 </org.eclipse.e4.ui.model.application:MApplication>

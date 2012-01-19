@@ -4,10 +4,10 @@
     <elements xsi:type="commands:Command" xmi:id="_NtAhUHZdEd-izNVw4-awdw" elementId="open.dialog.on.selection" commandName="Show Info"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_TaVQgHZdEd-izNVw4-awdw" featurename="handlers" parentElementId="app.simpleide">
-    <elements xsi:type="commands:Handler" xmi:id="_W8wOYHZdEd-izNVw4-awdw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.menu.OpenDialogHandler" command="_NtAhUHZdEd-izNVw4-awdw"/>
+    <elements xsi:type="commands:Handler" xmi:id="_W8wOYHZdEd-izNVw4-awdw" contributionURI="bundleclass://org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.menu.OpenDialogHandler" command="_NtAhUHZdEd-izNVw4-awdw"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_lAjq4HZeEd-R6aDhnXWjVw" featurename="descriptors" parentElementId="app.simpleide">
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_wtS-0HZeEd-R6aDhnXWjVw" label="Context Menu View" elementId="org.eclipse.e4.demo.simpleide.menu.ContextMenuView" category="org.eclipse.e4.secondaryDataStack" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.menu.ContextMenuView">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_wtS-0HZeEd-R6aDhnXWjVw" label="Context Menu View" elementId="org.eclipse.e4.demo.simpleide.menu.ContextMenuView" category="org.eclipse.e4.secondaryDataStack" contributionURI="bundleclass://org.eclipse.e4.demo.simpleide.navigator/org.eclipse.e4.demo.simpleide.menu.ContextMenuView">
       <tags>View</tags>
       <tags>categoryTag:Utilities</tags>
       <menus xmi:id="_JWJ4wV6WEd-kocunFhpHRA" elementId="org.eclipse.e4.demo.simpleide.menu.ContextMenuView">

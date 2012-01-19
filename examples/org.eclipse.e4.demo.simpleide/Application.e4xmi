@@ -52,14 +52,14 @@
     </trimBars>
   </children>
   <variables>org.eclipse.e4.demo.simpleide.services.IImageService</variables>
-  <handlers xmi:id="_jXCDwGAiEd-E_N65-FXwgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.ExitHandler" command="_oIK3gGAiEd-E_N65-FXwgA"/>
-  <handlers xmi:id="_pj_6cGEhEd-A9truh9jvIg" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.SaveAllHandler" command="_kpAnIGEhEd-A9truh9jvIg"/>
-  <handlers xmi:id="_w0lzMGEhEd-A9truh9jvIg" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.SaveHandler" command="_tl9UAGEhEd-A9truh9jvIg"/>
-  <handlers xmi:id="_BTglAGHYEd-_Y6o4fctqsw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.NewProjectDialogHandler" command="_CWMKAGHYEd-_Y6o4fctqsw"/>
-  <handlers xmi:id="_T8XWgGHYEd-_Y6o4fctqsw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.NewTextFileDialogHandler" command="_F3JIQGHYEd-_Y6o4fctqsw"/>
-  <handlers xmi:id="_WjZDIGHYEd-_Y6o4fctqsw" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.NewFolderDialogHandler" command="_IERuMGHYEd-_Y6o4fctqsw"/>
-  <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYx" elementId="org.eclipse.ui.showViewHandler" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.internal.workbench.swt.handlers.ShowViewHandler" command="org.eclipse.ui.views.showView"/>
-  <handlers xmi:id="_GuF_8GceEd-UeOvBc5sIBQ" contributionURI="platform:/plugin/org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.SwitchThemeHandler" command="_VAYokGcYEd-XPd4cWNb-1Q"/>
+  <handlers xmi:id="_jXCDwGAiEd-E_N65-FXwgA" contributionURI="bundleclass://org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.ExitHandler" command="_oIK3gGAiEd-E_N65-FXwgA"/>
+  <handlers xmi:id="_pj_6cGEhEd-A9truh9jvIg" contributionURI="bundleclass://org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.SaveAllHandler" command="_kpAnIGEhEd-A9truh9jvIg"/>
+  <handlers xmi:id="_w0lzMGEhEd-A9truh9jvIg" contributionURI="bundleclass://org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.SaveHandler" command="_tl9UAGEhEd-A9truh9jvIg"/>
+  <handlers xmi:id="_BTglAGHYEd-_Y6o4fctqsw" contributionURI="bundleclass://org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.NewProjectDialogHandler" command="_CWMKAGHYEd-_Y6o4fctqsw"/>
+  <handlers xmi:id="_T8XWgGHYEd-_Y6o4fctqsw" contributionURI="bundleclass://org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.NewTextFileDialogHandler" command="_F3JIQGHYEd-_Y6o4fctqsw"/>
+  <handlers xmi:id="_WjZDIGHYEd-_Y6o4fctqsw" contributionURI="bundleclass://org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.NewFolderDialogHandler" command="_IERuMGHYEd-_Y6o4fctqsw"/>
+  <handlers xmi:id="_eTBRgAFSEd-Z8rQksLwRYx" elementId="org.eclipse.ui.showViewHandler" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.internal.workbench.swt.handlers.ShowViewHandler" command="org.eclipse.ui.views.showView"/>
+  <handlers xmi:id="_GuF_8GceEd-UeOvBc5sIBQ" contributionURI="bundleclass://org.eclipse.e4.demo.simpleide/org.eclipse.e4.demo.simpleide.handlers.SwitchThemeHandler" command="_VAYokGcYEd-XPd4cWNb-1Q"/>
   <bindingTables xmi:id="_bFtE4GEhEd-A9truh9jvIg" bindingContext="_ui554GEgEd-A9truh9jvIg">
     <bindings xmi:id="_fW-s0GEhEd-A9truh9jvIg" keySequence="M1+Q" command="_oIK3gGAiEd-E_N65-FXwgA"/>
     <bindings xmi:id="_z1SkEGEhEd-A9truh9jvIg" keySequence="M1+M2+S" command="_kpAnIGEhEd-A9truh9jvIg"/>
@@ -83,10 +83,10 @@
   <commands xmi:id="_VAYokGcYEd-XPd4cWNb-1Q" elementId="simpleide.command.switchtheme" commandName="Switch Theme">
     <parameters xmi:id="_jQ1PYGcYEd-XPd4cWNb-1Q" elementId="simpleide.command.switchtheme.themeid" name="Theme Id" typeId="" optional="false"/>
   </commands>
-  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXg" elementId="org.eclipse.e4.core.commands.service" contributionURI="platform:/plugin/org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
-  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXh" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="platform:/plugin/org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
-  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXi" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="platform:/plugin/org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
-  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXj" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
-  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXk" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
-  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXl" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXh" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXi" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXj" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXk" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXl" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
 </simpleide:SimpleIDEApplication>

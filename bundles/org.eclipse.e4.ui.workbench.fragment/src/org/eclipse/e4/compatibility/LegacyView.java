@@ -14,14 +14,13 @@ import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.extensions.ModelViewReference;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.workbench.ui.menus.MenuHelper;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -42,7 +41,7 @@ import org.eclipse.ui.menus.IMenuService;
  * 
  */
 public class LegacyView {
-	public final static String LEGACY_VIEW_URI = "platform:/plugin/org.eclipse.ui.workbench/org.eclipse.e4.compatibility.LegacyView"; //$NON-NLS-1$
+	public final static String LEGACY_VIEW_URI = "bundleclass://org.eclipse.ui.workbench/org.eclipse.e4.compatibility.LegacyView"; //$NON-NLS-1$
 	private IViewPart impl;
 
 	public LegacyView(Composite parent, IEclipseContext context, MPart part) {
@@ -108,8 +107,8 @@ public class LegacyView {
 			String tbURI = "toolbar:" + part.getId(); //$NON-NLS-1$
 			menuSvc.populateContributionManager(tbMgr, tbURI);
 			MToolBar viewTB = MApplicationFactory.eINSTANCE.createToolBar();
-			MenuHelper.processToolbarManager(localContext, viewTB, tbMgr
-					.getItems());
+			MenuHelper.processToolbarManager(localContext, viewTB,
+					tbMgr.getItems());
 			part.setToolbar(viewTB);
 			tbMgr.getControl().dispose();
 
@@ -119,8 +118,8 @@ public class LegacyView {
 			menuSvc.populateContributionManager(menuMgr, menuURI);
 			MMenu viewMenu = MApplicationFactory.eINSTANCE.createMenu();
 			viewMenu.setId(menuURI);
-			MenuHelper.processMenuManager(localContext, viewMenu, menuMgr
-					.getItems());
+			MenuHelper.processMenuManager(localContext, viewMenu,
+					menuMgr.getItems());
 			part.getMenus().add(viewMenu);
 		} catch (Exception e) {
 			e.printStackTrace();

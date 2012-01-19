@@ -14,17 +14,14 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.extensions.ExtensionUtils;
 import org.eclipse.e4.extensions.ModelEditorReference;
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.internal.workbench.Trackable;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
-import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
-import org.eclipse.e4.workbench.ui.internal.Activator;
-import org.eclipse.e4.workbench.ui.internal.Policy;
-import org.eclipse.e4.workbench.ui.internal.Trackable;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -54,7 +51,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  * 
  */
 public class LegacyEditor {
-	public final static String LEGACY_VIEW_URI = "platform:/plugin/org.eclipse.ui.workbench/org.eclipse.e4.compatibility.LegacyEditor"; //$NON-NLS-1$
+	public final static String LEGACY_VIEW_URI = "bundleclass://org.eclipse.ui.workbench/org.eclipse.e4.compatibility.LegacyEditor"; //$NON-NLS-1$
 
 	private static final String IS_DIRTY = "isDirty"; //$NON-NLS-1$
 	private static final String EDITOR_DISPOSED = "editorDisposed"; //$NON-NLS-1$
@@ -123,8 +120,8 @@ public class LegacyEditor {
 					.get(WorkbenchPage.class.getName());
 			ModelEditorReference ref = new ModelEditorReference(part, page);
 			EditorSite site = new EditorSite(ref, editorWBPart, page);
-			EditorActionBars bars = getEditorActionBars(desc, page, page
-					.getWorkbenchWindow(), part.getId());
+			EditorActionBars bars = getEditorActionBars(desc, page,
+					page.getWorkbenchWindow(), part.getId());
 			site.setActionBars(bars);
 			site.setConfigurationElement(editorElement);
 			editorWBPart.init(site, (IEditorInput) localContext

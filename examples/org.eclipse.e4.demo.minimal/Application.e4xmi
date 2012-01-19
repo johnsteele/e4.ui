@@ -3,12 +3,12 @@
   <children xsi:type="basic:TrimmedWindow" xmi:id="_UOFhgIBJEd-ARoTbg-msxg" elementId="main" selectedElement="_-1RUYIBJEd-ARoTbg-msxg" label="" width="640" height="480">
     <children xsi:type="basic:PartSashContainer" xmi:id="_-1RUYIBJEd-ARoTbg-msxg" horizontal="true">
       <children xsi:type="basic:PartStack" xmi:id="__lfQYIBJEd-ARoTbg-msxg">
-        <children xsi:type="basic:Part" xmi:id="_B3vm4IBKEd-ARoTbg-msxg" contributionURI="platform:/plugin/org.eclipse.e4.demo.minimal/org.eclipse.e4.demo.minimal.Part" label="Part"/>
+        <children xsi:type="basic:Part" xmi:id="_B3vm4IBKEd-ARoTbg-msxg" contributionURI="bundleclass://org.eclipse.e4.demo.minimal/org.eclipse.e4.demo.minimal.Part" label="Part"/>
       </children>
     </children>
     <mainMenu xmi:id="_u006IIBKEd-ARoTbg-msxg">
       <children xsi:type="menu:Menu" xmi:id="_wDyAkIBKEd-ARoTbg-msxg" label="File">
-        <children xsi:type="menu:DirectMenuItem" xmi:id="_1DVq0IBKEd-ARoTbg-msxg" label="Exit" contributionURI="platform:/plugin/org.eclipse.e4.demo.minimal/org.eclipse.e4.demo.minimal.ExitHandler"/>
+        <children xsi:type="menu:DirectMenuItem" xmi:id="_1DVq0IBKEd-ARoTbg-msxg" label="Exit" contributionURI="bundleclass://org.eclipse.e4.demo.minimal/org.eclipse.e4.demo.minimal.ExitHandler"/>
       </children>
     </mainMenu>
   </children>

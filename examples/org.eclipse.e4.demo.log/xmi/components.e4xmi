@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu"  xmi:id="_UW9TZfr3Ed6gmo7caOxU9h">
   <components xmi:id="_UW9TZfr3Ed6gmo7caOxU9q" elementId="component.add.bindingContextView" parentID="org.eclipse.e4.ide.application">
-    <descriptors xmi:id="_2JqwsDEtEd-VhpFUss_l2g" elementId="org.eclipse.e4.demo.log.contextView" contributionURI="platform:/plugin/org.eclipse.e4.demo.log/org.eclipse.e4.demo.log.KeyContextView" label="Binding Context View" category="org.eclipse.e4.secondaryDataStack">
+    <descriptors xmi:id="_2JqwsDEtEd-VhpFUss_l2g" elementId="org.eclipse.e4.demo.log.contextView" contributionURI="bundleclass://org.eclipse.e4.demo.log/org.eclipse.e4.demo.log.KeyContextView" label="Binding Context View" category="org.eclipse.e4.secondaryDataStack">
       <bindingContexts>org.eclipse.e4.ui.contexts.views</bindingContexts>
     </descriptors>
-    <handlers xmi:id="_8DQrEDK-Ed-ltJ9rgXYhSw" elementId="bindingContexts.display.handler" contributionURI="platform:/plugin/org.eclipse.e4.demo.log/org.eclipse.e4.demo.log.ViewCurrentContextsHandler" command="bindingContexts.display"/>
+    <handlers xmi:id="_8DQrEDK-Ed-ltJ9rgXYhSw" elementId="bindingContexts.display.handler" contributionURI="bundleclass://org.eclipse.e4.demo.log/org.eclipse.e4.demo.log.ViewCurrentContextsHandler" command="bindingContexts.display"/>
     <commands xmi:id="bindingContexts.display" elementId="bindingContexts.display" commandName="Display Current Contexts"/>
   </components>
   <components xmi:id="_UW9TZfr3Ed6gmo7caOxU9y" elementId="component.add.bindingContextView.legacy" parentID="org.eclipse.e4.legacy.ide.application">
-    <descriptors xmi:id="_2JqwsDEtEd-VhpFUss_l2g" elementId="org.eclipse.e4.demo.log.contextView" contributionURI="platform:/plugin/org.eclipse.e4.demo.log/org.eclipse.e4.demo.log.KeyContextView" label="Binding Context View" category="org.eclipse.e4.secondaryDataStack">
+    <descriptors xmi:id="_2JqwsDEtEd-VhpFUss_l2g" elementId="org.eclipse.e4.demo.log.contextView" contributionURI="bundleclass://org.eclipse.e4.demo.log/org.eclipse.e4.demo.log.KeyContextView" label="Binding Context View" category="org.eclipse.e4.secondaryDataStack">
       <bindingContexts>org.eclipse.e4.ui.contexts.views</bindingContexts>
     </descriptors>
-    <handlers xmi:id="_8DQrEDK-Ed-ltJ9rgXYhSw" elementId="bindingContexts.display.handler" contributionURI="platform:/plugin/org.eclipse.e4.demo.log/org.eclipse.e4.demo.log.ViewCurrentContextsHandler" command="bindingContexts.display"/>
+    <handlers xmi:id="_8DQrEDK-Ed-ltJ9rgXYhSw" elementId="bindingContexts.display.handler" contributionURI="bundleclass://org.eclipse.e4.demo.log/org.eclipse.e4.demo.log.ViewCurrentContextsHandler" command="bindingContexts.display"/>
     <commands xmi:id="bindingContexts.display" elementId="bindingContexts.display" commandName="Display Current Contexts"/>
   </components>
   <components xmi:id="_UW9TZfr3Ed6gmo7caOxU9l" elementId="component.add.menu.window" parentID="org.eclipse.e4.ide.app.menu.window">
