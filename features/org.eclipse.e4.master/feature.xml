@@ -50,10 +50,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.e4.deeplink.master"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.platform.discovery.master"
          version="0.0.0"/>
          
