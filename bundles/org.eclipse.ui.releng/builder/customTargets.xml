@@ -1,0 +1,330 @@
+<project name="Build specific targets and properties" default="noDefault">
+
+	<!-- ===================================================================== -->
+	<!-- Run a given ${target} on all elements being built -->
+	<!-- Add on <ant> task for each top level element being built. -->
+	<!-- ===================================================================== -->
+	<available property="allElementsFile" file="${builder}/allElements.xml" value="${builder}/allElements.xml"/>
+	<property name="allElementsFile" location="${eclipse.pdebuild.templates}/headless-build/allElements.xml"/>
+
+	<import file="${allElementsFile}" />
+	<target name="allElements">
+		<antcall target="allElementsDelegator" />
+	</target>
+	
+	<!-- ===================================================================== -->
+	<!-- ===================================================================== -->
+	<target name="getBaseComponents" depends="checkLocalBase" unless="skipBase">
+		<!--get src="${eclipseBaseURL}" dest="${buildDirectory}/../temp-base.zip" />
+		<unzip dest="${base}" overwrite="true" src="${buildDirectory}/../temp-base.zip" /-->
+		<untar dest="${base}" src="${eclipseBaseURL}" compression="gzip" />
+	</target>
+
+	<target name="checkLocalBase">
+		<available file="${base}" property="skipBase" />
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Check out map files from correct repository -->
+	<!-- Replace values for mapsCheckoutTag as desired. -->
+	<!-- ===================================================================== -->
+	<target name="getMapFiles" depends="checkLocalMaps" unless="skipMaps">
+		<property name="mapsCheckoutTag" value="HEAD" />
+		<cvs cvsRoot="${mapsRepo}" package="${mapsRoot}" dest="${buildDirectory}/maps" tag="${mapsCheckoutTag}" />
+	</target>
+
+	<target name="checkLocalMaps">
+		<available property="skipMaps" file="${buildDirectory}/maps" />
+	</target>
+
+	<target name="tagMapFiles" if="tagMaps">
+		<cvs dest="${buildDirectory}/maps/${mapsRoot}" command="tag ${mapsTagTag}" />
+	</target>
+
+	<!-- ===================================================================== -->
+
+	<target name="clean" unless="noclean">
+		<antcall target="allElements">
+			<param name="target" value="cleanElement" />
+		</antcall>
+	</target>
+
+	<target name="gatherLogs">
+		<mkdir dir="${buildDirectory}/${buildLabel}/compilelogs" />
+		<antcall target="allElements">
+			<param name="target" value="gatherLogs" />
+		</antcall>
+		<unzip dest="${buildDirectory}/${buildLabel}/compilelogs" overwrite="true">
+			<fileset dir="${buildDirectory}/features">
+				<include name="**/*.log.zip" />
+			</fileset>
+		</unzip>
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do before setup -->
+	<!-- ===================================================================== -->
+	<target name="preSetup">
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do after setup but before starting the build proper -->
+	<!-- ===================================================================== -->
+	<target name="postSetup">
+		<antcall target="getBaseComponents" />
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do before fetching the build elements -->
+	<!-- ===================================================================== -->
+	<target name="preFetch">
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do after fetching the build elements -->
+	<!-- ===================================================================== -->
+	<target name="postFetch">
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do before the repositories are being processed -->
+	<!-- ===================================================================== -->
+	<target name="preProcessRepos">
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do after the repositories have been processed -->
+	<!-- ===================================================================== -->
+	<target name="postProcessRepos">
+	</target>
+	
+	<!-- ===================================================================== -->
+	<!-- Steps to do before generating the build scripts. -->
+	<!-- ===================================================================== -->
+	<target name="preGenerate">
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do after generating the build scripts. -->
+	<!-- ===================================================================== -->
+	<target name="postGenerate">
+		<antcall target="clean" />
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do before running the build.xmls for the elements being built. -->
+	<!-- ===================================================================== -->
+	<target name="preProcess">
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do after running the build.xmls for the elements being built. -->
+	<!-- ===================================================================== -->
+	<target name="postProcess">
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do before running assemble. -->
+	<!-- ===================================================================== -->
+	<target name="preAssemble">
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do after  running assemble. -->
+	<!-- ===================================================================== -->
+	<target name="postAssemble">
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do before running package. -->
+	<!-- ===================================================================== -->
+	<target name="prePackage">
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do after  running package. -->
+	<!-- ===================================================================== -->
+	<target name="postPackage">
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do after the build is done. -->
+	<!-- ===================================================================== -->
+	<target name="postBuild">
+		<antcall target="gatherLogs" />
+		<xslt style="${builder}/patch-ver.xsl" in="${p2.repo}/content.xml" out="${p2.repo}/out_content.xml">
+			<outputproperty name="method" value="xml"/>
+		</xslt>
+		<move file="${p2.repo}/out_content.xml" tofile="${p2.repo}/content.xml" />
+		<antcall target="test"/>
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do to test the build results -->
+	<!-- ===================================================================== -->
+	<property name="testDir" value="${buildDirectory}/tests"/>
+	
+	<property name="install" value="${testDir}/test-eclipse" />
+	<!--property name="os" value="${baseos}"/>
+	<property name="ws" value="${basews}"/>
+	<property name="arch" value="${basearch}"/-->
+
+	<!--suffix added to test output files to identify platform on which tests ran.-->
+	<property name="platform" value="${baseos}.${basews}.${basearch}" />
+
+	<!-- The root of the eclipse installation -->
+	<property name="eclipse-home" value="${install}/eclipse" />
+
+	<property name="repoLocation" value="${p2.repo}"/>
+	<!-- The directory that will contain all files containing information on the tests that ran.-->
+	<property name="results" value="${testDir}/results" />
+
+	<!--Directory for JUnit report output, console log output and .log content for each test suite.  
+			Overrides default in org.eclipse.test/library.xml-->
+	<property name="junit-report-output" value="${results}/${platform}" />
+
+	<!--Directory name of org.eclipse.test plug-in installed in ${eclipse-home}-->
+	<property name="org.eclipse.test" value="org.eclipse.test_3.2.100" />
+
+	<target name="test">
+		<mkdir dir="${testDir}"/>
+		<mkdir dir="${results}/xml" />
+		<mkdir dir="${results}/html" />
+		<mkdir dir="${junit-report-output}" />
+
+		<antcall target="all-tests" />
+	  	<xslt style="${builder}/test-output.xsl" extension=".txt" includes="*.xml" destdir="${results}/text" basedir="${results}/xml">
+	  		<outputproperty name="method" value="text"/>
+	  	</xslt>
+
+		<copydir dest="${buildDirectory}/${buildLabel}/results" src="${results}"></copydir>
+	</target>
+	
+	<target name="setup">
+		<delete dir="${install}" />
+		<mkdir dir="${install}" />
+		<untar dest="${install}" src="${eclipseBaseURL}" compression="gzip" />
+		<antcall target="installTestPlugins" />
+	</target>
+	
+	<target name="installTestPlugins">
+	    <fileset id="base.launcher.file" dir="${eclipse-home}">
+	      <filename name="plugins/org.eclipse.equinox.launcher_*.jar"/>
+	    </fileset>
+	    <property name="base.launcher" refid="base.launcher.file"/>
+	    <echo>${base.launcher}</echo>
+		<echo>-installIU ${testPlugin} +</echo>
+		<exec executable="${JAVA50_HOME}/bin/java" failonerror="false" dir="${eclipse-home}" timeout="900000" output="${results}/director.log" resultproperty="directorcode">
+			<arg line="-jar ${base.launcher}" />
+			<arg line="-vm ${JAVA50_HOME}/bin/java" />
+			<arg line="-application org.eclipse.equinox.p2.director" />
+			<arg line="-noSplash" />
+			<arg line="-consoleLog" />
+			<arg line="-flavor tooling" />
+			<arg line="-installIUs ${testPlugin},org.eclipse.test,org.eclipse.ant.optional.junit,org.eclipse.ui.test.platform.patch.feature.group,org.eclipse.ui.test.rcp.patch.feature.group" />
+			<arg line="-p2.os ${baseos}" />
+			<arg line="-p2.ws ${basews}" />
+			<arg line="-p2.arch ${basearch}" />
+			<arg line="-roaming" />
+			<arg line="-profile SDKProfile" />
+			<arg line="-repository file:${repoLocation}" />
+			<arg line="-destination ${eclipse-home}" />
+			<arg line="-bundlepool ${eclipse-home}" />
+		</exec>
+	</target>
+
+	<target name="junit" unless="skip.test">
+		<antcall target="setup">
+		</antcall>
+		<!--library.xml is now in dropins folder -->
+		<property name="library-file" value="${eclipse-home}/plugins/${org.eclipse.test}/library.xml" />
+		<echo>trying to find ${testPlugin}_v*</echo>
+		<fileset id="test.plugin.file" dir="${eclipse-home}/plugins">
+			<filename name="${testPlugin}_*/test.xml"/>
+		</fileset>
+		<property name="testPluginX" refid="test.plugin.file"/>
+		<echo>trying to launch ${testPluginX}</echo>
+		<property name="os" value="${baseos}"/>
+		<property name="ws" value="${basews}"/>
+		<property name="arch" value="${basearch}"/>
+		<ant antfile="${eclipse-home}/plugins/${testPluginX}" dir="${eclipse-home}" />
+		<antcall target="genResults" />
+	</target>
+
+	<macrodef name="runTests">
+		<attribute name="testPlugin" />
+
+		<sequential>
+
+			<!--alwasy use eclipse executable to launch tests with the exception of performance tests-->
+			<!--condition property="useEclipseExe" value="true">
+				<not>
+					<equals arg1="${test.target}" arg2="performance"/>
+				</not>
+			</condition-->
+
+			<condition property="performance.target.present" value="true">
+				<isset property="@{testPlugin}.has.performance.target" />
+			</condition>
+
+			<!--override the value of this property with performance if the tests run on performance machine-->
+			<property name="test.target" value="junit" />
+			<property name="report" value="@{testPlugin}" />
+
+
+			<!--install db plug-ins if running performance tests-->
+			<condition property="derby" value="eclipse/dropins/eclipse/plugins/org.apache.derby*/**">
+				<equals arg1="${test.target}" arg2="performance" />
+			</condition>
+			<!--	<property name="derby" value="" />  -->
+			<antcall target="${test.target}">
+				<param name="testPlugin" value="@{testPlugin}" />
+				<param name="output-file" value="@{testPlugin}.xml" />
+			</antcall>
+		</sequential>
+	</macrodef>
+	<target name="genResults">
+		<copy file="${eclipse-home}/${report}.xml" tofile="${results}/xml/${report}_${platform}.xml" failonerror="false" />
+		<style style="${eclipse-home}/plugins/${org.eclipse.test}/JUNIT.XSL" basedir="${results}/xml" destdir="${results}/html" />
+	</target>
+
+	<target name="ui">
+		<runTests testPlugin="org.eclipse.ui.tests" />
+	</target>
+	
+	<target name="jfacedatabinding">
+		<runTests testPlugin="org.eclipse.jface.tests.databinding" />
+	</target>
+	<target name="uinavigator">
+		<runTests testPlugin="org.eclipse.ui.tests.navigator" />
+	</target>
+
+	<target name="uircp">
+		<runTests testPlugin="org.eclipse.ui.tests.rcp" />
+	</target>
+	<target name="uiviews">
+		<runTests testPlugin="org.eclipse.ui.tests.views.properties.tabbed" />
+	</target>
+	<target name="all-tests">
+		<antcall target="ui" />
+		<antcall target="jfacedatabinding" />
+		<antcall target="uinavigator" />
+		<antcall target="uircp" />
+		<antcall target="uiviews" />
+	</target>
+
+
+	<!-- ===================================================================== -->
+	<!-- Steps to do to publish the build results -->
+	<!-- ===================================================================== -->
+	<target name="publish">
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- Default target                                                        -->
+	<!-- ===================================================================== -->
+	<target name="noDefault">
+		<echo message="You must specify a target when invoking this file" />
+	</target>
+
+</project>

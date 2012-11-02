@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Js Plug-in
+Bundle-SymbolicName: org.eclipse.ui.examples.di.js;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: org.mozilla.javascript,
+ org.eclipse.ui,
+ org.eclipse.equinox.registry,
+ org.eclipse.equinox.common,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.tweaklets.dependencyinjection;bundle-version="1.0.0"
+Export-Package: org.eclipse.ui.internal.examples.di.js

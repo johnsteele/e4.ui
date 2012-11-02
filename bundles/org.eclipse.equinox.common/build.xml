@@ -1,0 +1,86 @@
+<!--
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Tom Schindl<tom.schindl@bestsolution.at> - initial API and implementation
+ ******************************************************************************/
+-->
+<project>
+	<target name="cvs">
+		<mkdir dir="build/cvs-src" />
+		<cvs cvsroot=":pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse" package="org.eclipse.equinox.common" dest="build/cvs-src" />
+	</target>
+
+	<target name="clean">
+		<delete dir="build" />
+		<delete dir="dist" />
+	</target>
+
+	<target name="build">
+		<mkdir dir="build/src" />
+		<mkdir dir="build/bin" />
+
+		<!-- Copy the whole source-tree -->
+		<copy todir="build/src" overwrite="true">
+			<fileset dir="build/cvs-src/org.eclipse.equinox.common/src">
+				<include name="org/eclipse/core/internal/runtime/IRuntimeConstants.java" />
+				<include name="org/eclipse/core/internal/runtime/LocalizationUtils.java" />
+
+				<include name="org/eclipse/core/runtime/Assert.java" />
+				<include name="org/eclipse/core/runtime/AssertionFailedException.java" />
+				<include name="org/eclipse/core/runtime/CoreException.java" />
+				<include name="org/eclipse/core/runtime/ISafeRunnable.java" />
+				<include name="org/eclipse/core/runtime/IStatus.java" />
+				<include name="org/eclipse/core/runtime/ListenerList.java" />
+				<include name="org/eclipse/core/runtime/MultiStatus.java" />
+				<include name="org/eclipse/core/runtime/SafeRunner.java" />
+				<include name="org/eclipse/core/runtime/Status.java" />
+				<include name="org/eclipse/core/runtime/OperationCanceledException.java" />
+				<include name="org/eclipse/core/runtime/CoreException.java" />
+			</fileset>
+		</copy>
+
+		<copy todir="build/src">
+			<fileset dir="src">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<patch patchfile="patches/LocalizationUtils.patch" originalfile="build/src/org/eclipse/core/internal/runtime/LocalizationUtils.java" />
+		<patch patchfile="patches/CoreException.patch" originalfile="build/src/org/eclipse/core/runtime/CoreException.java" />
+		<patch patchfile="patches/SafeRunner.patch" originalfile="build/src/org/eclipse/core/runtime/SafeRunner.java" />
+
+		<javac srcdir="build/src" destdir="build/bin" source="1.4" target="1.4" classpath="/Users/tomson/gwt-builds/gwt-1.5/gwt-mac-0.0.0/gwt-user.jar">
+		</javac>
+
+		<!-- Create the emulation package needed -->
+		<mkdir dir="build/bin/com/google/gwt/emul" />
+		<copy todir="build/bin/com/google/gwt/emul">
+			<fileset dir="src">
+				<include name="java/**/*" />
+			</fileset>
+			<fileset dir="bin">
+				<include name="java/**/*" />
+			</fileset>
+		</copy>
+		<delete dir="build/bin/java"></delete>
+	</target>
+
+	<target name="dist" depends="clean, cvs, build">
+		<mkdir dir="dist" />
+		<jar destfile="dist/org.eclipse.equinox.common.jar">
+			<fileset dir="build/src">
+				<include name="org/**/*" />
+			</fileset>
+			<fileset dir="build/bin">
+				<include name="**/*" />
+			</fileset>
+		</jar>
+	</target>
+
+</project>

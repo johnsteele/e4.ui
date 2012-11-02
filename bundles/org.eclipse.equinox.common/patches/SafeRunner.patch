@@ -1,0 +1,84 @@
+### Eclipse Workspace Patch 1.0
+#P org.eclipse.equinox.common
+Index: src/org/eclipse/core/runtime/SafeRunner.java
+===================================================================
+RCS file: /cvsroot/eclipse/org.eclipse.equinox.common/src/org/eclipse/core/runtime/SafeRunner.java,v
+retrieving revision 1.6
+diff -u -r1.6 SafeRunner.java
+--- src/org/eclipse/core/runtime/SafeRunner.java	10 May 2006 18:23:18 -0000	1.6
++++ src/org/eclipse/core/runtime/SafeRunner.java	20 Oct 2007 00:44:28 -0000
+@@ -4,15 +4,12 @@
+  * are made available under the terms of the Eclipse Public License v1.0
+  * which accompanies this distribution, and is available at
+  * http://www.eclipse.org/legal/epl-v10.html
+- * 
++ *
+  * Contributors:
+  *     IBM Corporation - initial API and implementation
+  *******************************************************************************/
+ package org.eclipse.core.runtime;
+ 
+-import org.eclipse.core.internal.runtime.*;
+-import org.eclipse.osgi.util.NLS;
+-
+ /**
+  * Runs the given ISafeRunnable in a protected mode: exceptions
+  * thrown in the runnable are logged and passed to the runnable's
+@@ -37,33 +34,34 @@
+ 			code.run();
+ 		} catch (Exception e) {
+ 			handleException(code, e);
+-		} catch (LinkageError e) {
+-			handleException(code, e);
+-		}
++		} /*FIXME GWT catch (LinkageError e) {
++					handleException(code, e);
++				}*/
+ 	}
+ 
+ 	private static void handleException(ISafeRunnable code, Throwable e) {
+ 		if (!(e instanceof OperationCanceledException)) {
+-			// try to obtain the correct plug-in id for the bundle providing the safe runnable 
+-			Activator activator = Activator.getDefault();
+-			String pluginId = null;
+-			if (activator != null)
+-				pluginId = activator.getBundleId(code);
+-			if (pluginId == null)
+-				pluginId = IRuntimeConstants.PI_COMMON;
+-			String message = NLS.bind(CommonMessages.meta_pluginProblems, pluginId);
+-			IStatus status;
+-			if (e instanceof CoreException) {
+-				status = new MultiStatus(pluginId, IRuntimeConstants.PLUGIN_ERROR, message, e);
+-				((MultiStatus) status).merge(((CoreException) e).getStatus());
+-			} else {
+-				status = new Status(IStatus.ERROR, pluginId, IRuntimeConstants.PLUGIN_ERROR, message, e);
+-			}
+-			// Make sure user sees the exception: if the log is empty, log the exceptions on stderr 
+-			if (!RuntimeLog.isEmpty())
+-				RuntimeLog.log(status);
+-			else
+-				e.printStackTrace();
++			//FIXME GWT
++			//			// try to obtain the correct plug-in id for the bundle providing the safe runnable
++			//			Activator activator = Activator.getDefault();
++			//			String pluginId = null;
++			//			if (activator != null)
++			//				pluginId = activator.getBundleId(code);
++			//			if (pluginId == null)
++			//				pluginId = IRuntimeConstants.PI_COMMON;
++			//			String message = NLS.bind(CommonMessages.meta_pluginProblems, pluginId);
++			//			IStatus status;
++			//			if (e instanceof CoreException) {
++			//				status = new MultiStatus(pluginId, IRuntimeConstants.PLUGIN_ERROR, message, e);
++			//				((MultiStatus) status).merge(((CoreException) e).getStatus());
++			//			} else {
++			//				status = new Status(IStatus.ERROR, pluginId, IRuntimeConstants.PLUGIN_ERROR, message, e);
++			//			}
++			//			// Make sure user sees the exception: if the log is empty, log the exceptions on stderr
++			//			if (!RuntimeLog.isEmpty())
++			//				RuntimeLog.log(status);
++			//			else
++			e.printStackTrace();
+ 		}
+ 		code.handleException(e);
+ 	}

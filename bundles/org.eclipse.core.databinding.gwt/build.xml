@@ -1,0 +1,110 @@
+<!--
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Tom Schindl<tom.schindl@bestsolution.at> - initial API and implementation
+ ******************************************************************************/
+-->
+<project>
+	<target name="cvs">
+		<mkdir dir="build/cvs-src" />
+		<cvs cvsroot=":pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse" package="org.eclipse.core.databinding" dest="build/cvs-src" />
+	</target>
+
+	<target name="clean">
+		<delete dir="build" />
+		<delete dir="dist" />
+	</target>
+
+	<target name="build">
+		<mkdir dir="build/src" />
+		<mkdir dir="build/bin" />
+
+		<!-- Copy the whole source-tree -->
+		<copy todir="build/src" overwrite="true">
+			<fileset dir="build/cvs-src/org.eclipse.core.databinding/src">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<!-- Remove the items not ported -->
+
+		<delete file="build/src/org/eclipse/core/databinding/conversion/NumberToStringConverter.java" />
+		<delete file="build/src/org/eclipse/core/databinding/conversion/StringToNumberConverter.java" />
+		<delete file="build/src/org/eclipse/core/internal/databinding/Activator.java" />
+		<delete dir="build/src/org/eclipse/core/internal/databinding/conversion" />
+		<delete dir="build/src/org/eclipse/core/internal/databinding/validation" />
+		<delete dir="build/src/org/eclipse/core/internal/databinding/observable/tree" />
+		<delete file="build/src/org/eclipse/core/internal/databinding/ClassLookupSupport.java" />
+
+		<patch patchfile="patches/UpdateValueStrategy.patch" originalfile="build/src/org/eclipse/core/databinding/UpdateValueStrategy.java" />
+		<patch patchfile="patches/UpdateSetStrategy.patch" originalfile="build/src/org/eclipse/core/databinding/UpdateSetStrategy.java" />
+		<patch patchfile="patches/UpdateListStrategy.patch" originalfile="build/src/org/eclipse/core/databinding/UpdateListStrategy.java" />
+		<patch patchfile="patches/UpdateStrategy.patch" originalfile="build/src/org/eclipse/core/databinding/UpdateStrategy.java" />
+		<patch patchfile="patches/BindingException.patch" originalfile="build/src/org/eclipse/core/databinding/BindingException.java" />
+
+		<patch patchfile="patches/Realm.patch" originalfile="build/src/org/eclipse/core/databinding/observable/Realm.java" />
+
+		<patch patchfile="patches/ValueChangeEvent.patch" originalfile="build/src/org/eclipse/core/databinding/observable/value/ValueChangeEvent.java" />
+		<patch patchfile="patches/ValueChangingEvent.patch" originalfile="build/src/org/eclipse/core/databinding/observable/value/ValueChangingEvent.java" />
+
+		<patch patchfile="patches/BindingMessages.patch" originalfile="build/src/org/eclipse/core/internal/databinding/BindingMessages.java" />
+		<patch patchfile="patches/StalenessObservableValue.patch" originalfile="build/src/org/eclipse/core/internal/databinding/observable/StalenessObservableValue.java" />
+
+		<!-- Replace the items through special implementations for GWT -->
+
+		<!--		<copy todir="build/src" overwrite="true">
+			<fileset dir="gwt-replacements">
+				<include name="**/*" />
+			</fileset>
+		</copy>-->
+
+		<!-- Replace the items through special implementations for GWT -->
+		<!--		<copy todir="build/src" overwrite="true">
+			<fileset dir="gwt-replacements-tmp">
+				<include name="**/*" />
+			</fileset>
+		</copy>-->
+
+		<copy todir="build/src">
+			<fileset dir="src">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<javac srcdir="build/src" destdir="build/bin" source="1.4" target="1.4" classpath="../org.eclipse.equinox.common.gwt/dist/org.eclipse.equinox.common.jar:../org.ufacekit.libs/gwt-common-deploy/gwt-user.jar">
+		</javac>
+
+	</target>
+
+	<target name="dist" depends="clean, cvs, build">
+		<mkdir dir="dist" />
+		<jar destfile="dist/org.eclipse.core.databinding.jar">
+			<fileset dir="build/src">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="build/bin">
+				<include name="**/*" />
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="package">
+		<mkdir dir="dist" />
+		<javac srcdir="build/src" destdir="build/bin" source="1.4" target="1.4" classpath="../org.eclipse.equinox.common.gwt/dist/org.eclipse.equinox.common.jar:/Users/tomson/gwt-builds/gwt-1.5/gwt-mac-0.0.0/gwt-user.jar">
+		</javac>
+		<jar destfile="dist/org.eclipse.core.databinding.jar">
+			<fileset dir="build/src">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="build/bin">
+				<include name="**/*" />
+			</fileset>
+		</jar>
+	</target>
+</project>

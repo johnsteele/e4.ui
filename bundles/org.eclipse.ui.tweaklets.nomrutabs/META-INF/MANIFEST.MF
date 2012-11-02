@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.ui.tweaklets.nomrutabs;singleton:=true
+Bundle-Version: 0.9.0.qualifier
+Bundle-RequiredExecutionEnvironment: CDC-1.1/Foundation-1.1,
+ J2SE-1.4
+Require-Bundle: org.eclipse.ui;bundle-version="[3.4.0,4.0.0)"
+Bundle-Vendor: %providerName
+Export-Package: org.eclipse.ui.tweaklets.nomrutabs

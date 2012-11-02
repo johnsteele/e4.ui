@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <actionSet
+               id="org.eclipse.ui.WorkingSetActionSet">
+         </actionSet>
+         <actionSet
+               id="org.eclipse.ui.WorkingSetModificationActionSet">
+         </actionSet>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.workingSets">
+      <workingSet
+            icon="$nl$/icons/full/obj16/workset.gif"
+            id="org.eclipse.ui.tweaklets.workingsets.newResourceWorkingSet"
+            name="Resources (new)"
+            pageClass="org.eclipse.ui.tweaklts.workingsets.internal.NewResourceWizardPage"
+            updaterClass="org.eclipse.ui.tweaklts.workingsets.internal.NewResourceWorkingSetUpdater">
+      </workingSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.eclipse.ui.tweaklts.workingsets.internal.TestView"
+            id="org.eclipse.ui.tweaklets.workingsets.view1"
+            name="Test View">
+      </view>
+   </extension>
+
+</plugin>

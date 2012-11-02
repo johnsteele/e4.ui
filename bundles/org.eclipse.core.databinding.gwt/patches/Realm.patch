@@ -1,0 +1,212 @@
+### Eclipse Workspace Patch 1.0
+#P org.eclipse.core.databinding
+Index: src/org/eclipse/core/databinding/observable/Realm.java
+===================================================================
+RCS file: /cvsroot/eclipse/org.eclipse.core.databinding/src/org/eclipse/core/databinding/observable/Realm.java,v
+retrieving revision 1.9
+diff -u -r1.9 Realm.java
+--- src/org/eclipse/core/databinding/observable/Realm.java	2 Oct 2007 19:33:50 -0000	1.9
++++ src/org/eclipse/core/databinding/observable/Realm.java	20 Oct 2007 02:25:06 -0000
+@@ -14,7 +14,7 @@
+ 
+ import org.eclipse.core.databinding.Binding;
+ import org.eclipse.core.databinding.util.Policy;
+-import org.eclipse.core.internal.databinding.Queue;
++//import org.eclipse.core.internal.databinding.Queue;
+ import org.eclipse.core.runtime.ISafeRunnable;
+ import org.eclipse.core.runtime.IStatus;
+ import org.eclipse.core.runtime.SafeRunner;
+@@ -69,9 +69,9 @@
+  * lock, it may be easier to implement syncExec and keep the default
+  * implementation of asyncExec.
+  * </p>
+- * 
++ *
+  * @since 1.0
+- * 
++ *
+  * @see IObservable
+  */
+ public abstract class Realm {
+@@ -81,19 +81,19 @@
+ 	/**
+ 	 * Returns the default realm for the calling thread, or <code>null</code>
+ 	 * if no default realm has been set.
+-	 * 
++	 *
+ 	 * @return the default realm, or <code>null</code>
+ 	 */
+ 	public static Realm getDefault() {
+ 		return (Realm) defaultRealm.get();
+ 	}
+-	
++
+ 	/**
+ 	 * Sets the default realm for the calling thread, returning the current
+ 	 * default thread. This method is inherently unsafe, it is recommended to
+ 	 * use {@link #runWithDefault(Realm, Runnable)} instead. This method is
+ 	 * exposed to subclasses to facilitate testing.
+-	 * 
++	 *
+ 	 * @param realm
+ 	 *            the new default realm, or <code>null</code>
+ 	 * @return the previous default realm, or <code>null</code>
+@@ -110,17 +110,17 @@
+ 	 *         the caller in this realm).
+ 	 */
+ 	abstract public boolean isCurrent();
++//
++//	private Thread workerThread;
++//
++//	Queue workQueue = new Queue();
+ 
+-	private Thread workerThread;
+-
+-	Queue workQueue = new Queue();
+-	
+ 	/**
+ 	 * Runs the given runnable. If an exception occurs within the runnable, it
+ 	 * is logged and not re-thrown. If the runnable implements
+ 	 * {@link ISafeRunnable}, the exception is passed to its
+ 	 * <code>handleException<code> method.
+-	 * 
++	 *
+ 	 * @param runnable
+ 	 */
+ 	protected static void safeRun(final Runnable runnable) {
+@@ -157,7 +157,7 @@
+ 	 * exception handler method will be called if any exceptions occur while
+ 	 * running it. Otherwise, the exception will be logged.
+ 	 * </p>
+-	 * 
++	 *
+ 	 * @param runnable
+ 	 */
+ 	public void exec(Runnable runnable) {
+@@ -181,43 +181,44 @@
+ 	 * <p>
+ 	 * Subclasses should use {@link #safeRun(Runnable)} to run the runnable.
+ 	 * </p>
+-	 * 
++	 *
+ 	 * @param runnable
+ 	 */
+ 	public void asyncExec(Runnable runnable) {
+-		synchronized (workQueue) {
+-			ensureWorkerThreadIsRunning();
+-			workQueue.enqueue(runnable);
+-			workQueue.notifyAll();
+-		}
++		safeRun(runnable);
++//		synchronized (workQueue) {
++//			ensureWorkerThreadIsRunning();
++//			workQueue.enqueue(runnable);
++//			workQueue.notifyAll();
++//		}
+ 	}
+ 
+-	/**
+-	 * 
+-	 */
+-	private void ensureWorkerThreadIsRunning() {
+-		if (workerThread == null) {
+-			workerThread = new Thread() {
+-				public void run() {
+-					try {
+-						while (true) {
+-							Runnable work = null;
+-							synchronized (workQueue) {
+-								while (workQueue.isEmpty()) {
+-									workQueue.wait();
+-								}
+-								work = (Runnable) workQueue.dequeue();
+-							}
+-							syncExec(work);
+-						}
+-					} catch (InterruptedException e) {
+-						// exit
+-					}
+-				}
+-			};
+-			workerThread.start();
+-		}
+-	}
++//	/**
++//	 *
++//	 */
++//	private void ensureWorkerThreadIsRunning() {
++//		if (workerThread == null) {
++//			workerThread = new Thread() {
++//				public void run() {
++//					try {
++//						while (true) {
++//							Runnable work = null;
++//							synchronized (workQueue) {
++//								while (workQueue.isEmpty()) {
++//									workQueue.wait();
++//								}
++//								work = (Runnable) workQueue.dequeue();
++//							}
++//							syncExec(work);
++//						}
++//					} catch (InterruptedException e) {
++//						// exit
++//					}
++//				}
++//			};
++//			workerThread.start();
++//		}
++//	}
+ 
+ 	/**
+ 	 * Causes the <code>run()</code> method of the runnable to be invoked from
+@@ -235,21 +236,21 @@
+ 	 * Note: This class is not meant to be called by clients and therefore has
+ 	 * only protected access.
+ 	 * </p>
+-	 * 
++	 *
+ 	 * @param runnable
+ 	 */
+ 	protected void syncExec(Runnable runnable) {
+ 		SyncRunnable syncRunnable = new SyncRunnable(runnable);
+ 		asyncExec(syncRunnable);
+-		synchronized (syncRunnable) {
+-			while (!syncRunnable.hasRun) {
+-				try {
+-					syncRunnable.wait();
+-				} catch (InterruptedException e) {
+-					Thread.currentThread().interrupt();
+-				}
+-			}
+-		}
++//		synchronized (syncRunnable) {
++//			while (!syncRunnable.hasRun) {
++//				try {
++//					syncRunnable.wait();
++//				} catch (InterruptedException e) {
++//					Thread.currentThread().interrupt();
++//				}
++//			}
++//		}
+ 	}
+ 
+ 	static class SyncRunnable implements Runnable {
+@@ -267,7 +268,7 @@
+ 			} finally {
+ 				synchronized (this) {
+ 					hasRun = true;
+-					this.notifyAll();
++//					this.notifyAll();
+ 				}
+ 			}
+ 		}
+@@ -277,7 +278,7 @@
+ 	 * Sets the provided <code>realm</code> as the default for the duration of
+ 	 * {@link Runnable#run()} and resets the previous realm after completion.
+ 	 * Note that this will not set the given realm as the current realm.
+-	 * 
++	 *
+ 	 * @param realm
+ 	 * @param runnable
+ 	 */

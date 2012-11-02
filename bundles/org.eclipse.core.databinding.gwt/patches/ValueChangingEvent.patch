@@ -1,0 +1,45 @@
+### Eclipse Workspace Patch 1.0
+#P org.eclipse.core.databinding
+Index: src/org/eclipse/core/databinding/observable/value/ValueChangingEvent.java
+===================================================================
+RCS file: /cvsroot/eclipse/org.eclipse.core.databinding/src/org/eclipse/core/databinding/observable/value/ValueChangingEvent.java,v
+retrieving revision 1.4
+diff -u -r1.4 ValueChangingEvent.java
+--- src/org/eclipse/core/databinding/observable/value/ValueChangingEvent.java	16 Mar 2007 18:00:56 -0000	1.4
++++ src/org/eclipse/core/databinding/observable/value/ValueChangingEvent.java	20 Oct 2007 02:01:57 -0000
+@@ -18,14 +18,14 @@
+  * Value changing event describing a pending change of an
+  * {@link IObservableValue} object's current value. Listeners can veto the
+  * pending change by setting {@link #veto} to <code>true</code>.
+- * 
++ *
+  * @since 1.0
+- * 
++ *
+  */
+ public class ValueChangingEvent extends ObservableEvent {
+ 
+ 	/**
+-	 * 
++	 *
+ 	 */
+ 	private static final long serialVersionUID = 2305345286999701156L;
+ 
+@@ -45,7 +45,7 @@
+ 
+ 	/**
+ 	 * Creates a new value changing event.
+-	 * 
++	 *
+ 	 * @param source
+ 	 *            the source observable value
+ 	 * @param diff
+@@ -60,7 +60,7 @@
+ 	 * @return the observable value from which this event originated
+ 	 */
+ 	public IObservableValue getObservableValue() {
+-		return (IObservableValue) source;
++		return (IObservableValue) getSource();
+ 	}
+ 
+ 	protected void dispatch(IObservablesListener listener) {

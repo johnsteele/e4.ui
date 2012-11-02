@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+<extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.sound.category"
+            defaultHandler="org.eclipse.sound.ui.PlaySoundHandler"
+            description="%command.play.description"
+            id="org.eclipse.sound.playSound"
+            name="%command.play.name">
+         <commandParameter
+               id="org.eclipse.sound.id"
+               name="%command.play.parameter.name"
+               optional="false"
+               values="org.eclipse.sound.ui.internal.SoundExtensionValues">
+         </commandParameter>
+      </command>
+      <category
+            description="%category.sound.description"
+            id="org.eclipse.sound.category"
+            name="%category.sound.name">
+      </category>
+   </extension>
+<extension
+      point="org.eclipse.ui.startup">
+   <startup>
+   </startup>
+</extension>
+<extension
+      point="org.eclipse.sound.sounds">
+   <sound
+         file="sounds/noerrors.wav"
+         id="org.eclipse.sound.ui.noErrors"
+         name="%sound.name.noMoreErrors">
+   </sound>
+   <sound
+         file="sounds/newerror.wav"
+         id="org.eclipse.sound.ui.newErrors"
+         name="%sound.name.newErrors">
+   </sound>
+   <sound
+         file="sounds/failure.wav"
+         id="org.eclipse.sound.ui.jobFailure"
+         name="%sound.name.jobFailed">
+   </sound>
+   <sound
+         file="sounds/success.wav"
+         id="org.eclipse.sound.ui.jobSuccess"
+         name="%sound.name.jobSuccess">
+   </sound>
+</extension>
+</plugin>
