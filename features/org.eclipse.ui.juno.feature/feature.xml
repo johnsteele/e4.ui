@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.rcp.patch.feature"
+      id="org.eclipse.ui.juno.feature"
       label="%featureName"
       version="4.2.1.qualifier"
       provider-name="%providerName"
       image="eclipse_update_120.jpg"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.0.qualifier">
-
 
    <description>
       %description
@@ -22,15 +21,12 @@
    </license>
 
 
-   <requires>
-      <import feature="org.eclipse.rcp" version="4.2.1.v20120814-120134-7IAPA8BrHQicS-rjP0GbqK780kMy" patch="true"/>
-   </requires>
+   <includes
+         id="org.eclipse.e4.rcp.patch.feature"
+         version="0.0.0"/>
 
-   <plugin
-         id="org.eclipse.ui.workbench"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <includes
+         id="org.eclipse.rcp.patch.feature"
+         version="0.0.0"/>
 
 </feature>
