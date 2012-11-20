@@ -256,10 +256,10 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.swt.gtk.hpux.ia64"
+         id="org.eclipse.swt.gtk.hpux.ia64_32"
          os="hpux"
          ws="gtk"
-         arch="ia64"
+         arch="ia64_32"
          download-size="0"
          install-size="0"
          version="0.0.0"
