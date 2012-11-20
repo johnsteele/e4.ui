@@ -3,6 +3,9 @@
    <feature url="features/org.eclipse.ui.juno.feature_4.2.1.qualifier.jar" id="org.eclipse.ui.juno.feature" version="4.2.1.qualifier">
       <category name="org.eclipse.e4.ui.juno.category"/>
    </feature>
+   <feature url="features/org.eclipse.ui.juno.feature.source_4.2.1.qualifier.jar" id="org.eclipse.ui.juno.feature.source" version="4.2.1.qualifier">
+      <category name="org.eclipse.e4.ui.juno.category"/>
+   </feature>
    <category-def name="org.eclipse.e4.ui.juno.category" label="Juno SR1 Patches"/>
 </site>
 
