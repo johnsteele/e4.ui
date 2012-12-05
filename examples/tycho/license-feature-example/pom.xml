@@ -154,10 +154,10 @@
           </execution>
         </executions>
       </plugin>
-    </plugins>
+</plugins>
+<pluginManagement>
+ <plugins>
 
-    <pluginManagement>
-      <plugins>
         <plugin>
           <groupId>org.eclipse.tycho</groupId>
           <artifactId>target-platform-configuration</artifactId>
