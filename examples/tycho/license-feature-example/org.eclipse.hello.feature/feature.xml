@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.hello.feature"
+      label="%featureName"
+      provider-name="%providerName"
+      image="eclipse_update_120.jpg"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.0.qualifier"
+      version="0.13.0.qualifier">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <plugin
+         id="org.eclipse.examples.hello"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.hello.feature_0.13.0.qualifier.jar" id="org.eclipse.hello.feature" version="0.13.0.qualifier">
+      <category name="org.eclipse.e4.ui.hello.category"/>
+   </feature>
+   <feature url="features/org.eclipse.hello.feature.source_0.13.0.qualifier.jar" id="org.eclipse.hello.feature.source" version="0.13.0.qualifier">
+      <category name="org.eclipse.e4.ui.hello.category"/>
+   </feature>
+   <category-def name="org.eclipse.e4.ui.hello.category" label="Hello Related Features"/>
+</site>
+
