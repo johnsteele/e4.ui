@@ -22,10 +22,10 @@
   <packaging>pom</packaging>
 
   <properties>
-    <tycho.version>0.16.0</tycho.version>
-    <tycho-extras.version>0.16.0</tycho-extras.version>
+    <tycho.version>0.17.0-SNAPSHOT</tycho.version>
+    <tycho-extras.version>0.17.0-SNAPSHOT</tycho-extras.version>
 
-    <m-build-repo.url>http://download.eclipse.org/eclipse/updates/4.2-M-builds/M20121121-1200</m-build-repo.url>
+    <m-build-repo.url>http://download.eclipse.org/eclipse/updates/4.2-M-builds/M20121219-1200</m-build-repo.url>
     <tycho-repo.url>https://oss.sonatype.org/content/groups/public/</tycho-repo.url>
   </properties>
 
